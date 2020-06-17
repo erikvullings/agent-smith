@@ -1,0 +1,25 @@
+{
+  "name": "agent-smith",
+  "version": "1.0.0",
+  "description": "An agent-based crowd simulator in 2D",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "start": "pnpm run -r dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erikvullings/agent-smith.git"
+  },
+  "keywords": [],
+  "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erikvullings/agent-smith/issues"
+  },
+  "homepage": "https://github.com/erikvullings/agent-smith#readme",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "pnpm": "^5.2.1"
+  }
+}
