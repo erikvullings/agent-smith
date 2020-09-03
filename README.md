@@ -15,6 +15,28 @@ threat scenarios. It does not aim to be a very realistic crowd or traffic simula
 
 The name is inspired by Agent Smith in the film The Matrix.
 
+## Creating vector tiles
+
+On an Ubuntu machine, run the following commands:
+
+```bash
+git clone https://github.com/openmaptiles/openmaptiles.git
+cd openmaptiles
+sudo ./quickstart.sh netherlands # assuming you want to create mbtiles from The Netherlands (replace with the name known at geofabrik).
+
+```
+
+## Open Source Routing Machine
+
+Used for creating a routing service for driving, cycling, and walking. These routing services are used by the agents to
+compute their routes.
+
+See their [website](https://project-osrm.org).
+
+## OpenTripPlanner
+
+See the [website](https://opentripplanner.org).
+
 ## TODO
 
 Below is a description of the goals we are working towards...
