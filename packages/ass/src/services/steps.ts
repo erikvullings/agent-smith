@@ -3,7 +3,17 @@ import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 import { log } from '../utils';
 
-const moveAgentAlongRoute = (agent: IAgent, deltaTime: number): boolean => {
+/** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
+const moveGroup = (agent: IAgent, services: IEnvServices) => {
+  if (!agent.group || agent.group.length === 0) return;
+  for (const id of agent.group) {
+    const a = services.agents[id];
+    if (a) a.actual = agent.actual;
+  }
+};
+
+/** Move agent along a route. */
+const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
   const { route = [] } = agent;
   if (route.length > 0) {
     const step = route[0];
@@ -13,9 +23,10 @@ const moveAgentAlongRoute = (agent: IAgent, deltaTime: number): boolean => {
       const loc = first?.maneuver?.location;
       if (loc) {
         agent.actual = { id: (first && first.name) || 'unnamed', coord: loc };
+        moveGroup(agent, services);
       }
       if (route.length > 1) {
-        return moveAgentAlongRoute(agent, deltaTime - duration);
+        return moveAgentAlongRoute(agent, services, deltaTime - duration);
       } else {
         // We are moving along the last segment
         agent.destination = undefined;
@@ -35,6 +46,7 @@ const moveAgentAlongRoute = (agent: IAgent, deltaTime: number): boolean => {
       step.duration = duration - deltaTime;
       const coord = [x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio] as [number, number];
       agent.actual = { id: step.name || 'unnamed', coord };
+      moveGroup(agent, services);
     }
   }
   log(`${agent.id} has reached ${agent.actual.id} (${agent.actual.coord}).`);
@@ -47,8 +59,8 @@ const moveAgent = (profile: Profile) => async (
   services: IEnvServices,
   options: IActivityOptions = {}
 ) => {
-  const { route = [], status } = agent;
-  if (status === 'paused') return false;
+  const { route = [], memberOf } = agent;
+  if (memberOf) return false; // TODO Or can we return true?
   const { destination } = options;
   if (route.length === 0) {
     if (!destination) return true;
@@ -62,7 +74,7 @@ const moveAgent = (profile: Profile) => async (
     agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
     log(JSON.stringify(agent.route, null, 2));
   }
-  return moveAgentAlongRoute(agent, services.getDeltaTime() / 1000);
+  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
 /** Wait until a start time before continuing */
@@ -85,10 +97,44 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   return waitUntil(agent, services, stepOptions);
 };
 
+const controlAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const { control } = options;
+  if (control && control.length > 0) {
+    if (!agent.group) {
+      agent.group = [];
+    }
+    for (const id of control) {
+      const a = services.agents[id];
+      if (a) {
+        a.memberOf = agent.id;
+        agent.group.push(id);
+      }
+    }
+  }
+  return true;
+};
+
+const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const { release } = options;
+  if (agent.group && release && release.length > 0) {
+    for (const id of release) {
+      const a = services.agents[id];
+      const i = agent.group.indexOf(id);
+      if (a) {
+        a.memberOf = undefined;
+        agent.group.splice(i, 1);
+      }
+    }
+  }
+  return true;
+};
+
 export const steps = {
   walkTo: moveAgent('foot'),
   cycleTo: moveAgent('bike'),
   driveTo: moveAgent('driving'),
   waitUntil,
   waitFor,
+  controlAgents,
+  releaseAgents,
 };

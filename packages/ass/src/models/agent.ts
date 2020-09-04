@@ -2,12 +2,14 @@ import { IOsrmRouteStep } from 'osrm-rest-client';
 import { ActivityList } from '.';
 import { ILocation } from './location';
 
+export type TransportType = 'car' | 'bicycle';
+
 export interface IAgent {
   id: string;
   /** Type of agent */
-  type: 'man' | 'woman' | 'boy' | 'girl' | 'car' | string;
+  type: 'man' | 'woman' | 'boy' | 'girl' | TransportType;
   /** Status of the agent */
-  status: false | 'paused' | 'walking' | 'cycling' | 'driving' | string;
+  status: 'active' | 'walking' | 'cycling' | 'driving';
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** ID of home address */
@@ -35,7 +37,7 @@ export interface IAgent {
   /** Items that the agent owns, e.g. a car or bicycle. */
   owns?: Array<{
     /** Type of object that the agent owns, e.g. car or bicyle */
-    type: string;
+    type: TransportType;
     /** ID of the owned object */
     id: string;
   }>;

@@ -4,7 +4,7 @@ import { randomItem, minutes } from '../utils';
 import distance from '@turf/distance';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-  const steps = [] as Array<{ name: string; options?: IActivityOptions }>;
+  const steps = [] as ActivityList;
   const { startTime } = options;
   if (startTime) {
     steps.push({ name: 'waitUntil', options });
@@ -14,13 +14,17 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
     const car = ownedCar && services.agents[ownedCar.id];
     if (car && distance(agent.actual.coord, car.actual.coord, { units: 'meters' }) < 500) {
       steps.push({ name: 'walkTo', options: { destination: car.actual } });
+      steps.push({ name: 'controlAgents', options: { control: [car.id] } });
       steps.push({ name: 'driveTo', options: { destination: agent.destination } });
+      steps.push({ name: 'releaseAgents', options: { release: [car.id] } });
     } else {
-      const ownedBike = agent.owns.filter((o) => o.type === 'bike').shift();
+      const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
       const bike = ownedBike && services.agents[ownedBike.id];
       if (bike && distance(agent.actual.coord, bike.actual.coord, { units: 'meters' }) < 300) {
         steps.push({ name: 'walkTo', options: { destination: bike.actual } });
+        steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
         steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
+        steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
       } else {
         steps.push({ name: 'walkTo', options: { destination: agent.destination } });
       }
@@ -51,9 +55,9 @@ export const plans = {
       }
       const occupations = agent.occupations.filter((o) => o.type === 'work');
       if (occupations.length > 0) {
-        const { location } = options;
+        const { destination } = options;
         const occupation =
-          (location && occupations.filter((o) => o.id === location).shift()) || randomItem(occupations);
+          (destination && occupations.filter((o) => o.id === destination.id).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
         prepareRoute(agent, services, options);
       }
@@ -68,9 +72,9 @@ export const plans = {
       }
       const occupations = agent.occupations.filter((o) => o.type === 'shop');
       if (occupations.length > 0) {
-        const { location } = options;
+        const { destination } = options;
         const occupation =
-          (location && occupations.filter((o) => o.id === location).shift()) || randomItem(occupations);
+          (destination && occupations.filter((o) => o.id === destination.id).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
         prepareRoute(agent, services, options);
       }

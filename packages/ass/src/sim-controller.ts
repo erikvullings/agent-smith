@@ -36,19 +36,38 @@ export const simController = async (
     },
   };
 
-  agents.push({
+  const agent1 = {
     id: uuid4(),
     type: 'man',
     speed: 1.4,
-    status: 'walking',
+    status: 'active',
     home: services.locations['Firmamentlaan 5'],
+    owns: [{ id: 'car1', type: 'car' }],
     actual: services.locations['Firmamentlaan 5'],
     occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
-  } as IAgent);
+  } as IAgent;
+
+  const car = {
+    id: 'car1',
+    type: 'car',
+    status: 'active',
+    actual: services.locations['Firmamentlaan 5'],
+  } as IAgent;
+
+  agents.push(agent1, car);
+  services.agents = agents.reduce((acc, cur) => {
+    acc[cur.id] = cur;
+    return acc;
+  }, {} as { [id: string]: IAgent });
+
+  /** Agent types that never control itself */
+  const passiveTypes = ['car', 'bicycle'];
 
   let i = 0;
   while (i < 100000) {
-    await Promise.all(agents.filter((a) => a.status).map((a) => updateAgent(a, services)));
+    await Promise.all(
+      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services))
+    );
     updateTime();
     i++;
   }

@@ -11,7 +11,10 @@ export interface IActivityOptions {
   duration?: number;
   /** Destination when travelling */
   destination?: ILocation;
-  [key: string]: any;
+  /** Agents IDs you want to start controlling, e.g. vehicles or children */
+  control?: string[];
+  /** Agents IDs you are controlling and want to release, e.g. vehicles or children */
+  release?: string[];
 }
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
