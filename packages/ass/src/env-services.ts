@@ -1,6 +1,6 @@
 import { OSRM, Coordinate, IOsrm } from 'osrm-rest-client';
 import { plans, steps } from './services';
-import { IAgent, IPlan, Step } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions } from './models';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -17,7 +17,7 @@ export interface IEnvServices {
   /** Available plans */
   plans: { [plan: string]: IPlan };
   /** Available steps i.e. basic components that make up a plan, e.g. go to location */
-  steps: { [step: string]: Step };
+  steps: { [step: string]: Activity };
   /** Available locations */
   locations: {
     [id: string]: {
@@ -59,41 +59,74 @@ export const envServices = (time: Date = new Date()) => {
     walk,
     /** Agent lookup */
     agents: {},
-    /** Available plans */
+    /** Available high-level plans for agents to choose from */
     plans,
-    /** Available steps i.e. basic components that make up a plan, e.g. go to location */
+    /** Available steps i.e. basic activities that make up a plan, e.g. go to location */
     steps,
     /** Empty object with locations */
     locations: {},
   } as IEnvServices;
 };
 
-/** Select a plan from the available plans, and make preparations */
-const selectPlan = async (agent: IAgent, services: IEnvServices) => {
-  // TODO Make smarter selection
+const createAgenda = (agent: IAgent, services: IEnvServices) => {
   const plans = Object.keys(services.plans);
-  agent.plan = plans[0];
-  const plan = services.plans[agent.plan];
-  if (plan.prepare) {
-    await plan.prepare(agent, services);
-  }
-  return true;
+  const selectedPlan = plans[0];
+  agent.plans = [{ name: selectedPlan }];
 };
 
-/** Execute a plan */
-const executePlan = async (agent: IAgent, services: IEnvServices) => {
-  if (agent.plan) {
-    const plan = services.plans[agent.plan];
-    const ready = await plan.execute(agent, services);
-    if (ready) {
-      agent.plan = undefined;
-    }
-    return ready;
-  } else {
-    return true;
+// xdfghujk.ytdx
+// /** Execute a plan */
+// const executePlan = async (agent: IAgent, services: IEnvServices) => {
+//   if (agent.plans && agent.plans.length > 0) {
+//     const selectedPlan = agent.plans[0];
+//     const plan = services.plans[selectedPlan.name];
+//     const ready = await plan.execute(agent, services, selectedPlan.options);
+//     if (ready) {
+//       agent.plans.pop();
+//     }
+//     return ready;
+//   } else {
+//     return true;
+//   }
+// };
+
+export const executeSteps = async (
+  agent: IAgent & { steps: Array<{ name: string; options?: IActivityOptions }> },
+  services: IEnvServices
+) => {
+  const { name, options } = agent.steps[0];
+  const step = services.steps[name];
+  if (step && (await step(agent, services, options))) {
+    // Task completed: remove
+    agent.steps.shift();
   }
+  return agent.steps.length === 0;
 };
 
 export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
-  return agent.plan ? executePlan(agent, services) : selectPlan(agent, services);
+  if (agent.steps && agent.steps.length > 0) {
+    const result = await executeSteps(
+      agent as IAgent & { steps: Array<{ name: string; options?: IActivityOptions }> },
+      services
+    );
+    if (result) {
+      const curPlan = agent.plans?.shift();
+      if (curPlan) {
+        const { name, options } = curPlan;
+        const plan = services.plans[name];
+        if (plan && plan.cleanup) {
+          await plan.cleanup(agent, services, options);
+        }
+      }
+    }
+  } else if (agent.plans && agent.plans.length > 0) {
+    const { name, options } = agent.plans[0];
+    const plan = services.plans[name];
+    if (plan && plan.prepare) {
+      await plan.prepare(agent, services, options);
+    }
+  } else {
+    createAgenda(agent, services);
+    updateAgent(agent, services);
+  }
 };

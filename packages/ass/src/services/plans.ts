@@ -36,15 +36,5 @@ export const plans = {
       }
       return true;
     },
-    execute: async (agent: IAgent, services: IEnvServices) => {
-      if (!agent.steps || agent.steps.length === 0) return true;
-      const { name, options } = agent.steps[0];
-      const step = services.steps[name];
-      if (step && (await step(agent, services, options))) {
-        // Task completed: remove
-        agent.steps.shift();
-      }
-      return agent.steps.length === 0;
-    },
   },
 };

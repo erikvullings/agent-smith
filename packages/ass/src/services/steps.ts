@@ -1,22 +1,21 @@
 import { Profile } from 'osrm-rest-client';
-import { IAgent, IStepOptions, Step } from '../models';
+import { IAgent, IActivityOptions, Activity } from '../models';
 import { IEnvServices } from '../env-services';
 import { log } from '../utils';
 
-const moveAgentAlongRoute = (agent: IAgent, metersToMove: number) => {
+const moveAgentAlongRoute = (agent: IAgent, deltaTime: number): boolean => {
   const { route = [] } = agent;
   if (route.length > 0) {
     const step = route[0];
-    const distance = step.distance || 0;
-    if (metersToMove > distance) {
+    const duration = step.duration || 0;
+    if (deltaTime > duration) {
       const first = agent.route?.shift();
       const loc = first?.maneuver?.location;
       if (loc) {
         agent.actual = loc;
       }
       if (route.length > 1) {
-        moveAgentAlongRoute(agent, metersToMove - distance);
-        return false;
+        return moveAgentAlongRoute(agent, deltaTime - duration);
       } else {
         // agent.status = 'paused';
         // agent.destination = undefined;
@@ -26,12 +25,12 @@ const moveAgentAlongRoute = (agent: IAgent, metersToMove: number) => {
       }
     } else if (step.maneuver) {
       // Move along the current step, i.e. road segment
-      const ratio = metersToMove / distance;
+      const ratio = deltaTime / duration;
       const {
         actual: [x1, y1],
       } = agent;
       const [x2, y2] = step.maneuver.location || [0, 0];
-      step.distance = distance - metersToMove;
+      step.duration = duration - deltaTime;
       agent.actual = [x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio];
     }
   }
@@ -40,7 +39,11 @@ const moveAgentAlongRoute = (agent: IAgent, metersToMove: number) => {
 };
 
 /** Move the agent along its trajectory */
-const moveAgent = (profile: Profile) => async (agent: IAgent, services: IEnvServices, options: IStepOptions = {}) => {
+const moveAgent = (profile: Profile) => async (
+  agent: IAgent,
+  services: IEnvServices,
+  options: IActivityOptions = {}
+) => {
   const { route = [], status } = agent;
   if (status === 'paused') return false;
   const { destination } = options;
@@ -56,12 +59,11 @@ const moveAgent = (profile: Profile) => async (agent: IAgent, services: IEnvServ
     agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
     log(JSON.stringify(agent.route, null, 2));
   }
-  const meters = (agent.speed * services.getDeltaTime()) / 1000;
-  return moveAgentAlongRoute(agent, meters);
+  return moveAgentAlongRoute(agent, services.getDeltaTime() / 1000);
 };
 
 export const steps = {
   walkTo: moveAgent('foot'),
   cycleTo: moveAgent('bike'),
   driveTo: moveAgent('driving'),
-} as { [key: string]: Step };
+} as { [key: string]: Activity };

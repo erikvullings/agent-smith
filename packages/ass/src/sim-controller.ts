@@ -1,6 +1,6 @@
 import { envServices, updateAgent } from './env-services';
 import { IAgent } from './models/agent';
-import { uuid4, log } from './utils';
+import { uuid4 } from './utils';
 
 export const simController = async (
   options: {

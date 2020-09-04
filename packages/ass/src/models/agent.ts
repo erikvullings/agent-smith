@@ -1,5 +1,5 @@
 import { IOsrmRouteStep } from 'osrm-rest-client';
-import { IStepOptions } from '.';
+import { IActivityOptions } from '.';
 
 export interface IAgent {
   id: string;
@@ -36,10 +36,10 @@ export interface IAgent {
   }>;
   /** Actual location as [lon, lat] */
   actual: [number, number];
-  /** Name of the active plan, e.g. 'Go to work', 'Go to school', 'Learn', 'Do shopping' */
-  plan?: string;
+  /** Active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
+  plans?: Array<{ name: string; options?: IActivityOptions }>;
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
-  steps?: Array<{ name: string; options?: IStepOptions }>;
+  steps?: Array<{ name: string; options?: IActivityOptions }>;
   /** Location that agents wants to reach, as [lon, lat] */
   destination?: [number, number];
   /** Speed factor, where 1 is the actual speed suggested by the routing engine */
