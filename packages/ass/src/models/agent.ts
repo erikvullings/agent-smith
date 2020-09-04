@@ -36,8 +36,8 @@ export interface IAgent {
   }>;
   /** Actual location as [lon, lat] */
   actual: [number, number];
-  /** Active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
-  plans?: Array<{ name: string; options?: IActivityOptions }>;
+  /** Agenda with active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
+  agenda?: Array<{ name: string; options?: IActivityOptions }>;
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
   steps?: Array<{ name: string; options?: IActivityOptions }>;
   /** Location that agents wants to reach, as [lon, lat] */

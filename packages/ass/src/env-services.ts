@@ -71,24 +71,8 @@ export const envServices = (time: Date = new Date()) => {
 const createAgenda = (agent: IAgent, services: IEnvServices) => {
   const plans = Object.keys(services.plans);
   const selectedPlan = plans[0];
-  agent.plans = [{ name: selectedPlan }];
+  agent.agenda = [{ name: selectedPlan }];
 };
-
-// xdfghujk.ytdx
-// /** Execute a plan */
-// const executePlan = async (agent: IAgent, services: IEnvServices) => {
-//   if (agent.plans && agent.plans.length > 0) {
-//     const selectedPlan = agent.plans[0];
-//     const plan = services.plans[selectedPlan.name];
-//     const ready = await plan.execute(agent, services, selectedPlan.options);
-//     if (ready) {
-//       agent.plans.pop();
-//     }
-//     return ready;
-//   } else {
-//     return true;
-//   }
-// };
 
 export const executeSteps = async (
   agent: IAgent & { steps: Array<{ name: string; options?: IActivityOptions }> },
@@ -110,7 +94,7 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
       services
     );
     if (result) {
-      const curPlan = agent.plans?.shift();
+      const curPlan = agent.agenda?.shift();
       if (curPlan) {
         const { name, options } = curPlan;
         const plan = services.plans[name];
@@ -119,8 +103,8 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
         }
       }
     }
-  } else if (agent.plans && agent.plans.length > 0) {
-    const { name, options } = agent.plans[0];
+  } else if (agent.agenda && agent.agenda.length > 0) {
+    const { name, options } = agent.agenda[0];
     const plan = services.plans[name];
     if (plan && plan.prepare) {
       await plan.prepare(agent, services, options);
