@@ -1,6 +1,6 @@
 @echo off
 setlocal
-SET PWD=c:\dev\web\agent-smith\packages\osrm\data
+SET PWD=C:\dev\web\agent-smith\packages\osrm-services\data
 SET FILE=netherlands-latest
 echo Processing driving data
 

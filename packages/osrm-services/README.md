@@ -13,4 +13,5 @@ Assuming you have installed Docker, proceed as follows.
   the `PWD` and `FILE` properties. Run `preprocess.bat`. For The Netherlands, processing all 3 profiles (driving,
   cycling and walking), this takes less than an hour. The first time, it may take slightly more since you also need to
   download the docker images.
-- Update the `launch.bat` file and set the `PWD` and `FILE` properties. Run `launch.bat`.
+- Update the `launch.bat` file and set the `PWD` and `FILE` properties. Beware the trailing slash in the `PWD` property.
+  Run `launch.bat`.
