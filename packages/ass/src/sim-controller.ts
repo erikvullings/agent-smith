@@ -23,12 +23,16 @@ export const simController = async (
 
   services.locations = {
     huisarts: {
-      type: 'doctor',
-      location: [5.490361, 51.457513],
+      id: 'doctor',
+      coord: [5.490361, 51.457513],
     },
     tue_innovation_forum: {
-      type: 'academic',
-      location: [5.486752, 51.446421],
+      id: 'academic',
+      coord: [5.486752, 51.446421],
+    },
+    'Firmamentlaan 5': {
+      id: 'home',
+      coord: [5.496994, 51.468701],
     },
   };
 
@@ -37,9 +41,8 @@ export const simController = async (
     type: 'man',
     speed: 1.4,
     status: 'walking',
-    home: 'Firmamentlaan 5',
-    actual: [5.496994, 51.468701],
-    destination: [5.479583, 51.443029],
+    home: services.locations['Firmamentlaan 5'],
+    actual: services.locations['Firmamentlaan 5'],
     occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
   } as IAgent);
 

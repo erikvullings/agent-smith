@@ -1,6 +1,6 @@
-import { OSRM, Coordinate, IOsrm } from 'osrm-rest-client';
+import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps } from './services';
-import { IAgent, IPlan, Activity, IActivityOptions } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -19,14 +19,7 @@ export interface IEnvServices {
   /** Available steps i.e. basic components that make up a plan, e.g. go to location */
   steps: { [step: string]: Activity };
   /** Available locations */
-  locations: {
-    [id: string]: {
-      /** Type of location, e.g. office, home, shop */
-      type: string;
-      /** Coordinate on the map */
-      location: Coordinate;
-    };
-  };
+  locations: { [id: string]: ILocation };
 }
 
 /** Create services so an agent can deal with the environment, e.g. for navigation. */

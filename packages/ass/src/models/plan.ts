@@ -1,6 +1,6 @@
 import { IEnvServices } from '../env-services';
 import { IAgent } from '.';
-import { Coordinate } from 'osrm-rest-client';
+import { ILocation } from './location';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */
@@ -10,7 +10,7 @@ export interface IActivityOptions {
   /** Number of microseconds this activity lasts */
   duration?: number;
   /** Destination when travelling */
-  destination?: Coordinate;
+  destination?: ILocation;
   [key: string]: any;
 }
 

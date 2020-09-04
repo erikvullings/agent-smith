@@ -1,5 +1,6 @@
 import { IOsrmRouteStep } from 'osrm-rest-client';
 import { IActivityOptions } from '.';
+import { ILocation } from './location';
 
 export interface IAgent {
   id: string;
@@ -7,12 +8,16 @@ export interface IAgent {
   type: 'man' | 'woman' | 'boy' | 'girl' | 'car' | string;
   /** Status of the agent */
   status: false | 'paused' | 'walking' | 'cycling' | 'driving' | string;
+  /** Actual location as [lon, lat] */
+  actual: ILocation;
   /** ID of home address */
-  home?: string;
+  home?: ILocation;
+  /** Location that agents wants to reach, as [lon, lat] */
+  destination?: ILocation;
   /** ID of work address */
   occupations?: Array<{
     /** Type of occupation, e.g. work, shop, learn */
-    type: string;
+    type: 'work' | 'shop' | string;
     /** Id of the location where the occupation takes place */
     id: string;
   }>;
@@ -34,14 +39,10 @@ export interface IAgent {
     /** ID of the owned object */
     id: string;
   }>;
-  /** Actual location as [lon, lat] */
-  actual: [number, number];
   /** Agenda with active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
   agenda?: Array<{ name: string; options?: IActivityOptions }>;
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
   steps?: Array<{ name: string; options?: IActivityOptions }>;
-  /** Location that agents wants to reach, as [lon, lat] */
-  destination?: [number, number];
   /** Speed factor, where 1 is the actual speed suggested by the routing engine */
   speed: number;
   /** Route to follow from actual location to destination */

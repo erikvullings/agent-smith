@@ -12,14 +12,14 @@ const moveAgentAlongRoute = (agent: IAgent, deltaTime: number): boolean => {
       const first = agent.route?.shift();
       const loc = first?.maneuver?.location;
       if (loc) {
-        agent.actual = loc;
+        agent.actual = { id: (first && first.name) || 'unnamed', coord: loc };
       }
       if (route.length > 1) {
         return moveAgentAlongRoute(agent, deltaTime - duration);
       } else {
         // agent.status = 'paused';
         // agent.destination = undefined;
-        log(`${agent.id} has reached a destination.`);
+        log(`${agent.id} has reached ${agent.actual.id}.`);
         return true;
         // We are moving along the last segment
       }
@@ -27,14 +27,17 @@ const moveAgentAlongRoute = (agent: IAgent, deltaTime: number): boolean => {
       // Move along the current step, i.e. road segment
       const ratio = deltaTime / duration;
       const {
-        actual: [x1, y1],
+        actual: {
+          coord: [x1, y1],
+        },
       } = agent;
       const [x2, y2] = step.maneuver.location || [0, 0];
       step.duration = duration - deltaTime;
-      agent.actual = [x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio];
+      const coord = [x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio] as [number, number];
+      agent.actual = { id: step.name || 'unnamed', coord };
     }
   }
-  log(`${agent.id} has reached (${agent.actual[0]}, ${agent.actual[1]}).`);
+  log(`${agent.id} has reached (${agent.actual.id}).`);
   return false;
 };
 
@@ -51,7 +54,7 @@ const moveAgent = (profile: Profile) => async (
     if (!destination) return true;
     const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
     const routeResult = await routeService.route({
-      coordinates: [agent.actual, destination],
+      coordinates: [agent.actual.coord, destination.coord],
       continue_straight: true,
       steps: true,
     });
