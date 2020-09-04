@@ -1,6 +1,6 @@
 import { envServices, updateAgent } from './env-services';
 import { IAgent } from './models/agent';
-import { uuid4 } from './utils';
+import { uuid4, simTime } from './utils';
 
 export const simController = async (
   options: {
@@ -9,7 +9,7 @@ export const simController = async (
     startTime?: Date;
   } = {}
 ) => {
-  const { simSpeed = 10, startTime = new Date() } = options;
+  const { simSpeed = 10, startTime = simTime(0, 6) } = options;
   const services = envServices();
   const agents = [] as IAgent[];
 

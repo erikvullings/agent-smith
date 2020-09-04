@@ -1,10 +1,14 @@
-import { IAgent, IActivityOptions } from '../models';
+import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { randomItem, log } from '../utils';
+import { randomItem, minutes } from '../utils';
 import distance from '@turf/distance';
 
-const prepareRoute = (agent: IAgent, services: IEnvServices) => {
+const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as Array<{ name: string; options?: IActivityOptions }>;
+  const { startTime } = options;
+  if (startTime) {
+    steps.push({ name: 'waitUntil', options });
+  }
   if (agent.owns && agent.owns.length > 0) {
     const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
     const car = ownedCar && services.agents[ownedCar.id];
@@ -27,6 +31,17 @@ const prepareRoute = (agent: IAgent, services: IEnvServices) => {
   agent.steps = steps;
 };
 
+/** Wait for options.duration msec */
+const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const { duration } = options;
+  if (duration) {
+    const startTime = new Date(services.getTime().valueOf() + duration);
+    agent.steps = [{ name: 'waitUntil', options: { startTime } }];
+  }
+  return true;
+};
+
+/** All plans that are available to each agent */
 export const plans = {
   /** In the options, you can set the work location to go to */
   'Go to work': {
@@ -40,7 +55,7 @@ export const plans = {
         const occupation =
           (location && occupations.filter((o) => o.id === location).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services);
+        prepareRoute(agent, services, options);
       }
       return true;
     },
@@ -57,20 +72,38 @@ export const plans = {
         const occupation =
           (location && occupations.filter((o) => o.id === location).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services);
+        prepareRoute(agent, services, options);
       }
       return true;
     },
   },
+  /** Go to your home address */
   'Go home': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      if (options) {
-        log(options);
-      }
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       if (agent.home) {
-        agent.destination = services.locations[agent.home.id];
-        prepareRoute(agent, services);
+        agent.destination = agent.home;
+        prepareRoute(agent, services, options);
       }
+      return true;
+    },
+  },
+  /** Work for a number of hours (set duration in the options) */
+  Work: { prepare: waitFor },
+  /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
+  'Have lunch': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination, duration = minutes(20, 50) } = options;
+      const steps = [] as ActivityList;
+      if (destination) {
+        const actual = agent.actual;
+        agent.destination = destination;
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: { duration } });
+        steps.push({ name: 'walkTo', options: { destination: actual } });
+      } else {
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
       return true;
     },
   },

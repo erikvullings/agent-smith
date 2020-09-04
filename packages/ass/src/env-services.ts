@@ -1,6 +1,7 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
+import { simTime, hours } from './utils';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -61,10 +62,20 @@ export const envServices = (time: Date = new Date()) => {
   } as IEnvServices;
 };
 
-const createAgenda = (agent: IAgent, services: IEnvServices) => {
-  const plans = Object.keys(services.plans);
-  const selectedPlan = plans[0];
-  agent.agenda = [{ name: selectedPlan }];
+const createAgenda = (agent: IAgent, _services: IEnvServices) => {
+  if (typeof agent._day === 'undefined') {
+    agent._day = 0;
+  } else {
+    agent._day++;
+  }
+  const { _day: day } = agent;
+  agent.agenda = [
+    { name: 'Go to work', options: { startTime: simTime(day, 8) } },
+    { name: 'Work', options: { duration: hours(3, 5) } },
+    { name: 'Have lunch' },
+    { name: 'Work', options: { duration: hours(3, 5) } },
+    { name: 'Go home' },
+  ];
 };
 
 export const executeSteps = async (

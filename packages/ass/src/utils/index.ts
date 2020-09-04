@@ -82,3 +82,36 @@ export const range = (from: number, to: number, step: number = 1) => {
   }
   return arr;
 };
+
+/**
+ * Returns a random number between min (inclusive) and max (exclusive)
+ */
+export const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+export const randomIntInRange = (min: number, max: number) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+/** Convert a number of minutes to the number of msec */
+export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
+
+/** Convert a number of hours to the number of msec */
+export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
+
+const now = new Date();
+const year = now.getFullYear();
+const month = now.getMonth();
+const day = now.getDate();
+
+/** Create a date relative to today */
+export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
+  new Date(year, month, day + days, hours, minutes, seconds);

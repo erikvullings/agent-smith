@@ -1,5 +1,5 @@
 import { IOsrmRouteStep } from 'osrm-rest-client';
-import { IActivityOptions } from '.';
+import { ActivityList } from '.';
 import { ILocation } from './location';
 
 export interface IAgent {
@@ -39,10 +39,12 @@ export interface IAgent {
     /** ID of the owned object */
     id: string;
   }>;
+  /** Agenda day, e.g. in order to create a new agenda each day. Internal property, do not set yourself. */
+  _day?: number;
   /** Agenda with active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
-  agenda?: Array<{ name: string; options?: IActivityOptions }>;
+  agenda?: ActivityList;
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
-  steps?: Array<{ name: string; options?: IActivityOptions }>;
+  steps?: ActivityList;
   /** Speed factor, where 1 is the actual speed suggested by the routing engine */
   speed: number;
   /** Route to follow from actual location to destination */

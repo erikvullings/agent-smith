@@ -17,6 +17,8 @@ export interface IActivityOptions {
 /** A typical step that can be executed. When the step returns true, it signals completion. */
 export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 
+export type ActivityList = Array<{ name: string; options?: IActivityOptions }>;
+
 export interface IPlan {
   /** Prepare the plan, e.g. select a destination and prepare all steps */
   prepare: Activity;
