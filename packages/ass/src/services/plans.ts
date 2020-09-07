@@ -57,7 +57,7 @@ export const plans = {
       if (occupations.length > 0) {
         const { destination } = options;
         const occupation =
-          (destination && occupations.filter((o) => o.id === destination.id).shift()) || randomItem(occupations);
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
         prepareRoute(agent, services, options);
       }
@@ -74,7 +74,7 @@ export const plans = {
       if (occupations.length > 0) {
         const { destination } = options;
         const occupation =
-          (destination && occupations.filter((o) => o.id === destination.id).shift()) || randomItem(occupations);
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
         prepareRoute(agent, services, options);
       }

@@ -48,7 +48,7 @@ export interface IAgent {
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
   steps?: ActivityList;
   /** Speed factor, where 1 is the actual speed suggested by the routing engine */
-  speed: number;
+  speed?: number;
   /** Route to follow from actual location to destination */
   route?: IOsrmRouteStep[];
 }

@@ -1,3 +1,6 @@
+import { IAgent } from '../models';
+import { IItem } from 'test-bed-schemas';
+
 /**
  * Create a GUID
  * @see https://stackoverflow.com/a/2117523/319711
@@ -115,3 +118,17 @@ const day = now.getDate();
 /** Create a date relative to today */
 export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
   new Date(year, month, day + days, hours, minutes, seconds);
+
+/** Convert agent to entity item */
+export const agentToEntityItem = (agent: IAgent): IItem => ({
+  id: agent.id,
+  type: agent.type,
+  location: {
+    longitude: agent.actual.coord[0],
+    latitude: agent.actual.coord[1],
+  },
+  children: agent.group,
+  tags: {
+    agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
+  },
+});

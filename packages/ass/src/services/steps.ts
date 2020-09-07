@@ -22,7 +22,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       const first = agent.route?.shift();
       const loc = first?.maneuver?.location;
       if (loc) {
-        agent.actual = { id: (first && first.name) || 'unnamed', coord: loc };
+        agent.actual = { type: (first && first.name) || 'unnamed', coord: loc };
         moveGroup(agent, services);
       }
       if (route.length > 1) {
@@ -31,7 +31,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
         // We are moving along the last segment
         agent.destination = undefined;
         agent.route = undefined;
-        log(`${agent.id} has reached the final destination: ${agent.actual.id} (${agent.actual.coord}).`);
+        log(`${agent.id} has reached the final destination: ${agent.actual.type} (${agent.actual.coord}).`);
         return true;
       }
     } else if (step.maneuver) {
@@ -45,11 +45,11 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       const [x2, y2] = step.maneuver.location || [0, 0];
       step.duration = duration - deltaTime;
       const coord = [x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio] as [number, number];
-      agent.actual = { id: step.name || 'unnamed', coord };
+      agent.actual = { type: step.name || 'unnamed', coord };
       moveGroup(agent, services);
     }
   }
-  log(`${agent.id} has reached ${agent.actual.id} (${agent.actual.coord}).`);
+  log(`${agent.id} has reached ${agent.actual.type} (${agent.actual.coord}).`);
   return false;
 };
 
