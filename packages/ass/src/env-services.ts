@@ -1,7 +1,7 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
-import { simTime, hours } from './utils';
+import { simTime, hours, randomInRange } from './utils';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -70,7 +70,7 @@ const createAgenda = (agent: IAgent, _services: IEnvServices) => {
   }
   const { _day: day } = agent;
   agent.agenda = [
-    { name: 'Go to work', options: { startTime: simTime(day, 8) } },
+    { name: 'Go to work', options: { startTime: simTime(day, randomInRange(6, 9), randomInRange(0, 59)) } },
     { name: 'Work', options: { duration: hours(3, 5) } },
     { name: 'Have lunch' },
     { name: 'Work', options: { duration: hours(3, 5) } },
