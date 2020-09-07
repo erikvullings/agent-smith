@@ -11,25 +11,22 @@ are:
 Aim is to create a micro-simulator that simulates large groups of people and traffic as input for the evaluation of
 threat scenarios. It does not aim to be a very realistic crowd or traffic simulator.
 
+## Usage
+
+Prerequisites: you need to have a working version of Docker running on your machine.
+
+1. Setup OSRM, the Open Source routing machine. See the readme in `packages/osrm`.
+2. Start Kafka, see `packages/kafka`, for running the GUI.
+3. Start Agent Smith Simulator, see `packages/ass`. You can use VSCode's launch file to run it.
+
 ## Name
 
 The name is inspired by Agent Smith in the film The Matrix.
 
-## Creating vector tiles
-
-On an Ubuntu machine, run the following commands:
-
-```bash
-git clone https://github.com/openmaptiles/openmaptiles.git
-cd openmaptiles
-sudo ./quickstart.sh netherlands # assuming you want to create mbtiles from The Netherlands (replace with the name known at geofabrik).
-
-```
-
 ## Open Source Routing Machine
 
 Used for creating a routing service for driving, cycling, and walking. These routing services are used by the agents to
-compute their routes.
+compute their routes. Please see `packages/osrm` how to set it up.
 
 See their [website](https://project-osrm.org).
 
@@ -56,3 +53,14 @@ An agent can also have children: these children will either have a fixed relativ
 simulate people in a bus, or a dynamic relative position, e.g. to simulate people walking in a group. Nesting is limited
 to 2 levels, so we can also simulate a family group walking inside a tour group. Agents can leave or join a group when
 needed.
+
+## Creating vector tiles
+
+On an Ubuntu machine, run the following commands:
+
+```bash
+git clone https://github.com/openmaptiles/openmaptiles.git
+cd openmaptiles
+sudo ./quickstart.sh netherlands # assuming you want to create mbtiles from The Netherlands (replace with the name known at geofabrik).
+
+```
