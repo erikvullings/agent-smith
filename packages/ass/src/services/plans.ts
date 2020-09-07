@@ -1,6 +1,6 @@
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { randomItem, minutes } from '../utils';
+import { randomItem, minutes, randomPlaceNearby } from '../utils';
 import distance from '@turf/distance';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
@@ -96,17 +96,13 @@ export const plans = {
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      const { destination, duration = minutes(20, 50) } = options;
+      const { destination = randomPlaceNearby(agent, 1000, 'food'), duration = minutes(20, 50) } = options;
       const steps = [] as ActivityList;
-      if (destination) {
-        const actual = agent.actual;
-        agent.destination = destination;
-        steps.push({ name: 'walkTo', options: { destination } });
-        steps.push({ name: 'waitFor', options: { duration } });
-        steps.push({ name: 'walkTo', options: { destination: actual } });
-      } else {
-        steps.push({ name: 'waitFor', options: { duration } });
-      }
+      const actual = agent.actual;
+      agent.destination = destination;
+      steps.push({ name: 'walkTo', options: { destination } });
+      steps.push({ name: 'waitFor', options: { duration } });
+      steps.push({ name: 'walkTo', options: { destination: actual } });
       agent.steps = steps;
       return true;
     },

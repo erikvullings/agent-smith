@@ -68,21 +68,12 @@ const createAgenda = (agent: IAgent, _services: IEnvServices) => {
   } else {
     agent._day++;
   }
-  const {
-    _day: day,
-    actual: {
-      coord: [lon, lat],
-    },
-  } = agent;
-  const randomLunchPlace: ILocation = {
-    type: 'food',
-    // 1 degree is approximately 111111 meters
-    coord: [randomInRange(lon - 0.01, lon + 0.01), randomInRange(lat - 0.01, lat + 0.01)],
-  };
+  const { _day: day } = agent;
+
   agent.agenda = [
     { name: 'Go to work', options: { startTime: simTime(day, randomInRange(6, 9), randomInRange(0, 59)) } },
     { name: 'Work', options: { duration: hours(3, 5) } },
-    { name: 'Have lunch', options: { destination: randomLunchPlace } },
+    { name: 'Have lunch' },
     { name: 'Work', options: { duration: hours(3, 5) } },
     { name: 'Go home' },
   ];

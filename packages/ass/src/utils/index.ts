@@ -1,4 +1,4 @@
-import { IAgent } from '../models';
+import { IAgent, ILocation } from '../models';
 import { IItem } from 'test-bed-schemas';
 
 /**
@@ -132,3 +132,18 @@ export const agentToEntityItem = (agent: IAgent): IItem => ({
     agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
   },
 });
+
+/** Based on the actual lat/lon, create a place nearby */
+export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string): ILocation => {
+  const {
+    actual: {
+      coord: [lon, lat],
+    },
+  } = a;
+  const r = rangeInMeter / 111139;
+  return {
+    type,
+    // 1 degree is approximately 111111 meters
+    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+  };
+};
