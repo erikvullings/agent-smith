@@ -5,17 +5,9 @@
   "source": "src/run.ts",
   "main": "dist/run.js",
   "scripts": {
-    "build": "microbundle",
-    "dev": "microbundle watch",
-    "clean": "rimraf dist",
-    "link": "pnpm link",
-    "typedoc": "typedoc --out ../../docs/typedoc src",
-    "build:domain": "npm run build && npm run typedoc",
-    "dry-run": "npm publish --dry-run",
-    "patch-release": "npm run build && npm version patch --force -m \"Patch release\" && npm run publish",
-    "minor-release": "npm run build && npm version minor --force -m \"Minor release\" && npm run publish",
-    "major-release": "npm run build && npm version major --force -m \"Major release\" && npm run publish",
-    "publish": "git commit package.json -m \"version bump\" && npm publish && git push --follow-tags"
+    "build": "tsc",
+    "dev": "tsc -w",
+    "clean": "rimraf dist"
   },
   "keywords": [],
   "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
