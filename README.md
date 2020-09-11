@@ -15,7 +15,7 @@ threat scenarios. It does not aim to be a very realistic crowd or traffic simula
 
 Prerequisites: you need to have a working version of Docker running on your machine.
 
-1. Setup OSRM, the Open Source routing machine. See the readme in `packages/osrm`.
+1. Setup OSRM, the Open Source routing machine. See the readme in `packages/osrm`. Note that you do not need to run it from there, as OSRM is started as part of the `docker-compose.yml` file in Kafka.
 2. Start Kafka, see `packages/kafka`, for running the GUI.
 3. Start Agent Smith Simulator, see `packages/ass`. You can use VSCode's launch file to run it.
 

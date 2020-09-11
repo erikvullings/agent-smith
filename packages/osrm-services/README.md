@@ -11,7 +11,17 @@ Assuming you have installed Docker, proceed as follows.
 - From [GeoFabrik](https://www.geofabrik.de/), download the latest OSM file and save it in the `data` folder.
 - Update the `preprocess.bat` file to reflect the local GIT folder that you are using, i.e. provide the proper name for
   the `PWD` and `FILE` properties. Run `preprocess.bat`. For The Netherlands, processing all 3 profiles (driving,
-  cycling and walking), this takes less than an hour. The first time, it may take slightly more since you also need to
+  cycling and walking), it takes less than an hour. The first time, it may take slightly more since you also need to
   download the docker images.
+
+## Starting the OSRM services
+
+You can either start it using a docker command, as is done in the `launch.bat` file:
+
 - Update the `launch.bat` file and set the `PWD` and `FILE` properties. Beware the trailing slash in the `PWD` property.
-  Run `launch.bat`.
+- Run `launch.bat`.
+
+Alternatively, you can use the docker-compose file:
+
+- Update the `.env` file specifying the corrects folder path and file name. You can use `docker-compose config` to verify that the path and filename are correctly specified.
+- Run `docker-compose up -d`

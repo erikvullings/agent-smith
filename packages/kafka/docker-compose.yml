@@ -234,6 +234,42 @@ services:
     restart: on-failure
     volumes:
       - ./schemas:/src/schemas
+
+  driving:
+    image: osrm/osrm-backend
+    ports:
+      - "5000:5000"
+    command:
+      - osrm-routed
+      - --algorithm
+      - mld
+      - /data/${PBF_FILE}.osrm
+    volumes:
+      - ${DATA_FOLDER}/driving:/data
+
+  cycling:
+    image: osrm/osrm-backend
+    ports:
+      - "5001:5000"
+    command:
+      - osrm-routed
+      - --algorithm
+      - mld
+      - /data/${PBF_FILE}.osrm
+    volumes:
+      - ${DATA_FOLDER}/cycling:/data
+
+  walking:
+    image: osrm/osrm-backend
+    ports:
+      - "5002:5000"
+    command:
+      - osrm-routed
+      - --algorithm
+      - mld
+      - /data/${PBF_FILE}.osrm
+    volumes:
+      - ${DATA_FOLDER}/walking:/data
 # volumes:
 #   postgres-data:
 #   trial-data:

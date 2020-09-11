@@ -6,7 +6,7 @@ push agent updates.
 
 ## Usage
 
-To start Apache Kafka and other services, you need to install Docker and Docker-compose, after which you can run:
+To start OSRM, Apache Kafka and other services, you need to install Docker and Docker-compose, and provide the correct paths in the `.env` file for the OSRM filename and data folder (see also the OSRM package folder). Next, you can run the whole stack using:
 
 ```bash
 docker-compose up -d
@@ -17,10 +17,6 @@ To stop, just use
 ```bash
 docker-compose down
 ```
-
-### Note
-
-In the near future, it is likely that the OSRM services will become part of this too.
 
 ## Services
 
