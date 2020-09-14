@@ -1,0 +1,50 @@
+{
+  "layers": [
+    {
+      "id": "main",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "source": "main.json",
+      "title": "main",
+      "style": {
+        "type": "circle",
+        "pointCircle": true,
+        "icons": {
+          "man": "images/man.png",
+          "car": "images/car.png"
+        },
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-image": [
+              "get",
+              "type"
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/main"
+    }
+  ],
+  "sourcePath": "./sources/",
+  "importPath": "./import",
+  "serverUrl": "http://localhost:3008",
+  "importRoot": "import/",
+  "sourceRoot": "sources/",
+  "socketFlushInterval": 100,
+  "serverPath": "C:\\arnoud\\actueel\\v2018\\simulation\\agent-smith\\packages\\configs\\layers\\"
+}

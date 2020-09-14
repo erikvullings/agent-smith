@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "C:\\arnoud\\Projects\\csVue\\csnext"
+		}
+	],
+	"settings": {
+		"todo-tree.flat": false,
+		"prettier.singleQuote": true,
+		"typescript.preferences.quoteStyle": "single",
+		"javascript.preferences.quoteStyle": "single",
+		"npm-intellisense.importQuotes": "'",
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"src/datamodel/*.js": true
+		}
+	}
+}

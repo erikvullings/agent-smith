@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Launch Simulation",
       "cwd": "${workspaceFolder}/packages/ass/",
       "skipFiles": [
         "<node_internals>/**",

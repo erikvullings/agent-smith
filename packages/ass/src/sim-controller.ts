@@ -13,7 +13,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 0.5, startTime = simTime(0, 6) } = options;
     const services = envServices();
     const agents = [] as IAgent[];
 
@@ -54,7 +54,7 @@ export const simController = async (
       // speed: 1.4,
       status: 'active',
       home: services.locations['Firmamentlaan 5'],
-      owns: [{ id: 'car1', type: 'car' }],
+      owns: [],
       actual: services.locations['Firmamentlaan 5'],
       occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
     } as IAgent;
@@ -88,11 +88,20 @@ export const simController = async (
         agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services))
       );
       updateTime();
-      i % 10 === 0 && notifyOthers();
+      // await sleep(20);
+      i % 2 === 0 && notifyOthers();
       i++;
+      
     }
   });
 };
+
+// function sleep(ms: number) {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, ms);
+//   });
+// }   
+
 
 /** Connect to Kafka and create a connector */
 const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
