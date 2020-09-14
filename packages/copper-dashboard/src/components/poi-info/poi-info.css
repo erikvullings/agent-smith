@@ -1,0 +1,26 @@
+.mil-symbol-info {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+.feature-info-form {
+    position: absolute;
+    left: 50px;
+    top: 5px;
+}
+
+.feature-info-title input {
+    color: black !important;
+    font-weight: 600;
+}
+
+.info-actions {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
+
+.feature-action-chip {
+    margin-right: 4px;
+}

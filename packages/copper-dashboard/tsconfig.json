@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "watch": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,    
+    "importHelpers": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "lib": [
+    "es5",
+    "es6",
+    "dom",
+    "es2015.core",
+    "es2015.collection",
+    "es2015.generator",
+    "es2015.iterable",
+    "es2015.promise",
+    "es2015.proxy",
+    "es2015.reflect",
+    "es2015.symbol",
+    "es2015.symbol.wellknown",
+    "esnext.asynciterable"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx"
+  ],
+  "exclude": ["node_modules"]
+}

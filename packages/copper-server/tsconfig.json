@@ -1,0 +1,31 @@
+{  
+  "include": ["src/"],
+  "exclude": ["./src/maatregelen-importer", "./dist"],
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "es6",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "module": "commonjs",
+    "rootDir": "./src/",
+    // These settings are totally up to you
+    "esModuleInterop": true,
+    // "strict": true,
+    "skipLibCheck": true,
+
+    "experimentalDecorators": true, /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": true, /* Enables experimental support for emitting type metadata for decorators. */
+
+    "lib": ["es2016", "esnext.asynciterable"],
+    "outDir": "./dist/" /* Redirect output structure to the directory. */
+    
+    /* Experimental Options */
+  
+  },
+  
+    // "references": [
+    //   { "path":"../core" }
+    // ]
+}

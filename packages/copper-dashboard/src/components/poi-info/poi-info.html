@@ -1,0 +1,16 @@
+<div>
+    <!-- <mil-symbol class="mil-symbol-info" size="20" v-if="widget.data.feature.properties.sidc" :code="widget.data.feature.properties.sidc"></mil-symbol> -->
+    <div class="feature-info-form">
+        <!-- <template-item :template="infoTemplate.title" :feature="feature"></template-item> -->
+        <component :is="getInfoTemplate()"></component>
+        <!-- {{ parseTemplate(featureType.infoTemplate.title) }} -->
+        <!-- <v-text-field label="title" flat class="feature-info-title" dense solo v-model="widget.data.feature.properties.name"></v-text-field> -->
+
+    </div>
+
+    <v-layout class="info-actions">
+        <v-chip @click="zoomTo()" outlined class="feature-action-chip">
+            <v-icon left>search</v-icon>zoom to
+        </v-chip>        
+    </v-layout>
+</div>
