@@ -4,8 +4,9 @@
   "description": "An agent-based crowd simulator in 2D",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf ./dist",
-    "start": "pnpm run -r dev"
+    "clean": "pnpm run -r clean",
+    "start": "pnpm run -r dev",
+    "install": "pnpm run -r install"
   },
   "repository": {
     "type": "git",
