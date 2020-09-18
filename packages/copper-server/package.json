@@ -4,6 +4,7 @@
     "description": "",
     "main": "server.js",
     "scripts": {
+        "install": "npm i",
         "start": "node dist/index.js",
         "start:build": "node dist/index.js",
         "debug": "cross-env TZ=UTC NODE_ENV=development tsnd --inspect --respawn src/index.ts",
