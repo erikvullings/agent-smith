@@ -36,6 +36,9 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       }
     } else if (step.maneuver) {
       // Move along the current step, i.e. road segment
+      // Init: agent = (0, 0), loc = (30, 0), duration = 30sec
+      // Step 1: deltaTime = 1 => ratio = 1/30, agent = (0 + (30 - 0) * 1/30) = (1, 0), duration = 30 - 1 = 29
+      // Step 2: deltaTime = 1 => ratio = 1/29, agent = (1 + (30 - 1) * 1/29) = (2, 0), duration = 28
       const ratio = deltaTime / duration;
       const {
         actual: {
@@ -64,15 +67,20 @@ const moveAgent = (profile: Profile) => async (
   const { destination } = options;
   if (route.length === 0) {
     if (!destination) return true;
-    const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
-    const routeResult = await routeService.route({
-      coordinates: [agent.actual.coord, destination.coord],
-      continue_straight: true,
-      steps: true,
-    });
-    const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
-    agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
-    log(JSON.stringify(agent.route, null, 2));
+    try {
+      const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
+      const routeResult = await routeService.route({
+        coordinates: [agent.actual.coord, destination.coord],
+        continue_straight: true,
+        steps: true,
+        // approaches: 'curb',
+      });
+      const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
+      agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
+      log(JSON.stringify(agent.route, null, 2));
+    } catch (e) {
+      console.error(e);
+    }
   }
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };

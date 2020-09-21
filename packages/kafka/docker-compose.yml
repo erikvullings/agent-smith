@@ -141,17 +141,17 @@ services:
   #   ports:
   #     - "5050:5050"
 
-  time_service:
-    image: drivereu/test-bed-time-service:latest
-    depends_on:
-      - broker
-      - schema_registry
-    ports:
-      - "8100:8100"
-    environment:
-      KAFKA_BROKER_URL: broker:9092
-      SCHEMA_REGISTRY_URL: http://schema_registry:3502
-      AUTO_REGISTER_SCHEMAS: "true"
+  # time_service:
+  #   image: drivereu/test-bed-time-service:latest
+  #   depends_on:
+  #     - broker
+  #     - schema_registry
+  #   ports:
+  #     - "8100:8100"
+  #   environment:
+  #     KAFKA_BROKER_URL: broker:9092
+  #     SCHEMA_REGISTRY_URL: http://schema_registry:3502
+  #     AUTO_REGISTER_SCHEMAS: "true"
 
   # large_file_service:
   #   image: drivereu/large-file-service:latest
@@ -161,25 +161,25 @@ services:
   #     HOST: localhost
   #     PORT: 9090
 
-  #   trial_management_tool:
-  #     image: drivereu/trial-management-tool:latest
-  #     depends_on:
-  #       - broker
-  #       - schema_registry
-  #     ports:
-  #       - '3210:3210'
-  #     environment:
-  #       CLIENT_ID: TB-TrialMgmt
-  #       KAFKA_HOST: broker:9092
-  #       SCHEMA_REGISTRY: http://schema_registry:3502
-  #       TRIAL_MANAGER_SERVER_PORT: 3210
-  #       PRODUCE: system_request_change_of_trial_stage,system_tm_phase_message,system_tm_role_player,system_tm_session_mgmt,large_data_update
-  #       SSL: 'false'
-  #       SSL_PFX: certs/TB-TrialMgmt.p12
-  #       SSL_PASSPHRASE: changeit
-  #       SSL_CA: certs/test-ca.pem
-  #     volumes:
-  #       - trial-data:/app/trials
+  trial_management_tool:
+    image: drivereu/trial-management-tool:latest
+    depends_on:
+      - broker
+      - schema_registry
+    ports:
+      - "3210:3210"
+    environment:
+      CLIENT_ID: TB-TrialMgmt
+      KAFKA_HOST: broker:9092
+      SCHEMA_REGISTRY: http://schema_registry:3502
+      TRIAL_MANAGER_SERVER_PORT: 3210
+      PRODUCE: simulation_session_mgmt,simulation-time-control,simulation-time-mgmt,simulation-entity-post,system_tm_role_player,large_data_update
+      SSL: "false"
+      SSL_PFX: certs/TB-TrialMgmt.p12
+      SSL_PASSPHRASE: changeit
+      SSL_CA: certs/test-ca.pem
+    volumes:
+      - trial-data:/app/trials
 
   # copper_gui:
   #   image: drivereu/copper-gui:0.0.5
@@ -270,6 +270,7 @@ services:
       - /data/${PBF_FILE}.osrm
     volumes:
       - ${DATA_FOLDER}/walking:/data
-# volumes:
-#   postgres-data:
-#   trial-data:
+
+volumes:
+  # postgres-data:
+  trial-data:
