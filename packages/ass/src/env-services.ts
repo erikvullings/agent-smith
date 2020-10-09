@@ -1,7 +1,7 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
-import { simTime, hours, randomInRange } from './utils';
+import { simTime, hours, randomInRange, simplifiedDistanceFactory } from './utils';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -21,10 +21,17 @@ export interface IEnvServices {
   steps: { [step: string]: Activity };
   /** Available locations */
   locations: { [id: string]: ILocation };
+  /** Approximate distance calculator in meters */
+  distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
 }
 
 /** Create services so an agent can deal with the environment, e.g. for navigation. */
-export const envServices = (time: Date = new Date()) => {
+export const envServices = ({
+  time = new Date(),
+}: {
+  time?: Date /** See bounding boxes of all countries: https://gist.github.com/graydon/11198540 */;
+  latitudeAvg?: number;
+} = {}) => {
   const drive = OSRM({ osrm: 'http://127.0.0.1:5000', defaultProfile: 'driving' });
   const cycle = OSRM({ osrm: 'http://127.0.0.1:5001', defaultProfile: 'bike' });
   const walk = OSRM({ osrm: 'http://127.0.0.1:5002', defaultProfile: 'foot' });
@@ -59,6 +66,8 @@ export const envServices = (time: Date = new Date()) => {
     steps,
     /** Empty object with locations */
     locations: {},
+    /** Approximate distance function in meters */
+    distance: simplifiedDistanceFactory(),
   } as IEnvServices;
 };
 

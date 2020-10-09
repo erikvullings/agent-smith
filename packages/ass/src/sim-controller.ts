@@ -1,7 +1,7 @@
 import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel, ProduceRequest } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
-import { uuid4, simTime, log, agentToEntityItem } from './utils';
+import { uuid4, simTime, log, agentToEntityItem, sleep } from './utils';
 
 const SimEntityItemTopic = 'simulation_entity_item';
 
@@ -13,8 +13,8 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 0.5, startTime = simTime(0, 6) } = options;
-    const services = envServices();
+    const { simSpeed = 1, startTime = simTime(0, 6) } = options;
+    const services = envServices({ latitudeAvg: 51.4 });
     const agents = [] as IAgent[];
 
     let currentSpeed = simSpeed;
@@ -54,7 +54,7 @@ export const simController = async (
       // speed: 1.4,
       status: 'active',
       home: services.locations['Firmamentlaan 5'],
-      owns: [],
+      owns: [{ type: 'car', id: 'car1' }],
       actual: services.locations['Firmamentlaan 5'],
       occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
     } as IAgent;
@@ -88,20 +88,12 @@ export const simController = async (
         agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services))
       );
       updateTime();
-      // await sleep(20);
+      await sleep(1);
       i % 2 === 0 && notifyOthers();
       i++;
-      
     }
   });
 };
-
-// function sleep(ms: number) {
-//   return new Promise((resolve) => {
-//     setTimeout(resolve, ms);
-//   });
-// }   
-
 
 /** Connect to Kafka and create a connector */
 const createAdapter = (callback: (tb: TestBedAdapter) => void) => {

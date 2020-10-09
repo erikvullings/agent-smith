@@ -1,7 +1,6 @@
-import { Profile } from 'osrm-rest-client';
+import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
-import { log } from '../utils';
 
 /** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
 const moveGroup = (agent: IAgent, services: IEnvServices) => {
@@ -12,48 +11,46 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
   }
 };
 
+const defaultWalkingSpeed = 5000 / 3600;
+
 /** Move agent along a route. */
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
   const { route = [] } = agent;
-  if (route.length > 0) {
-    const step = route[0];
-    const duration = step.duration || 0;
-    if (deltaTime > duration) {
-      const first = agent.route?.shift();
-      const loc = first?.maneuver?.location;
-      if (loc) {
-        agent.actual = { type: (first && first.name) || 'unnamed', coord: loc };
-        moveGroup(agent, services);
-      }
-      if (route.length > 1) {
-        return moveAgentAlongRoute(agent, services, deltaTime - duration);
-      } else {
-        // We are moving along the last segment
-        agent.destination = undefined;
-        agent.route = undefined;
-        log(`${agent.id} has reached the final destination: ${agent.actual.type} (${agent.actual.coord}).`);
-        return true;
-      }
-    } else if (step.maneuver) {
-      // Move along the current step, i.e. road segment
-      // Init: agent = (0, 0), loc = (30, 0), duration = 30sec
-      // Step 1: deltaTime = 1 => ratio = 1/30, agent = (0 + (30 - 0) * 1/30) = (1, 0), duration = 30 - 1 = 29
-      // Step 2: deltaTime = 1 => ratio = 1/29, agent = (1 + (30 - 1) * 1/29) = (2, 0), duration = 28
-      const ratio = deltaTime / duration;
-      const {
-        actual: {
-          coord: [x1, y1],
-        },
-      } = agent;
-      const [x2, y2] = step.maneuver.location || [0, 0];
-      step.duration = duration - deltaTime;
-      const coord = [x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio] as [number, number];
+  if (route.length === 0) {
+    return true; // Done
+  }
+  const step = route[0];
+  const totDistance = step.distance || 0;
+  const totDuration = step.duration || 0;
+  agent.speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
+  let distance2go = agent.speed * deltaTime;
+  const waypoints = (step.geometry as ILineString).coordinates;
+  for (let i = 0; i < waypoints.length; i++) {
+    const [x0, y0] = agent.actual.coord;
+    const [x1, y1] = waypoints[i];
+    const segmentLength = services.distance(x0, y0, x1, y1);
+    // const segmentLength2 = distance([y0, x0], [y1, x1], { units: 'meters' });
+    // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
+    if (distance2go >= segmentLength) {
+      agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
+      distance2go -= segmentLength;
+    } else {
+      i > 0 && (step.geometry as ILineString).coordinates.splice(0, i);
+      const ratio = distance2go / segmentLength;
+      const coord = [x0 + (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
       agent.actual = { type: step.name || 'unnamed', coord };
       moveGroup(agent, services);
+      // console.log(
+      //   `${agent.id} is travelling at ${Math.round((agent.speed * 36) / 10)}km/h to ${agent.actual.type} (${round(
+      //     agent.actual.coord
+      //   )}).`
+      // );
+      return false;
     }
   }
-  log(`${agent.id} has reached ${agent.actual.type} (${agent.actual.coord}).`);
-  return false;
+  route.splice(0, 1);
+  agent.route = route;
+  return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed);
 };
 
 /** Move the agent along its trajectory */
@@ -73,11 +70,12 @@ const moveAgent = (profile: Profile) => async (
         coordinates: [agent.actual.coord, destination.coord],
         continue_straight: true,
         steps: true,
-        // approaches: 'curb',
+        overview: 'full',
+        geometries: 'geojson',
       });
       const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
       agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
-      log(JSON.stringify(agent.route, null, 2));
+      console.log(JSON.stringify(agent.route, null, 2));
     } catch (e) {
       console.error(e);
     }
