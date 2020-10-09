@@ -147,3 +147,55 @@ export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string)
     coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
   };
 };
+
+const R = 6378.137; // Radius of earth in KM
+const Deg2Rad = Math.PI / 180;
+
+/**
+ * Calculate the distance in meters between two WGS84 coordinates
+ * @param lat1
+ * @param lon1
+ * @param lat2
+ * @param lon2
+ * @source https://stackoverflow.com/a/11172685/319711
+ */
+export const distanceInMeters = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  // generally used geo measurement function
+  const dLat = lat2 * Deg2Rad - lat1 * Deg2Rad;
+  const dLon = lon2 * Deg2Rad - lon1 * Deg2Rad;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1000; // meters
+};
+
+/**
+ * Generate an approximate distance function for distances up to 50.000m.
+ * @param lat Average latitude of the simulation, used to approximate the length of a longitude circle
+ * @see https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
+ */
+export const simplifiedDistanceFactory = () => {
+  // const coslat = Math.cos((latitudeAvg * Math.PI) / 180);
+  const f = Math.PI / 360;
+  /** Distance between WGS84 coordinates in meters */
+  return (lat0: number, lng0: number, lat1: number, lng1: number) => {
+    const x = lat0 - lat1;
+    // const y = (lng0 - lng1) * coslat;
+    const y = (lng0 - lng1) * Math.cos((lat0 + lat1) * f);
+    // 111194.92664455873 = R * Math.PI / 180 where R is the radius of the Earth in meter is 6371000
+    return 111194.92664455873 * Math.sqrt(x * x + y * y);
+  };
+};
+
+/** Delay function */
+export const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+/** Round a number or array of numbers to a fixed number of decimals */
+export const round = (n: number | number[], decimals = 6) => {
+  const factor = Math.pow(10, decimals);
+  const r = (x: number) => Math.round(x * factor) / factor;
+  return typeof n === 'number' ? r(n) : n.map(r);
+};
