@@ -12,7 +12,7 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
   if (agent.owns && agent.owns.length > 0) {
     const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
     const car = ownedCar && services.agents[ownedCar.id];
-    if (car && distance(...agent.actual.coord, ...car.actual.coord) < 500) {
+    if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500) {
       steps.push({ name: 'walkTo', options: { destination: car.actual } });
       steps.push({ name: 'controlAgents', options: { control: [car.id] } });
       steps.push({ name: 'driveTo', options: { destination: agent.destination } });
@@ -20,7 +20,7 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
     } else {
       const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
       const bike = ownedBike && services.agents[ownedBike.id];
-      if (bike && distance(...agent.actual.coord, ...bike.actual.coord) < 300) {
+      if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300) {
         steps.push({ name: 'walkTo', options: { destination: bike.actual } });
         steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
         steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
