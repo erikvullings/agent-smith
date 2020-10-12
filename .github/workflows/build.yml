@@ -28,4 +28,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install 
         run: pnpm install
+      
+      - name: Build 
+        run: pnpm run -r build
 
