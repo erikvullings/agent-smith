@@ -26,6 +26,9 @@ jobs:
           version: 5.5.12
 
       # Runs a single command using the runners shell
-      - name: Install
-        run: pnpm run install
+      - name: Install 
+        run: pnpm install
+
+      - name: Install copper
+        run: pnpm run -r init
 
