@@ -3,16 +3,15 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "install": "npm i",
         "serve": "vue-cli-service serve --watch --inline-vue",
         "build": "vue-cli-service build --dest --inline-vue ../copper-server/dist/dashboard",
         "build:watch": "vue-cli-service build --watch --dest ../copper-server/dist/dashboard",
         "bundle-report": "webpack-bundle-analyzer --port 4200 dist/stats.json",
         "clean": "del-cli package-lock.json dist lib node_modules tsconfig.tsbuildinfo",
-        "dev": "pnpm build:watch",
-        "linkcs": "pnpm link @csnext/cs-client && pnpm link @csnext/cs-split-panel && pnpm link @csnext/cs-map && pnpm link @csnext/cs-form && pnpm link @csnext/cs-timeline && pnpm link @csnext/cs-data",
-        "unlinkcs": "pnpm unlink @csnext/cs-core && pnpm unlink @csnext/cs-client && pnpm unlink @csnext/cs-split-panel && pnpm unlink @csnext/cs-map && pnpm unlink @csnext/cs-form && pnpm unlink @csnext/cs-timeline && pnpm unlink @csnext/cs-data",
-        "update": "pnpm install && pnpm linkcs"
+        "dev": "yarn build:watch",
+        "linkcs": "yarn link @csnext/cs-core && yarn link @csnext/cs-client && yarn link @csnext/cs-split-panel && yarn link @csnext/cs-map && yarn link @csnext/cs-form && yarn link @csnext/cs-timeline && yarn link @csnext/cs-data",
+        "unlinkcs": "yarn unlink @csnext/cs-core && yarn unlink @csnext/cs-client && yarn unlink @csnext/cs-split-panel && yarn unlink @csnext/cs-map && yarn unlink @csnext/cs-form && yarn unlink @csnext/cs-timeline && yarn unlink @csnext/cs-data",
+        "update": "yarn && yarn linkcs"
     },
     "dependencies": {
         "@csnext/cs-client": "canary",
@@ -31,13 +30,7 @@
         "vue-class-component": "^7.2.5",
         "vue-markdown": "^2.2.4",
         "vue-property-decorator": "^9.0.0",
-        "babel-loader": "^8.1.0",
-        "@mapbox/mapbox-gl-draw": "1.2.0",
-        "@mapbox/mapbox-gl-geocoder": "^4.7.0",
-        "@mapbox/mapbox-gl-traffic": "1.0.2",
-        "reflect-metadata": "0.1.13",
-        "simplebar-vue": "1.5.1",
-        "socket.io-client": "2.3.0"
+        "babel-loader": "^8.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.11.6",
