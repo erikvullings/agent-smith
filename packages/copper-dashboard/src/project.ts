@@ -67,9 +67,8 @@ export const project: IProject = {
                         background: true,
                         class: 'data-map-container',
                         token: process.env.VUE_APP_MAPBOX_TOKEN,
-                        mbOptions: {
-                            // style: 'http://localhost:4500/styles/klokantech-basic/style.json',
-                            style: 'mapbox://styles/mapbox/streets-v9', //"http://localhost:901/styles/klokantech-basic/style.json", //"mapbox://styles/mapbox/streets-v9",
+                        mbOptions: {                            
+                            // style: 'mapbox://styles/mapbox/streets-v9', //"http://localhost:901/styles/klokantech-basic/style.json", //"mapbox://styles/mapbox/streets-v9",
                             center: [4.799119, 52.478137],
                             zoom: 13
                         } as MapboxOptions,
@@ -83,7 +82,16 @@ export const project: IProject = {
                         showGeocoder: false,
                         showTraffic: false,
                         showLayers: true,
-                        showBuildings: false,                       
+                        showBuildings: false,   
+                        styleList: [
+                            { id: 'pdok', title: 'PDOK', uri: 'https://geodata.nationaalgeoregister.nl/beta/topotiles-viewer/styles/achtergrond.json' },
+                            { id: 'streets', title: 'Streets', uri: 'mapbox://styles/mapbox/streets-v10' },
+                            { id: 'basic', title: 'Basic', uri: 'mapbox://styles/mapbox/basic-v9' },
+                            { id: 'dark', title: 'Dark', uri: 'mapbox://styles/mapbox/dark-v9' },
+                            { id: 'light', title: 'Light', uri: 'mapbox://styles/mapbox/light-v9' },
+                            { id: 'outdoors', title: 'Outdoors', uri: 'mapbox://styles/mapbox/outdoors-v10' },
+                            { id: 'satellite', title: 'Satellite', uri: 'mapbox://styles/mapbox/satellite-streets-v10' }
+                        ],                    
                     } as MapOptions
                 }               
             ]
