@@ -46,5 +46,5 @@
   "importRoot": "import/",
   "sourceRoot": "sources/",
   "socketFlushInterval": 100,
-  "serverPath": "C:\\arnoud\\actueel\\v2018\\simulation\\agent-smith\\packages\\configs\\layers\\"
+  "serverPath": "C:\\dev\\web\\agent-smith\\packages\\configs\\layers\\"
 }

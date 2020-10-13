@@ -199,3 +199,35 @@ export const round = (n: number | number[], decimals = 6) => {
   const r = (x: number) => Math.round(x * factor) / factor;
   return typeof n === 'number' ? r(n) : n.map(r);
 };
+
+export const generateAgents = (lng: number, lat: number, count: number) => {
+  const offset = () => random(-10000, 10000) / 100000;
+  const generateLocations = (type: 'home' | 'work') =>
+    range(1, count / 2).reduce((acc) => {
+      const coord = [lng + offset(), lat + offset()] as [number, number];
+      const id = uuid4();
+      acc[id] = { type, coord };
+      return acc;
+    }, {} as { [key: string]: ILocation });
+  const occupations = generateLocations('work');
+  const occupationIds = Object.keys(occupations);
+  const homes = generateLocations('home');
+  const homeIds = Object.keys(homes);
+  const agents = range(1, count).reduce((acc) => {
+    const home = homes[randomItem(homeIds)];
+    const occupationId = randomItem(occupationIds);
+    const occupation = occupations[occupationId];
+    const agent = {
+      id: uuid4(),
+      type: 'man',
+      status: 'active',
+      home,
+      // owns: [{ type: 'car', id: 'car1' }],
+      actual: home,
+      occupations: [{ id: occupationId, ...occupation }],
+    } as IAgent;
+    acc.push(agent);
+    return acc;
+  }, [] as IAgent[]);
+  return { agents, locations: Object.assign({}, homes, occupations) };
+};

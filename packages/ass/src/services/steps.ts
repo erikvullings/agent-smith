@@ -75,7 +75,7 @@ const moveAgent = (profile: Profile) => async (
       });
       const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
       agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
-      console.log(JSON.stringify(agent.route, null, 2));
+      // console.log(JSON.stringify(agent.route, null, 2));
     } catch (e) {
       console.error(e);
     }
