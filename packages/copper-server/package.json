@@ -17,7 +17,8 @@
         "watch": "tsc -w",
         "clean": "del-cli dist node_modules yarn.lock tsconfig.tsbuildinfo",
         "dev:run": "ts-node-dev index.ts",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "init": "npm i"
     },
     "author": "",
     "license": "MIT",

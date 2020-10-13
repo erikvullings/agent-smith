@@ -4,14 +4,15 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve --watch --inline-vue",
-        "build": "vue-cli-service build --dest --inline-vue ../copper-server/dist/dashboard",
+        "build": "vue-cli-service build --dest ../copper-server/dist/dashboard",
         "build:watch": "vue-cli-service build --watch --dest ../copper-server/dist/dashboard",
         "bundle-report": "webpack-bundle-analyzer --port 4200 dist/stats.json",
         "clean": "del-cli package-lock.json dist lib node_modules tsconfig.tsbuildinfo",
         "dev": "yarn build:watch",
         "linkcs": "yarn link @csnext/cs-core && yarn link @csnext/cs-client && yarn link @csnext/cs-split-panel && yarn link @csnext/cs-map && yarn link @csnext/cs-form && yarn link @csnext/cs-timeline && yarn link @csnext/cs-data",
         "unlinkcs": "yarn unlink @csnext/cs-core && yarn unlink @csnext/cs-client && yarn unlink @csnext/cs-split-panel && yarn unlink @csnext/cs-map && yarn unlink @csnext/cs-form && yarn unlink @csnext/cs-timeline && yarn unlink @csnext/cs-data",
-        "update": "yarn && yarn linkcs"
+        "update": "yarn && yarn linkcs",
+        "init": "npm i"
     },
     "dependencies": {
         "@csnext/cs-client": "canary",
