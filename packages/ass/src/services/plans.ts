@@ -20,7 +20,10 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
     } else {
       const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
       const bike = ownedBike && services.agents[ownedBike.id];
-      if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300) {
+      if (
+        bike &&
+        distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300
+      ) {
         steps.push({ name: 'walkTo', options: { destination: bike.actual } });
         steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
         steps.push({ name: 'cycleTo', options: { destination: agent.destination } });

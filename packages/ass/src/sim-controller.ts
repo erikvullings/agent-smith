@@ -1,7 +1,7 @@
 import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel, ProduceRequest } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
-import { uuid4, simTime, log, agentToEntityItem, sleep } from './utils';
+import { uuid4, simTime, log, agentToEntityItem, sleep, generateAgents } from './utils';
 
 const SimEntityItemTopic = 'simulation_entity_item';
 
@@ -13,7 +13,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 1, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     const agents = [] as IAgent[];
 
@@ -73,7 +73,10 @@ export const simController = async (
       },
     } as IAgent;
 
-    agents.push(agent1, car);
+    const agentCount = 98;
+    const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
+    agents.push(agent1, car, ...generatedAgents);
+    services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
@@ -89,7 +92,7 @@ export const simController = async (
       );
       updateTime();
       await sleep(1);
-      i % 2 === 0 && notifyOthers();
+      i % 5 === 0 && notifyOthers();
       i++;
     }
   });
