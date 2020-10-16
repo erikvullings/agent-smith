@@ -69,8 +69,8 @@ export const project: IProject = {
                         token: process.env.VUE_APP_MAPBOX_TOKEN,
                         mbOptions: {                            
                             // style: 'mapbox://styles/mapbox/streets-v9', //"http://localhost:901/styles/klokantech-basic/style.json", //"mapbox://styles/mapbox/streets-v9",
-                            center: [4.799119, 52.478137],
-                            zoom: 13
+                            center: [5.496994, 51.468701],
+                            zoom: 12
                         } as MapboxOptions,
                         showDraw: false,
                         showRuler: true,
