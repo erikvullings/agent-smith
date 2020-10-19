@@ -1,7 +1,7 @@
 {
   "layers": [
     {
-      "id": "main",
+      "id": "car",
       "sourceType": "geojson",
       "version": "0.0.1",
       "color": "lightgray",
@@ -11,15 +11,11 @@
       ],
       "isEditable": false,
       "tileSupport": false,
-      "source": "main.json",
-      "title": "main",
+      "title": "car",
+      "source": "car.json",
       "style": {
         "type": "circle",
-        "pointCircle": true,
-        "icons": {
-          "man": "images/man.png",
-          "car": "images/car.png"
-        },
+        "icon": "images/car.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
@@ -28,16 +24,43 @@
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true,
-            "icon-image": [
-              "get",
-              "type"
-            ]
+            "icon-ignore-placement": true
           }
         },
         "types": []
       },
-      "sourceUrl": "http://localhost:3008/sources/main"
+      "sourceUrl": "http://localhost:3008/sources/car"
+    },
+    {
+      "id": "man",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "man",
+      "source": "man.json",
+      "style": {
+        "type": "circle",
+        "icon": "images/man.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/man"
     }
   ],
   "sourcePath": "./sources/",
@@ -45,6 +68,6 @@
   "serverUrl": "http://localhost:3008",
   "importRoot": "import/",
   "sourceRoot": "sources/",
-  "socketFlushInterval": 100,
-  "serverPath": "C:\\dev\\web\\agent-smith\\packages\\configs\\layers\\"
+  "socketFlushInterval": 500,
+  "serverPath": "C:\\arnoud\\actueel\\v2018\\agent-smith\\packages\\configs\\layers\\"
 }
