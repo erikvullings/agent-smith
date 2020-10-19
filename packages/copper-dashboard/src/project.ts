@@ -30,7 +30,7 @@ export const project: IProject = {
                 {
                     id: "event",
                     type: "layer-server-service",
-                    options: { url: AppState.Instance.serverUrl() + '/', activeLayers: ['main'] } as ILayerServiceOptions
+                    options: { url: AppState.Instance.serverUrl() + '/', activeLayers: ['man', 'car'] } as ILayerServiceOptions
                 }
 
             ]
@@ -83,14 +83,14 @@ export const project: IProject = {
                         showTraffic: false,
                         showLayers: true,
                         showBuildings: false,   
-                        styleList: [
-                            { id: 'pdok', title: 'PDOK', uri: 'https://geodata.nationaalgeoregister.nl/beta/topotiles-viewer/styles/achtergrond.json' },
+                        styleList: [                            
                             { id: 'streets', title: 'Streets', uri: 'mapbox://styles/mapbox/streets-v10' },
                             { id: 'basic', title: 'Basic', uri: 'mapbox://styles/mapbox/basic-v9' },
                             { id: 'dark', title: 'Dark', uri: 'mapbox://styles/mapbox/dark-v9' },
                             { id: 'light', title: 'Light', uri: 'mapbox://styles/mapbox/light-v9' },
                             { id: 'outdoors', title: 'Outdoors', uri: 'mapbox://styles/mapbox/outdoors-v10' },
-                            { id: 'satellite', title: 'Satellite', uri: 'mapbox://styles/mapbox/satellite-streets-v10' }
+                            { id: 'satellite', title: 'Satellite', uri: 'mapbox://styles/mapbox/satellite-streets-v10' },
+                            { id: 'pdok', title: 'PDOK', uri: 'https://geodata.nationaalgeoregister.nl/beta/topotiles-viewer/styles/achtergrond.json' }
                         ],                    
                     } as MapOptions
                 }               
