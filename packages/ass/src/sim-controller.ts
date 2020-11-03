@@ -86,7 +86,7 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle'];
 
     let i = 0;
-    while (i < 100000) {
+    while (i < 10000000) {
       await Promise.all(
         agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services))
       );

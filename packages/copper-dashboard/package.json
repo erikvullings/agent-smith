@@ -12,7 +12,8 @@
         "linkcs": "yarn link @csnext/cs-core && yarn link @csnext/cs-client && yarn link @csnext/cs-split-panel && yarn link @csnext/cs-map && yarn link @csnext/cs-form && yarn link @csnext/cs-timeline && yarn link @csnext/cs-data",
         "unlinkcs": "yarn unlink @csnext/cs-core && yarn unlink @csnext/cs-client && yarn unlink @csnext/cs-split-panel && yarn unlink @csnext/cs-map && yarn unlink @csnext/cs-form && yarn unlink @csnext/cs-timeline && yarn unlink @csnext/cs-data",
         "update": "yarn && yarn linkcs",
-        "init": "npm i"
+        "init": "npm i",
+        "start": ""
     },
     "dependencies": {
         "@csnext/cs-client": "canary",
@@ -22,7 +23,7 @@
         "@csnext/cs-data": "canary",
         "axios": "~0.20.0",
         "chroma-js": "^2.1.0",
-        "class-transformer": "^0.2.3",
+        "class-transformer": "^0.3.1",
         "date-fns": "^2.16.1",
         "geojson": "^0.5.0",
         "milsymbol": "2.0.0",

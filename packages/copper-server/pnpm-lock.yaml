@@ -1,14 +1,14 @@
 dependencies:
-  '@csnext/cs-layer-server': 0.0.132-beta.29_class-transformer@0.2.3
+  '@csnext/cs-layer-server': 0.0.132-beta.29_class-transformer@0.3.1
   '@mapbox/togeojson': 0.16.0
   '@nestjs/common': 7.4.4_0c773f197e7bb0df0bedc332ad8bc35d
   '@nestjs/core': 7.4.4_efc34def801f29a4094d370628537f54
-  '@nestjs/cqrs': 7.0.1_6d11ab0b190de919f62eb58a0b1fc0ad
-  '@nestjs/swagger': 4.6.0_90f1337fe6182ed12950fb64511a211c
-  '@nestjs/typeorm': 7.1.4_887afab1fa3a94e0c82471b852d1a0f5
+  '@nestjs/cqrs': 7.0.1_722cf4a42e6b56abd858f94f21d3ff7e
+  '@nestjs/swagger': 4.6.0_84e20f2f722f2a8a31f5135a29fee9a9
+  '@nestjs/typeorm': 7.1.4_6d4c28cc83ddb1816f8705009df3c322
   '@types/command-line-args': 5.0.0
   '@types/node': 14.10.3
-  class-transformer: 0.2.3
+  class-transformer: 0.3.1
   command-line-args: 5.1.1
   cors: 2.8.5
   cross-env: 7.0.2
@@ -53,7 +53,8 @@ packages:
     dev: false
     resolution:
       integrity: sha512-4k5fje2Rxi83mQun/ZO6of6NCZRR/sAMBi3GMyIJHL+AXcCNEVUCD/+QLvfX8snuwp7vetaQzgn3RVTsNY2gpQ==
-  /@csnext/cs-layer-server/0.0.132-beta.29_class-transformer@0.2.3:
+      tarball: '@csnext/cs-core/-/cs-core-0.0.132-beta.29.tgz'
+  /@csnext/cs-layer-server/0.0.132-beta.29_class-transformer@0.3.1:
     dependencies:
       '@csnext/cs-core': 0.0.132-beta.29
       '@macrostrat/dbgeo-stream': 1.0.0
@@ -64,7 +65,7 @@ packages:
       '@nestjs/platform-express': 7.4.4_a073563eda6e2cb33ae79215800d4b16
       '@nestjs/platform-socket.io': 7.4.4_881b749265a2bed5d0d2a00e8f0bb6d0
       '@nestjs/platform-ws': 7.4.4_881b749265a2bed5d0d2a00e8f0bb6d0
-      '@nestjs/swagger': 4.6.0_90f1337fe6182ed12950fb64511a211c
+      '@nestjs/swagger': 4.6.0_84e20f2f722f2a8a31f5135a29fee9a9
       '@nestjs/websockets': 7.4.4_722cf4a42e6b56abd858f94f21d3ff7e
       arangojs: 6.14.1
       async-lock: 1.2.4
@@ -94,6 +95,7 @@ packages:
       class-transformer: '*'
     resolution:
       integrity: sha512-aS6EC1Lg3F2rmKIDXFaue2OTyVNTlvjwd0FWb/s0/GptpMpWMx2a3ZL/CCXAdfaaGyApdfdonXgSRE0Rf0LIMA==
+      tarball: '@csnext/cs-layer-server/-/cs-layer-server-0.0.132-beta.29.tgz'
   /@macrostrat/dbgeo-stream/1.0.0:
     dependencies:
       wkx: 0.4.8
@@ -158,11 +160,10 @@ packages:
       rxjs: ^6.4.0
     resolution:
       integrity: sha512-ZqsQuTdTzgqpizFEgacwHXvfz2+ekGLbMWuPcXk5uDS0+rY1R1rkY8oVkHA7SG700PaV4CccG93THxGfRM9mBQ==
-  /@nestjs/cqrs/7.0.1_6d11ab0b190de919f62eb58a0b1fc0ad:
+  /@nestjs/cqrs/7.0.1_722cf4a42e6b56abd858f94f21d3ff7e:
     dependencies:
       '@nestjs/common': 7.4.4_0c773f197e7bb0df0bedc332ad8bc35d
       '@nestjs/core': 7.4.4_efc34def801f29a4094d370628537f54
-      reflect-metadata: 0.1.13
       rxjs: 6.6.3
     dev: false
     peerDependencies:
@@ -172,10 +173,10 @@ packages:
       rxjs: ^6.4.0
     resolution:
       integrity: sha512-4UJAH3ryJvT+SDeuB5ls1OpJsPr3xqsyiuWCfVd1oyzCLazuxl04t/xup005HtWdxczwLgaAau7SIAb+XZotBQ==
-  /@nestjs/mapped-types/0.1.0_1b0f00287698f34c118e849b7cc86bec:
+  /@nestjs/mapped-types/0.1.0_a53a591d65abc3e872a9df6e3cc06e25:
     dependencies:
       '@nestjs/common': 7.4.4_0c773f197e7bb0df0bedc332ad8bc35d
-      class-transformer: 0.2.3
+      class-transformer: 0.3.1
       reflect-metadata: 0.1.13
     dev: false
     peerDependencies:
@@ -228,11 +229,11 @@ packages:
       rxjs: ^6.0.0
     resolution:
       integrity: sha512-ieiPLDpI/zlkOU9lo4q/LrVLWD2IQca99vl/BOguqZd0tu0BkRwzy0hVejrucBmD3fIz3/0BBDHS5lWzisgrEw==
-  /@nestjs/swagger/4.6.0_90f1337fe6182ed12950fb64511a211c:
+  /@nestjs/swagger/4.6.0_84e20f2f722f2a8a31f5135a29fee9a9:
     dependencies:
       '@nestjs/common': 7.4.4_0c773f197e7bb0df0bedc332ad8bc35d
       '@nestjs/core': 7.4.4_efc34def801f29a4094d370628537f54
-      '@nestjs/mapped-types': 0.1.0_1b0f00287698f34c118e849b7cc86bec
+      '@nestjs/mapped-types': 0.1.0_a53a591d65abc3e872a9df6e3cc06e25
       lodash: 4.17.20
       path-to-regexp: 3.2.0
       reflect-metadata: 0.1.13
@@ -244,11 +245,10 @@ packages:
       reflect-metadata: ^0.1.12
     resolution:
       integrity: sha512-B7DBMm+MTBfttGvtdb9quEbP9lgi5w3OFs30v/if0ZHE0Fl1B+t1FP8rnmR0xk5wfp7Wd/9LVl9ll/hvIheJ4w==
-  /@nestjs/typeorm/7.1.4_887afab1fa3a94e0c82471b852d1a0f5:
+  /@nestjs/typeorm/7.1.4_6d4c28cc83ddb1816f8705009df3c322:
     dependencies:
       '@nestjs/common': 7.4.4_0c773f197e7bb0df0bedc332ad8bc35d
       '@nestjs/core': 7.4.4_efc34def801f29a4094d370628537f54
-      reflect-metadata: 0.1.13
       rxjs: 6.6.3
       typeorm: 0.2.26
       uuid: 8.3.0
@@ -1135,10 +1135,10 @@ packages:
     optional: true
     resolution:
       integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==
-  /class-transformer/0.2.3:
+  /class-transformer/0.3.1:
     dev: false
     resolution:
-      integrity: sha512-qsP+0xoavpOlJHuYsQJsN58HXSl8Jvveo+T37rEvCEeRfMWoytAyR0Ua/YsFgpM6AZYZ/og2PJwArwzJl1aXtQ==
+      integrity: sha512-cKFwohpJbuMovS8xVLmn8N2AUbAuc8pVo4zEfsUVo8qgECOogns1WVk/FkOZoxhOPTyTYFckuoH+13FO+MQ8GA==
   /cli-color/2.0.0:
     dependencies:
       ansi-regex: 2.1.1
@@ -5102,13 +5102,13 @@ specifiers:
   '@nestjs/core': ^7.4.4
   '@nestjs/cqrs': 7.0.1
   '@nestjs/swagger': ^4.6.0
-  '@nestjs/typeorm': ^7.1.3
+  '@nestjs/typeorm': ^7.1.4
   '@types/command-line-args': ^5.0.0
   '@types/dotenv': ^8.2.0
-  '@types/mapbox-gl': ^1.11.2
-  '@types/node': ^14.6.4
+  '@types/mapbox-gl': ^1.12.0
+  '@types/node': ^14.10.3
   '@types/orientjs': ^3.0.11
-  class-transformer: ^0.2.3
+  class-transformer: ^0.3.1
   command-line-args: ^5.1.1
   cors: ^2.8.5
   cross-env: 7.0.2

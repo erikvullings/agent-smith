@@ -17,6 +17,20 @@
       "outFiles": [
         "${workspaceFolder}/packages/ass/dist/**/*.js"
       ],
-    }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Debug Copper Server",
+      // "processId": "${command:PickProcess}",
+      "protocol": "inspector",
+      "port": 9229,
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**"        
+      ],
+      "localRoot": "${workspaceFolder}/packages/copper-server",
+      "remoteRoot": "."
+  }     
   ]
 }
