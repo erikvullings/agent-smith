@@ -1,0 +1,17 @@
+# docker run -e OVERPASS_META=yes -e OVERPASS_MODE=init -e OVERPASS_PLANET_URL=http://download.geofabrik.de/europe/netherlands-latest.osm.bz2 -e OVERPASS_RULES_LOAD=10 -v ./data:/db -p 12345:80 -i -t --name overpass_netherlands wiktorn/overpass-api
+
+version: "3.3"
+services:
+  overpass-api:
+    environment:
+      - OVERPASS_META=no
+      - OVERPASS_MODE=init
+      - OVERPASS_PLANET_URL=http://download.geofabrik.de/europe/${PBF_FILE}.osm.bz2
+      # - OVERPASS_DIFF_URL=http://download.openstreetmap.fr/replication/europe/netherlands/minute/
+      - OVERPASS_RULES_LOAD=10
+    volumes:
+      - ${DATA_FOLDER}:/db'
+    ports:
+      - "3010:80"
+    container_name: overpass_netherlands
+    image: wiktorn/overpass-api
