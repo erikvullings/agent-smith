@@ -11,6 +11,8 @@ are:
 Aim is to create a micro-simulator that simulates large groups of people and traffic as input for the evaluation of
 threat scenarios. It does not aim to be a very realistic crowd or traffic simulator.
 
+![Agent simulator](docs/agent-smith.gif)
+
 ## Usage
 
 Prerequisites: you need to have a working version of Docker running on your machine.
