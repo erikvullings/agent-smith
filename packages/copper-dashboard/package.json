@@ -21,7 +21,7 @@
         "@csnext/cs-form": "canary",
         "@csnext/cs-map": "canary",
         "@csnext/cs-data": "canary",
-        "axios": "~0.20.0",
+        "axios": "~0.21.1",
         "chroma-js": "^2.1.0",
         "class-transformer": "^0.3.1",
         "date-fns": "^2.16.1",
