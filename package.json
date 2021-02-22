@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/erikvullings/agent-smith#readme",
   "devDependencies": {
-    "rimraf": "^3.0.2",
-    "pnpm": "^5.5.12"
+    "pnpm": "^5.17.2",
+    "rimraf": "^3.0.2"
   }
 }
