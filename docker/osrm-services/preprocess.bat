@@ -8,6 +8,7 @@ docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /d
 docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-partition /data/%FILE%.osrm
 docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-customize /data/%FILE%.osrm
 
+rmdir driving
 move data driving
 mkdir data
 move driving\%FILE%.osm.pbf data\
@@ -18,6 +19,7 @@ docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-extract -p /opt/bicycle.lu
 docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-partition /data/%FILE%.osrm
 docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-customize /data/%FILE%.osrm
 
+rmdir cycling
 move data cycling
 mkdir data
 move cycling\%FILE%.osm.pbf data\
@@ -28,6 +30,7 @@ docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-extract -p /opt/foot.lua /
 docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-partition /data/%FILE%.osrm
 docker run -t -v "%PWD%:/data" osrm/osrm-backend osrm-customize /data/%FILE%.osrm
 
+rmdir walking
 move data walking
 mkdir data
 move walking\%FILE%.osm.pbf data\
