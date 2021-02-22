@@ -1,5 +1,6 @@
 import { IAgent, ILocation } from '../models';
 import { IItem } from 'test-bed-schemas';
+import { Feature } from '@turf/helpers';
 
 /**
  * Create a GUID
@@ -130,6 +131,29 @@ export const agentToEntityItem = (agent: IAgent): IItem => ({
   children: agent.group,
   tags: {
     agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
+  },
+});
+
+export const agentToFeature = (agent: IAgent) => ({
+  type: 'Feature',
+  geometry: {
+    'eu.driver.model.sim.support.geojson.geometry.Point': {
+      type: 'Point',
+      coordinates: agent.actual.coord,
+    } as { [key: string]: any },
+  },
+  properties: {
+    id: agent.id,
+    type: agent.type,
+    force: 'w', // w=white, b=blue, r=red
+    children: agent.group,
+    location: {
+      longitude: agent.actual.coord[0],
+      latitude: agent.actual.coord[1],
+    },
+    tags: {
+      agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
+    },
   },
 });
 
