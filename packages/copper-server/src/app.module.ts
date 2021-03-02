@@ -6,6 +6,7 @@ import {
   DefaultWebSocketGateway,
   LayerService,
   SourceController,
+  TypesController,
   FeatureController, LogService
 } from '@csnext/cs-layer-server';
 import * as path from 'path';
@@ -15,12 +16,12 @@ import { TestbedController } from './testbed/testbed.controller';
 
 @Module({
   imports: [ CommandBus ],
-  controllers: [ AppController, LayerController, FeatureController, SourceController, TestbedController],
+  controllers: [ AppController, LayerController, FeatureController, SourceController, TypesController, TestbedController],
   providers: [ LogService, LayerService, DefaultWebSocketGateway]
 })
 export class ApplicationModule {
   readonly configFolder: string =
-    process.env.LAYER_SERVER_CONFIG_FOLDER || './../../configs/layers/';
+    process.env.LAYER_SERVER_CONFIG_FOLDER || './../../../docker/kafka/configs/layers/';
 
   constructor(private readonly layerService: LayerService) {
     const folder = path.join(__dirname, this.configFolder);

@@ -2,9 +2,9 @@
 import { NestServer } from '@csnext/cs-layer-server';
 import { ApplicationModule } from './app.module';
 import { join } from 'path';
-import { ExpressPeerServer } from 'peer';
 import { Logger } from '@nestjs/common';
 
+const port = process.env.SERVER_PORT || '3008';
 const server = new NestServer();
 
 server.config = {
@@ -23,6 +23,6 @@ server.config = {
 
 Logger.log('Copper server', 'Server');
  
-server.bootstrap(ApplicationModule, 'copper-server', '0.0.0.0', 3008).then(async ()=>{   
+server.bootstrap(ApplicationModule, 'copper-server', '0.0.0.0', Number.parseInt(port)).then(async ()=>{   
  
 });
