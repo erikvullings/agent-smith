@@ -1,0 +1,162 @@
+{
+  "layers": [
+    {
+      "id": "car",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "car",
+      "source": "car.json",
+      "style": {
+        "type": "circle",
+        "icon": "images/car.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/car"
+    },
+    {
+      "id": "man",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "man",
+      "source": "man.json",
+      "style": {
+        "type": "circle",
+        "icon": "images/man.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/man"
+    },
+    {
+      "id": "Feature",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "Feature",
+      "source": "Feature.json",
+      "style": {
+        "type": "circle",
+        "icon": "images/Feature.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/Feature"
+    }
+  ],
+  "featureTypes": {
+    "man": {
+      "title": "man",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    }
+  },
+  "sourcePath": "./sources/",
+  "importPath": "./import",
+  "types": [],
+  "serverUrl": "http://localhost:3008",
+  "importRoot": "import/",
+  "sourceRoot": "sources/",
+  "socketFlushInterval": 500,
+  "serverPath": "/app/configs/layers"
+}

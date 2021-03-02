@@ -153,65 +153,63 @@ services:
       SCHEMA_REGISTRY_URL: http://schema_registry:3502
       AUTO_REGISTER_SCHEMAS: "true"
 
-  trial_management_tool:
-    image: drivereu/trial-management-tool:latest
-    depends_on:
-      - broker
-      - schema_registry
-    ports:
-      - "3210:3210"
-    environment:
-      CLIENT_ID: TB-TrialMgmt
-      KAFKA_HOST: broker:9092
-      SCHEMA_REGISTRY: http://schema_registry:3502
-      TRIAL_MANAGER_SERVER_PORT: 3210
-      PRODUCE: simulation_session_mgmt,simulation-time-control,simulation-time-mgmt,simulation-entity-post,system_tm_role_player,large_data_update
-      SSL: "false"
-      SSL_PFX: certs/TB-TrialMgmt.p12
-      SSL_PASSPHRASE: changeit
-      SSL_CA: certs/test-ca.pem
-    volumes:
-      - trial-data:/app/trials
+  # trial_management_tool:
+  #   image: drivereu/trial-management-tool:latest
+  #   depends_on:
+  #     - broker
+  #     - schema_registry
+  #   ports:
+  #     - "3210:3210"
+  #   environment:
+  #     CLIENT_ID: TB-TrialMgmt
+  #     KAFKA_HOST: broker:9092
+  #     SCHEMA_REGISTRY: http://schema_registry:3502
+  #     TRIAL_MANAGER_SERVER_PORT: 3210
+  #     PRODUCE: simulation_session_mgmt,simulation-time-control,simulation-time-mgmt,simulation-entity-post,system_tm_role_player,large_data_update
+  #     SSL: "false"
+  #     SSL_PFX: certs/TB-TrialMgmt.p12
+  #     SSL_PASSPHRASE: changeit
+  #     SSL_CA: certs/test-ca.pem
+  #   volumes:
+  #     - trial-data:/app/trials
 
-  copper_gui:
-    image: drivereu/copper-gui:0.0.5
-    hostname: copper_gui
-    ports:
-      - 8080:8080
-    depends_on:
-      - broker
-      - schema_registry
-      - copper_server
-    environment:
-      VUE_APP_COPPER_LAYER_URL: "'http://localhost:3007'"
-      VUE_APP_COPPER_LOG_URL: "'http://localhost:3007/logs'"
-      VUE_APP_COPPER_SOCKET_SERVER_URL: "'http://localhost:3007'"
-    command:
-      [
-        'sh',
-        '-c',
-        'echo "var VUE_APP_COPPER_LAYER_URL=$$VUE_APP_COPPER_LAYER_URL;var VUE_APP_COPPER_LOG_URL=$$VUE_APP_COPPER_LOG_URL;var VUE_APP_COPPER_SOCKET_SERVER_URL=$$VUE_APP_COPPER_SOCKET_SERVER_URL" > /copper/global-vars-copper.js && http-server /copper',
-      ]
+  # copper_gui:
+  #   image: drivereu/copper-gui:0.0.5
+  #   hostname: copper_gui
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - broker
+  #     - schema_registry
+  #     - copper_server
+  #   environment:
+  #     VUE_APP_COPPER_LAYER_URL: "'http://localhost:3007'"
+  #     VUE_APP_COPPER_LOG_URL: "'http://localhost:3007/logs'"
+  #     VUE_APP_COPPER_SOCKET_SERVER_URL: "'http://localhost:3007'"
+  #   command:
+  #     [
+  #       'sh',
+  #       '-c',
+  #       'echo "var VUE_APP_COPPER_LAYER_URL=$$VUE_APP_COPPER_LAYER_URL;var VUE_APP_COPPER_LOG_URL=$$VUE_APP_COPPER_LOG_URL;var VUE_APP_COPPER_SOCKET_SERVER_URL=$$VUE_APP_COPPER_SOCKET_SERVER_URL" > /copper/global-vars-copper.js && http-server /copper',
+  #     ]
 
   copper_server:
-    image: drivereu/copper-server:0.0.5
+    image: ghcr.io/erikvullings/agent-smith/copper:fast
     depends_on:
       - broker
       - schema_registry
       - silent-producer
     ports:
-      - '3007:3007'
+      - '3008:3008'
     environment:
       KAFKA_HOST: broker:9092
-      SCHEMA_REGISTRY: http://schema_registry:3502
-      VUE_APP_COPPER_LAYER_URL: http://localhost:3007
-      VUE_APP_COPPER_LOG_URL: http://localhost:3007/logs
-      VUE_APP_COPPER_SOCKET_SERVER_URL: http://localhost:3007
-      COPPER_SERVER_PORT: 3007
+      SCHEMA_REGISTRY: http://schema_registry:3502      
+      COPPER_SERVER_PORT: 3008
       COPPER_CLIENT_ID: Copper
+      LAYER_SERVER_CONFIG_FOLDER: '../../configs/layers'
       SSL: 'false'
     volumes:
-      - ./copper-config/configs:/configs
+      - ./configs:/app/configs
 
   silent-producer:
     image: drivereu/silent-producer:latest
@@ -270,95 +268,95 @@ services:
     # environment:
     #   HOST: localhost
     #   PORT: 9090
-  webmail:
-    image: drivereu/driver-roundcube:0.0.1
-    hostname: webmail
-    container_name: webmail
-    environment:
-      - ROUNDCUBEMAIL_DEFAULT_HOST=10.5.0.5
-      - ROUNDCUBEMAIL_SMTP_SERVER=10.5.0.5
-      - ROUNDCUBEMAIL_DEFAULT_PORT=143
-      - ROUNDCUBEMAIL_SMTP_PORT=25
-    ports:
-      - "80:80"
-    networks:
-      static-network:
-        ipv4_address: 10.5.0.6
-      default:
-      backend:
-    depends_on:
-      - mailserver
-  mailserver:
-    image: drivereu/driver-mailserver:0.0.1
-    hostname: dockermail
-    domainname: driver.eu
-    container_name: mailserver
-    ports:
-      - "25:25"
-      - "143:143"
-      - "587:587"
-      - "993:993"
-      - "3000:3000"
-    networks:
-      static-network:
-        ipv4_address: 10.5.0.5
-      default:
-      backend:
-    volumes:
-      - maildata:/var/mail
-      - mailstate:/var/mail-state
-      - mailconfig/:/tmp/docker-mailserver/
-    environment:
-      - DMS_DEBUG=1
-    cap_add:
-      - NET_ADMIN
-      - SYS_PTRACE
-    restart: always
-  mailgateway:
-    image: drivereu/driver-mailgateway:0.0.1
-    container_name: mailgateway
-    ports:
-      # websocket notifications
-      - "9996:9996"
-      # REST api
-      - "7891:7891"
-    environment:
-      - ApiMailServerUrl=http://10.5.0.5:3000
-      - LargeFileServiceUrl=http://large_file_service:9090/upload
-      - SmtpHost=10.5.0.5
-      - SmtpPort=25
-      - IMapHost=10.5.0.5
-      - IMapPort=993
-      - kafka_kafkaHost=broker:9092
-      - kafka_schemaRegistryUrl=schema_registry:3502
-      - kafka_mediaTopicName=simulation_entity_post
-      - kafka_connectToKafka=true
-      - server_port=7891
-    depends_on:
-      - mailserver
-      - broker
-      - large_file_service
-      - schema_registry
-    networks:
-      static-network:
-        ipv4_address: 10.5.0.10
-      default:
-    restart: always
-  mailmonitor:
-    image: drivereu/driver-mailmonitor:0.0.1
-    container_name: mailmonitor
-    ports:
-      - "4200:4200"
-    links:
-      - mailgateway
-    depends_on:
-      - mailgateway
-    networks:
-      static-network:
-        ipv4_address: 10.5.0.11
-      default:
-      backend:
-    restart: always
+  # webmail:
+  #   image: drivereu/driver-roundcube:0.0.1
+  #   hostname: webmail
+  #   container_name: webmail
+  #   environment:
+  #     - ROUNDCUBEMAIL_DEFAULT_HOST=10.5.0.5
+  #     - ROUNDCUBEMAIL_SMTP_SERVER=10.5.0.5
+  #     - ROUNDCUBEMAIL_DEFAULT_PORT=143
+  #     - ROUNDCUBEMAIL_SMTP_PORT=25
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     static-network:
+  #       ipv4_address: 10.5.0.6
+  #     default:
+  #     backend:
+  #   depends_on:
+  #     - mailserver
+  # mailserver:
+  #   image: drivereu/driver-mailserver:0.0.1
+  #   hostname: dockermail
+  #   domainname: driver.eu
+  #   container_name: mailserver
+  #   ports:
+  #     - "25:25"
+  #     - "143:143"
+  #     - "587:587"
+  #     - "993:993"
+  #     - "3000:3000"
+  #   networks:
+  #     static-network:
+  #       ipv4_address: 10.5.0.5
+  #     default:
+  #     backend:
+  #   volumes:
+  #     - maildata:/var/mail
+  #     - mailstate:/var/mail-state
+  #     - mailconfig/:/tmp/docker-mailserver/
+  #   environment:
+  #     - DMS_DEBUG=1
+  #   cap_add:
+  #     - NET_ADMIN
+  #     - SYS_PTRACE
+  #   restart: always
+  # mailgateway:
+  #   image: drivereu/driver-mailgateway:0.0.1
+  #   container_name: mailgateway
+  #   ports:
+  #     # websocket notifications
+  #     - "9996:9996"
+  #     # REST api
+  #     - "7891:7891"
+  #   environment:
+  #     - ApiMailServerUrl=http://10.5.0.5:3000
+  #     - LargeFileServiceUrl=http://large_file_service:9090/upload
+  #     - SmtpHost=10.5.0.5
+  #     - SmtpPort=25
+  #     - IMapHost=10.5.0.5
+  #     - IMapPort=993
+  #     - kafka_kafkaHost=broker:9092
+  #     - kafka_schemaRegistryUrl=schema_registry:3502
+  #     - kafka_mediaTopicName=simulation_entity_post
+  #     - kafka_connectToKafka=true
+  #     - server_port=7891
+  #   depends_on:
+  #     - mailserver
+  #     - broker
+  #     - large_file_service
+  #     - schema_registry
+  #   networks:
+  #     static-network:
+  #       ipv4_address: 10.5.0.10
+  #     default:
+  #   restart: always
+  # mailmonitor:
+  #   image: drivereu/driver-mailmonitor:0.0.1
+  #   container_name: mailmonitor
+  #   ports:
+  #     - "4200:4200"
+  #   links:
+  #     - mailgateway
+  #   depends_on:
+  #     - mailgateway
+  #   networks:
+  #     static-network:
+  #       ipv4_address: 10.5.0.11
+  #     default:
+  #     backend:
+  #   restart: always
 volumes:
   # postgres-data:
   trial-data:

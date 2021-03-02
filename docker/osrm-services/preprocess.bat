@@ -1,6 +1,6 @@
 @echo off
 setlocal
-SET PWD=C:\dev\web\agent-smith\docker\osrm-services\data
+SET PWD=C:\arnoud\actueel\v2018\agent-smith\docker\osrm-services\data
 SET FILE=netherlands-latest
 echo Processing driving data
 
