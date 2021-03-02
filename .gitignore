@@ -103,3 +103,9 @@ dist
 # TernJS port file
 .tern-port
 docker/kafka/data
+packages/kafka/data
+packages/osrm-services/cycling
+packages/osrm-services/driving
+packages/osrm-services/walking
+packages/osrm-services/data
+docker/osrm-services/preprocess.bat

@@ -1,0 +1,8 @@
+FROM mhart/alpine-node:14
+RUN npm install pm2 ts-node typescript -g
+COPY ./packages/copper-server /app/copper-server
+# COPY ./packages/configs /configs
+WORKDIR /app/copper-server
+EXPOSE 3008
+CMD ["node", "./dist/index.js"]
+# CMD ["ls", "./dist"]

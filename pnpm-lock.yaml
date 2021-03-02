@@ -1,7 +1,7 @@
 devDependencies:
   pnpm: 5.17.2
   rimraf: 3.0.2
-lockfileVersion: 5.2
+lockfileVersion: 5.1
 packages:
   /balanced-match/1.0.0:
     dev: true
