@@ -1,12 +1,13 @@
 import { Get, Controller, Logger as NestLogger } from '@nestjs/common';
 import { LayerService } from '@csnext/cs-layer-server';
-import { TestBedAdapter, LogLevel, IAdapterMessage, ITestBedOptions, IItem } from 'node-test-bed-adapter';
+import { TestBedAdapter, LogLevel, IAdapterMessage, ITestBedOptions, IItem, IFeatureCollection } from 'node-test-bed-adapter';
 import { Feature } from 'geojson';
 import { LogService, LayerDefinition } from '@csnext/cs-layer-server';
 import _ from 'lodash';
+// import { IFeature } from 'test-bed-schemas/dist/standard/geojson/standard_geojson-value';
 
 const SimEntityItemTopic = 'simulation_entity_item';
-
+const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 @Controller('testbed')
 export class TestbedController {
     private adapter: TestBedAdapter;
@@ -29,7 +30,7 @@ export class TestbedController {
                 kafkaHost: host,
                 schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
                 clientId: 'copper',
-                consume: [{ topic: SimEntityItemTopic }],
+                consume: [{ topic: SimEntityItemTopic }, { topic: SimEntityFeatureCollectionTopic }],
                 logging: {
                     logToConsole: LogLevel.Info,
                     logToKafka: LogLevel.Warn,
@@ -59,37 +60,19 @@ export class TestbedController {
             this.busy = true;
             let message = this.messageQueue.shift();
             switch (message.topic) {
+                case SimEntityFeatureCollectionTopic:                     
+                    const collection = message.value as IFeatureCollection;
+                    await this.updateFeatureCollection(collection);
+                    break;
                 case SimEntityItemTopic:
                     const entity = message.value as IItem;
-                    if (entity.type) {
-
-                        // find layer                        
-                        let layer = await this.getEntityItemLayer(entity.type);
-                        // NestLogger.debug(layer?.id);
-
-                        const feature = {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [entity.location.longitude, entity.location.latitude, entity.location.altitude],
-                            },
-                            id: entity.id,
-                            properties: { ...entity, ...{ location: undefined } },
-                        } as Feature;
-
-                        // console.log(feature);
-                        this.layers
-                            .updateFeature(layer.id, feature)
-                            .then(() => {
-                                // console.log('updated');
-                            })
-                            .catch(() => {
-                                console.log('e');
-                            });
-                    }
+                    await this.updateFeature(entity);
 
                     // console.log(entity.location.latitude);
                     // console.log('Sim Message');
+                    break;
+                default:
+                    console.log(message.topic);
                     break;
             }
 
@@ -151,6 +134,73 @@ export class TestbedController {
         }
     }
 
+    private groupBy = <T, K extends keyof any>(list: T[], getKey: (item: T) => K) =>
+    list.reduce((previous, currentItem) => {
+        const group = getKey(currentItem);
+        if (!previous[group]) previous[group] = [];
+        previous[group].push(currentItem);
+        return previous;
+    }, {} as Record<K, T[]>);
+
+    private async updateFeatureCollection(collection: IFeatureCollection)
+    {
+        const types = this.groupBy(collection.features, (i: any) => i.properties.type);
+        for (const type in types) {
+            if (Object.prototype.hasOwnProperty.call(types, type)) {
+                const features = types[type];
+                for (const feature of features) {
+                    feature.geometry = feature.geometry['eu.driver.model.sim.support.geojson.geometry.Point'];                    
+
+                    if (feature.properties.hasOwnProperty('tags')) {
+                        for (const key in feature.properties.tags) {
+                            if (Object.prototype.hasOwnProperty.call(feature.properties.tags, key)) {
+                                const element = feature.properties.tags[key];
+                                feature.properties[key] = element;
+                                
+                            }
+                        }
+                        delete feature.properties.tags;
+
+                    }
+                    
+                }                
+                let layer = await this.getEntityItemLayer(type);
+                this.layers.updateAllFeatures(type, features);                
+            }
+        }
+        console.log(`feature collection update at ${new Date().toISOString()} with ${collection.features.length} features`);        
+    }
+
+    private async updateFeature(entity: IItem)
+    {
+        if (entity.type)
+        {
+            // find layer                        
+            let layer = await this.getEntityItemLayer(entity.type);
+            const feature = {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [entity.location.longitude, entity.location.latitude, entity.location.altitude],
+                },
+                id: entity.id,
+                properties: { ...entity, ...{ location: undefined } },
+            } as Feature;
+
+            // console.log(feature);
+            this.layers
+                .updateFeature(layer.id, feature)
+                .then(() =>
+                {
+                    // console.log('updated');
+                })
+                .catch(() =>
+                {
+                    console.log('e');
+                });
+        }
+    }
+
     private getEntityItemLayer(id: string): Promise<LayerDefinition> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -174,13 +224,13 @@ export class TestbedController {
                     type: 'circle',
                     icon: `images/${id}.png`,
                     showSymbol: true,   
-                    clusterSettings: {
-                        cluster: true,
-                        clusterRadius: 500,
-                        paint: {
-                            "circle-color": "red"
-                        }
-                    },                 
+                    // clusterSettings: {
+                    //     cluster: true,
+                    //     clusterRadius: 500,
+                    //     paint: {
+                    //         "circle-color": "red"
+                    //     }
+                    // },                 
                     mapbox: {
                       circlePaint: {
                         "circle-radius": 20,
