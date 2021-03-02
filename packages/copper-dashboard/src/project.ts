@@ -30,7 +30,7 @@ export const project: IProject = {
                 {
                     id: "event",
                     type: "layer-server-service",
-                    options: { url: AppState.Instance.serverUrl() + '/', activeLayers: ['man', 'car'] } as ILayerServiceOptions
+                    options: { url: AppState.Instance.serverUrl() + '/', loadFeatureTypes: true, activeLayers: ['man', 'car'] } as ILayerServiceOptions
                 }
 
             ]
@@ -78,7 +78,7 @@ export const project: IProject = {
                         showStyles: true,
                         showGeolocater: false,
                         showInfoWidget: true,
-                        showFeatureDetails: false,                        
+                        showFeatureDetails: true,                        
                         showGeocoder: false,
                         showTraffic: false,
                         showLayers: true,
