@@ -99,7 +99,7 @@ export const simController = async (
         agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services))
       );
       updateTime();
-      await sleep(1);
+      await sleep(100);
       i % 5 === 0 && notifyOthers();
       i++;
     }
