@@ -1,11 +1,11 @@
 # dist
 # /node_modules
+./node_modules
 docs
 docker
-./node_modules
+packages/copper-dashboard
 packages/ass
-
 packages/kafka
 packages/osrm-services
-packages/copper-server/node_modules
+# packages/copper-server/node_modules
 packages/copper-server/package-lock.json
