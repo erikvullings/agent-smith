@@ -96,7 +96,7 @@ export const simController = async (
       status: 'active',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'Antoon Derkinderenstraat 17' }],
+      occupations: [{ type: 'wander', id: 'Antoon Derkinderenstraat 17' }],
     } as IAgent;
 
     const car = {

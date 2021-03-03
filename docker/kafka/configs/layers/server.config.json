@@ -92,6 +92,36 @@
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/Feature"
+    },
+    {
+      "id": "bicycle",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "gray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "bicycle",
+      "source": "bicycle",
+      "style": {
+        "type": "circle",
+        "icon": "images/bicycle.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        }
+      },
+      "sourceUrl": "http://localhost:3008/sources/bicycle"
     }
   ],
   "featureTypes": {
