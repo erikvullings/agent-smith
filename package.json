@@ -7,7 +7,7 @@
     "clean": "pnpm run -r clean",
     "start": "pnpm run -r dev",
     "init": "pnpm run -r init",
-    "docker:build": "docker build -t ghcr.io/erikvullings/agent-smith/copper -f ./copper-dockerfile .",
+    "docker:build": "docker build -t ghcr.io/erikvullings/agent-smith/copper .",
     "docker:run": "docker stop copper-v2018 & docker rm copper-v2018 & docker run -p 8008:3008 --name copper-v2018 ghcr.io/erikvullings/agent-smith/copper",
     "docker:build-fast": "docker build -t ghcr.io/erikvullings/agent-smith/copper:fast -f ./copper-dockerfile-fast .",
     "docker:run-fast": "docker stop copper-v2018 & docker rm copper-v2018 & docker run -p 8008:3008 --name copper-v2018 ghcr.io/erikvullings/agent-smith/copper:fast",

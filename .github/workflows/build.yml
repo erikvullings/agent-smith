@@ -26,9 +26,11 @@ jobs:
           version: 5.5.12
 
       # Runs a single command using the runners shell
-      - name: Install 
-        run: pnpm install
-      
-      - name: Build 
-        run: pnpm run -r build
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          repository: tnocs/copper
+          tag_with_ref: true
 
