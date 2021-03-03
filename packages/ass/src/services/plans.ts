@@ -96,6 +96,9 @@ export const plans = {
   },
   /** Work for a number of hours (set duration in the options) */
   Work: { prepare: waitFor },
+
+  Shop: { prepare: waitFor },
+
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
@@ -110,4 +113,31 @@ export const plans = {
       return true;
     },
   },
+  
+  'Wander': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination = randomPlaceNearby(agent, 300, 'street') } = options;
+      const steps = [] as ActivityList;
+      agent.destination = destination;
+      steps.push({ name: 'walkTo', options: { destination } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+
+  'Go to other shops': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination = randomPlaceNearby(agent, 300, 'shop'), duration = minutes(10, 40) } = options;
+      const steps = [] as ActivityList;
+      const actual = agent.actual;
+      agent.destination = destination;
+      steps.push({ name: 'walkTo', options: { destination } });
+      steps.push({ name: 'waitFor', options: { duration } });
+      steps.push({ name: 'walkTo', options: { destination: actual } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
 };
