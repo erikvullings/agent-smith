@@ -9,9 +9,9 @@ services:
       - osrm-routed
       - --algorithm
       - mld
-      - /data/${PBF_FILE}.osrm
+      - /data/netherlands-latest.osrm
     volumes:
-      - ${DATA_FOLDER}/driving:/data
+      - ./driving:/data
 
   cycling:
     image: osrm/osrm-backend
@@ -21,9 +21,9 @@ services:
       - osrm-routed
       - --algorithm
       - mld
-      - /data/${PBF_FILE}.osrm
+      - /data/netherlands-latest.osrm
     volumes:
-      - ${DATA_FOLDER}/cycling:/data
+      - ./cycling:/data
 
   walking:
     image: osrm/osrm-backend
@@ -33,6 +33,6 @@ services:
       - osrm-routed
       - --algorithm
       - mld
-      - /data/${PBF_FILE}.osrm
+      - /data/netherlands-latest.osrm
     volumes:
-      - ${DATA_FOLDER}/walking:/data
+      - ./walking:/data
