@@ -29,7 +29,6 @@ const setAgenda = (agent: IAgent, _services: IEnvServices) => {
         }
         case 'shop':{
             return [
-                //{ name: 'Have lunch' },
                 { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
                 { name: 'Shop', options: { duration: hours(0, 1) } },
                 { name: 'Go home' },]
