@@ -194,7 +194,7 @@ services:
   #     ]
 
   copper_server:
-    image: ghcr.io/erikvullings/agent-smith/copper
+    image: tnocs/copper
     depends_on:
       - broker
       - schema_registry
