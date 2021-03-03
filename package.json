@@ -8,6 +8,7 @@
     "start": "pnpm run -r dev",
     "init": "pnpm run -r init",
     "docker:build": "docker build -t tnocs/copper .",
+    "docker:push": "docker push tnocs/copper",
     "docker:run": "docker stop copper-v2018 & docker rm copper-v2018 & docker run -p 8008:3008 --name copper-v2018 tnocs/copper",
     "docker:build-fast": "docker build -t tnocs/copper:fast -f ./copper-dockerfile-fast .",
     "docker:run-fast": "docker stop copper-v2018 & docker rm copper-v2018 & docker run -p 8008:3008 --name copper-v2018 tnocs/copper:fast",
