@@ -33,16 +33,11 @@ const setAgenda = (agent: IAgent, _services: IEnvServices) => {
                 { name: 'Shop', options: { duration: hours(0, 1) } },
                 { name: 'Go home' },]
         }    
-        case 'wander':{
+        case 'stroll':{
           return [
-                { name: 'Wander' }]
-
-                // return [
-                //   { name: 'Wander' },
-                //   { name: 'Wander' },
-                //   { name: 'Wander' },
-                //   { name: 'Go home' },]
-  
+                { name: 'Wander' },
+                { name: 'Wander' },
+                { name: 'Go home' },]
         }
         default: {
           console.log("No occupation found");

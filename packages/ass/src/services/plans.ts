@@ -116,10 +116,11 @@ export const plans = {
   
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      const { destination = randomPlaceNearby(agent, 300, 'street') } = options;
+      const { destination = randomPlaceNearby(agent, 300, 'road'), duration = minutes(0, 5) } = options;
       const steps = [] as ActivityList;
       agent.destination = destination;
       steps.push({ name: 'walkTo', options: { destination } });
+      steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       return true;
     },
