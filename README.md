@@ -20,7 +20,6 @@ Prerequisites: you need to have a working version of Docker running on your mach
 1. Setup OSRM, the Open Source routing machine. See the readme in `packages/osrm`. Note that you do not need to run it from there, as OSRM is started as part of the `docker-compose.yml` file in Kafka.
 2. Start Kafka, see `packages/kafka`, for running the GUI.
 3. Start Agent Smith Simulator, see `packages/ass`. You can use VSCode's launch file to run it.
-4. Run `pnpm run -r init` followed by `pnpm start` to also start the server/client needed for the simulation viewer
 
 ## Name
 
@@ -28,7 +27,7 @@ The name is inspired by Agent Smith in the film The Matrix.
 
 ## Simulation viewer
 
-This project also includes a simulation viewer (named COPPER). This viewer consists of a server that listens to all simulation events published on Kafka and a webclient. After starting the viewer (point 4 of usage), visit [http://localhost:3008/](http://localhost:3008/) with your browser.
+This project also includes a simulation viewer (named COPPER). This viewer consists of a server that listens to all simulation events published on Kafka and a webclient. The viewer is included in the docker-compose and is available at [http://localhost:3008/](http://localhost:3008/).
 
 ## Open Source Routing Machine
 
