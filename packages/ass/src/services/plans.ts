@@ -1,6 +1,6 @@
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { randomItem, minutes, randomPlaceNearby } from '../utils';
+import { randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck } from '../utils';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -85,13 +85,12 @@ export const plans = {
     },
   },
 
-  /** In the options, you can set the shop location to go to */
   'Go to the park': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       if (!agent.occupations) {
         return true;
       }
-      const occupations = agent.occupations.filter((o) => o.type === 'park');
+      const occupations = agent.occupations.filter((o) => o.type === 'wander');
       if (occupations.length > 0) {
         const { destination } = options;
         const occupation =
@@ -135,13 +134,13 @@ export const plans = {
   
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      const { destination = randomPlaceNearby(agent, 500, 'road'), duration = minutes(0, 10) } = options;
+      const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
       const steps = [] as ActivityList;
-      const actual = agent.actual;
       agent.destination = destination;
       steps.push({ name: 'walkTo', options: { destination } });
-      steps.push({ name: 'waitFor', options: { duration } });
-      steps.push({ name: 'walkTo', options: { destination: actual } });
+      if (inRangeCheck(0,10,randomIntInRange(0,100))){
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
       agent.steps = steps;
       return true;
     },

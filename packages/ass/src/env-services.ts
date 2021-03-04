@@ -1,7 +1,7 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
-import { simTime, hours, randomInRange, simplifiedDistanceFactory } from './utils';
+import { simplifiedDistanceFactory } from './utils';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -72,7 +72,7 @@ export const envServices = ({
 };
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
-  agent.agenda = agendas.setAgenda(agent, services);
+  agent.agenda = agendas.getAgenda(agent, services);
 };
 
 export const executeSteps = async (
