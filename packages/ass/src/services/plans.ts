@@ -84,6 +84,25 @@ export const plans = {
       return true;
     },
   },
+
+  /** In the options, you can set the shop location to go to */
+  'Go to the park': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      if (!agent.occupations) {
+        return true;
+      }
+      const occupations = agent.occupations.filter((o) => o.type === 'park');
+      if (occupations.length > 0) {
+        const { destination } = options;
+        const occupation =
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+        agent.destination = services.locations[occupation.id];
+        prepareRoute(agent, services, options);
+      }
+      return true;
+    },
+  },
+
   /** Go to your home address */
   'Go home': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -116,11 +135,13 @@ export const plans = {
   
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      const { destination = randomPlaceNearby(agent, 300, 'road'), duration = minutes(0, 5) } = options;
+      const { destination = randomPlaceNearby(agent, 500, 'road'), duration = minutes(0, 10) } = options;
       const steps = [] as ActivityList;
+      const actual = agent.actual;
       agent.destination = destination;
       steps.push({ name: 'walkTo', options: { destination } });
       steps.push({ name: 'waitFor', options: { duration } });
+      steps.push({ name: 'walkTo', options: { destination: actual } });
       agent.steps = steps;
       return true;
     },
@@ -129,7 +150,7 @@ export const plans = {
 
   'Go to other shops': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      const { destination = randomPlaceNearby(agent, 300, 'shop'), duration = minutes(10, 40) } = options;
+      const { destination = randomPlaceNearby(agent, 300, 'shop'), duration = minutes(0, 40) } = options;
       const steps = [] as ActivityList;
       const actual = agent.actual;
       agent.destination = destination;

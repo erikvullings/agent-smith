@@ -62,13 +62,13 @@ export const simController = async (
         type: 'home',
         coord: [5.499309, 51.437832],
       },
-      'Antoon Derkinderenstraat': {
-        type: 'stroll',
-        coord: [5.496440, 51.437772],
-      },
       h_m_shop: {
         type: 'work',
         coord: [5.476234, 51.442025],
+      },
+      de_laak: {
+        type: 'park',
+        coord: [5.486752, 51.446421],
       }
     };
 
@@ -96,10 +96,10 @@ export const simController = async (
     const agent3 = {
       id: uuid4(),
       type: 'man',
-      status: 'active',
+      status: 'walking',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'stroll', id: 'Antoon Derkinderenstraat' }],
+      occupations: [{ type: 'park', id: 'de_laak' }],
     } as IAgent;
 
     const car = {
