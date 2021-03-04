@@ -230,7 +230,7 @@ export const round = (n: number | number[], decimals = 6) => {
 
 export const generateAgents = (lng: number, lat: number, count: number) => {
   const offset = () => random(-10000, 10000) / 100000;
-  const generateLocations = (type: 'home' | 'work') =>
+  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();

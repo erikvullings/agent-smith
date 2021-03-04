@@ -42,9 +42,9 @@ export const simController = async (
     };
 
     services.locations = {
-      huisarts: {
+      ziekenhuis: {
         type: 'medical',
-        coord: [5.490361, 51.457513],
+        coord: [5.487755, 51.454860],
       },
       tue_innovation_forum: {
         type: 'work',
@@ -102,6 +102,16 @@ export const simController = async (
       occupations: [{ type: 'wander', id: 'park' }],
     } as IAgent;
 
+    const agent4 = {
+      id: uuid4(),
+      type: 'woman',
+      status: 'active',
+      owns: [{ type: 'car', id: 'car2' }],
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
+    } as IAgent;
+
     const car = {
       id: 'car1',
       type: 'car',
@@ -115,6 +125,21 @@ export const simController = async (
         ).waypoints[0].location,
       },
     } as IAgent;
+
+    const car2 = {
+      id: 'car2',
+      type: 'car',
+      status: 'active',
+      actual: {
+        type: 'home',
+        coord: (
+          await services.drive.nearest({
+            coordinates: [services.locations['Antoon Derkinderenstraat 17'].coord],
+          })
+        ).waypoints[0].location,
+      },
+    } as IAgent;
+
 
     const bicycle = {
       id: 'bicycle1',
@@ -132,7 +157,7 @@ export const simController = async (
 
     const agentCount = 6;
     const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
-    agents.push(agent1, agent2, agent3, car, bicycle, ...generatedAgents);
+    agents.push(agent1, agent2, agent3, agent4, car, car2, bicycle, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;

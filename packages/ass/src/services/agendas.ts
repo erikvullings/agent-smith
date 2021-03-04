@@ -39,6 +39,13 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
         { name: 'Go home' },
       ];
     }
+    case 'doctor_visit': {
+      return [
+        { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+        { name: 'GetExamined', options: { duration: hours(0, 5) } },
+        { name: 'Go home' },
+      ];
+    }
     default: {
       return [
         { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },

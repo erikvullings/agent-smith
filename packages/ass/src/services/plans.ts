@@ -102,6 +102,24 @@ export const plans = {
     },
   },
 
+  'Visit doctor': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      if (!agent.occupations) {
+        return true;
+      }
+      const occupations = agent.occupations.filter((o) => o.type === 'doctor_visit');
+      if (occupations.length > 0) {
+        const { destination } = options;
+        const occupation =
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+        agent.destination = services.locations[occupation.id];
+        prepareRoute(agent, services, options);
+      }
+      return true;
+    },
+  },
+
+
   /** Go to your home address */
   'Go home': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -116,6 +134,9 @@ export const plans = {
   Work: { prepare: waitFor },
 
   Shop: { prepare: waitFor },
+
+  GetExamined: { prepare: waitFor },
+
 
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
@@ -146,7 +167,6 @@ export const plans = {
     },
   },
 
-
   'Go to other shops': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 300, 'shop'), duration = minutes(0, 40) } = options;
@@ -160,5 +180,4 @@ export const plans = {
       return true;
     },
   },
-
 };

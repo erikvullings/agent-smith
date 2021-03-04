@@ -97,7 +97,7 @@
       "id": "bicycle",
       "sourceType": "geojson",
       "version": "0.0.1",
-      "color": "lightgray",
+      "color": "gray",
       "isLive": true,
       "tags": [
         "entity-item"
@@ -119,10 +119,39 @@
             "icon-allow-overlap": true,
             "icon-ignore-placement": true
           }
-        },
-        "types": []
+        }
       },
       "sourceUrl": "http://localhost:3008/sources/bicycle"
+    },
+    {
+      "id": "woman",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "gray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "woman",
+      "source": "woman",
+      "style": {
+        "type": "circle",
+        "icon": "images/woman.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "gray"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        }
+      },
+      "sourceUrl": "http://localhost:3008/sources/woman"
     }
   ],
   "featureTypes": {
@@ -189,5 +218,5 @@
   "importRoot": "import/",
   "sourceRoot": "sources/",
   "socketFlushInterval": 500,
-  "serverPath": "/Users/melissa/Desktop/tno_stage/agent-smith/docker/kafka/configs/layers/"
+  "serverPath": "/app/configs/layers"
 }
