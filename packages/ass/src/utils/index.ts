@@ -105,8 +105,8 @@ export const randomIntInRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-export const inRangeCheck = (min: number, max: number, check:number) => {
-  return ((randomIntInRange(0,100)*(randomIntInRange(0,100)-10)) <=0);
+export const inRangeCheck = (min: number, max: number, value:number) => {
+  return (((value-min)*(value-max)) <=0);
 };
 
 /** Convert a number of minutes to the number of msec */
