@@ -230,21 +230,17 @@ export const round = (n: number | number[], decimals = 6) => {
 
 export const generateAgents = (lng: number, lat: number, count: number) => {
   const offset = () => random(-10000, 10000) / 100000;
-  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park', percentage: number) =>
-    range(1, count*percentage).reduce((acc) => {
+  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
+    range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
       acc[id] = { type, coord };
       return acc;
     }, {} as { [key: string]: ILocation });
-  
-  // const to_generate: { type: 'home' | 'work' | 'shop' | 'medical' | 'park', percentage: number }[] = [
-  //     { "type": "work", "percentage": 0.5 },
-  // ];
     
-  const occupations = generateLocations('work', 0.5);  
+  const occupations = generateLocations('work');
   const occupationIds = Object.keys(occupations);
-  const homes = generateLocations('home', 0.5);
+  const homes = generateLocations('home');
   const homeIds = Object.keys(homes);
   const agents = range(1, count).reduce((acc) => {
     const home = homes[randomItem(homeIds)];

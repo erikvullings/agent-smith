@@ -25,7 +25,7 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
       return [
         { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'Shop', options: { duration: hours(0, 1) } },
-        { name: 'Go to other shops' },
+        //{ name: 'Go to other shops' },
         { name: 'Go to other shops' },
         { name: 'Wander' },
         { name: 'Go home' },
