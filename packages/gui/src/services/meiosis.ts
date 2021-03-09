@@ -34,9 +34,7 @@ export interface IAppModel extends IAppStateModel, CollectionsModel<IContent> {
 
 export interface IActions extends IAppStateActions, CollectionsActions<IContent> {}
 
-export type ModelUpdateFunction =
-  | Partial<IAppModel>
-  | ((model: Partial<IAppModel>) => Partial<IAppModel>);
+export type ModelUpdateFunction = Partial<IAppModel> | ((model: Partial<IAppModel>) => Partial<IAppModel>);
 
 export type UpdateStream = Stream<Partial<ModelUpdateFunction>>;
 
@@ -48,18 +46,12 @@ export type MeiosisComponent<T extends { [key: string]: any } = {}> = FactoryCom
 
 const runServices = (startingState: IAppModel) =>
   app.services.reduce(
-    (state: IAppModel, service: (s: IAppModel) => Partial<IAppModel> | void) =>
-      merge(state, service(state)),
+    (state: IAppModel, service: (s: IAppModel) => Partial<IAppModel> | void) => merge(state, service(state)),
     startingState
   );
 
 const app = {
-  initial: Object.assign(
-    {},
-    appStateMgmt.initial,
-    exercisesCollection.initial,
-    usersCollection.initial
-  ) as IAppModel,
+  initial: Object.assign({}, appStateMgmt.initial, exercisesCollection.initial, usersCollection.initial) as IAppModel,
   actions: (update: UpdateStream, states: Stream<IAppModel>) =>
     Object.assign(
       {},
@@ -71,18 +63,11 @@ const app = {
   services: [
     // (s) => console.log(s.app.page),
   ] as Array<(s: IAppModel) => Partial<IAppModel> | void>,
-  effects: (_update: UpdateStream, actions: IActions) => [
-    LoginEffect(actions),
-    LoadDataEffect(actions),
-  ],
+  effects: (_update: UpdateStream, actions: IActions) => [LoginEffect(actions), LoadDataEffect(actions)],
 };
 
 const update = Stream<ModelUpdateFunction>();
-export const states = Stream.scan(
-  (state, patch) => runServices(merge(state, patch)),
-  app.initial,
-  update
-);
+export const states = Stream.scan((state, patch) => runServices(merge(state, patch)), app.initial, update);
 export const actions = app.actions(update, states);
 const effects = app.effects(update, actions);
 

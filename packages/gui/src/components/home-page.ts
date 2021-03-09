@@ -13,7 +13,7 @@ export const HomePage: MeiosisComponent = () => {
     view: ({ attrs: { state } }) => {
       console.log(state);
 
-      return m('.home-page', [m('div', 'HOMEPAGE')]);
+      return m('.home-page', m('div', 'HOMEPAGE'));
     },
   };
 };

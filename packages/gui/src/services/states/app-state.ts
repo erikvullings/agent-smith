@@ -50,27 +50,29 @@ export const appStateMgmt = {
     return {
       setPage: (page: Dashboards) => update({ app: { page } }),
       update: (model: Partial<IAppModel>) => update(model),
-      search: (isSearching: boolean, searchQuery?: string) =>
-        update({ app: { isSearching, searchQuery } }),
+      search: (isSearching: boolean, searchQuery?: string) => update({ app: { isSearching, searchQuery } }),
       changePage: (page, params, query) => {
         dashboardSvc.switchTo(page, params, query);
         update({ app: { page } });
       },
       login: async (loggedInUser?: string) => {
-        if (!loggedInUser) {
-          const uid = localStorage.getItem(userIdKey);
-          if (!uid) return;
-          loggedInUser = uid;
-        }
-        if (typeof loggedInUser === 'string') {
-          const user = await actions.users.load(loggedInUser);
-          user && localStorage.setItem(userIdKey, loggedInUser);
-          Auth.isAuthenticated = user ? true : false;
-          update({ app: { loggedInUser: user } });
-        } else {
-          Auth.isAuthenticated = true;
-          update({ app: { loggedInUser } });
-        }
+        Auth.setUsername('Dummy');
+        Auth.setRoles(['admin']);
+        update({ app: { loggedInUser: { id: 1, name: 'Dummy' } } });
+        // if (!loggedInUser) {
+        //   const uid = localStorage.getItem(userIdKey);
+        //   if (!uid) return;
+        //   loggedInUser = uid;
+        // }
+        // if (typeof loggedInUser === 'string') {
+        //   const user = await actions.users.load(loggedInUser);
+        //   user && localStorage.setItem(userIdKey, loggedInUser);
+        //   Auth.isAuthenticated = user ? true : false;
+        //   update({ app: { loggedInUser: user } });
+        // } else {
+        //   Auth.isAuthenticated = true;
+        //   update({ app: { loggedInUser } });
+        // }
       },
       logout: () => {
         localStorage.removeItem(userIdKey);

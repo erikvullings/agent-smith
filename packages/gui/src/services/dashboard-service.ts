@@ -95,6 +95,7 @@ export const dashboardSvc: DashboardService = new DashboardService([
     title: 'HOME',
     icon: 'home',
     route: '/',
+    default: true,
     visible: true,
     component: HomePage,
   },
