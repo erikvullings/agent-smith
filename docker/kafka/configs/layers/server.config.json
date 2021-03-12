@@ -128,7 +128,7 @@
       "id": "woman",
       "sourceType": "geojson",
       "version": "0.0.1",
-      "color": "gray",
+      "color": "lightgray",
       "isLive": true,
       "tags": [
         "entity-item"
@@ -150,7 +150,8 @@
             "icon-allow-overlap": true,
             "icon-ignore-placement": true
           }
-        }
+        },
+        "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/woman"
     }
