@@ -1,6 +1,6 @@
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { randomItem, minutes, randomPlaceNearby } from '../utils';
+import { randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck } from '../utils';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -84,6 +84,42 @@ export const plans = {
       return true;
     },
   },
+
+  'Go to the park': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      if (!agent.occupations) {
+        return true;
+      }
+      const occupations = agent.occupations.filter((o) => o.type === 'wander');
+      if (occupations.length > 0) {
+        const { destination } = options;
+        const occupation =
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+        agent.destination = services.locations[occupation.id];
+        prepareRoute(agent, services, options);
+      }
+      return true;
+    },
+  },
+
+  'Visit doctor': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      if (!agent.occupations) {
+        return true;
+      }
+      const occupations = agent.occupations.filter((o) => o.type === 'doctor_visit');
+      if (occupations.length > 0) {
+        const { destination } = options;
+        const occupation =
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+        agent.destination = services.locations[occupation.id];
+        prepareRoute(agent, services, options);
+      }
+      return true;
+    },
+  },
+
+
   /** Go to your home address */
   'Go home': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -96,10 +132,44 @@ export const plans = {
   },
   /** Work for a number of hours (set duration in the options) */
   Work: { prepare: waitFor },
+
+  Shop: { prepare: waitFor },
+
+  GetExamined: { prepare: waitFor },
+
+
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 1000, 'food'), duration = minutes(20, 50) } = options;
+      const steps = [] as ActivityList;
+      const actual = agent.actual;
+      agent.destination = destination;
+      steps.push({ name: 'walkTo', options: { destination } });
+      steps.push({ name: 'waitFor', options: { duration } });
+      steps.push({ name: 'walkTo', options: { destination: actual } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+  
+  'Wander': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
+      const steps = [] as ActivityList;
+      agent.destination = destination;
+      steps.push({ name: 'walkTo', options: { destination } });
+      if (inRangeCheck(0,10,randomIntInRange(0,100))){
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Go to other shops': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination = randomPlaceNearby(agent, 300, 'shop'), duration = minutes(0, 40) } = options;
       const steps = [] as ActivityList;
       const actual = agent.actual;
       agent.destination = destination;

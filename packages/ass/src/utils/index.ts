@@ -105,6 +105,10 @@ export const randomIntInRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+export const inRangeCheck = (min: number, max: number, value:number) => {
+  return (((value-min)*(value-max)) <=0);
+};
+
 /** Convert a number of minutes to the number of msec */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
 
@@ -226,13 +230,14 @@ export const round = (n: number | number[], decimals = 6) => {
 
 export const generateAgents = (lng: number, lat: number, count: number) => {
   const offset = () => random(-10000, 10000) / 100000;
-  const generateLocations = (type: 'home' | 'work') =>
+  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
       acc[id] = { type, coord };
       return acc;
     }, {} as { [key: string]: ILocation });
+    
   const occupations = generateLocations('work');
   const occupationIds = Object.keys(occupations);
   const homes = generateLocations('home');

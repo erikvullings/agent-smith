@@ -13,7 +13,7 @@
         "<node_internals>/**",
         "${workspaceFolder}/packages/ass/node_modules/**/*.js"
       ],
-      "program": "${workspaceFolder}\\packages\\ass\\src\\run.ts",
+      "program": "${workspaceFolder}/packages/ass/src/run.ts",
       "outFiles": [
         "${workspaceFolder}/packages/ass/dist/**/*.js"
       ],

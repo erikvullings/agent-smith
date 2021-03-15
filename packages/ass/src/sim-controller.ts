@@ -42,9 +42,9 @@ export const simController = async (
     };
 
     services.locations = {
-      huisarts: {
+      ziekenhuis: {
         type: 'medical',
-        coord: [5.490361, 51.457513],
+        coord: [5.487755, 51.454860],
       },
       tue_innovation_forum: {
         type: 'work',
@@ -54,6 +54,22 @@ export const simController = async (
         type: 'home',
         coord: [5.496994, 51.468701],
       },
+      'Monarchstraat 52': {
+        type: 'home',
+        coord: [5.521275, 51.448302],
+      },
+      'Antoon Derkinderenstraat 17': {
+        type: 'home',
+        coord: [5.499309, 51.437832],
+      },
+      h_m_shop: {
+        type: 'work',
+        coord: [5.476234, 51.442025],
+      },
+      park: {
+        type: 'park',
+        coord: [5.497535, 51.441965],
+      }
     };
 
     const agent1 = {
@@ -65,6 +81,35 @@ export const simController = async (
       owns: [{ type: 'car', id: 'car1' }],
       actual: services.locations['Firmamentlaan 5'],
       occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
+    } as IAgent;
+
+    const agent2 = {
+      id: uuid4(),
+      type: 'man',
+      status: 'active',
+      home: services.locations['Monarchstraat 52'],
+      owns: [{ type: 'bicycle', id: 'bicycle1' }],
+      actual: services.locations['Monarchstraat 52'],
+      occupations: [{ type: 'shop', id: 'h_m_shop' }],
+    } as IAgent;
+
+    const agent3 = {
+      id: uuid4(),
+      type: 'man',
+      status: 'active',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'wander', id: 'park' }],
+    } as IAgent;
+
+    const agent4 = {
+      id: uuid4(),
+      type: 'woman',
+      status: 'active',
+      owns: [{ type: 'car', id: 'car2' }],
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
     } as IAgent;
 
     const car = {
@@ -81,9 +126,38 @@ export const simController = async (
       },
     } as IAgent;
 
-    const agentCount = 98;
+    const car2 = {
+      id: 'car2',
+      type: 'car',
+      status: 'active',
+      actual: {
+        type: 'home',
+        coord: (
+          await services.drive.nearest({
+            coordinates: [services.locations['Antoon Derkinderenstraat 17'].coord],
+          })
+        ).waypoints[0].location,
+      },
+    } as IAgent;
+
+
+    const bicycle = {
+      id: 'bicycle1',
+      type: 'bicycle',
+      status: 'active',
+      actual: {
+        type: 'home',
+        coord: (
+          await services.cycle.nearest({
+            coordinates: [services.locations['Monarchstraat 52'].coord],
+          })
+        ).waypoints[0].location,
+      },
+    } as IAgent;
+
+    const agentCount = 6;
     const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
-    agents.push(agent1, car, ...generatedAgents);
+    agents.push(agent1, agent2, agent3, agent4, car, car2, bicycle, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
