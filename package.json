@@ -13,7 +13,6 @@
     "docker:build-fast": "docker build -t tnocs/copper:fast -f ./copper-dockerfile-fast .",
     "docker:run-fast": "docker stop copper-v2018 & docker rm copper-v2018 & docker run -p 8008:3008 --name copper-v2018 tnocs/copper:fast",
     "docker:push-fast": "docker push tnocs/copper:fast"
-
   },
   "repository": {
     "type": "git",
@@ -29,5 +28,9 @@
   "devDependencies": {
     "pnpm": "^5.17.2",
     "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@types/redis": "^2.8.28",
+    "redis": "^3.0.2"
   }
 }

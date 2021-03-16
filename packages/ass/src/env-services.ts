@@ -67,9 +67,10 @@ export const envServices = ({
     /** Empty object with locations */
     locations: {},
     /** Approximate distance function in meters */
-    distance: simplifiedDistanceFactory(),
+    distance: simplifiedDistanceFactory()
   } as IEnvServices;
 };
+
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
   agent.agenda = agendas.getAgenda(agent, services);

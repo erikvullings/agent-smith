@@ -2,6 +2,7 @@ import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { redisServices } from './services';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -166,6 +167,11 @@ export const simController = async (
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
+
+    console.log(agent1.id)
+    console.log(agent1.actual.coord)
+    redisServices.geoRad(agent1,services,'100');
+    //redisServices.geoAdd(agent2);
 
     let i = 0;
     while (i < 10000000) {

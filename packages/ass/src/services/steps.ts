@@ -2,6 +2,7 @@ import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 
+
 /** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
 const moveGroup = (agent: IAgent, services: IEnvServices) => {
   if (!agent.group || agent.group.length === 0) return;
