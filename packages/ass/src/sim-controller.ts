@@ -168,9 +168,12 @@ export const simController = async (
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
 
-    console.log(agent1.id)
-    console.log(agent1.actual.coord)
-    redisServices.geoRad(agent1,services,'100');
+    await redisServices.geoAdd(agent1);
+    await redisServices.geoAdd(agent2);
+    //await redisServices.geoAdd(agent3);
+    //await redisServices.geoAdd(agent4);
+
+    await redisServices.geoRad(agent1,'10');
     //redisServices.geoAdd(agent2);
 
     let i = 0;

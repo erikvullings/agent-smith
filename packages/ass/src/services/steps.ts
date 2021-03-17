@@ -1,6 +1,7 @@
 import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
+import { redisServices } from './redisService';
 
 
 /** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
@@ -34,12 +35,14 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
+      //redisServices.geoAdd(agent);
       distance2go -= segmentLength;
     } else {
       i > 0 && (step.geometry as ILineString).coordinates.splice(0, i);
       const ratio = distance2go / segmentLength;
       const coord = [x0 + (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
       agent.actual = { type: step.name || 'unnamed', coord };
+      //redisServices.geoAdd(agent);
       moveGroup(agent, services);
       // console.log(
       //   `${agent.id} is travelling at ${Math.round((agent.speed * 36) / 10)}km/h to ${agent.actual.type} (${round(
