@@ -1,3 +1,5 @@
 import { simController } from './sim-controller';
+import { redisServices } from './services';
 
-simController().then(() => console.log('Done'));
+redisServices.flushDb().then(simController().then(() => console.log('Done')));
+//simController().then(() => console.log('Done'));

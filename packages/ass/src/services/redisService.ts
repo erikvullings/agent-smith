@@ -35,7 +35,13 @@ const geoAdd = async (agent: IAgent) => {
   //console.log("Done", agent.id)
 }
 
+const flushDb = () => {
+  return redis.flushdb();
+  //console.log("flushed")
+}
+
 export const redisServices = {
   geoAdd,
-  geoRad
+  geoRad,
+  flushDb
 };

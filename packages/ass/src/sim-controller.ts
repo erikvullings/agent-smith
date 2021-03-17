@@ -170,8 +170,8 @@ export const simController = async (
 
     await redisServices.geoAdd(agent1);
     await redisServices.geoAdd(agent2);
-    //await redisServices.geoAdd(agent3);
-    //await redisServices.geoAdd(agent4);
+    await redisServices.geoAdd(agent3);
+    await redisServices.geoAdd(agent4);
 
     await redisServices.geoRad(agent1,'10');
     //redisServices.geoAdd(agent2);
