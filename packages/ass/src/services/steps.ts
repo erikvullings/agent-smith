@@ -1,7 +1,7 @@
 import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
-import { redisServices } from './redisService';
+import { redisServices } from './redis-service';
 
 
 /** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
@@ -14,10 +14,8 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 };
 
 const defaultWalkingSpeed = 5000 / 3600;
-let count = 0;
 /** Move agent along a route. */
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
-  count ++;
   const { route = [] } = agent;
   if (route.length === 0) {
     return true; // Done

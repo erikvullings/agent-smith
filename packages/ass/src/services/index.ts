@@ -1,5 +1,7 @@
 export * from './plans';
 export * from './steps';
 export * from './agendas';
-export * from './redisService';
+export * from './redis-service';
+export * from './redis-service';
+
 

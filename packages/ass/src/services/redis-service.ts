@@ -2,8 +2,8 @@ import { IAgent } from '../models';
 
 const Redis = require("ioredis");
 const redis = new Redis();
+
 redis.on('error', function(err: any) {
-  // handle async errors here
   console.log('Error' + err)
 });
 
@@ -48,6 +48,7 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
       console.error(err);
     } else {
       console.log(result); 
+      return result;
     }
   });
 }
