@@ -36,14 +36,14 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
-      redisServices.geoAdd(agent);
+      redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
     } else {
       i > 0 && (step.geometry as ILineString).coordinates.splice(0, i);
       const ratio = distance2go / segmentLength;
       const coord = [x0 + (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
       agent.actual = { type: step.name || 'unnamed', coord };
-      redisServices.geoAdd(agent);
+      redisServices.geoAdd('agents', agent);
       moveGroup(agent, services);
       // console.log(
       //   `${agent.id} is travelling at ${Math.round((agent.speed * 36) / 10)}km/h to ${agent.actual.type} (${round(
