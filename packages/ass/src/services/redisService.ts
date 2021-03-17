@@ -3,16 +3,19 @@ import { IAgent } from '../models';
 const Redis = require("ioredis");
 const redis = new Redis();
 
+ *   (key,longitude,latitude,radius value, radius unit,include coordinates in result,
+ *    include the distance from supplied latitude & longitude, sort(closest first)) */
 const geoRad = async (agent: IAgent, radius: string) => {
   redis.georadius(
   'agents',                                 //key
-  String(agent.actual.coord[0]),            //longitude
-  String(agent.actual.coord[1]),            //latitude
-  radius,                                   //radius value
-  'km',                                      //radius unit
-  'WITHCOORD',                              //include coordinates in result
-  'WITHDIST',                               //include the distance from supplied latitude & longitude
-  'ASC',                                    //sort (closest first)
+  'agents',                                 
+  String(agent.actual.coord[0]),            
+  String(agent.actual.coord[1]),            
+  radius,                                   
+  'km',                                     
+  'WITHCOORD',                              
+  'WITHDIST',                               
+  'ASC',                                    
   ).then((res: any) => 
   res.map(function(resArr: any[][]) {
                var res = {
@@ -25,9 +28,19 @@ const geoRad = async (agent: IAgent, radius: string) => {
                  return res;
   }));
 }
-const geoAdd = async (agent: IAgent) => {
+
+/** Calculate distance between two agents */
+const geoDist = async (agent1: IAgent, agent2: IAgent) => {
+  redis.geodist(
+  'agents',                                 
+  agent1.id,            
+  agent2.id).then((res: any) => console.log(res));;
+  };
+
+/** Add new value to key */
+const geoAdd = async (key: string, agent: IAgent) => {
   redis.geoadd(
-    'agents',    
+    key,    
     String(agent.actual.coord[0]),           
     String(agent.actual.coord[1]),             
     agent.id,                
@@ -37,11 +50,11 @@ const geoAdd = async (agent: IAgent) => {
 
 const flushDb = () => {
   return redis.flushdb();
-  //console.log("flushed")
 }
 
 export const redisServices = {
   geoAdd,
   geoRad,
+  geoDist,
   flushDb
 };
