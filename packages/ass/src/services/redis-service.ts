@@ -8,7 +8,7 @@ redis.on('error', function(err: any) {
 });
 
 /**  The input for georadius: 
- *   (key,longitude,latitude,radius value, radius unit,include coordinates in result,
+ *   (key,longitude,latitude,radius value, radius unit(m,km),include coordinates in result,
  *    include the distance from supplied latitude & longitude, sort(closest first)) */
 const geoRad = async (agent: IAgent, radius: string) => {
   redis.georadius(
@@ -53,7 +53,7 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
   });
 }
 
-/** Add new value to "agents" key */
+/** Add new value to key */
 const geoAdd = async (key: string, agent: IAgent) => {
   redis.geoadd(
     key,    
@@ -61,7 +61,19 @@ const geoAdd = async (key: string, agent: IAgent) => {
     String(agent.actual.coord[1]),             
     agent.id                
   );
-  //console.log("Done", agent.id)
+}
+
+/** Add multiple values to key */
+const geoAddBatch = async (key: string, agents: Array<IAgent>) => {
+  let arr: string[][] = [];
+  agents.forEach(agent => {
+    arr.push(["geoadd", key, String(agent.actual.coord[0]),String(agent.actual.coord[1]),agent.id])
+  });
+
+  redis.pipeline(arr)
+  .exec(() => {
+    console.log("Batch done");
+  });
 }
 
 /** Remove all keys from database */
@@ -73,5 +85,6 @@ export const redisServices = {
   geoAdd,
   geoRad,
   geoDist,
-  flushDb
+  flushDb,
+  geoAddBatch
 };

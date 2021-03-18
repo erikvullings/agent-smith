@@ -167,14 +167,7 @@ export const simController = async (
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
 
-    await redisServices.geoAdd('agents', agent1);
-    await redisServices.geoAdd('agents', agent2);
-    await redisServices.geoAdd('agents', agent3);
-    await redisServices.geoAdd('agents', agent4);
-
-    console.log(agent1.id)
-    await redisServices.geoRad(agent1,'3');
-    await redisServices.geoDist(agent1,agent2);
+    await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4]);
 
     let i = 0;
     while (i < 10000000) {
