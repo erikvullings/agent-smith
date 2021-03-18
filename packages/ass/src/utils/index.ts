@@ -1,6 +1,6 @@
 import { IAgent, ILocation } from '../models';
 import { IItem } from 'test-bed-schemas';
-import { redisServices } from '../services';
+//import { redisServices } from '../services';
 
 
 /**

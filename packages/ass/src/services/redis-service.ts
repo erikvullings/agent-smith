@@ -31,7 +31,7 @@ const geoRad = async (agent: IAgent, radius: string) => {
               longitude : resArr[2][0],
               latitude  : resArr[2][1]
             };
-            console.log(res)
+            console.log(res);
             return res});
           };
     });
@@ -64,9 +64,9 @@ const geoAdd = async (key: string, agent: IAgent) => {
   //console.log("Done", agent.id)
 }
 
-const flushDb = () => {
-  return redis.flushdb();
-  //console.log("flushed")
+/** Remove all keys from database */
+const flushDb = function() {
+  redis.flushdb();
 }
 
 export const redisServices = {

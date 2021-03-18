@@ -153,6 +153,13 @@ services:
       SCHEMA_REGISTRY_URL: http://schema_registry:3502
       AUTO_REGISTER_SCHEMAS: "true"
 
+  redis:
+    image: "redis:latest"
+    ports:
+     - "6379:6379"
+    volumes:
+     - $PWD/redis-data:/var/lib/redis
+     - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
   # trial_management_tool:
   #   image: drivereu/trial-management-tool:latest
   #   depends_on:
