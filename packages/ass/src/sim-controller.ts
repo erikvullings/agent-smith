@@ -70,6 +70,10 @@ export const simController = async (
       park: {
         type: 'park',
         coord: [5.497535, 51.441965],
+      },
+      'station': {
+        type: 'station',
+        coord: [5.479549, 51.443012],
       }
     };
 
@@ -168,6 +172,10 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle'];
 
     await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4]);
+
+   // await redisServices.geoRad(agent1,'3');
+    
+    await redisServices.geoSearch(services.locations['station'], '100');
 
     let i = 0;
     while (i < 10000000) {

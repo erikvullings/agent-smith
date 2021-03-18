@@ -1,4 +1,4 @@
-import { IAgent } from '../models';
+import { IAgent, ILocation } from '../models';
 
 const Redis = require("ioredis");
 const redis = new Redis();
@@ -11,6 +11,7 @@ redis.on('error', function(err: any) {
  *   (key,longitude,latitude,radius value, radius unit(m,km),include coordinates in result,
  *    include the distance from supplied latitude & longitude, sort(closest first)) */
 const geoRad = async (agent: IAgent, radius: string) => {
+  var resArray: { key: any[]; distance: any[]; longitude: any; latitude: any; }[] = [];
   redis.georadius(
     'agents',                                 
     String(agent.actual.coord[0]),            
@@ -32,9 +33,10 @@ const geoRad = async (agent: IAgent, radius: string) => {
               latitude  : resArr[2][1]
             };
             console.log(res);
-            return res});
+            resArray.push(res)});
           };
     });
+    return resArray;
   };
    
 /** Calculate distance between two points */
@@ -43,6 +45,27 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
   'agents',                                 
   agent1.id,            
   agent2.id,
+  function (err: any, result: any) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(result); 
+      return result;
+    }
+  });
+}
+
+/** Search for agents in area */
+const geoSearch = async (location: ILocation, radius: string) => {
+  redis.geosearch(
+  'agents',                                 
+  'FROMLONLAT',            
+  location.coord[0],
+  location.coord[1],
+  'BYRADIUS',
+  radius,
+  'km',
+  'ASC',
   function (err: any, result: any) {
     if (err) {
       console.error(err);
@@ -86,5 +109,6 @@ export const redisServices = {
   geoRad,
   geoDist,
   flushDb,
-  geoAddBatch
+  geoAddBatch,
+  geoSearch
 };
