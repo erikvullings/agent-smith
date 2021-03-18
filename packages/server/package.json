@@ -1,0 +1,43 @@
+{
+  "name": "scenario-editor-server",
+  "version": "0.0.1",
+  "private": "true",
+  "description": "REST server for scenario editor.",
+  "main": "index.js",
+  "scripts": {
+    "link": "pnpm link ass-shared",
+    "clean": "rimraf ./dist",
+    "cleanup": "npm run clean",
+    "serve": "node -r dotenv/config node_modules/rest-easy-loki/dist/cli.js --config ./config.json",
+    "serve:old": "node -r dotenv/config ./dist/server.js",
+    "dev:old": "npm start",
+    "start": "tsc-watch --outDir ./dist --onSuccess \"node -r dotenv/config ./dist/server.js\" --onFailure \"echo Beep! Compilation Failed\" --compiler typescript/bin/tsc",
+    "build": "tsc -b",
+    "update": "rimraf db.old && mv db db.old && mkdir db",
+    "update:local": "rimraf db.old && mv db db.old && mkdir db && npm start",
+    "dev": "node node_modules/rest-easy-loki/dist/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TNOCS/agent-smith.git"
+  },
+  "keywords": [
+    "scenario",
+    "editor"
+  ],
+  "author": "Erik Vullings <erik.vullings@tno.nl> (http://www.tno.nl)",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.1",
+    "rest-easy-loki": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/koa": "2.11.6",
+    "@types/node": "^14.14.31",
+    "@types/node-fetch": "1.6.9",
+    "rimraf": "^3.0.2",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.2.2"
+  }
+}
