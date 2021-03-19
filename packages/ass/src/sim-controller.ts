@@ -3,6 +3,7 @@ import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices } from './services';
+import { ILocation } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -172,19 +173,17 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle'];
 
     await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4]);
-
    // await redisServices.geoRad(agent1,'3');
-   //let agentsArray: Array<string> = [];
-    //agentsArray.push( 
-     // await redisServices.geoSearch(services.locations['station'], '100');
 
-      const intervalObj = setInterval(() => {
-        redisServices.geoSearch(services.locations['station'], '3')
-      }, 500);
+    const intervalObj = setInterval(async () => {
+      let testArr = await redisServices.geoSearch(services.locations['station'], '3');
+      console.log(testArr);
+      // const random = Math.floor(Math.random() * testArr.length);
+      // console.log(random, testArr[random]);
+      // const agentLoc : ILocation = agents[(agents.findIndex(x => x.id === testArr[random]))].actual;
+      // console.log(await redisServices.geoSearch(agentLoc,'300'));
+    }, 5000);
       
-    //const randomElement = agentsArray[Math.floor(Math.random() * Array.length)];
-
-
     let i = 0;
     while (i < 10000000) {
       await Promise.all(

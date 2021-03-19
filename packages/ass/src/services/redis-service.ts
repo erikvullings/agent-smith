@@ -56,8 +56,9 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
 }
 
 /** Search for agents in area */
-const geoSearch = async (location: ILocation, radius: string) => {
-    redis.geosearch(
+const geoSearch = async (location: ILocation, radius: string): Promise<any> => {
+  var resArray: { key: any[]; distance: any[]; longitude: any; latitude: any; }[] = [];
+    await redis.geosearch(
       'agents',                                 
       'FROMLONLAT',            
       location.coord[0],
@@ -65,15 +66,25 @@ const geoSearch = async (location: ILocation, radius: string) => {
       'BYRADIUS',
       radius,
       'km',
+      'WITHCOORD',                              
+      'WITHDIST',                                 
       'ASC',
-      function (err: any, result: any) {
+      function (err: any, result: any[][]) {
         if (err) {
           console.error(err);
+          return null;
         } else {
-          console.log(result); 
-          return result;
-        }
-      });
+          result.map(function(resArr: any[][]) {
+            var res = {
+                key       : resArr[0],
+                distance  : resArr[1],
+                longitude : resArr[2][0],
+                latitude  : resArr[2][1]
+              };
+              resArray.push(res)});
+            };
+          })
+      return resArray;
 };
 
 /** Add new value to key */
