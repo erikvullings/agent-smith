@@ -220,5 +220,5 @@
   "importRoot": "import/",
   "sourceRoot": "sources/",
   "socketFlushInterval": 500,
-  "serverPath": "/Users/melissa/Desktop/tno_stage/agent-smith/docker/kafka/configs/layers/"
+  "serverPath": "/app/configs/layers"
 }

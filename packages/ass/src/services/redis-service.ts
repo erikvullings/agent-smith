@@ -57,24 +57,24 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
 
 /** Search for agents in area */
 const geoSearch = async (location: ILocation, radius: string) => {
-  redis.geosearch(
-  'agents',                                 
-  'FROMLONLAT',            
-  location.coord[0],
-  location.coord[1],
-  'BYRADIUS',
-  radius,
-  'km',
-  'ASC',
-  function (err: any, result: any) {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log(result); 
-      return result;
-    }
-  });
-}
+    redis.geosearch(
+      'agents',                                 
+      'FROMLONLAT',            
+      location.coord[0],
+      location.coord[1],
+      'BYRADIUS',
+      radius,
+      'km',
+      'ASC',
+      function (err: any, result: any) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log(result); 
+          return result;
+        }
+      });
+};
 
 /** Add new value to key */
 const geoAdd = async (key: string, agent: IAgent) => {

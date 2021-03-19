@@ -1,6 +1,6 @@
 import { IAgent, ILocation } from '../models';
 import { IItem } from 'test-bed-schemas';
-//import { redisServices } from '../services';
+import { redisServices } from '../services';
 
 
 /**
@@ -257,7 +257,7 @@ export const generateAgents = (lng: number, lat: number, count: number) => {
       occupations: [{ id: occupationId, ...occupation }],
     } as IAgent;
     acc.push(agent);
-    //redisServices.geoAdd('agents', agent);
+    redisServices.geoAdd('agents', agent);
     return acc;
   }, [] as IAgent[]);
   return { agents, locations: Object.assign({}, homes, occupations) };

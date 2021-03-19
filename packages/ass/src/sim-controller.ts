@@ -159,7 +159,7 @@ export const simController = async (
       },
     } as IAgent;
 
-    const agentCount = 6;
+    const agentCount = 90;
     const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
     agents.push(agent1, agent2, agent3, agent4, car, car2, bicycle, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
@@ -174,8 +174,16 @@ export const simController = async (
     await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4]);
 
    // await redisServices.geoRad(agent1,'3');
-    
-    await redisServices.geoSearch(services.locations['station'], '100');
+   //let agentsArray: Array<string> = [];
+    //agentsArray.push( 
+     // await redisServices.geoSearch(services.locations['station'], '100');
+
+      const intervalObj = setInterval(() => {
+        redisServices.geoSearch(services.locations['station'], '3')
+      }, 500);
+      
+    //const randomElement = agentsArray[Math.floor(Math.random() * Array.length)];
+
 
     let i = 0;
     while (i < 10000000) {
