@@ -178,12 +178,15 @@ export const simController = async (
     const intervalObj = setInterval(async () => {
       let testArr = await redisServices.geoSearch(services.locations['station'], '3');
       console.log(testArr);
-      // const random = Math.floor(Math.random() * testArr.length);
-      // console.log(random, testArr[random]);
-      // const agentLoc : ILocation = agents[(agents.findIndex(x => x.id === testArr[random]))].actual;
-      // console.log(await redisServices.geoSearch(agentLoc,'300'));
-    }, 5000);
+
+      const random = Math.floor(Math.random() * testArr.length);
+      var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
+      console.log(agentRand)
+      console.log(await redisServices.geoRad(agentRand,'300'));
+    }, 10000);
       
+
+
     let i = 0;
     while (i < 10000000) {
       await Promise.all(

@@ -17,7 +17,7 @@ const geoRad = async (agent: IAgent, radius: string) => {
     String(agent.actual.coord[0]),            
     String(agent.actual.coord[1]),            
     radius,                                   
-    'km',                                     
+    'm',                                     
     'WITHCOORD',                              
     'WITHDIST',                               
     'ASC',                                    
