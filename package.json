@@ -32,6 +32,7 @@
   "dependencies": {
     "@types/redis": "^2.8.28",
     "ioredis": "^4.24.2",
+    "perf_hooks": "0.0.1",
     "redis": "^3.0.2"
   }
 }

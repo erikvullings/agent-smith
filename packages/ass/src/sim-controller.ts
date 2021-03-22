@@ -4,6 +4,7 @@ import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices } from './services';
 import { ILocation } from './models';
+import { performance } from 'perf_hooks';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -160,7 +161,7 @@ export const simController = async (
       },
     } as IAgent;
 
-    const agentCount = 90;
+    const agentCount = 200;
     const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
     agents.push(agent1, agent2, agent3, agent4, car, car2, bicycle, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
@@ -172,21 +173,34 @@ export const simController = async (
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
 
-    await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4]);
-   // await redisServices.geoRad(agent1,'3');
+    var t0 = performance.now()
+
+    await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4, ...generatedAgents]);
+    
+    var t1 = performance.now()
+    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
+
 
     const intervalObj = setInterval(async () => {
-      let testArr = await redisServices.geoSearch(services.locations['station'], '3');
+      let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
       console.log(testArr);
+      var t2 = performance.now()
 
       const random = Math.floor(Math.random() * testArr.length);
       var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
-      console.log(agentRand)
-      console.log(await redisServices.geoRad(agentRand,'300'));
-    }, 10000);
+     // console.log("random agent",agentRand);
+      let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
+      //console.log("response",resp);
+
+      if(resp.length > 0) {
+          console.log("chosen agents is: " , resp[0])
+      }
+
+      var t3 = performance.now()
+      console.log("interval took " + (t3 - t2) + " milliseconds.")
+
+    }, 20000);
       
-
-
     let i = 0;
     while (i < 10000000) {
       await Promise.all(

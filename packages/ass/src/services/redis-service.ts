@@ -11,7 +11,7 @@ redis.on('error', function(err: any) {
  *   (key,longitude,latitude,radius value, radius unit(m,km),include coordinates in result,
  *    include the distance from supplied latitude & longitude, sort(closest first)) */
 const geoRad = async (agent: IAgent, radius: string) => {
-  var resArray: { key: any[]; distance: any[]; longitude: any; latitude: any; }[] = [];
+  let resArray: Array<Object> = [];
   redis.georadius(
     'agents',                                 
     String(agent.actual.coord[0]),            
@@ -25,17 +25,22 @@ const geoRad = async (agent: IAgent, radius: string) => {
       if (err) {
         console.error(err);
       } else {
-        result.map(function(resArr: any[][]) {
+        result.map(function(resArr: any[]) {
           var res = {
               key       : resArr[0],
               distance  : resArr[1],
               longitude : resArr[2][0],
               latitude  : resArr[2][1]
             };
-            console.log(res);
-            resArray.push(res)});
+            if(String(res.key) != agent.id){
+              //console.log("First res isssss",res)
+              resArray.push(res);
+            }
+          });
           };
     });
+    //console.log("length", resArray.length)
+    console.log("type check", resArray[1])
     return resArray;
   };
    
@@ -56,7 +61,7 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
 }
 
 /** Search for agents in area */
-const geoSearch = async (location: ILocation, radius: string): Promise<any> => {
+const geoSearch = async (location: ILocation, radius: string, agent?: IAgent): Promise<any> => {
   var resArray: { key: any[]; distance: any[]; longitude: any; latitude: any; }[] = [];
     await redis.geosearch(
       'agents',                                 
@@ -65,14 +70,13 @@ const geoSearch = async (location: ILocation, radius: string): Promise<any> => {
       location.coord[1],
       'BYRADIUS',
       radius,
-      'km',
+      'm',
       'WITHCOORD',                              
       'WITHDIST',                                 
       'ASC',
       function (err: any, result: any[][]) {
         if (err) {
           console.error(err);
-          return null;
         } else {
           result.map(function(resArr: any[][]) {
             var res = {
@@ -81,7 +85,14 @@ const geoSearch = async (location: ILocation, radius: string): Promise<any> => {
                 longitude : resArr[2][0],
                 latitude  : resArr[2][1]
               };
-              resArray.push(res)});
+              if(agent != undefined && String(res.key) === agent.id){
+                //console.log("First res isssss",res)
+                //resArray.push(res);
+              }
+              else {
+                resArray.push(res);
+              }
+            });
             };
           })
       return resArray;
