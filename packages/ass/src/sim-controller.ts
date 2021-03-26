@@ -3,7 +3,6 @@ import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices } from './services';
-import { ILocation } from './models';
 import { performance } from 'perf_hooks';
 import * as simConfig from "./sim_config.json"
 
@@ -176,14 +175,8 @@ export const simController = async (
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
-
-    var t0 = performance.now()
-
-    await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4, ...generatedAgents]);
     
-    var t1 = performance.now()
-    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
-
+    await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4, ...generatedAgents]);
 
     // const intervalObj = setInterval(async () => {
     //   let testArr = await redisServices.geoSearch(services.locations['station'], '3000');

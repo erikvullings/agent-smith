@@ -124,6 +124,7 @@ const day = now.getDate();
 /** Create a date relative to today */
 export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
   new Date(year, month, day + days, hours, minutes, seconds);
+  
 
 /** Convert agent to entity item */
 export const agentToEntityItem = (agent: IAgent): IItem => ({
