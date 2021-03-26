@@ -1,0 +1,27 @@
+{
+    "settings": {
+        "agentCount": 10,
+        "center_coord": [5.476543, 51.440208],
+        "radius": 10000
+    },
+    "customAgents": [
+        {
+            "id": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "man",
+            "status": "active",
+            "owns": [{ "type": "car", "id": "car2" }],
+            "home": {"type": "home", "coord": [5.499309, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "occupations": [{ "type": "doctor_visit", "id": "ziekenhuis"}]
+          },
+          {
+            "id": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "man",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499309, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "occupations": [{ "type": "wander", "id": "park"}]
+          }
+    ]
+}
+

@@ -5,6 +5,7 @@ import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './ut
 import { redisServices } from './services';
 import { ILocation } from './models';
 import { performance } from 'perf_hooks';
+import * as simConfig from "./sim_config.json"
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -100,24 +101,27 @@ export const simController = async (
       occupations: [{ type: 'shop', id: 'h_m_shop' }],
     } as IAgent;
 
-    const agent3 = {
-      id: uuid4(),
-      type: 'man',
-      status: 'active',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'wander', id: 'park' }],
-    } as IAgent;
+    // const agent3 = {
+    //   id: uuid4(),
+    //   type: 'man',
+    //   status: 'active',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'wander', id: 'park' }],
+    // } as IAgent;
 
-    const agent4 = {
-      id: uuid4(),
-      type: 'woman',
-      status: 'active',
-      owns: [{ type: 'car', id: 'car2' }],
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
-    } as IAgent;
+    // const agent4 = {
+    //   id: uuid4(),
+    //   type: 'woman',
+    //   status: 'active',
+    //   owns: [{ type: 'car', id: 'car2' }],
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
+    // } as IAgent;
+
+    const agent3 = simConfig.customAgents[1] as IAgent;
+    const agent4 = simConfig.customAgents[0] as IAgent;
 
     const car = {
       id: 'car1',
@@ -161,8 +165,8 @@ export const simController = async (
       },
     } as IAgent;
 
-    const agentCount = 200;
-    const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
+    const agentCount = simConfig.settings.agentCount;
+    const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
     agents.push(agent1, agent2, agent3, agent4, car, car2, bicycle, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
@@ -181,25 +185,25 @@ export const simController = async (
     console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
 
 
-    const intervalObj = setInterval(async () => {
-      let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
-      console.log(testArr);
-      var t2 = performance.now()
+    // const intervalObj = setInterval(async () => {
+    //   let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
+    //   console.log(testArr);
+    //   var t2 = performance.now()
 
-      const random = Math.floor(Math.random() * testArr.length);
-      var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
-     // console.log("random agent",agentRand);
-      let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
-      //console.log("response",resp);
+    //   const random = Math.floor(Math.random() * testArr.length);
+    //   var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
+    //  // console.log("random agent",agentRand);
+    //   let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
+    //   //console.log("response",resp);
 
-      if(resp.length > 0) {
-          console.log("chosen agents is: " , resp[0])
-      }
+    //   if(resp.length > 0) {
+    //       console.log("chosen agents is: " , resp[0])
+    //   }
 
-      var t3 = performance.now()
-      console.log("interval took " + (t3 - t2) + " milliseconds.")
+    //   var t3 = performance.now()
+    //   console.log("interval took " + (t3 - t2) + " milliseconds.")
 
-    }, 20000);
+    // }, 20000);
       
     let i = 0;
     while (i < 10000000) {
