@@ -5,6 +5,7 @@ import { ILocation } from './location';
 export type TransportType = 'car' | 'bicycle';
 
 export interface IAgent {
+   /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ 
   id: string;
   /** Type of agent */
   type: 'man' | 'woman' | 'boy' | 'girl' | TransportType;

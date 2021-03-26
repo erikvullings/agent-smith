@@ -1,6 +1,7 @@
 import { IAgent } from '../models';
 import { simTime, hours, randomInRange} from '../utils';
 import { IEnvServices } from '../env-services';
+import * as simConfig from "../sim_config.json";
 
 function getAgenda(agent: IAgent, _services: IEnvServices) {
   if (typeof agent._day === 'undefined') {
@@ -69,6 +70,21 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
   }
 }
 
+function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: number) {
+  if (typeof agent._day === 'undefined') {
+    agent._day = 0;
+  } else {
+    agent._day++;
+  }
+  const { _day: day } = agent;
+
+    var agenda = simConfig.customAgendas[customAgIndex].agendaItems;
+    agenda[0].options = {startTime:simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
+    console.log(agenda)
+  return agenda;
+}
+
 export const agendas = {
   getAgenda,
+  customAgenda
 };

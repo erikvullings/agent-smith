@@ -256,7 +256,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
       // owns: [{ type: 'car', id: 'car1' }],
       actual: home,
       occupations: [{ id: occupationId, ...occupation }],
-    } as IAgent;
+    } as unknown as IAgent;
     acc.push(agent);
     redisServices.geoAdd('agents', agent);
     return acc;

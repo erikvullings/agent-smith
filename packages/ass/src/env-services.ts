@@ -72,29 +72,18 @@ export const envServices = ({
     distance: simplifiedDistanceFactory()
   } as IEnvServices;
 };
-let startTime: Date;
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
-  // if (typeof agent._day === 'undefined') {
-  //   agent._day = 0;
-  // } else {
-  //   agent._day++;
-  // }
-  // const { _day: day } = agent;
 
-  // let index = 0;
-  // if (simConfig.customAgendas.some(function(el, i) {
-  //     if (el.agentIds[0] == agent.id) {
-  //       index = i;
-  //       return true;
-  //     }}))
-  //     {
-  //       simConfig.customAgendas[index].agendaItems[0].options = {startTime:simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
-  //       agent.agenda = simConfig.customAgendas[index].agendaItems;
-  // }
-  // else{
+  const customAgIndex = simConfig.customAgendas.findIndex(el => el.agentIds[0] === agent.id);
+  console.log(customAgIndex);
+  if (customAgIndex > -1) {
+    //console.log(simConfig.customAgendas[customAgIndex].agendaItems)
+    agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
+  }
+  else{
     agent.agenda = agendas.getAgenda(agent, services);
-  //}
+  }
 };
 
 export const executeSteps = async (
