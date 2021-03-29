@@ -12,10 +12,10 @@ export const Dsl: MeiosisComponent = () => {
     },
     view: ({ attrs: { state } }) => {
       console.log(state);
-        return m("dsl", [
+        return m("main", [
+            m("h4", {class: "title"}, "DSL editor"),
             m("label", "DSL page"),
-            m("button", "A button"),
-
+            
         ])
 
       //return m('.home-page', m('div', 'HOMEPAGE'));
