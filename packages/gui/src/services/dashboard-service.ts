@@ -2,11 +2,12 @@ import m, { RouteDefs } from 'mithril';
 import { IDashboard } from '../models';
 import { actions, states } from './meiosis';
 import { Layout } from '../components/layout';
-import { AboutPage, HomePage } from '../components';
+import { AboutPage, Dsl, HomePage } from '../components';
 import { Auth } from './login-service';
 
 export const enum Dashboards {
   HOME = 'HOME',
+  DSL = 'DSL',
   ABOUT = 'ABOUT',
   EDIT = 'EDIT',
   LOGIN = 'LOGIN',
@@ -98,6 +99,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     default: true,
     visible: true,
     component: HomePage,
+  },
+  {
+    id: Dashboards.DSL,
+    title: 'DSL',
+    icon: 'home',
+    route: '/dsl',
+    visible: true,
+    component: Dsl,
   },
   {
     id: Dashboards.ABOUT,

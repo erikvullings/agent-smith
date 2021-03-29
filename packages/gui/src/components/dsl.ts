@@ -1,19 +1,19 @@
 import m from 'mithril';
 import { Dashboards, MeiosisComponent } from '../services';
 
-export const HomePage: MeiosisComponent = () => {
+export const Dsl: MeiosisComponent = () => {
   return {
     oninit: async ({
       attrs: {
         actions: { setPage },
       },
     }) => {
-      setPage(Dashboards.HOME);
+      setPage(Dashboards.DSL);
     },
     view: ({ attrs: { state } }) => {
       console.log(state);
-        return m("main", [
-            m("button", "Test"),
+        return m("dsl", [
+            m("label", "DSL page"),
             m("button", "A button"),
 
         ])
