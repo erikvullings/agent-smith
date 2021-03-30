@@ -3,7 +3,6 @@ import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices } from './services';
-import { performance } from 'perf_hooks';
 import * as simConfig from "./sim_config.json"
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -79,26 +78,26 @@ export const simController = async (
       }
     };
 
-    const agent1 = {
-      id: uuid4(),
-      type: 'man',
-      // speed: 1.4,
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      owns: [{ type: 'car', id: 'car1' }],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
-    } as IAgent;
+    // const agent1 = {
+    //   id: uuid4(),
+    //   type: 'man',
+    //   // speed: 1.4,
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   owns: [{ type: 'car', id: 'car1' }],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
+    // } as IAgent;
 
-    const agent2 = {
-      id: uuid4(),
-      type: 'man',
-      status: 'active',
-      home: services.locations['Monarchstraat 52'],
-      owns: [{ type: 'bicycle', id: 'bicycle1' }],
-      actual: services.locations['Monarchstraat 52'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-    } as IAgent;
+    // const agent2 = {
+    //   id: uuid4(),
+    //   type: 'man',
+    //   status: 'active',
+    //   home: services.locations['Monarchstraat 52'],
+    //   owns: [{ type: 'bicycle', id: 'bicycle1' }],
+    //   actual: services.locations['Monarchstraat 52'],
+    //   occupations: [{ type: 'shop', id: 'h_m_shop' }],
+    // } as IAgent;
 
     // const agent3 = {
     //   id: uuid4(),
@@ -118,9 +117,6 @@ export const simController = async (
     //   actual: services.locations['Antoon Derkinderenstraat 17'],
     //   occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
     // } as IAgent;
-
-    const agent3 = simConfig.customAgents[1] as IAgent;
-    const agent4 = simConfig.customAgents[0] as IAgent;
 
     const car = {
       id: 'car1',
@@ -164,9 +160,15 @@ export const simController = async (
       },
     } as IAgent;
 
+    var customAgentArr = simConfig.customAgents;
+
+    for(let i=0; i<customAgentArr.length; i++){
+      agents.push(simConfig.customAgents[i] as IAgent);
+    }
+
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(agent1, agent2, agent3, agent4, car, car2, bicycle, ...generatedAgents);
+    agents.push(car, car2, bicycle, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
@@ -176,7 +178,7 @@ export const simController = async (
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
     
-    await redisServices.geoAddBatch('agents', [agent1,agent2,agent3,agent4, ...generatedAgents]);
+    await redisServices.geoAddBatch('agents', agents);
 
     // const intervalObj = setInterval(async () => {
     //   let testArr = await redisServices.geoSearch(services.locations['station'], '3000');

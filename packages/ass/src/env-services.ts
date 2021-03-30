@@ -3,7 +3,6 @@ import { plans, steps, agendas } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import * as simConfig from "./sim_config.json";
-import { simTime, hours, randomInRange} from './utils';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -75,15 +74,15 @@ export const envServices = ({
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
 
-  const customAgIndex = simConfig.customAgendas.findIndex(el => el.agentIds[0] === agent.id);
-  console.log(customAgIndex);
-  if (customAgIndex > -1) {
-    //console.log(simConfig.customAgendas[customAgIndex].agendaItems)
-    agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
-  }
-  else{
+  // const customAgIndex = simConfig.customAgendas.findIndex(el => el.agentIds[0] === agent.id);
+  // console.log(customAgIndex);
+  // if (customAgIndex > -1) {
+  //   //console.log(simConfig.customAgendas[customAgIndex].agendaItems)
+  //   agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
+  // }
+  // else{
     agent.agenda = agendas.getAgenda(agent, services);
-  }
+  //}
 };
 
 export const executeSteps = async (
