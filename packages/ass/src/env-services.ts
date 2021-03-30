@@ -2,7 +2,6 @@ import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
-import * as simConfig from "./sim_config.json";
 
 export interface IEnvServices {
   /** Get sim time */

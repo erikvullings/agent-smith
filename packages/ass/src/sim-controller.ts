@@ -3,7 +3,8 @@ import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices } from './services';
-import * as simConfig from "./sim_config.json"
+import * as jsonSimConfig from "./sim_config.json"
+import { ISimConfig } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -18,7 +19,10 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    const agents = [] as IAgent[];
+    const simConfig = jsonSimConfig as ISimConfig;
+    const agents : Array<IAgent> = simConfig.customAgents;
+
+    console.log(agents)
 
     let currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -78,46 +82,6 @@ export const simController = async (
       }
     };
 
-    // const agent1 = {
-    //   id: uuid4(),
-    //   type: 'man',
-    //   // speed: 1.4,
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   owns: [{ type: 'car', id: 'car1' }],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
-    // } as IAgent;
-
-    // const agent2 = {
-    //   id: uuid4(),
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Monarchstraat 52'],
-    //   owns: [{ type: 'bicycle', id: 'bicycle1' }],
-    //   actual: services.locations['Monarchstraat 52'],
-    //   occupations: [{ type: 'shop', id: 'h_m_shop' }],
-    // } as IAgent;
-
-    // const agent3 = {
-    //   id: uuid4(),
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'wander', id: 'park' }],
-    // } as IAgent;
-
-    // const agent4 = {
-    //   id: uuid4(),
-    //   type: 'woman',
-    //   status: 'active',
-    //   owns: [{ type: 'car', id: 'car2' }],
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
-    // } as IAgent;
-
     const car = {
       id: 'car1',
       type: 'car',
@@ -159,12 +123,6 @@ export const simController = async (
         ).waypoints[0].location,
       },
     } as IAgent;
-
-    var customAgentArr = simConfig.customAgents;
-
-    for(let i=0; i<customAgentArr.length; i++){
-      agents.push(simConfig.customAgents[i] as IAgent);
-    }
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
