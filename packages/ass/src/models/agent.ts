@@ -20,14 +20,14 @@ export interface IAgent {
   /** ID of work address */
   occupations?: Array<{
     /** Type of occupation, e.g. work, shop, learn */
-    type: 'work' | 'shop' | 'wander' | 'doctor_visit' | string;
+    type: 'work' | 'learn' | 'shop' | 'wander' | 'doctor_visit' | string;
     /** Id of the location where the occupation takes place */
     id: string;
   }>;
   /** ID of task address */
-  tasks?: Array<{
+  activities?: Array<{
     /** Type of occupation, e.g. work, shop, learn */
-    type: 'work' | 'shop' | 'wander' | 'doctor_visit' | string;
+    type: 'work' | 'learn' | 'shop' | 'wander' | 'doctor_visit' | string;
     /** Id of the location where the occupation takes place */
     id: string;
   }>;
