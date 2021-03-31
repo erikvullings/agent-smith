@@ -24,6 +24,13 @@ export interface IAgent {
     /** Id of the location where the occupation takes place */
     id: string;
   }>;
+  /** ID of task address */
+  tasks?: Array<{
+    /** Type of occupation, e.g. work, shop, learn */
+    type: 'work' | 'shop' | 'wander' | 'doctor_visit' | string;
+    /** Id of the location where the occupation takes place */
+    id: string;
+  }>;
   /** IDs of relatives and friends */
   relations?: Array<{
     /** Type of relation, e.g. family, relative, friend, enemy */
