@@ -11,15 +11,17 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
     agent._day++;
   }
   const { _day: day } = agent;
-
-  const agendas = {
+  const activities = {
     'work': function () {
       return [
         { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'Work', options: { duration: hours(3, 5) } },
         { name: 'Have lunch' },
         { name: 'Work', options: { duration: hours(3, 5) } },
-        { name: 'Go to other shops' },
+      ];
+    },
+    'go home': function () {
+      return [
         { name: 'Go home' },
       ];
     },
@@ -28,23 +30,18 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
         { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'Shop', options: { duration: hours(0, 1) } },
         { name: 'Go to other shops' },
-        { name: 'Wander' },
-        { name: 'Go home' },
       ];
     },
     'wander': function () {
       return [
         { name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'Wander' },
-        { name: 'Wander' },
-        { name: 'Go home' },
       ];
     },
     'doctor_visit': function () {
       return [
         { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'GetExamined', options: { duration: hours(0, 5) } },
-        { name: 'Go home' },
       ];
     },
     'default': function () {
@@ -58,13 +55,26 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
     }
   };
 
+  const agentAgendas = {
+    'work': function () {
+      return Array.prototype.concat.apply([], [activities['work'](), activities['go home']()]);
+    },
+    'learn': function () {
+      return Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]);
+    },
+    null: function () {
+      return Array.prototype.concat.apply([], [activities['work'](), activities['go home']()]);
+    },
+  };
+
   if(agent.occupations != undefined && agent.occupations.length != 0){
-    return (agendas[agent.occupations[0].type as keyof typeof agendas] || agendas['default'])();  
-  }
+    return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  }
   else{
-    return agendas['default']();
+    //var test1 = agentAgendas['null']();
+    return agentAgendas['work']()  }
   }
-}
+
+
 
 function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: number) {
   if (typeof agent._day === 'undefined') {
