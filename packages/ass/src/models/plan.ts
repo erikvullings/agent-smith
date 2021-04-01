@@ -15,6 +15,8 @@ export interface IActivityOptions {
   control?: string[];
   /** Agents IDs you are controlling and want to release, e.g. vehicles or children */
   release?: string[];
+  /** Priority of activity */
+  priority?: 1 | 2 | 3;
 }
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */

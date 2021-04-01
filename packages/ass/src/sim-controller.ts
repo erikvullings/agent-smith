@@ -138,25 +138,27 @@ export const simController = async (
     
     await redisServices.geoAddBatch('agents', agents);
 
-    // const intervalObj = setInterval(async () => {
-    //   let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
-    //   console.log(testArr);
-    //   var t2 = performance.now()
+    const intervalObj = setInterval(async () => {
+       let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
+      // console.log(testArr);
+      //var t2 = performance.now()
 
-    //   const random = Math.floor(Math.random() * testArr.length);
-    //   var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
-    //  // console.log("random agent",agentRand);
-    //   let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
-    //   //console.log("response",resp);
+      const random = Math.floor(Math.random() * testArr.length);
+      var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
 
-    //   if(resp.length > 0) {
-    //       console.log("chosen agents is: " , resp[0])
-    //   }
+      console.log(agentRand.agenda)
+     // console.log("random agent",agentRand);
+      //let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
+      //console.log("response",resp);
 
-    //   var t3 = performance.now()
-    //   console.log("interval took " + (t3 - t2) + " milliseconds.")
+      // if(resp.length > 0) {
+      //     console.log("chosen agents is: " , resp[0])
+      // }
 
-    // }, 20000);
+      //var t3 = performance.now()
+      //console.log("interval took " + (t3 - t2) + " milliseconds.")
+
+    }, 20000);
       
     let i = 0;
     while (i < 10000000) {
