@@ -34,8 +34,8 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
     },
     'wander': function () {
       return [
-        { name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-        { name: 'Wander', options: { priority: 2 } },
+        //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
+        { name: 'Wander', options: { priority: 3 } },
       ];
     },
     'doctor_visit': function () {
@@ -57,10 +57,13 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
 
   const agentAgendas = {
     'work': function () {
-      return Array.prototype.concat.apply([], [activities['work'](), activities['go home']()]);
+      return Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]);
     },
     'learn': function () {
       return Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]);
+    },
+    'wander': function () {
+      return Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]);
     },
     null: function () {
       return Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]);
@@ -68,11 +71,10 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
   };
 
   if(agent.occupations != undefined && agent.occupations.length != 0){
-    console.log("tewst", agent.occupations[0].type)
     return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  }
   else{
     //var test1 = agentAgendas['null']();
-    return agentAgendas['null']()  }
+    return agentAgendas['work']()  }
   }
 
 

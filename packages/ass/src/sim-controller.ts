@@ -146,7 +146,12 @@ export const simController = async (
       const random = Math.floor(Math.random() * testArr.length);
       var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
 
-      console.log(agentRand.agenda)
+      console.log("random agenda",agentRand.agenda)
+      if(agentRand.agenda != undefined && 3 > agentRand.agenda[1].options?.priority){
+        console.log("i am innnnnn")
+        agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
+        console.log(agentRand.agenda)
+      }
      // console.log("random agent",agentRand);
       //let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
       //console.log("response",resp);

@@ -38,7 +38,7 @@
             "status": "active",
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": []
+            "occupations": [{ "type": "wander", "id": "park"}]
         }
     ],
     "customAgendas": [
