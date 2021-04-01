@@ -51,7 +51,7 @@
         "mapbox": {
           "circlePaint": {
             "circle-radius": 20,
-            "circle-color": "gray"
+            "circle-color": "white"
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -61,6 +61,130 @@
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/man"
+    },
+    {
+      "id": "woman",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "woman",
+      "source": "woman.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/24/000000/standing-woman.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 20,
+            "circle-color": "white"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/woman"
+    },
+    {
+      "id": "girl",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "girl",
+      "source": "girl.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/24/000000/standing-woman.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 14,
+            "circle-color": "white"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/girl"
+    },
+    {
+      "id": "boy",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "boy",
+      "source": "boy.json",
+      "style": {
+        "type": "circle",
+        "icon": "images/man.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 14,
+            "circle-color": "white"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/boy"
+    },
+    {
+      "id": "group",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "group",
+      "source": "group.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/windows/24/000000/group-foreground-selected.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-radius": 30,
+            "circle-color": "white"
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/group"
     },
     {
       "id": "Feature",
@@ -92,68 +216,6 @@
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/Feature"
-    },
-    {
-      "id": "bicycle",
-      "sourceType": "geojson",
-      "version": "0.0.1",
-      "color": "lightgray",
-      "isLive": true,
-      "tags": [
-        "entity-item"
-      ],
-      "isEditable": false,
-      "tileSupport": false,
-      "title": "bicycle",
-      "source": "bicycle.json",
-      "style": {
-        "type": "circle",
-        "icon": "images/bicycle.png",
-        "showSymbol": true,
-        "mapbox": {
-          "circlePaint": {
-            "circle-radius": 20,
-            "circle-color": "gray"
-          },
-          "symbolLayout": {
-            "icon-allow-overlap": true,
-            "icon-ignore-placement": true
-          }
-        },
-        "types": []
-      },
-      "sourceUrl": "http://localhost:3008/sources/bicycle"
-    },
-    {
-      "id": "woman",
-      "sourceType": "geojson",
-      "version": "0.0.1",
-      "color": "lightgray",
-      "isLive": true,
-      "tags": [
-        "entity-item"
-      ],
-      "isEditable": false,
-      "tileSupport": false,
-      "title": "woman",
-      "source": "woman.json",
-      "style": {
-        "type": "circle",
-        "icon": "images/woman.png",
-        "showSymbol": true,
-        "mapbox": {
-          "circlePaint": {
-            "circle-radius": 20,
-            "circle-color": "gray"
-          },
-          "symbolLayout": {
-            "icon-allow-overlap": true,
-            "icon-ignore-placement": true
-          }
-        },
-        "types": []
-      },
-      "sourceUrl": "http://localhost:3008/sources/woman"
     }
   ],
   "featureTypes": {
@@ -211,6 +273,236 @@
       "attributes": {
         "color": "#e15759"
       }
+    },
+    "woman": {
+      "title": "woman",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "boy": {
+      "title": "boy",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "girl": {
+      "title": "girl",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "group": {
+      "title": "group",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        },
+        {
+          "label": "number of members",
+          "type": "number",
+          "key": "number_of_members"
+        },
+        {
+          "label": "members",
+          "type": "string",
+          "key": "members"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
     }
   },
   "sourcePath": "./sources/",
@@ -220,5 +512,5 @@
   "importRoot": "import/",
   "sourceRoot": "sources/",
   "socketFlushInterval": 500,
-  "serverPath": "/Users/melissa/Desktop/tno_stage/agent-smith/docker/kafka/configs/layers/"
+  "serverPath": "/app/configs/layers"
 }

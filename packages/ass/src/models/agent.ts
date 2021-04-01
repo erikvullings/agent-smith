@@ -12,6 +12,8 @@ export interface IAgent {
   status: 'active' | 'walking' | 'cycling' | 'driving';
   /** Actual location as [lon, lat] */
   actual: ILocation;
+  /** Force of the agent (white, red or blue) */
+  force?: 'white'|'red'|'blue';
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
@@ -34,6 +36,8 @@ export interface IAgent {
   memberOf?: string;
   /** IDs of the members, e.g. the people inside a car or the children of a parent. */
   group?: string[];
+  /** number of members in the group */
+  nomembers?: number;
   /** Items that the agent owns, e.g. a car or bicycle. */
   owns?: Array<{
     /** Type of object that the agent owns, e.g. car or bicyle */

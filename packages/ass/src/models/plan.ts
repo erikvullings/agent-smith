@@ -1,6 +1,7 @@
 import { IEnvServices } from '../env-services';
 import { IAgent } from '.';
 import { ILocation } from './location';
+import { IGroup } from './group';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */
@@ -18,7 +19,7 @@ export interface IActivityOptions {
 }
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
-export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
+export type Activity = (agent: IAgent | IGroup, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 
 export type ActivityList = Array<{
   name: string;

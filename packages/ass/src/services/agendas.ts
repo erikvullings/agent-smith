@@ -1,8 +1,9 @@
 import { IAgent } from '../models';
-import { simTime, hours, randomInRange} from '../utils';
+import { IGroup } from '../models';
+import { simTime, hours, minutes, randomInRange} from '../utils';
 import { IEnvServices } from '../env-services';
 
-function getAgenda(agent: IAgent, _services: IEnvServices) {
+function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;
   } else {
@@ -25,10 +26,18 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
       case 'shop': {
         return [
           { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
-          { name: 'Shop', options: { duration: hours(0, 1) } },
-          //{ name: 'Go to other shops' },
+          { name: 'Shop', options: { duration: minutes(15, 30) } },
           { name: 'Go to other shops' },
           { name: 'Wander' },
+          { name: 'Go home' },
+        ];
+      }
+      case 'school': {
+        return [
+          { name: 'Go to school', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+          { name: 'Work', options: { duration: hours(3, 5) } },
+          { name: 'Have lunch' },
+          { name: 'Work', options: { duration: hours(3, 5) } },
           { name: 'Go home' },
         ];
       }

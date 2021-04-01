@@ -1,6 +1,6 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
-import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
+import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
 
 export interface IEnvServices {
@@ -15,6 +15,8 @@ export interface IEnvServices {
   walk: IOsrm;
   /** Agent lookup */
   agents: { [id: string]: IAgent };
+  /** Group lookup */
+  groups: { [id: string]: IGroup };
   /** Available plans */
   plans: { [plan: string]: IPlan };
   /** Available steps i.e. basic components that make up a plan, e.g. go to location */
@@ -60,6 +62,8 @@ export const envServices = ({
     walk,
     /** Agent lookup */
     agents: {},
+    /** Group lookup */
+    groups: {},
     /** Available high-level plans for agents to choose from */
     plans,
     /** Available steps i.e. basic activities that make up a plan, e.g. go to location */
@@ -71,12 +75,12 @@ export const envServices = ({
   } as IEnvServices;
 };
 
-const createAgenda = async (agent: IAgent, services: IEnvServices) => {
+const createAgenda = async (agent: IAgent | IGroup, services: IEnvServices) => {
   agent.agenda = agendas.getAgenda(agent, services);
 };
 
 export const executeSteps = async (
-  agent: IAgent & { steps: Array<{ name: string; options?: IActivityOptions }> },
+  agent: (IAgent | IGroup) & { steps: Array<{ name: string; options?: IActivityOptions }> },
   services: IEnvServices
 ) => {
   const { name, options } = agent.steps[0];
@@ -88,10 +92,10 @@ export const executeSteps = async (
   return agent.steps.length === 0;
 };
 
-export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
+export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices) => {
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
-      agent as IAgent & { steps: Array<{ name: string; options?: IActivityOptions }> },
+      agent as (IAgent | IGroup) & { steps: Array<{ name: string; options?: IActivityOptions }> },
       services
     );
     if (result) {
