@@ -14,10 +14,10 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
   const activities = {
     'work': function () {
       return [
-        { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
         { name: 'Have lunch', options: { priority: 3 } },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
       ];
     },
     'go home': function () {
@@ -27,8 +27,8 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
     },
     'shop': function () {
       return [
-        { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
-        { name: 'Shop', options: { duration: hours(0, 1) }, priority: 2 },
+        { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
+        { name: 'Shop', options: { duration: hours(0, 1) }, priority: 3 },
         { name: 'Go to other shops', options: { priority: 3 } },
       ];
     },
