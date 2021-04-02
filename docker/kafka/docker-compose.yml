@@ -225,41 +225,41 @@ services:
     volumes:
       - ./schemas:/src/schemas
 
-  driving:
-    image: osrm/osrm-backend
-    ports:
-      - "5000:5000"
-    command:
-      - osrm-routed
-      - --algorithm
-      - mld
-      - /data/netherlands-latest.osrm
-    volumes:
-      - ./driving:/data
+  # driving:
+  #   image: osrm/osrm-backend
+  #   ports:
+  #     - "5000:5000"
+  #   command:
+  #     - osrm-routed
+  #     - --algorithm
+  #     - mld
+  #     - /data/netherlands-latest.osrm
+  #   volumes:
+  #     - ./driving:/data
 
-  cycling:
-    image: osrm/osrm-backend
-    ports:
-      - "5001:5000"
-    command:
-      - osrm-routed
-      - --algorithm
-      - mld
-      - /data/netherlands-latest.osrm
-    volumes:
-      - ./cycling:/data
+  # cycling:
+  #   image: osrm/osrm-backend
+  #   ports:
+  #     - "5001:5000"
+  #   command:
+  #     - osrm-routed
+  #     - --algorithm
+  #     - mld
+  #     - /data/netherlands-latest.osrm
+  #   volumes:
+  #     - ./cycling:/data
 
-  walking:
-    image: osrm/osrm-backend
-    ports:
-      - "5002:5000"
-    command:
-      - osrm-routed
-      - --algorithm
-      - mld
-      - /data/netherlands-latest.osrm
-    volumes:
-      - ./walking:/data
+  # walking:
+  #   image: osrm/osrm-backend
+  #   ports:
+  #     - "5002:5000"
+  #   command:
+  #     - osrm-routed
+  #     - --algorithm
+  #     - mld
+  #     - /data/netherlands-latest.osrm
+  #   volumes:
+  #     - ./walking:/data
  
   large_file_service:
     image: drivereu/large-file-service:latest
