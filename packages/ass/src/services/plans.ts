@@ -123,6 +123,23 @@ export const plans = {
     },
   },
 
+  'Go to the location': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      if (!agent.occupations) {
+        return true;
+      }
+      const occupations = agent.occupations.filter((o) => o.type === 'release_at_location');
+      if (occupations.length > 0) {
+        const { destination } = options;
+        const occupation =
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+        agent.destination = services.locations[occupation.id];
+        prepareRoute(agent, services, options);
+      }
+      return true;
+    },
+  },
+
   'Visit doctor': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       if (!agent.occupations) {
@@ -181,6 +198,26 @@ export const plans = {
       agent.destination = destination;
       steps.push({ name: 'walkTo', options: { destination } });
       if (inRangeCheck(0,10,randomIntInRange(0,100))){
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+  'Release':{
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      if(agent.group){
+        const {release = agent.group, duration = minutes(5)} = options;
+        for (let i of release){
+          const member = _services.agents[i];
+          delete member.memberOf;
+        }
+        delete agent.group;
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      else{
+        const {duration = minutes(5)} = options;
         steps.push({ name: 'waitFor', options: { duration } });
       }
       agent.steps = steps;

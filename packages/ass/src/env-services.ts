@@ -15,8 +15,6 @@ export interface IEnvServices {
   walk: IOsrm;
   /** Agent lookup */
   agents: { [id: string]: IAgent };
-  /** Group lookup */
-  groups: { [id: string]: IGroup };
   /** Available plans */
   plans: { [plan: string]: IPlan };
   /** Available steps i.e. basic components that make up a plan, e.g. go to location */
