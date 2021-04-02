@@ -170,7 +170,10 @@
       "source": "group.json",
       "style": {
         "type": "circle",
-        "icon": "https://img.icons8.com/windows/24/000000/group-foreground-selected.png",
+        "text-field": [
+          "get",
+          "features.properties.tags.number_of_members"
+        ],
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {

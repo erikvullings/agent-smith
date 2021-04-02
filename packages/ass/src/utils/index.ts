@@ -136,7 +136,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
   children: agent.group,
   tags: {
     agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
-    number_of_members: agent.nomembers ? String(agent.nomembers): '',
+    number_of_members: agent.group ? String(agent.group.length): '',
     members: agent.group ? agent.group.join(', ') : '',
   },
 });
@@ -160,7 +160,7 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
     },
     tags: {
       agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
-      number_of_members: agent.nomembers ? String(agent.nomembers): '',
+      number_of_members: agent.group ? String(agent.group.length): '',
       members: agent.group ? agent.group.join(', ') : '',
     },
   },

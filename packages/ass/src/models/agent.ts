@@ -2,12 +2,14 @@ import { IOsrmRouteStep } from 'osrm-rest-client';
 import { ActivityList } from '.';
 import { ILocation } from './location';
 
-export type TransportType = 'car' | 'bicycle';
+export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
+
+export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group';
 
 export interface IAgent {
   id: string;
   /** Type of agent */
-  type: 'man' | 'woman' | 'boy' | 'girl' | TransportType;
+  type: AgentType | TransportType;
   /** Status of the agent */
   status: 'active' | 'walking' | 'cycling' | 'driving';
   /** Actual location as [lon, lat] */
@@ -36,8 +38,6 @@ export interface IAgent {
   memberOf?: string;
   /** IDs of the members, e.g. the people inside a car or the children of a parent. */
   group?: string[];
-  /** number of members in the group */
-  nomembers?: number;
   /** Items that the agent owns, e.g. a car or bicycle. */
   owns?: Array<{
     /** Type of object that the agent owns, e.g. car or bicyle */
