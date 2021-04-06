@@ -13,65 +13,45 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   }
   const { _day: day } = agent;
   const activities = {
-    'work': () => {
-      return [
+    'work': () => [
         { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
         { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
         { name: 'Have lunch', options: { priority: 2 } },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
-      ];
-    },
-    'go home': () =>  [
-        { name: 'Go home', options: { priority: 3 } },
-      ],
-    'shop': () => {
-      return [
+        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } }],
+    'go home': () => [
+        { name: 'Go home', options: { priority: 3 } }],
+    'shop': () => [
         { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
         { name: 'Shop', options: { duration: hours(0, 1) }, priority: 2 },
-        { name: 'Go to other shops', options: { priority: 3 } },
-      ];
-    },
-    'wander': function () {
-      return [
+        { name: 'Go to other shops', options: { priority: 3 } }],
+    'wander': () => [
         //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-        { name: 'Wander', options: { priority: 3 } },
-      ];
-    },
-    'doctor_visit': function () {
-      return [
+        { name: 'Wander', options: { priority: 3 } }],
+    'doctor_visit': () => [
         { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
-        { name: 'GetExamined', options: { duration: hours(0, 5) } },
-      ];
-    },
-    'release_at_location': function () {
-      return [
+        { name: 'GetExamined', options: { duration: hours(0, 5) } }],
+    'release_at_location': () => [
         { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'Release' },
-        { name: 'Go home' },
-      ];}
+        { name: 'Go home' }]
   };
 
   const agentAgendas = {
-    'work': function () {
-      return Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]);
+    'work': () => 
+       Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]),
       //return [activities['work'](),activities['go home']()];
-    },
-    'learn': function () {
-      return Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]);
-    },
-    'wander': function () {
-      return Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]);
-    },
-    null: function () {
-      return Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]);
-    },
+    'learn': () => 
+      Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]),
+    'wander': () => 
+      Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]),
+    null: () => 
+      Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()])
   };
 
   if(agent.occupations != undefined && agent.occupations.length != 0){
     return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
   }
   else{
-    //var test1 = agentAgendas['null']();
     return agentAgendas['work']()  }
   }
 
