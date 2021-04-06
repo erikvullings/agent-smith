@@ -69,12 +69,21 @@ export const envServices = ({
     /** Empty object with locations */
     locations: {},
     /** Approximate distance function in meters */
-    distance: simplifiedDistanceFactory(),
+    distance: simplifiedDistanceFactory()
   } as IEnvServices;
 };
 
-const createAgenda = async (agent: IAgent | IGroup, services: IEnvServices) => {
-  agent.agenda = agendas.getAgenda(agent, services);
+const createAgenda = async (agent: IAgent, services: IEnvServices) => {
+
+  // const customAgIndex = simConfig.customAgendas.findIndex(el => el.agentIds[0] === agent.id);
+  // console.log(customAgIndex);
+  // if (customAgIndex > -1) {
+  //   //console.log(simConfig.customAgendas[customAgIndex].agendaItems)
+  //   agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
+  // }
+  // else{
+    agent.agenda = agendas.getAgenda(agent, services);
+  //}
 };
 
 export const executeSteps = async (

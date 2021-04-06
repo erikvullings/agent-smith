@@ -18,7 +18,8 @@
     "@turf/helpers": "^6.3.0",
     "node-test-bed-adapter": "^2.0.8",
     "osrm-rest-client": "^0.1.6",
-    "test-bed-schemas": "^0.3.8"
+    "test-bed-schemas": "^0.3.8",
+    "ioredis": "^4.24.2"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",

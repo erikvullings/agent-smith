@@ -1,0 +1,55 @@
+{
+    "settings": {
+        "agentCount": 10,
+        "center_coord": [5.476543, 51.440208],
+        "radius": 10000
+    },
+    "customAgents": [
+        {
+            "id": "e6c8d80b-cdf6-44e1-b0e4-bec8a9a49378",
+            "type": "man",
+            "status": "active",
+            "owns": [{ "type": "car", "id": "car1" }],
+            "home": {"type": "home", "coord": [5.496994, 51.468701]},
+            "actual": {"type": "home", "coord": [5.496994, 51.468701]},
+            "occupations": [{ "type": "work", "id": "tue_innovation_forum"}]
+        },
+        {
+            "id": "f97a0292-ca8e-45ed-b9f3-c49431f755ca",
+            "type": "man",
+            "status": "active",
+            "owns": [{ "type": "bicycle", "id": "bicycle1" }],
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "home", "coord": [5.521275, 51.448302]},
+            "occupations": [{ "type": "work", "id": "h_m_shop"}]
+        },
+        {
+            "id": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "man",
+            "status": "active",
+            "owns": [{ "type": "car", "id": "car2" }],
+            "home": {"type": "home", "coord": [5.499309, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "occupations": [{ "type": "work", "id": "ziekenhuis"}]
+        },
+        {
+            "id": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "man",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499309, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "occupations": [{ "type": "wander", "id": "park"}]
+        }
+    ],
+    "customAgendas": [
+        {
+            "agentIds": ["51bc0240-d4fb-4a2e-a548-d3e32aa3037b"],
+            "agendaItems": [
+                { "name": "Go to the park", "options" : {}},
+                { "name": "Wander" },
+                { "name": "Go home" }
+            ] 
+        }
+    ]
+}
+

@@ -7,6 +7,7 @@ export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
 export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' ;
 
 export interface IAgent {
+   /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ 
   id: string;
   /** Type of agent */
   type: AgentType | TransportType;
@@ -23,7 +24,14 @@ export interface IAgent {
   /** ID of work address */
   occupations?: Array<{
     /** Type of occupation, e.g. work, shop, learn */
-    type: 'work' | 'shop' | 'wander' | 'doctor_visit' | string;
+    type: 'work' | 'learn' | 'shop' | 'wander' | 'doctor_visit' | string;
+    /** Id of the location where the occupation takes place */
+    id: string;
+  }>;
+  /** ID of task address */
+  activities?: Array<{
+    /** Type of occupation, e.g. work, shop, learn */
+    type: 'work' | 'learn' | 'shop' | 'wander' | 'doctor_visit' | string;
     /** Id of the location where the occupation takes place */
     id: string;
   }>;

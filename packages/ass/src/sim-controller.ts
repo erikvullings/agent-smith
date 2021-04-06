@@ -3,6 +3,9 @@ import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { IGroup } from './models/group';
+import { redisServices } from './services';
+import * as jsonSimConfig from "./sim_config.json"
+import { ISimConfig } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -18,7 +21,11 @@ export const simController = async (
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
-    const agents = [] as IAgent[];
+    const simConfig = jsonSimConfig as ISimConfig;
+    const agents : Array<IAgent> = simConfig.customAgents;
+
+    console.log(agents)
+
     let currentSpeed = simSpeed;
     let currentTime = startTime;
 
@@ -70,6 +77,10 @@ export const simController = async (
       park: {
         type: 'park',
         coord: [5.497535, 51.441965],
+      },
+      'station': {
+        type: 'station',
+        coord: [5.479549, 51.443012],
       }
     };
 
@@ -227,9 +238,52 @@ export const simController = async (
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
+    // const car = {
+    //   id: 'car1',
+    //   type: 'car',
+    //   status: 'active',
+    //   actual: {
+    //     type: 'home',
+    //     coord: (
+    //       await services.drive.nearest({
+    //         coordinates: [services.locations['Firmamentlaan 5'].coord],
+    //       })
+    //     ).waypoints[0].location,
+    //   },
+    // } as IAgent;
 
-    const agentCount = 0;
-    const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
+    // const car2 = {
+    //   id: 'car2',
+    //   type: 'car',
+    //   status: 'active',
+    //   actual: {
+    //     type: 'home',
+    //     coord: (
+    //       await services.drive.nearest({
+    //         coordinates: [services.locations['Antoon Derkinderenstraat 17'].coord],
+    //       })
+    //     ).waypoints[0].location,
+    //   },
+    // } as IAgent;
+
+    // const bicycle = {
+    //   id: 'bicycle1',
+    //   type: 'bicycle',
+    //   status: 'active',
+    //   actual: {
+    //     type: 'home',
+    //     coord: (
+    //       await services.cycle.nearest({
+    //         coordinates: [services.locations['Monarchstraat 52'].coord],
+    //       })
+    //     ).waypoints[0].location,
+    //   },
+    // } as IAgent;
+
+
+
+    const agentCount = simConfig.settings.agentCount;
+    const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
     agents.push(white1, blue1, red1, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
@@ -239,7 +293,36 @@ export const simController = async (
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
+    
+    await redisServices.geoAddBatch('agents', agents);
 
+    const intervalObj = setInterval(async () => {
+       let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
+      // console.log(testArr);
+      //var t2 = performance.now()
+
+      const random = Math.floor(Math.random() * testArr.length);
+      var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
+
+      console.log("random agenda",agentRand.agenda)
+
+      if(agentRand.agenda != undefined && 1 < agentRand.agenda[1].options?.priority){
+        console.log("i am innnnnn")
+        agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
+        console.log(agentRand.agenda)
+      }
+     // console.log("random agent",agentRand);
+      //let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
+      //console.log("response",resp);
+
+      // if(resp.length > 0) {
+      //     console.log("chosen agents is: " , resp[0])
+      // }
+
+      //var t3 = performance.now()
+      //console.log("interval took " + (t3 - t2) + " milliseconds.")
+    }, 30000);
+      
     let i = 0;
     while (i < 10000000) {
       agentstoshow = [];

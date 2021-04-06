@@ -1,5 +1,6 @@
 import { IAgent, IGroup, ILocation } from '../models';
 import { IItem } from 'test-bed-schemas';
+import { redisServices } from '../services';
 
 
 /**
@@ -123,6 +124,7 @@ const day = now.getDate();
 /** Create a date relative to today */
 export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
   new Date(year, month, day + days, hours, minutes, seconds);
+  
 
 
 /** Convert agent to entity item */
@@ -236,9 +238,9 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number) => {
-  const offset = () => random(-10000, 10000) / 100000;
-  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park'| 'school') =>
+export const generateAgents = (lng: number, lat: number, count: number, radius: number) => {
+  const offset = () => random(-radius, radius) / 100000;
+  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park' | 'school') =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
@@ -255,61 +257,72 @@ export const generateAgents = (lng: number, lat: number, count: number) => {
     const home = homes[randomItem(homeIds)];
     const occupationId = randomItem(occupationIds);
     const occupation = occupations[occupationId];
-    const  r= randomInRange(0, 1);
-    if(r < 0.4){
-      const agent = {
-        id: uuid4(),
-        type: 'man',
-        status: 'active',
-        home,
-        // owns: [{ type: 'car', id: 'car1' }],
-        actual: home,
-        occupations: [{ id: occupationId, ...occupation }],
-      } as IAgent;
-      acc.push(agent);
-    }
-    else if (r < 0.8){
-      const occupationId = randomItem(occupationIds);
-      const occupation = occupations[occupationId];
-      const agent = {
-        id: uuid4(),
-        type: 'woman',
-        status: 'active',
-        home,
-        // owns: [{ type: 'car', id: 'car1' }],
-        actual: home,
-        occupations: [{ id: occupationId, ...occupation }],
-      } as IAgent;
-      acc.push(agent);
-    }
-    else if (r < 0.9){
-      const schoolId = randomItem(schoolIds);
-      const school = occupations[schoolId];
-      const agent = {
-        id: uuid4(),
-        type: 'boy',
-        status: 'active',
-        home,
-        // owns: [{ type: 'car', id: 'car1' }],
-        actual: home,
-        occupations: [{ id: schoolId, ...school }],
-      } as IAgent;
-      acc.push(agent);
-    }
-    else {
-      const schoolId = randomItem(schoolIds);
-      const school = occupations[schoolId];
-      const agent = {
-        id: uuid4(),
-        type: 'girl',
-        status: 'active',
-        home,
-        // owns: [{ type: 'car', id: 'car1' }],
-        actual: home,
-        occupations: [{ id: schoolId, ...school }],
-      } as IAgent;
-      acc.push(agent);
-    }
+    // const  r= randomInRange(0, 1);
+    // if(r < 0.4){
+    //   const agent = {
+    //     id: uuid4(),
+    //     type: 'man',
+    //     status: 'active',
+    //     home,
+    //     // owns: [{ type: 'car', id: 'car1' }],
+    //     actual: home,
+    //     occupations: [{ id: occupationId, ...occupation }],
+    //   } as IAgent;
+    //   acc.push(agent);
+    // }
+    // else if (r < 0.8){
+    //   const occupationId = randomItem(occupationIds);
+    //   const occupation = occupations[occupationId];
+    //   const agent = {
+    //     id: uuid4(),
+    //     type: 'woman',
+    //     status: 'active',
+    //     home,
+    //     // owns: [{ type: 'car', id: 'car1' }],
+    //     actual: home,
+    //     occupations: [{ id: occupationId, ...occupation }],
+    //   } as IAgent;
+    //   acc.push(agent);
+    // }
+    // else if (r < 0.9){
+    //   const schoolId = randomItem(schoolIds);
+    //   const school = occupations[schoolId];
+    //   const agent = {
+    //     id: uuid4(),
+    //     type: 'boy',
+    //     status: 'active',
+    //     home,
+    //     // owns: [{ type: 'car', id: 'car1' }],
+    //     actual: home,
+    //     occupations: [{ id: schoolId, ...school }],
+    //   } as IAgent;
+    //   acc.push(agent);
+    // }
+    // else {
+    //   const schoolId = randomItem(schoolIds);
+    //   const school = occupations[schoolId];
+    //   const agent = {
+    //     id: uuid4(),
+    //     type: 'girl',
+    //     status: 'active',
+    //     home,
+    //     // owns: [{ type: 'car', id: 'car1' }],
+    //     actual: home,
+    //     occupations: [{ id: schoolId, ...school }],
+    //   } as IAgent;
+    //   acc.push(agent);
+    // }
+    const agent = {
+      id: uuid4(),
+      type: 'man',
+      status: 'active',
+      home,
+      // owns: [{ type: 'car', id: 'car1' }],
+      actual: home,
+      occupations: [{ id: occupationId, ...occupation }],
+    } as unknown as IAgent;
+    acc.push(agent);
+    redisServices.geoAdd('agents', agent);
     return acc;
   }, [] as IAgent[]);
   return { agents, locations: Object.assign({}, homes, occupations) };
