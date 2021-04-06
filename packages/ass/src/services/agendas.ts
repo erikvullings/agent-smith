@@ -53,8 +53,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
 
   const agentAgendas = {
     'work': function () {
-      //return Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]);
-      return [activities['work'](),activities['go home']()];
+      return Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]);
+      //return [activities['work'](),activities['go home']()];
     },
     'learn': function () {
       return Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]);
