@@ -12,23 +12,21 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
   }
   const { _day: day } = agent;
   const activities = {
-    'work': function () {
+    'work': () => {
       return [
-        { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
-        { name: 'Have lunch', options: { priority: 3 } },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
+        { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Have lunch', options: { priority: 2 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
       ];
     },
-    'go home': function () {
-      return [
+    'go home': () =>  [
         { name: 'Go home', options: { priority: 3 } },
-      ];
-    },
-    'shop': function () {
+      ],
+    'shop': () => {
       return [
-        { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-        { name: 'Shop', options: { duration: hours(0, 1) }, priority: 3 },
+        { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
+        { name: 'Shop', options: { duration: hours(0, 1) }, priority: 2 },
         { name: 'Go to other shops', options: { priority: 3 } },
       ];
     },
@@ -43,21 +41,13 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
         { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
         { name: 'GetExamined', options: { duration: hours(0, 5) } },
       ];
-    },
-    'default': function () {
-      return [
-        { name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
-        { name: 'Work', options: { duration: hours(3, 5) } },
-        { name: 'Have lunch' },
-        { name: 'Work', options: { duration: hours(3, 5) } },
-        { name: 'Go home' },
-      ];
     }
   };
 
   const agentAgendas = {
     'work': function () {
-      return Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]);
+      //return Array.prototype.concat.apply([], [activities['work'](), activities['go home'](),activities['wander']()]);
+      return [activities['work'](),activities['go home']()];
     },
     'learn': function () {
       return Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]);
@@ -76,7 +66,6 @@ function getAgenda(agent: IAgent, _services: IEnvServices) {
     //var test1 = agentAgendas['null']();
     return agentAgendas['work']()  }
   }
-
 
 function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: number) {
   if (typeof agent._day === 'undefined') {

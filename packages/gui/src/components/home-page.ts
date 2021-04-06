@@ -1,5 +1,6 @@
-import m from 'mithril';
+import m, { mount } from 'mithril';
 import { Dashboards, MeiosisComponent } from '../services';
+
 
 export const HomePage: MeiosisComponent = () => {
   return {
@@ -15,7 +16,6 @@ export const HomePage: MeiosisComponent = () => {
         return m("main", [
             m("button", "Test"),
             m("button", "A button"),
-
         ])
 
       //return m('.home-page', m('div', 'HOMEPAGE'));

@@ -163,7 +163,6 @@ export const simController = async (
 
       //var t3 = performance.now()
       //console.log("interval took " + (t3 - t2) + " milliseconds.")
-
     }, 30000);
       
     let i = 0;
