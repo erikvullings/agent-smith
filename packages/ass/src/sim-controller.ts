@@ -73,6 +73,8 @@ export const simController = async (
       }
     };
 
+    /** Agents with transporttypes */
+
     // const agent1 = {
     //   id: 'agent 1',
     //   type: 'man',
@@ -98,7 +100,7 @@ export const simController = async (
     //   },
     // } as IAgent;
 
-       // const car = {
+    // const car = {
     //   id: 'car1',
     //   type: 'car',
     //   status: 'active',
@@ -138,135 +140,60 @@ export const simController = async (
     // } as IAgent;
 
 
-    const agentx = {
-      id: 'agent x',
-      type: 'man',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'shop', id: 'h_m_shop'  }],
-      memberOf: 'group2'
-    } as IAgent;
+    /** Agents in groups */
 
-    const agenty = {
-      id: 'agent y',
-      type: 'man',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-      memberOf: 'group2'
-    } as IAgent;
+    // const agentx = {
+    //   id: 'agent x',
+    //   type: 'man',
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'shop', id: 'h_m_shop'  }],
+    //   memberOf: 'group2'
+    // } as IAgent;
 
-    const agenta = {
-      id: 'agenta',
-      type: 'man',
-      status: 'active',
-      home: services.locations['Monarchstraat 52'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'shop', id: 'h_m_shop'  }],
-      memberOf: 'group2'
-    } as IAgent;
+    // const agenty = {
+    //   id: 'agent y',
+    //   type: 'man',
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
+    //   memberOf: 'group2'
+    // } as IAgent;
 
-    const agentshop = {
-      id: 'agentshop',
-      type: 'woman',
-      status: 'active',
-      home: services.locations['Monarchstraat 52'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'shop', id: 'h_m_shop'  }]
-    } as IAgent;
+    // const agenta = {
+    //   id: 'agenta',
+    //   type: 'man',
+    //   status: 'active',
+    //   home: services.locations['Monarchstraat 52'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'shop', id: 'h_m_shop'  }],
+    //   memberOf: 'group2'
+    // } as IAgent;
 
+    // const group2 = {
+    //   id: 'group2',
+    //   type: 'group',
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'release_at_location', id: 'ziekenhuis' }],
+    //   group: ['agent x', 'agenta', 'agent y'],
+    // } as IGroup;
 
+    // const group1 = {
+    //   id: 'group1',
+    //   type: 'group',
+    //   status: 'active',
+    //   force: 'blue',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'shop', id: 'h_m_shop' }],
+    //   memberOf: 'group2',
+    // } as IGroup;
 
-    const agent3 = {
-      id: 'agent 3',
-      type: 'man',
-      status: 'active',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-      relations: [{type:'family', id:'fam1'}] ,
-      group: ['child2'],
-      memberOf: 'group2',
-    } as IAgent;
-
-    const woman1 = {
-      id: 'woman1',
-      type: 'woman',
-      status: 'active',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-      relations: [{type:'family', id:'fam1'}] ,
-    } as IAgent;
-
-    const group2 = {
-      id: 'group2',
-      type: 'group',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'release_at_location', id: 'ziekenhuis' }],
-      group: ['agent x', 'agenta', 'agent y'],
-    } as IGroup;
-
-    const group1 = {
-      id: 'group1',
-      type: 'group',
-      status: 'active',
-      force: 'blue',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-      memberOf: 'group2',
-    } as IGroup;
-
-
-   const agent4 = {
-     id: 'agent4',
-     type: 'man',
-     status: 'active',
-     owns: [{ type: 'car', id: 'car2' }],
-     home: services.locations['Antoon Derkinderenstraat 17'],
-     actual: services.locations['Antoon Derkinderenstraat 17'],
-     occupations: [{ type: 'doctor_visit', id: 'ziekenhuis' }],
-     relations: [{type:'family', id:'fam1'}] ,
-     group: ['child1']
-    } as IAgent;
-
-    const child1 = {
-      id: 'child1',
-      type: 'boy',
-      status: 'active',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      relations: [{type:'family', id:'fam1'}] ,
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-      memberOf: 'agent4',
-    } as IAgent;
-
-    const child2 = {
-      id: 'child2',
-      type: 'girl',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      relations: [{type:'family', id:'fam1'}] ,
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-      memberOf: 'agent3'
-    } as IAgent;
-
-    const child3 = {
-      id: 'child3',
-      type: 'girl',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      relations: [{type:'family', id:'fam1'}] ,
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
-    } as IAgent;
-
+    /** Agents in force */
     const white1 = {
       id: 'white1',
       type: 'man',
@@ -303,7 +230,7 @@ export const simController = async (
 
     const agentCount = 0;
     const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
-    agents.push(group1, group2, agenta, agentx, agenty, ...generatedAgents);
+    agents.push(white1, blue1, red1, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
@@ -315,11 +242,11 @@ export const simController = async (
 
     let i = 0;
     while (i < 10000000) {
-      await Promise.all(
-        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
-      );
       agentstoshow = [];
       agents.filter((a) => !a.memberOf && !(a.type == 'group' && !a.group)).map((a) => agentstoshow.push(a)),
+      await Promise.all(
+      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
+      );
       updateTime();
       await sleep(100);
       i % 5 === 0 && notifyOthers();

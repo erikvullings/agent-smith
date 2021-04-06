@@ -208,7 +208,7 @@ export const plans = {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       if(agent.group){
-        const {release = agent.group, duration = minutes(5)} = options;
+        const {release = agent.group, duration = minutes(1)} = options;
         for (let i of release){
           const member = _services.agents[i];
           delete member.memberOf;
@@ -217,7 +217,7 @@ export const plans = {
         steps.push({ name: 'waitFor', options: { duration } });
       }
       else{
-        const {duration = minutes(5)} = options;
+        const {duration = minutes(1)} = options;
         steps.push({ name: 'waitFor', options: { duration } });
       }
       agent.steps = steps;

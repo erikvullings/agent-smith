@@ -134,6 +134,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
     latitude: agent.actual.coord[1],
   },
   children: agent.group,
+  force: agent.force ? agent.force: "white" ,
   tags: {
     agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
     number_of_members: agent.group ? String(agent.group.length): '',
@@ -154,6 +155,7 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
     id: agent.id,
     type: agent.type,
     children: agent.group,
+    force: agent.force ? agent.force: "white" ,
     location: {
       longitude: agent.actual.coord[0],
       latitude: agent.actual.coord[1],

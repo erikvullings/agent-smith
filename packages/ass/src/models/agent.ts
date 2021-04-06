@@ -4,7 +4,7 @@ import { ILocation } from './location';
 
 export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
 
-export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group';
+export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' ;
 
 export interface IAgent {
   id: string;
