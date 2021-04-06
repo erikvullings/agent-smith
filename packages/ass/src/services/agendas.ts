@@ -68,7 +68,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   };
 
   if(agent.occupations != undefined && agent.occupations.length != 0){
-    return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  }
+    return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
+  }
   else{
     //var test1 = agentAgendas['null']();
     return agentAgendas['work']()  }

@@ -24,7 +24,7 @@ export const simController = async (
     const simConfig = jsonSimConfig as ISimConfig;
     const agents : Array<IAgent> = simConfig.customAgents;
 
-    console.log(agents)
+    console.log("adapter",agents)
 
     let currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -212,7 +212,7 @@ export const simController = async (
       force: 'white',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
+      occupations: [{ type: 'work', id: 'h_m_shop' }],
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
@@ -223,7 +223,7 @@ export const simController = async (
       force: 'blue',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
+      occupations: [{ type: 'work', id: 'h_m_shop' }],
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
@@ -234,7 +234,7 @@ export const simController = async (
       force: 'red',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'shop', id: 'h_m_shop' }],
+      occupations: [{ type: 'work', id: 'h_m_shop' }],
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
