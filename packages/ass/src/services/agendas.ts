@@ -57,11 +57,10 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'guard': () => [
       //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-      [{ name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
-      [{ name: 'Guard', options: { duration: hours(3, 5), priority: 1 } },
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },{ name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },{ name: 'Guard', options: { duration: hours(3, 5), priority: 1 } },
       { name: 'Have lunch', options: { priority: 2 } },
       { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
-
     ],
     'release_at_location': () => [
       { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
@@ -81,12 +80,18 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       Array.prototype.concat.apply([], [activities['shop'](),(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
       activities['go home']()]),
     ],
-    'learn': () => 
+    'learn': () => [
       Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]),
-    'wander': () => 
+    ],
+    'wander': () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]),
-     null: () => 
+    ],
+    'guard': () => [
+      Array.prototype.concat.apply([], [blueActivities['guard']()[randomIntInRange(0,blueActivities["guard"]().length-1)], activities['go home']()]),
+    ],
+     null: () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()])
+     ]
   };
 
   const agentAgendas = {
@@ -97,6 +102,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations["learn"]())[randomIntInRange(0,activities["work"]().length-1)], 
     'wander': () => 
       (agendaVariations["wander"]())[randomIntInRange(0,activities["work"]().length-1)], 
+    'guard': () => 
+      (agendaVariations["guard"]())[randomIntInRange(0,blueActivities["guard"]().length-1)], 
     null: () => 
       (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
   };
@@ -116,7 +123,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       } 
     case 'blue': { 
       //statements; 
-      return agentAgendas['work']()    
+      console.log("blue agenda",agentAgendas['guard']()  )
+      return agentAgendas['guard']()    
     } 
     default: { 
       if(agent.occupations != undefined && agent.occupations.length != 0){
