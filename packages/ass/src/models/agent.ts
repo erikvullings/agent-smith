@@ -16,7 +16,7 @@ export interface IAgent {
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
-  force?: 'white'|'red'|'blue';
+  force: 'white'|'red'|'blue';
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */

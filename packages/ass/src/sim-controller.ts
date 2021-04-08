@@ -306,8 +306,7 @@ export const simController = async (
 
       console.log("random agenda",agentRand.agenda)
 
-      if(agentRand.agenda != undefined && 1 < agentRand.agenda[1].options?.priority){
-        console.log("i am innnnnn")
+      if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
         agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
         console.log(agentRand.agenda)
       }

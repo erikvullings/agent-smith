@@ -173,6 +173,8 @@ export const plans = {
 
   Shop: { prepare: waitFor },
 
+  Guard: { prepare: waitFor },
+
   GetExamined: { prepare: waitFor },
 
 

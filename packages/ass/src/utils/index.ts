@@ -315,6 +315,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     const agent = {
       id: uuid4(),
       type: 'man',
+      force: 'white',
       status: 'active',
       home,
       // owns: [{ type: 'car', id: 'car1' }],

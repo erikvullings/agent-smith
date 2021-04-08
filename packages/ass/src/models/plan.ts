@@ -20,6 +20,13 @@ export interface IActivityOptions {
   priority?: 1 | 2 | 3;
 }
 
+export type IAgentActivities =  Array<IAgentActivity>;
+
+export interface IAgentActivity {
+  [key : string]: Array<ActivityList>;
+};
+
+
 /** A typical step that can be executed. When the step returns true, it signals completion. */
 export type Activity = (agent: IAgent | IGroup, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 

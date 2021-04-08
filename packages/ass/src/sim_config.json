@@ -8,6 +8,7 @@
         {
             "id": "e6c8d80b-cdf6-44e1-b0e4-bec8a9a49378",
             "type": "man",
+            "force": "white",
             "status": "active",
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.496994, 51.468701]},
@@ -17,6 +18,7 @@
         {
             "id": "f97a0292-ca8e-45ed-b9f3-c49431f755ca",
             "type": "man",
+            "force": "white",
             "status": "active",
             "owns": [{ "type": "bicycle", "id": "bicycle1" }],
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
@@ -26,6 +28,7 @@
         {
             "id": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "type": "man",
+            "force": "white",
             "status": "active",
             "owns": [{ "type": "car", "id": "car2" }],
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
@@ -35,6 +38,7 @@
         {
             "id": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "type": "man",
+            "force": "white",
             "status": "active",
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
