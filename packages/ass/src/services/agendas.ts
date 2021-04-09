@@ -25,12 +25,14 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Work', options: { duration: hours(3, 5), priority: 1 } }],
     ],
     'go home': () => [
-      { name: 'Go home', options: { priority: 3 } }
+      [{ name: 'Go home', options: { priority: 3 } }]
     ],
     'shop': () => [
-      { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
+      [{ name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } },
-      { name: 'Go to other shops', options: { priority: 3 } }
+      { name: 'Go to other shops', options: { priority: 3 } }],
+      [{ name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
+      { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } }],
     ],
     'wander': () => [
       //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
@@ -42,8 +44,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'release_at_location': () => [
       { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
-      { name: 'Release' },
-      { name: 'Go home' }
+      { name: 'Release' }
     ]
   };
 
@@ -74,20 +75,20 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       Array.prototype.concat.apply([], [(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
       activities['go home'](),activities['wander']()]),
       Array.prototype.concat.apply([], [(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
-      activities['shop'](),activities['go home']()]),
+      activities['shop']()[randomIntInRange(0,activities["shop"]().length-1)],activities['go home']()]),
       Array.prototype.concat.apply([], [(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
       activities['wander'](),activities['go home']()]),
-      Array.prototype.concat.apply([], [activities['shop'](),(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
+      Array.prototype.concat.apply([], [activities['shop']()[randomIntInRange(0,activities["shop"]().length-1)],(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
       activities['go home']()]),
     ],
     'learn': () => [
-      Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]),
+      Array.prototype.concat.apply([], [activities['work']()[randomIntInRange(0,activities["work"]().length-1)], activities['wander'](), activities['go home']()]),
     ],
     'wander': () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]),
     ],
     'guard': () => [
-      Array.prototype.concat.apply([], [blueActivities['guard']()[0], activities['go home']()]),
+      Array.prototype.concat.apply([], [blueActivities['guard']()[randomIntInRange(0,blueActivities["guard"]().length-1)], activities['go home']()]),
     ],
     'release_at_location': () => [
       Array.prototype.concat.apply([], [activities['release_at_location']()[randomIntInRange(0,activities["release_at_location"]().length-1)], activities['go home']()]),
@@ -108,7 +109,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'release_at_location': () => 
       (agendaVariations["release_at_location"]())[0], 
     'guard': () => 
-      (agendaVariations["guard"]())[0], 
+      (agendaVariations["guard"]())[randomIntInRange(0,blueActivities["guard"]().length-1)], 
     null: () => 
       (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
   };
@@ -147,15 +148,6 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     } 
  } 
  
-  // console.log("force", agent.force)
-  // if(agent.occupations != undefined && agent.occupations.length != 0){
-  //   console.log(agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]() )
-  //   return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
-  // }
-  // else{
-  //   return agentAgendas['work']()  }
-  // }
-
 function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: number) {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;

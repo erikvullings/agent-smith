@@ -43,6 +43,24 @@
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "wander", "id": "park"}]
+        },
+        {
+            "id": "78bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "man",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "home", "coord": [5.521275, 51.448302]},
+            "occupations": [{ "type": "work", "id": "park"}]
+        },
+        {
+            "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "woman",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499555, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499555, 51.437832]},
+            "occupations": [{ "type": "work", "id": "park"}]
         }
     ],
     "customAgendas": [
