@@ -87,7 +87,10 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]),
     ],
     'guard': () => [
-      Array.prototype.concat.apply([], [blueActivities['guard']()[randomIntInRange(0,blueActivities["guard"]().length-1)], activities['go home']()]),
+      Array.prototype.concat.apply([], [blueActivities['guard']()[0], activities['go home']()]),
+    ],
+    'release_at_location': () => [
+      Array.prototype.concat.apply([], [activities['release_at_location']()[randomIntInRange(0,activities["release_at_location"]().length-1)], activities['go home']()]),
     ],
      null: () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()])
@@ -102,16 +105,22 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations["learn"]())[randomIntInRange(0,activities["work"]().length-1)], 
     'wander': () => 
       (agendaVariations["wander"]())[randomIntInRange(0,activities["work"]().length-1)], 
+    'release_at_location': () => 
+      (agendaVariations["release_at_location"]())[0], 
     'guard': () => 
-      (agendaVariations["guard"]())[randomIntInRange(0,blueActivities["guard"]().length-1)], 
+      (agendaVariations["guard"]())[0], 
     null: () => 
       (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
   };
 
+  if(agent.memberOf != null){
+    return agentAgendas['release_at_location']();
+  }
+  else {
   switch(agent.force) { 
     case 'white': { 
       if(agent.occupations != undefined && agent.occupations.length != 0){
-        console.log(agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]() )
+        //console.log(agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]() )
         return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
       }
       else{
@@ -123,7 +132,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       } 
     case 'blue': { 
       //statements; 
-      console.log("blue agenda",agentAgendas['guard']()  )
+      //console.log("blue agenda",agentAgendas['guard']()  )
       return agentAgendas['guard']()    
     } 
     default: { 
@@ -134,6 +143,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       else{
         return agentAgendas['work']()  }
       }
+    } 
     } 
  } 
  

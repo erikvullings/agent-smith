@@ -125,17 +125,14 @@ export const plans = {
 
   'Go to the location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-      if (!agent.occupations) {
-        return true;
+      const steps = [] as ActivityList;
+      const anyLocation = randomIntInRange(2,5) 
+      for(let i = 0; i < anyLocation; i +=1) {
+        const {destination = randomPlaceNearby(agent, 300, 'any')} = options;
+        agent.destination = destination;
+        steps.push({ name: 'walkTo', options: { destination } });
       }
-      const occupations = agent.occupations.filter((o) => o.type === 'release_at_location');
-      if (occupations.length > 0) {
-        const { destination } = options;
-        const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-        agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services, options);
-      }
+      agent.steps = steps;
       return true;
     },
   },
