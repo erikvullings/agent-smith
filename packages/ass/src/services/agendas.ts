@@ -4,7 +4,6 @@ import { simTime, hours, minutes, randomInRange, randomIntInRange} from '../util
 import { IEnvServices } from '../env-services';
 import * as simConfig from "../sim_config.json";
 
-
 function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;
@@ -25,14 +24,14 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Work', options: { duration: hours(3, 5), priority: 1 } }],
     ],
     'go home': () => [
-      [{ name: 'Go home', options: { priority: 3 } }]
+      { name: 'Go home', options: { priority: 3 } }
     ],
     'shop': () => [
       [{ name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } },
       { name: 'Go to other shops', options: { priority: 3 } }],
       [{ name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
-      { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } }],
+      { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } }]
     ],
     'wander': () => [
       //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
@@ -50,11 +49,17 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
 
   const blueActivities = {
     'go home': () => [
-      { name: 'Go home', options: { priority: 3 } }
+      { name: 'Go home', options: { priority: 3 }}
     ],
     'wander': () => [
       //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
       { name: 'Wander', options: { priority: 1 } }
+    ],
+    'patrol': () => [
+      //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
+      [{ name: 'Patrol', options: { priority: 1 } },
+      { name: 'Patrol', options: { priority: 1 } },
+      { name: 'Patrol', options: { priority: 1 } }]
     ],
     'guard': () => [
       //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
@@ -87,8 +92,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'wander': () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]),
     ],
-    'guard': () => [
+    'police': () => [
       Array.prototype.concat.apply([], [blueActivities['guard']()[randomIntInRange(0,blueActivities["guard"]().length-1)], activities['go home']()]),
+      Array.prototype.concat.apply([], [blueActivities['patrol']()[randomIntInRange(0,blueActivities["patrol"]().length-1)], activities['go home']()]),
     ],
     'release_at_location': () => [
       Array.prototype.concat.apply([], [activities['release_at_location']()[randomIntInRange(0,activities["release_at_location"]().length-1)], activities['go home']()]),
@@ -100,18 +106,17 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
 
   const agentAgendas = {
     'work': () => 
-      (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
-      //return [activities['work'](),activities['go home']()];
+      (agendaVariations["work"]())[randomIntInRange(0,agendaVariations["work"]().length-1)], 
     'learn': () => 
-      (agendaVariations["learn"]())[randomIntInRange(0,activities["work"]().length-1)], 
+      (agendaVariations["learn"]())[randomIntInRange(0,agendaVariations["learn"]().length-1)], 
     'wander': () => 
-      (agendaVariations["wander"]())[randomIntInRange(0,activities["work"]().length-1)], 
+      (agendaVariations["wander"]())[randomIntInRange(0,agendaVariations["wander"]().length-1)], 
     'release_at_location': () => 
       (agendaVariations["release_at_location"]())[0], 
-    'guard': () => 
-      (agendaVariations["guard"]())[randomIntInRange(0,blueActivities["guard"]().length-1)], 
+    'police_duty': () => 
+      (agendaVariations["police"]())[randomIntInRange(0,agendaVariations["police"]().length-1)], 
     null: () => 
-      (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
+      (agendaVariations["work"]())[randomIntInRange(0,agendaVariations["work"]().length-1)], 
   };
 
   if(agent.memberOf != null){
@@ -128,13 +133,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
         return agentAgendas['work']()  }
       }
     case 'red': { 
-       //statements; 
        return agentAgendas['work']()      
       } 
     case 'blue': { 
-      //statements; 
-      //console.log("blue agenda",agentAgendas['guard']()  )
-      return agentAgendas['guard']()    
+      console.log("blue agenda",agentAgendas['police_duty']()  )
+      return agentAgendas['police_duty']()    
     } 
     default: { 
       if(agent.occupations != undefined && agent.occupations.length != 0){
