@@ -153,138 +153,96 @@ export const simController = async (
 
     /** Agents in groups */
 
-    // const agentx = {
-    //   id: 'agent x',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'shop', id: 'h_m_shop'  }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const agenty = {
-    //   id: 'agent y',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const agenta = {
-    //   id: 'agenta',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'shop', id: 'h_m_shop'  }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const group2 = {
-    //   id: 'group2',
-    //   type: 'group',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'release_at_location', id: 'ziekenhuis' }],
-    //   group: ['agent x', 'agenta', 'agent y'],
-    // } as IGroup;
-
-    // const group1 = {
-    //   id: 'group1',
-    //   type: 'group',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'shop', id: 'h_m_shop' }],
-    //   memberOf: 'group2',
-    // } as IGroup;
-
-    /** Agents in force */
-    const white1 = {
-      id: 'white1',
+    const agentx = {
+      id: 'agent x',
       type: 'man',
       status: 'active',
-      force: 'white',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'h_m_shop' }],
-      relations: [{type:'family', id:'fam1'}] ,
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      memberOf: 'group2'
     } as IAgent;
 
-    const blue1 = {
-      id: 'blue1',
+    const agenty = {
+      id: 'agent y',
       type: 'man',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
+      memberOf: 'group2'
+    } as IAgent;
+
+    const agenta = {
+      id: 'agenta',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Monarchstraat 52'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      memberOf: 'group2'
+    } as IAgent;
+
+    const group2 = {
+      id: 'group2',
+      type: 'group',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'ziekenhuis' }],
+      force: "blue",
+      group: ['agent x', 'agenta', 'agent y'],
+    } as IGroup;
+
+    const group1 = {
+      id: 'group1',
+      type: 'group',
       status: 'active',
       force: 'blue',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
       occupations: [{ type: 'work', id: 'h_m_shop' }],
-      relations: [{type:'family', id:'fam1'}] ,
-    } as IAgent;
+      memberOf: 'group2',
+    } as IGroup;
 
-    const red1 = {
-      id: 'red1',
-      type: 'man',
-      status: 'active',
-      force: 'red',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'h_m_shop' }],
-      relations: [{type:'family', id:'fam1'}] ,
-    } as IAgent;
-
-    // const car = {
-    //   id: 'car1',
-    //   type: 'car',
+    /** Agents in force */
+    // const white1 = {
+    //   id: 'white1',
+    //   type: 'man',
     //   status: 'active',
-    //   actual: {
-    //     type: 'home',
-    //     coord: (
-    //       await services.drive.nearest({
-    //         coordinates: [services.locations['Firmamentlaan 5'].coord],
-    //       })
-    //     ).waypoints[0].location,
-    //   },
+    //   force: 'white',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
+    //   relations: [{type:'family', id:'fam1'}] ,
     // } as IAgent;
 
-    // const car2 = {
-    //   id: 'car2',
-    //   type: 'car',
+    // const blue1 = {
+    //   id: 'blue1',
+    //   type: 'man',
     //   status: 'active',
-    //   actual: {
-    //     type: 'home',
-    //     coord: (
-    //       await services.drive.nearest({
-    //         coordinates: [services.locations['Antoon Derkinderenstraat 17'].coord],
-    //       })
-    //     ).waypoints[0].location,
-    //   },
+    //   force: 'blue',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
+    //   relations: [{type:'family', id:'fam1'}] ,
     // } as IAgent;
 
-    // const bicycle = {
-    //   id: 'bicycle1',
-    //   type: 'bicycle',
+    // const red1 = {
+    //   id: 'red1',
+    //   type: 'man',
     //   status: 'active',
-    //   actual: {
-    //     type: 'home',
-    //     coord: (
-    //       await services.cycle.nearest({
-    //         coordinates: [services.locations['Monarchstraat 52'].coord],
-    //       })
-    //     ).waypoints[0].location,
-    //   },
+    //   force: 'red',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
+    //   relations: [{type:'family', id:'fam1'}] ,
     // } as IAgent;
-
 
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(white1, blue1, red1, ...generatedAgents);
+    agents.push(agenta, agentx, agenty, group1, group2, ...generatedAgents);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
@@ -293,7 +251,6 @@ export const simController = async (
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle'];
-    
     await redisServices.geoAddBatch('agents', agents);
 
     const intervalObj = setInterval(async () => {
@@ -325,7 +282,7 @@ export const simController = async (
     let i = 0;
     while (i < 10000000) {
       agentstoshow = [];
-      agents.filter((a) => !a.memberOf && !(a.type == 'group' && !a.group)).map((a) => agentstoshow.push(a)),
+      agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a)),
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
       );

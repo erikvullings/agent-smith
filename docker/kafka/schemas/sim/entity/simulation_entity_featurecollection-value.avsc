@@ -247,6 +247,11 @@
                                         "type": "record",
                                         "fields": [
                                             {
+                                                "name": "title",
+                                                "doc": "Title of the feature",
+                                                "type": "string"
+                                            },
+                                            {
                                                 "name": "id",
                                                 "doc": "Unique case-insensitive identifier of the feature",
                                                 "type": "string"
@@ -277,6 +282,16 @@
                                                     "string"
                                                 ],
                                                 "default": null
+                                            },
+                                            {
+                                                "name": "visible",
+                                                "doc": "Visibility of the feature",
+                                                "type": "number"
+                                            },
+                                            {
+                                                "name": "color",
+                                                "doc": "Color of the feature",
+                                                "type": "string"
                                             },
                                             {
                                                 "name": "tags",

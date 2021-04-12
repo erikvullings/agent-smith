@@ -82,7 +82,10 @@
         "mapbox": {
           "circlePaint": {
             "circle-radius": 20,
-            "circle-color": "white"
+            "circle-color": [
+              "get",
+              "color"
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -113,7 +116,10 @@
         "mapbox": {
           "circlePaint": {
             "circle-radius": 14,
-            "circle-color": "white"
+            "circle-color": [
+              "get",
+              "color"
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -144,7 +150,10 @@
         "mapbox": {
           "circlePaint": {
             "circle-radius": 14,
-            "circle-color": "white"
+            "circle-color": [
+              "get",
+              "color"
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -170,19 +179,35 @@
       "source": "group.json",
       "style": {
         "type": "circle",
-        "icon": "https://img.icons8.com/windows/24/000000/group-foreground-selected.png",
         "showSymbol": true,
-        "layout": {
-          "text-field": "hoi"
-        },
         "mapbox": {
           "circlePaint": {
             "circle-radius": 30,
-            "circle-color": "white"
+            "circle-color": "white",
+            "circle-opacity": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "text-field": [
+              "get",
+              "title"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ]
           }
         },
         "types": []
@@ -475,6 +500,11 @@
           "label": "members",
           "type": "string",
           "key": "members"
+        },
+        {
+          "label": "force",
+          "type": "string",
+          "key": "force"
         }
       ],
       "infoPanels": {

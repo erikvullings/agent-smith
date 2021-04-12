@@ -2,6 +2,7 @@ import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
 import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
+import { validateId } from '@turf/helpers';
 
 export interface IEnvServices {
   /** Get sim time */

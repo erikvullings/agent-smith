@@ -29,7 +29,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'shop': () => [
       { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
-      { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } },
+      { name: 'Shop', options: { duration: minutes(15, 30) , priority: 2 } },
       { name: 'Go to other shops', options: { priority: 3 } }
     ],
     'wander': () => [
@@ -43,7 +43,6 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'release_at_location': () => [
       { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
-      { name: 'Go home' }
     ]
   };
 
@@ -65,7 +64,6 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'release_at_location': () => [
       { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
-      { name: 'Go home' }
     ]
   };
   
@@ -90,7 +88,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       Array.prototype.concat.apply([], [blueActivities['guard']()[0], activities['go home']()]),
     ],
     'release_at_location': () => [
-      Array.prototype.concat.apply([], [activities['release_at_location']()[randomIntInRange(0,activities["release_at_location"]().length-1)], activities['go home']()]),
+      Array.prototype.concat.apply([], [activities['release_at_location'](), activities['go home']()]),
     ],
      null: () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()])
@@ -113,8 +111,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
   };
 
-  if(agent.memberOf != null){
+  if(agent.type == 'group'){
     return agentAgendas['release_at_location']();
+    //return agentAgendas['shop']();
   }
   else {
   switch(agent.force) { 

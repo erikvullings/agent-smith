@@ -114,7 +114,6 @@ const geoAddBatch = async (key: string, agents: Array<IAgent>) => {
   agents.forEach(agent => {
     arr.push(["geoadd", key, String(agent.actual.coord[0]),String(agent.actual.coord[1]),agent.id])
   });
-
   redis.pipeline(arr)
   .exec(() => {
     console.log("Batch done");

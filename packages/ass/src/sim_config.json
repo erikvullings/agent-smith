@@ -1,6 +1,6 @@
 {
     "settings": {
-        "agentCount": 10,
+        "agentCount": 0,
         "center_coord": [5.476543, 51.440208],
         "radius": 10000
     },
