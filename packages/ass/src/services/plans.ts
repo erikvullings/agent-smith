@@ -91,37 +91,21 @@ export const plans = {
   /** In the options, you can set the shop location to go to */
   'Go shopping': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-      if (!agent.occupations) {
-        return true;
-      }
-      const occupations = agent.occupations;
-      if (occupations.length > 0) {
-        const { destination } = options;
-        const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-        agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services, options);
-      }
-      return true;
-    },
+    const { destination = randomPlaceNearby(agent, 10000, 'shop') } = options;
+    agent.destination = destination;
+    prepareRoute(agent, services, options);
+
+    return true;
   },
 
   'Go to the park': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-      if (!agent.occupations) {
-        return true;
-      }
-      const occupations = agent.occupations;
-      if (occupations.length > 0) {
-        const { destination } = options;
-        const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-        agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services, options);
-      }
+      const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
+  
       return true;
     },
-  },
 
   'Go to the location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -143,6 +127,15 @@ export const plans = {
       prepareRoute(agent, services, options);
       
       return true;      
+    },
+  },
+
+  'Go to specific location': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'walkTo'});
+      agent.steps = steps;
+      return true;
     },
   },
 
@@ -183,6 +176,25 @@ export const plans = {
 
   GetExamined: { prepare: waitFor },
 
+  'Chat': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(5,15) } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Patrol': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination = randomPlaceNearby(agent, 1000, 'road') } = options;
+      const steps = [] as ActivityList;
+      agent.destination = destination;
+      steps.push({ name: 'walkTo', options: { destination } });
+      agent.steps = steps;
+      return true;
+    },
+  },
 
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
@@ -249,4 +261,5 @@ export const plans = {
       return true;
     },
   },
-};
+}}
+}

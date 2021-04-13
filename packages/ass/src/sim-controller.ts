@@ -2,10 +2,10 @@ import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
-import { IGroup } from './models/group';
 import { redisServices } from './services';
 import * as jsonSimConfig from "./sim_config.json"
-import { ISimConfig } from './models';
+import { ILocation, ISimConfig } from './models';
+import { close } from 'node:fs';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -254,29 +254,49 @@ export const simController = async (
     await redisServices.geoAddBatch('agents', agents);
 
     const intervalObj = setInterval(async () => {
-       let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
-      // console.log(testArr);
-      //var t2 = performance.now()
+      let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
 
       const random = Math.floor(Math.random() * testArr.length);
       var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
 
-      console.log("random agenda",agentRand.agenda)
+      console.log("random agent1",agentRand)
 
-      if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
-        agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
-        console.log(agentRand.agenda)
+      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '20');
+
+      console.log("before",closeAgents);
+      closeAgents = closeAgents.filter(function(item) {
+        return item.key != agentRand.id;
+      });
+      console.log("after",closeAgents);
+      
+      
+      if(closeAgents.length > 1){
+        var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
+        console.log("random agent2",agentRand2)
+
+        var destinationCoord: ILocation = {type: "road",
+         coord: [(agentRand.actual.coord[0]+agentRand2.actual.coord[0])/2,
+         (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
+      
+
+        if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
+          agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
+          agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
+
+          agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
+          agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
+
+          
+          console.log("agenda1",agentRand.agenda)
+          console.log("agenda2",agentRand2.agenda)
+
+        }
       }
-     // console.log("random agent",agentRand);
-      //let resp = await redisServices.geoSearch(agentRand.actual,'10',agentRand);
-      //console.log("response",resp);
-
-      // if(resp.length > 0) {
-      //     console.log("chosen agents is: " , resp[0])
+      // if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
+      //   agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
+      //   console.log(agentRand.agenda)
       // }
 
-      //var t3 = performance.now()
-      //console.log("interval took " + (t3 - t2) + " milliseconds.")
     }, 30000);
       
     let i = 0;
@@ -293,6 +313,7 @@ export const simController = async (
       }
   });
 };
+
 
 /** Connect to Kafka and create a connector */
 const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
