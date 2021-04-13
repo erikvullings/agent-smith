@@ -24,7 +24,7 @@ export interface IAgent {
   /** ID of work address */
   occupations?: Array<{
     /** Type of occupation, e.g. work, shop, learn */
-    type: 'work' | 'learn' | 'shop' | 'wander' | 'doctor_visit' | string;
+    type: 'work' | 'learn' | string;
     /** Id of the location where the occupation takes place */
     id: string;
   }>;

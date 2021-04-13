@@ -91,21 +91,6 @@ export const plans = {
   /** In the options, you can set the shop location to go to */
   'Go shopping': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-    //   if (!agent.occupations) {
-    //     return true;
-    //   }
-    //   const occupations = agent.occupations.filter((o) => o.type === 'shop');
-    //   if (occupations.length > 0) {
-    //     const { destination } = options;
-    //     const occupation =
-    //       (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-    //       console.log("occupation id", occupation.id)
-    //     agent.destination = services.locations[occupation.id];
-    //     prepareRoute(agent, services, options);
-    //   }
-    //   return true;
-    // },
-
     const { destination = randomPlaceNearby(agent, 10000, 'shop') } = options;
     agent.destination = destination;
     prepareRoute(agent, services, options);
@@ -131,6 +116,15 @@ export const plans = {
         agent.destination = destination;
         steps.push({ name: 'walkTo', options: { destination } });
       }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Go to specific location': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'walkTo'});
       agent.steps = steps;
       return true;
     },
@@ -172,6 +166,15 @@ export const plans = {
   Guard: { prepare: waitFor },
 
   GetExamined: { prepare: waitFor },
+
+  'Chat': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(5,15) } });
+      agent.steps = steps;
+      return true;
+    },
+  },
 
   'Patrol': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
