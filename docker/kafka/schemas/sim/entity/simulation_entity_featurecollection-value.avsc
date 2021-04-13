@@ -284,16 +284,6 @@
                                                 "default": null
                                             },
                                             {
-                                                "name": "visible",
-                                                "doc": "Visibility of the feature",
-                                                "type": "number"
-                                            },
-                                            {
-                                                "name": "color",
-                                                "doc": "Color of the feature",
-                                                "type": "string"
-                                            },
-                                            {
                                                 "name": "tags",
                                                 "doc": "Optional map containing feature specific information: key – unique name of the specific property; value – value of that property",
                                                 "type": [

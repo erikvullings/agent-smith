@@ -51,11 +51,38 @@
         "mapbox": {
           "circlePaint": {
             "circle-radius": 20,
-            "circle-color": "white"
+            "circle-color": [
+              "get",
+              "color"
+            ],
+            "circle-opacity": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
           }
         },
         "types": []
@@ -85,11 +112,35 @@
             "circle-color": [
               "get",
               "color"
+            ],
+            "circle-opacity": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
             ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
           }
         },
         "types": []
@@ -115,15 +166,39 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 14,
+            "circle-radius": 15,
             "circle-color": [
               "get",
               "color"
+            ],
+            "circle-opacity": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
             ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.7,
+              0.7
+            ]
           }
         },
         "types": []
@@ -149,15 +224,39 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 14,
+            "circle-radius": 15,
             "circle-color": [
               "get",
               "color"
+            ],
+            "circle-opacity": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
             ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.7,
+              0.7
+            ]
           }
         },
         "types": []
@@ -183,7 +282,10 @@
         "mapbox": {
           "circlePaint": {
             "circle-radius": 30,
-            "circle-color": "white",
+            "circle-color": [
+              "get",
+              "color"
+            ],
             "circle-opacity": [
               "match",
               [
@@ -207,7 +309,9 @@
             "text-font": [
               "Open Sans Bold",
               "Arial Unicode MS Bold"
-            ]
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": true
           }
         },
         "types": []
@@ -500,11 +604,6 @@
           "label": "members",
           "type": "string",
           "key": "members"
-        },
-        {
-          "label": "force",
-          "type": "string",
-          "key": "force"
         }
       ],
       "infoPanels": {

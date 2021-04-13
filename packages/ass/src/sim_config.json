@@ -12,7 +12,7 @@
             "status": "active",
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.496994, 51.468701]},
-            "actual": {"type": "home", "coord": [5.496994, 51.468701]},
+            "actual": {"type": "home", "coord": [5.521275, 51.468701]},
             "occupations": [{ "type": "work", "id": "tue_innovation_forum"}]
         },
         {

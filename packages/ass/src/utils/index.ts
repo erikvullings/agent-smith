@@ -140,8 +140,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
     agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
     number_of_members: agent.group ? String(agent.group.length): '',
     members: agent.group ? agent.group.join(', ') : '',
-    force: agent.force ? agent.force: "white" ,
-    visible: (agent.type == 'group' && !agent.group)? String(0): agent.memberOf? String(0): String(1),
+    force: agent.force ? agent.force: 'white' ,
   },
 });
 
@@ -159,8 +158,6 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
     title: agent.group ? String(agent.group.length): '',
     type: agent.type,
     children: agent.group,
-    color: agent.force ? agent.force: 'white' ,
-    visible: (agent.type == 'group' && !agent.group)? 0: 1,
     location: {
       longitude: agent.actual.coord[0],
       latitude: agent.actual.coord[1],
@@ -169,7 +166,7 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
       agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.group ? String(agent.group.length): '',
-      force: agent.force ? agent.force: 'white' ,
+      color: agent.force ? agent.force: 'white' ,
       visible: (agent.type == 'group' && !agent.group)? String(0): agent.memberOf? String(0): String(1),
     },
   },
