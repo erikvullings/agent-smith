@@ -130,13 +130,33 @@ export const plans = {
     },
   },
 
-  'Go to specific location': {
+  'Go go': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-      const steps = [] as ActivityList;
-      steps.push({ name: 'walkTo'});
-      agent.steps = steps;
+      const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
+  
       return true;
     },
+  },
+  
+  'Test': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      //const steps = [] as ActivityList;
+      //agent.destination = options.destination;
+
+      //steps.push({ name: 'walkTo', options: options});
+      //agent.steps = steps;
+      //const {destination = agent.destination} = options;
+      //agent.destination = destination;
+      //prepareRoute(agent, services, options);
+
+        const { destination = randomPlaceNearby(agent, 10000, 'shop') } = options;
+        agent.destination = destination;
+        prepareRoute(agent, services, options);
+    
+        return true;
+        },
   },
 
   'Visit doctor': {

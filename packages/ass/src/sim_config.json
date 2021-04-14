@@ -11,7 +11,7 @@
             "force": "white",
             "status": "active",
             "owns": [{ "type": "car", "id": "car1" }],
-            "home": {"type": "home", "coord": [5.496994, 51.468701]},
+            "home": {"type": "home", "coord": [5.521275, 51.468701]},
             "actual": {"type": "home", "coord": [5.521275, 51.468701]},
             "occupations": [{ "type": "work", "id": "tue_innovation_forum"}]
         },
@@ -40,9 +40,9 @@
             "type": "man",
             "force": "white",
             "status": "active",
-            "home": {"type": "home", "coord": [5.499309, 51.437832]},
-            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "park"}]
+            "home": {"type": "home", "coord": [5.519309, 51.437832]},
+            "actual": {"type": "home", "coord": [5.519309, 51.437832]},
+            "occupations": [{ "type": "work", "id": "station"}]
         },
         {
             "id": "78bc0240-d4fb-4a2e-a548-d3e32aa3037b",
@@ -58,9 +58,9 @@
             "type": "woman",
             "force": "blue",
             "status": "active",
-            "home": {"type": "home", "coord": [5.499555, 51.437832]},
-            "actual": {"type": "home", "coord": [5.499555, 51.437832]},
-            "occupations": [{ "type": "work", "id": "park"}]
+            "home": {"type": "home", "coord": [5.509555, 51.437832]},
+            "actual": {"type": "home", "coord": [5.509555, 51.437832]},
+            "occupations": [{ "type": "work", "id": "Monarchstraat 52"}]
         }
     ],
     "customAgendas": [

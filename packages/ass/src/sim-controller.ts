@@ -1,4 +1,4 @@
-import { envServices, updateAgent } from './env-services';
+import { envServices, executeSteps, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
@@ -219,7 +219,7 @@ export const simController = async (
 
     const blue1 = {
       id: 'blue1',
-      type: 'girl',
+      type: 'woman',
       status: 'active',
       force: 'blue',
       home: services.locations['Antoon Derkinderenstraat 17'],
@@ -230,7 +230,7 @@ export const simController = async (
 
     const red1 = {
       id: 'red1',
-      type: 'boy',
+      type: 'man',
       status: 'active',
       force: 'red',
       home: services.locations['Antoon Derkinderenstraat 17'],
@@ -261,7 +261,7 @@ export const simController = async (
 
       console.log("random agent1",agentRand)
 
-      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '20');
+      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '50');
 
       console.log("before",closeAgents);
       closeAgents = closeAgents.filter(function(item) {
@@ -270,7 +270,7 @@ export const simController = async (
       console.log("after",closeAgents);
       
       
-      if(closeAgents.length > 1){
+      if(closeAgents.length > 0){
         var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
         console.log("random agent2",agentRand2)
 
@@ -280,13 +280,27 @@ export const simController = async (
       
 
         if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
-          agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
-          agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
+          console.log(destinationCoord)
+          agentRand.destination = destinationCoord;
+          agentRand2.destination = destinationCoord;
+
+          //agentRand.agenda?.splice(0,0,{ name: 'Wander'});
+
+          //agentRand.agenda?.splice(0,0,{ name: 'Go to specific location'});
+          //agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location'});
+
+
+          //agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 }});
+          //agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 }});
+          agentRand.agenda?.splice(0,0,{ name: 'Go go' })
+          agentRand2.agenda?.splice(0,0,{ name: 'Go go' })
+
+           //agentRand.agenda?.splice(0,0,{ name: 'Go shopping'})
+          // agentRand2.agenda?.splice(0,0,{ name: 'Go shopping'})
 
           agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
           agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
 
-          
           console.log("agenda1",agentRand.agenda)
           console.log("agenda2",agentRand2.agenda)
 
