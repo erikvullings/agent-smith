@@ -19,17 +19,100 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 20,
-            "circle-color": "gray"
+            "circle-color": [
+              "get",
+              "force"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
           }
         },
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/car"
+    },
+    {
+      "id": "bicycle",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "bicycle",
+      "source": "bicycle.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/material-sharp/24/000000/bike-path--v2.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "get",
+              "force"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/bicycle"
     },
     {
       "id": "man",
@@ -50,12 +133,11 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 20,
             "circle-color": [
               "get",
-              "color"
+              "force"
             ],
-            "circle-opacity": [
+            "circle-radius": [
               "match",
               [
                 "get",
@@ -64,8 +146,8 @@
               "0",
               0,
               "1",
-              1,
-              1
+              20,
+              20
             ]
           },
           "symbolLayout": {
@@ -108,12 +190,11 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 20,
             "circle-color": [
               "get",
-              "color"
+              "force"
             ],
-            "circle-opacity": [
+            "circle-radius": [
               "match",
               [
                 "get",
@@ -122,8 +203,8 @@
               "0",
               0,
               "1",
-              1,
-              1
+              20,
+              20
             ]
           },
           "symbolLayout": {
@@ -162,16 +243,15 @@
       "source": "girl.json",
       "style": {
         "type": "circle",
-        "icon": "https://img.icons8.com/ios-filled/24/000000/standing-woman.png",
+        "icon": "img.icons8.com/ios-filled/50/000000/standing-woman.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 15,
             "circle-color": [
               "get",
-              "color"
+              "force"
             ],
-            "circle-opacity": [
+            "circle-radius": [
               "match",
               [
                 "get",
@@ -180,8 +260,8 @@
               "0",
               0,
               "1",
-              1,
-              1
+              15,
+              15
             ]
           },
           "symbolLayout": {
@@ -224,12 +304,11 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 15,
             "circle-color": [
               "get",
-              "color"
+              "force"
             ],
-            "circle-opacity": [
+            "circle-radius": [
               "match",
               [
                 "get",
@@ -238,8 +317,8 @@
               "0",
               0,
               "1",
-              1,
-              1
+              15,
+              15
             ]
           },
           "symbolLayout": {
@@ -281,12 +360,11 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 30,
             "circle-color": [
               "get",
-              "color"
+              "force"
             ],
-            "circle-opacity": [
+            "circle-radius": [
               "match",
               [
                 "get",
@@ -295,8 +373,8 @@
               "0",
               0,
               "1",
-              1,
-              1
+              30,
+              30
             ]
           },
           "symbolLayout": {
@@ -573,6 +651,136 @@
     },
     "group": {
       "title": "group",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        },
+        {
+          "label": "number of members",
+          "type": "number",
+          "key": "number_of_members"
+        },
+        {
+          "label": "members",
+          "type": "string",
+          "key": "members"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "car": {
+      "title": "car",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        },
+        {
+          "label": "number of members",
+          "type": "number",
+          "key": "number_of_members"
+        },
+        {
+          "label": "members",
+          "type": "string",
+          "key": "members"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "bicycle": {
+      "title": "bicycle",
       "properties": [
         {
           "label": "name",

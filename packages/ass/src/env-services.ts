@@ -100,6 +100,7 @@ export const executeSteps = async (
   return agent.steps.length === 0;
 };
 
+
 export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices) => {
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
@@ -126,4 +127,5 @@ export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices
     createAgenda(agent, services);
     updateAgent(agent, services);
   }
+  
 };

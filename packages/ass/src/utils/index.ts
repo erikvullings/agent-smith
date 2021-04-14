@@ -1,4 +1,4 @@
-import { IAgent, IGroup, ILocation } from '../models';
+import { IAgent, IGroup, ILocation} from '../models';
 import { IItem } from 'test-bed-schemas';
 import { redisServices } from '../services';
 
@@ -144,6 +144,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
   },
 });
 
+const transport = ['car' , 'bicycle' , 'bus' , 'train']
 
 export const agentToFeature = (agent: IAgent|IGroup) => ({
   type: 'Feature',
@@ -155,7 +156,7 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
   },
   properties: {
     id: agent.id,
-    title: agent.group ? String(agent.group.length): '',
+    title:((agent.type == 'group') && agent.group) ? String(agent.group.length): '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -166,8 +167,11 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
       agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.group ? String(agent.group.length): '',
-      color: agent.force ? agent.force: 'white' ,
-      visible: (agent.type == 'group' && !agent.group)? String(0): agent.memberOf? String(0): String(1),
+      force: agent.force ? agent.force: 'white' ,
+      visible: ((agent.type == 'group') && !agent.group)? String(0): 
+        ((agent.type == 'car') && !agent.group)? String(0): 
+        ((agent.type == 'bicycle') && !agent.group)? String(0): 
+        (!(agent.type == 'car') && !(agent.type == 'bicycle') && agent.memberOf)? String(0): String(1),
     },
   },
 });

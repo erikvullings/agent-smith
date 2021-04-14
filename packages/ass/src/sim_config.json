@@ -12,13 +12,13 @@
             "status": "active",
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.496994, 51.468701]},
-            "actual": {"type": "home", "coord": [5.521275, 51.468701]},
-            "occupations": [{ "type": "work", "id": "tue_innovation_forum"}]
+            "actual": {"type": "home", "coord": [5.496994, 51.468701]},
+            "occupations": [{ "type": "work", "id": "Ingmar B.V."}]
         },
         {
             "id": "f97a0292-ca8e-45ed-b9f3-c49431f755ca",
             "type": "man",
-            "force": "white",
+            "force": "blue",
             "status": "active",
             "owns": [{ "type": "bicycle", "id": "bicycle1" }],
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
@@ -28,12 +28,12 @@
         {
             "id": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "type": "man",
-            "force": "white",
+            "force": "red",
             "status": "active",
             "owns": [{ "type": "car", "id": "car2" }],
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "ziekenhuis"}]
+            "occupations": [{ "type": "work", "id": "Verweg"}]
         },
         {
             "id": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
@@ -43,7 +43,26 @@
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "wander", "id": "park"}]
+        },
+        {
+            "id": "bicycle1",
+            "type": "bicycle",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.521275, 51.448302]}
+        },
+        {
+            "id": "car1",
+            "type": "car",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.496994, 51.468701]}
+        },
+        {
+            "id": "car2",
+            "type": "car",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.499309, 51.437832]}
         }
+      
     ],
     "customAgendas": [
         {
