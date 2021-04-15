@@ -96,8 +96,8 @@ export const plans = {
     prepareRoute(agent, services, options);
 
     return true;
-  },
-
+  
+  },},
   'Go to the park': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
@@ -105,7 +105,7 @@ export const plans = {
       prepareRoute(agent, services, options);
   
       return true;
-    },
+    },},
 
   'Go to the location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -130,33 +130,28 @@ export const plans = {
     },
   },
 
-  'Go go': {
+  'Test plan': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
   
       return true;
-    },
+      },
   },
   
   'Test': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-      //const steps = [] as ActivityList;
+      const steps = [] as ActivityList;
       //agent.destination = options.destination;
 
-      //steps.push({ name: 'walkTo', options: options});
-      //agent.steps = steps;
+      steps.push({ name: 'walkTo', options: options});
+      agent.steps = steps;
       //const {destination = agent.destination} = options;
       //agent.destination = destination;
-      //prepareRoute(agent, services, options);
+      prepareRoute(agent, services, options);
 
-        const { destination = randomPlaceNearby(agent, 10000, 'shop') } = options;
-        agent.destination = destination;
-        prepareRoute(agent, services, options);
-    
-        return true;
-        },
+  },
   },
 
   'Visit doctor': {
@@ -281,5 +276,5 @@ export const plans = {
       return true;
     },
   },
-}}
+
 }

@@ -51,7 +51,7 @@
             "status": "active",
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "home", "coord": [5.521275, 51.448302]},
-            "occupations": [{ "type": "work", "id": "park"}]
+            "occupations": [{ "type": "work", "id": "police station"}]
         },
         {
             "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",

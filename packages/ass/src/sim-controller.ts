@@ -1,7 +1,7 @@
 import { envServices, executeSteps, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
-import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
 import { redisServices } from './services';
 import * as jsonSimConfig from "./sim_config.json"
 import { ILocation, ISimConfig } from './models';
@@ -74,6 +74,10 @@ export const simController = async (
         type: 'work',
         coord: [5.476234, 51.442025],
       },
+      mc_donalds: {
+        type: 'work',
+        coord: [5.476625, 51.441021],
+      },
       park: {
         type: 'park',
         coord: [5.497535, 51.441965],
@@ -81,7 +85,15 @@ export const simController = async (
       'station': {
         type: 'station',
         coord: [5.479549, 51.443012],
-      }
+      },
+      'police station': {
+        type: 'police station',
+        coord: [5.499089, 51.437034],
+      },
+      bijenkorf: {
+        type: 'work',
+        coord: [5.477151, 51.441586],
+      },
     };
 
     /** Agents with transporttypes */
@@ -213,7 +225,7 @@ export const simController = async (
       force: 'white',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'park' }],
+      occupations: [{ type: 'work', id: 'bijenkorf' }],
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
@@ -224,7 +236,7 @@ export const simController = async (
       force: 'blue',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'h_m_shop' }],
+      occupations: [{ type: 'work', id: 'mc_donalds' }],
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
@@ -261,14 +273,11 @@ export const simController = async (
 
       console.log("random agent1",agentRand)
 
-      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '50');
+      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '1000');
 
-      console.log("before",closeAgents);
       closeAgents = closeAgents.filter(function(item) {
         return item.key != agentRand.id;
-      });
-      console.log("after",closeAgents);
-      
+      });      
       
       if(closeAgents.length > 0){
         var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
@@ -277,41 +286,35 @@ export const simController = async (
         var destinationCoord: ILocation = {type: "road",
          coord: [(agentRand.actual.coord[0]+agentRand2.actual.coord[0])/2,
          (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
-      
+         console.log(destinationCoord)
+
 
         if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
-          console.log(destinationCoord)
-          agentRand.destination = destinationCoord;
-          agentRand2.destination = destinationCoord;
+          //agentRand.destination = destinationCoord;
+          //agentRand2.destination = destinationCoord;
 
-          //agentRand.agenda?.splice(0,0,{ name: 'Wander'});
+          let timesim = currentTime;
+          console.log("time before",timesim.valueOf())
+          timesim.setMinutes(timesim.getMinutes()+ 60)
+          console.log("time after",timesim.valueOf())
+          console.log("time curr",currentTime.valueOf())
 
-          //agentRand.agenda?.splice(0,0,{ name: 'Go to specific location'});
-          //agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location'});
+          //agentRand.agenda?.splice(0,0,{ name: 'Test plan' })
+          //agentRand2.agenda?.splice(0,0,{ name: 'Test plan' })
 
+          agentRand.agenda.splice(0,0,{ name: 'Go shopping', options: { startTime: timesim, priority: 1 } });
+          agentRand2.agenda.splice(0,0,{ name: 'Go shopping', options: { startTime: timesim, priority: 1 } });
 
-          //agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 }});
-          //agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 }});
-          agentRand.agenda?.splice(0,0,{ name: 'Go go' })
-          agentRand2.agenda?.splice(0,0,{ name: 'Go go' })
-
-           //agentRand.agenda?.splice(0,0,{ name: 'Go shopping'})
-          // agentRand2.agenda?.splice(0,0,{ name: 'Go shopping'})
-
-          agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
-          agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
+          // agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
+          // agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
 
           console.log("agenda1",agentRand.agenda)
           console.log("agenda2",agentRand2.agenda)
 
         }
       }
-      // if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
-      //   agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
-      //   console.log(agentRand.agenda)
-      // }
-
     }, 30000);
+  
       
     let i = 0;
     while (i < 10000000) {

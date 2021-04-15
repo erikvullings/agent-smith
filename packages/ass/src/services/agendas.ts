@@ -52,12 +52,12 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Go home', options: { priority: 3 }}
     ],
     'wander': () => [
-      //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
+      { name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
       { name: 'Wander', options: { priority: 1 } }
     ],
     'patrol': () => [
       //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-      [{ name: 'Patrol', options: { priority: 1 } },
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 }}, 
       { name: 'Patrol', options: { priority: 1 } },
       { name: 'Patrol', options: { priority: 1 } }]
     ],
