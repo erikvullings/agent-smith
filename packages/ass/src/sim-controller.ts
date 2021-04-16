@@ -4,7 +4,7 @@ import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
 import { redisServices } from './services';
 import * as jsonSimConfig from "./sim_config.json"
-import { ILocation, ISimConfig } from './models';
+import { ActivityList, ILocation, ISimConfig } from './models';
 import { close } from 'node:fs';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -18,7 +18,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
     const simConfig = jsonSimConfig as ISimConfig;
@@ -288,25 +288,21 @@ export const simController = async (
          (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
          console.log(destinationCoord)
 
-
         if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
-          //agentRand.destination = destinationCoord;
-          //agentRand2.destination = destinationCoord;
+          agentRand.destination = destinationCoord;
+          agentRand2.destination = destinationCoord;
 
           let timesim = currentTime;
-          console.log("time before",timesim.valueOf())
           timesim.setMinutes(timesim.getMinutes()+ 60)
-          console.log("time after",timesim.valueOf())
-          console.log("time curr",currentTime.valueOf())
 
-          //agentRand.agenda?.splice(0,0,{ name: 'Test plan' })
-          //agentRand2.agenda?.splice(0,0,{ name: 'Test plan' })
+          var newAgenda1 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: destinationCoord }},
+                                          { name: 'Chat', options: { priority: 2 } }];
+          agentRand.agenda = newAgenda1.concat(agentRand.agenda);
 
-          agentRand.agenda.splice(0,0,{ name: 'Go shopping', options: { startTime: timesim, priority: 1 } });
-          agentRand2.agenda.splice(0,0,{ name: 'Go shopping', options: { startTime: timesim, priority: 1 } });
+          var newAgenda2 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: destinationCoord }},
+                                      { name: 'Chat', options: { priority: 2 } }];
+          agentRand2.agenda = newAgenda2.concat(agentRand.agenda);
 
-          // agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
-          // agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
 
           console.log("agenda1",agentRand.agenda)
           console.log("agenda2",agentRand2.agenda)
