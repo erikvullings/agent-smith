@@ -2,10 +2,9 @@ import { envServices, executeSteps, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
-import { redisServices } from './services';
+import { redisServices, chatServices } from './services';
 import * as jsonSimConfig from "./sim_config.json"
-import { ActivityList, ILocation, ISimConfig } from './models';
-import { close } from 'node:fs';
+import { ISimConfig } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -265,51 +264,37 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle'];
     await redisServices.geoAddBatch('agents', agents);
 
+    var chatCount =0
     const intervalObj = setInterval(async () => {
+      if(chatCount < agents.length*0.02){
+        chatCount++
+        chattingFunc()
+      }
+    }, 30000);
+
+
+    const chattingFunc = async() => {
       let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
-
       const random = Math.floor(Math.random() * testArr.length);
-      var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
-
-      console.log("random agent1",agentRand)
-
-      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '1000');
+      var randomAgent : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
+      console.log("random agent1",randomAgent)
+      let closeAgents: Array<any> = await redisServices.geoSearch(randomAgent.actual, '1000');
 
       closeAgents = closeAgents.filter(function(item) {
-        return item.key != agentRand.id;
+        return item.key != randomAgent.id;
       });      
       
       if(closeAgents.length > 0){
-        var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
-        console.log("random agent2",agentRand2)
+        console.log("type", closeAgents[0].key)
 
-        var destinationCoord: ILocation = {type: "road",
-         coord: [(agentRand.actual.coord[0]+agentRand2.actual.coord[0])/2,
-         (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
-         console.log(destinationCoord)
+        var closeAgent : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
+        console.log("random agent2",closeAgent)
 
-        if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
-          agentRand.destination = destinationCoord;
-          agentRand2.destination = destinationCoord;
-
-          let timesim = currentTime;
-          timesim.setMinutes(timesim.getMinutes()+ 60)
-
-          var newAgenda1 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: destinationCoord }},
-                                          { name: 'Chat', options: { priority: 2 } }];
-          agentRand.agenda = newAgenda1.concat(agentRand.agenda);
-
-          var newAgenda2 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: destinationCoord }},
-                                      { name: 'Chat', options: { priority: 2 } }];
-          agentRand2.agenda = newAgenda2.concat(agentRand.agenda);
-
-
-          console.log("agenda1",agentRand.agenda)
-          console.log("agenda2",agentRand2.agenda)
+        await chatServices.chatFunction(randomAgent, closeAgent, services);
 
         }
-      }
-    }, 30000);
+
+    }
   
       
     let i = 0;
