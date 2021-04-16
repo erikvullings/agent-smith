@@ -2,6 +2,15 @@ import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
 import { randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
 
+const addGroup = (agent: IAgent, transport : IAgent, services: IEnvServices) => {
+  if(transport.group){
+    if(agent.group){
+      transport.group.push(...agent.group)
+      agent.group.filter((a) => services.agents[a].group).map((a) => addGroup(services.agents[a], transport, services)) 
+    }
+  }
+};
+
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
   const { distance } = services;
@@ -16,10 +25,7 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
       if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500){
         car.force = agent.force;
         car.group = [agent.id];
-        if(agent.group){
-          car.group.push(...agent.group)
-        }
-        agent.visibility = 0;
+        addGroup(agent, car, services);
         steps.push({ name: 'walkTo', options: { destination: car.actual } });
         steps.push({ name: 'controlAgents', options: { control: [car.id] } });
         steps.push({ name: 'driveTo', options: { destination: agent.destination } });
@@ -30,10 +36,7 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
         if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000){
             bike.force = agent.force;
             bike.group = [agent.id];
-            if(agent.group){
-              bike.group.push(...agent.group)
-            }
-            agent.visibility = 0;
+            addGroup(agent, bike, services);
             steps.push({ name: 'walkTo', options: { destination: bike.actual } });
             steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
             steps.push({ name: 'cycleTo', options: { destination: agent.destination } });

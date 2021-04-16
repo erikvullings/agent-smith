@@ -168,9 +168,9 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.group ? String(agent.group.length): '',
       force: agent.force ? agent.force: 'white' ,
-      visible: ((agent.type == 'group') && !agent.group)? String(0): 
-        ((agent.type == 'car') && !agent.group)? String(0): 
-        ((agent.type == 'bicycle') && !agent.group)? String(0): 
+      visible: 
+        ((agent.type == 'group' || (agent.type == 'car') || (agent.type == 'bicycle')) && !agent.group)? String(0): 
+        (agent.steps && agent.steps[0] && (agent.steps[0].name == 'driveTo' || agent.steps[0].name == 'cycleTo'))? String(0):
         (!(agent.type == 'car') && !(agent.type == 'bicycle') && agent.memberOf)? String(0): String(1),
     },
   },
