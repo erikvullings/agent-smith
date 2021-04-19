@@ -185,14 +185,16 @@ export const plans = {
 
   GetExamined: { prepare: waitFor },
 
-  'Chat': {
-    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
-      const steps = [] as ActivityList;
-      steps.push({ name: 'waitFor', options: { duration: minutes(5,15) } });
-      agent.steps = steps;
-      return true;
-    },
-  },
+  Chat: { prepare: waitFor },
+
+  // 'Chat': {
+  //   prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+  //     const steps = [] as ActivityList;
+  //     steps.push({ name: 'waitFor', options: { duration: minutes(5,15) } });
+  //     agent.steps = steps;
+  //     return true;
+  //   },
+  // },
 
   'Patrol': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {

@@ -270,32 +270,10 @@ export const simController = async (
         chatCount--;
         if(chatCount < agents.length*0.02){
           chatCount++;
-          agentChat();
+          chatServices.agentChat(agents,services);
         }
       }, 30000);  
     }
-
-    const agentChat = async() => {
-      let agentArr = await redisServices.geoSearch(services.locations['station'], '3000');
-      const random = Math.floor(Math.random() * agentArr.length);
-      var randomAgent : IAgent = agents[(agents.findIndex(x => x.id === agentArr[random].key))];
-      console.log("random agent1",randomAgent)
-      let closeAgents: Array<any> = await redisServices.geoSearch(randomAgent.actual, '1000');
-
-      closeAgents = closeAgents.filter(function(item) {
-        return item.key != randomAgent.id;
-      });      
-      
-      if(closeAgents.length > 0){
-        console.log("type", closeAgents[0].key)
-
-        var closeAgent : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
-        console.log("random agent2",closeAgent)
-
-        await chatServices.chat(randomAgent, closeAgent, services);
-        }
-    }
-  
       
     let i = 0;
     while (i < 10000000) {
