@@ -3,7 +3,7 @@ import { ActivityList, IAgent, ILocation } from '../models';
 
 
 /** Calculate distance between two points */
-const chatFunction = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
+const chat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
     var destinationCoord: ILocation = {type: "road",
     coord: [(randomAgent.actual.coord[0]+closeAgent.actual.coord[0])/2,
     (randomAgent.actual.coord[1]+closeAgent.actual.coord[1])/2]};
@@ -14,7 +14,7 @@ const chatFunction = async (randomAgent: IAgent, closeAgent: IAgent, services: I
     closeAgent.destination = destinationCoord;
 
      let timesim = services.getTime();
-     timesim.setMinutes(timesim.getMinutes()+ 60)
+     timesim.setMinutes(timesim.getMinutes()+ 2)
 
      var newAgenda1 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: destinationCoord }},
                                      { name: 'Chat', options: { priority: 2 } }];
@@ -34,5 +34,5 @@ const chatFunction = async (randomAgent: IAgent, closeAgent: IAgent, services: I
 
 
 export const chatServices = {
-    chatFunction,
+    chat,
 };

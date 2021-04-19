@@ -264,19 +264,21 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle'];
     await redisServices.geoAddBatch('agents', agents);
 
-    var chatCount =0
-    const intervalObj = setInterval(async () => {
-      if(chatCount < agents.length*0.02){
-        chatCount++
-        chattingFunc()
-      }
-    }, 30000);
+    if(agents.length >5){
+      var chatCount =1
+      const intervalObj = setInterval(async () => {
+        chatCount--;
+        if(chatCount < agents.length*0.02){
+          chatCount++;
+          agentChat();
+        }
+      }, 30000);  
+    }
 
-
-    const chattingFunc = async() => {
-      let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
-      const random = Math.floor(Math.random() * testArr.length);
-      var randomAgent : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
+    const agentChat = async() => {
+      let agentArr = await redisServices.geoSearch(services.locations['station'], '3000');
+      const random = Math.floor(Math.random() * agentArr.length);
+      var randomAgent : IAgent = agents[(agents.findIndex(x => x.id === agentArr[random].key))];
       console.log("random agent1",randomAgent)
       let closeAgents: Array<any> = await redisServices.geoSearch(randomAgent.actual, '1000');
 
@@ -290,10 +292,8 @@ export const simController = async (
         var closeAgent : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
         console.log("random agent2",closeAgent)
 
-        await chatServices.chatFunction(randomAgent, closeAgent, services);
-
+        await chatServices.chat(randomAgent, closeAgent, services);
         }
-
     }
   
       
