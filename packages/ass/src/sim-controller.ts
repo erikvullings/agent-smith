@@ -17,7 +17,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 2, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
     const simConfig = jsonSimConfig as ISimConfig;
@@ -92,6 +92,10 @@ export const simController = async (
       bijenkorf: {
         type: 'work',
         coord: [5.477151, 51.441586],
+      },
+      'wilhelminaplein': {
+        type: 'parking lot',
+        coord: [5.470759, 51.437697],
       },
     };
 
@@ -253,7 +257,7 @@ export const simController = async (
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(white1, red1, blue1, ...generatedAgents);
+    agents.push(white1);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
@@ -270,7 +274,8 @@ export const simController = async (
         chatCount--;
         if(chatCount < agents.length*0.02){
           chatCount++;
-          chatServices.agentChat(agents,services);
+          await chatServices.agentChat(agents,services);
+
         }
       }, 30000);  
     }

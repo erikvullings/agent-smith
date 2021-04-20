@@ -1,6 +1,6 @@
-import { ActivityList, IAgent, IAgentActivities } from '../models';
+import { IAgent } from '../models';
 import { IGroup } from '../models';
-import { simTime, hours, minutes, randomInRange, randomIntInRange} from '../utils';
+import { simTime, hours, randomInRange, randomIntInRange} from '../utils';
 import { IEnvServices } from '../env-services';
 import * as simConfig from "../sim_config.json";
 
