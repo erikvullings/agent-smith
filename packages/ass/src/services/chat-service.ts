@@ -5,9 +5,19 @@ import { redisServices } from './redis-service';
 
 /** Picks one random agent and the closest agent */
 const agentChat = async (agents: Array<IAgent>, services: IEnvServices) => {
-    let agentArr = await redisServices.geoSearch(services.locations['station'], '3000');
-    const random = Math.floor(Math.random() * agentArr.length);
-    var randomAgent : IAgent = agents[(agents.findIndex(agent => agent.id === agentArr[random].key))];
+    let redisAgents = await redisServices.geoSearch(services.locations['station'], '3000');
+    var availableAgents : Array<IAgent> = []
+
+    redisAgents.forEach((redisAgent: { key: string; }) => {
+      var currAgent : IAgent = agents[(agents.findIndex(agent => agent.id === redisAgent.key))];
+      if(currAgent.type != 'car' || 'bicycle' || 'bus' || 'train' && currAgent.steps != undefined 
+          && currAgent.steps[0].name != 'driveTo' || 'cycleTo'){
+          availableAgents.concat(currAgent);
+      }
+    });
+  
+    const random = Math.floor(Math.random() * availableAgents.length);
+    var randomAgent : IAgent = availableAgents[random];
     console.log("random agent1",randomAgent)
     let closeAgents: Array<any> = await redisServices.geoSearch(randomAgent.actual, '1000');
 
@@ -30,14 +40,14 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
     var destinationCoord: ILocation = {type: "road",
     coord: [(randomAgent.actual.coord[0]+closeAgent.actual.coord[0])/2,
     (randomAgent.actual.coord[1]+closeAgent.actual.coord[1])/2]};
-    console.log(destinationCoord)
+    console.log(destinationCoord);
 
    if(randomAgent.agenda != undefined && closeAgent.agenda != undefined){
     randomAgent.destination = destinationCoord;
     closeAgent.destination = destinationCoord;
 
     let timesim = services.getTime();
-    timesim.setMinutes(timesim.getMinutes()+ 2)
+    timesim.setMinutes(timesim.getMinutes()+ 2);
 
     let chatDuration = minutes(2, 15);
 
