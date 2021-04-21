@@ -1,6 +1,7 @@
 import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
+import { IGroup} from './models/group';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices } from './services';
 import * as jsonSimConfig from "./sim_config.json"
@@ -93,101 +94,66 @@ export const simController = async (
     };
 
   
-    // /** Agents in groups */
+    /** Agents in groups */
 
-    // const agentx = {
-    //   id: 'agent x',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
-    //   memberOf: 'group2'
-    // } as IAgent;
+    const agentx = {
+      id: 'agent x',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      memberOf: 'group2'
+    } as IAgent;
 
-    // const agenty = {
-    //   id: 'agent y',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-    //   memberOf: 'group2'
-    // } as IAgent;
+    const agenty = {
+      id: 'agent y',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
+      memberOf: 'group2'
+    } as IAgent;
 
-    // const agenta = {
-    //   id: 'agenta',
-    //   type: 'boy',
-    //   status: 'active',
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
-    //   memberOf: 'group2'
-    // } as IAgent;
+    const agenta = {
+      id: 'agenta',
+      type: 'boy',
+      status: 'active',
+      home: services.locations['Monarchstraat 52'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      memberOf: 'group2'
+    } as IAgent;
 
-    // const group2 = {
-    //   id: 'group2',
-    //   type: 'group',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'ziekenhuis' }],
-    //   force: "blue",
-    //   group: ['agent x', 'agenta', 'agent y'],
-    // } as IGroup;
+    const group2 = {
+      id: 'group2',
+      type: 'group',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'ziekenhuis' }],
+      force: "blue",
+      group: ['agent x', 'agenta', 'agent y'],
+    } as IGroup;
 
-    // const group1 = {
-    //   id: 'group1',
-    //   type: 'group',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
-    //   memberOf: 'group2',
-    // } as IGroup;
-
-    /** Agents in force */
-    // const white1 = {
-    //   id: 'white1',
-    //   type: 'woman',
-    //   status: 'active',
-    //   force: 'white',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'park' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
-
-    // const blue1 = {
-    //   id: 'blue1',
-    //   type: 'girl',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
-
-    // const red1 = {
-    //   id: 'red1',
-    //   type: 'boy',
-    //   status: 'active',
-    //   force: 'red',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'station' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
-
+    const group1 = {
+      id: 'group1',
+      type: 'group',
+      status: 'active',
+      force: 'blue',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop' }],
+      memberOf: 'group2',
+    } as IGroup;
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
 
 
-    //agents.push(group1, group2, agenta, agentx, agenty, ...generatedAgents);
-    agents.push( ...generatedAgents);
+    agents.push(group1, group2, agenta, agentx, agenty, ...generatedAgents);
+    //agents.push( ...generatedAgents);
     
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
@@ -203,48 +169,48 @@ export const simController = async (
     await redisServices.geoAddBatch('agents', agents);
 
     const intervalObj = setInterval(async () => {
-      let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
+       let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
 
-      const random = Math.floor(Math.random() * testArr.length);
-      var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
+       const random = Math.floor(Math.random() * testArr.length);
+       var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
 
-      console.log("random agent1",agentRand)
+    //   console.log("random agent1",agentRand)
 
-      let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '20');
+    //   let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '20');
 
-      console.log("before",closeAgents);
-      closeAgents = closeAgents.filter(function(item) {
-        return item.key != agentRand.id;
-      });
-      console.log("after",closeAgents);
+    //   console.log("before",closeAgents);
+    //   closeAgents = closeAgents.filter(function(item) {
+    //     return item.key != agentRand.id;
+    //   });
+    //   console.log("after",closeAgents);
       
       
-      if(closeAgents.length > 1){
-        var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
-        console.log("random agent2",agentRand2)
+    //   if(closeAgents.length > 1){
+    //     var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
+    //     console.log("random agent2",agentRand2)
 
-        var destinationCoord: ILocation = {type: "road",
-         coord: [(agentRand.actual.coord[0]+agentRand2.actual.coord[0])/2,
-         (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
+    //     var destinationCoord: ILocation = {type: "road",
+    //      coord: [(agentRand.actual.coord[0]+agentRand2.actual.coord[0])/2,
+    //      (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
       
 
-        if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
-          agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
-          agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
+    //     if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
+    //       agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
+    //       agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
 
-          agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
-          agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
+    //       agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
+    //       agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
 
           
-          console.log("agenda1",agentRand.agenda)
-          console.log("agenda2",agentRand2.agenda)
+    //       console.log("agenda1",agentRand.agenda)
+    //       console.log("agenda2",agentRand2.agenda)
 
+    //     }
+    //   }
+        if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
+          agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
+          console.log(agentRand.agenda)
         }
-      }
-      // if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
-      //   agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
-      //   console.log(agentRand.agenda)
-      // }
 
     }, 30000);
       

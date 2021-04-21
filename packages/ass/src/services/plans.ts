@@ -104,11 +104,12 @@ export const plans = {
   /** In the options, you can set the shop location to go to */
   'Go shopping': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-    const { destination = randomPlaceNearby(agent, 10000, 'shop') } = options;
-    agent.destination = destination;
-    prepareRoute(agent, services, options);
+      const { destination = randomPlaceNearby(agent, 1000, 'shop') } = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
 
-    return true;
+      return true;
+    },
   },
 
   'Go to the park': {
@@ -118,6 +119,7 @@ export const plans = {
       prepareRoute(agent, services, options);
   
       return true;
+      },
     },
 
   'Go to random location': {
@@ -125,7 +127,7 @@ export const plans = {
       const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
-      
+      console.log("random loc")
       return true;      
     },
   },
@@ -275,5 +277,4 @@ export const plans = {
       return true;
     },
   },
-}}
 }
