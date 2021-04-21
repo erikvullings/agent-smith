@@ -120,21 +120,8 @@ export const plans = {
       return true;
     },
 
-  'Go to the location': {
+  'Go to random location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-    //   if (!agent.occupations) {
-    //     return true;
-    //   }
-    //   const occupations = agent.occupations;
-    //   if (occupations.length > 0) {
-    //     const { destination } = options;
-    //     const occupation =
-    //       (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-    //     agent.destination = services.locations[occupation.id];
-    //     prepareRoute(agent, services, options);
-    //   }
-    //   return true;
-    // },
       const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
@@ -253,6 +240,20 @@ export const plans = {
         const {duration = minutes(1)} = options;
         steps.push({ name: 'waitFor', options: { duration } });
       }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'drop object':{
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      if(agent.group){
+        agent.group.filter((a) => _services.agents[a].type == 'object').map((a) => delete _services.agents[a].memberOf);
+        agent.group = agent.group.filter((a) => _services.agents[a].type !== 'object')
+      }
+      const {duration = minutes(0.5)} = options;
+      steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       return true;
     },

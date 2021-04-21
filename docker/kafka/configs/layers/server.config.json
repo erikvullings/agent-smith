@@ -426,6 +426,50 @@
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/Feature"
+    },
+    {
+      "id": "object",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "object.json",
+      "style": {
+        "type": "circle",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "get",
+              "force"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/object"
     }
   ],
   "featureTypes": {
@@ -617,6 +661,56 @@
           "label": "agenda",
           "type": "string",
           "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "object": {
+      "title": "object",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
         }
       ],
       "infoPanels": {

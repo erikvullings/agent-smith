@@ -3,14 +3,14 @@ import { ActivityList } from '.';
 import { ILocation } from './location';
 
 export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
-
 export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' ;
+export type ObjectType = 'object' ;
 
 export interface IAgent {
    /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ 
   id: string;
   /** Type of agent */
-  type: AgentType | TransportType;
+  type: AgentType | TransportType | ObjectType;
   /** Status of the agent */
   status: 'active' | 'walking' | 'cycling' | 'driving';
   /** Actual location as [lon, lat] */

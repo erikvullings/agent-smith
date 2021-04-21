@@ -177,6 +177,9 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
 });
 
 
+
+
+
 /** Based on the actual lat/lon, create a place nearby */
 export const randomPlaceNearby = (a: IAgent | IGroup, rangeInMeter: number, type: string): ILocation => {
   const {
