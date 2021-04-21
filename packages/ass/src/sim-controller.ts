@@ -1,4 +1,4 @@
-import { envServices, executeSteps, updateAgent } from './env-services';
+import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
@@ -9,6 +9,9 @@ import { ISimConfig } from './models';
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
+export const simConfig = jsonSimConfig as ISimConfig;
+export const customAgendas = simConfig.customAgendas;
+
 export const simController = async (
   options: {
     /** Simulation speed. 0 is paused, 1 is real-time. */
@@ -17,10 +20,9 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 2, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
-    const simConfig = jsonSimConfig as ISimConfig;
     const agents : Array<IAgent> = simConfig.customAgents;
 
     console.log("adapter",agents)
@@ -97,8 +99,12 @@ export const simController = async (
         type: 'parking lot',
         coord: [5.470759, 51.437697],
       },
-    };
+      'bioscoop': {
+        type: 'cinema',
+        coord: [5.477744, 51.437028],
+      },
 
+    };
     /** Agents with transporttypes */
 
     // const agent1 = {
@@ -250,14 +256,14 @@ export const simController = async (
       force: 'red',
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'station' }],
+      occupations: [{ type: 'work', id: 'bioscoop' }],
       relations: [{type:'family', id:'fam1'}] ,
     } as IAgent;
 
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(white1);
+    agents.push(white1, blue1, red1, ...generatedAgents,);
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
@@ -268,17 +274,17 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle'];
     await redisServices.geoAddBatch('agents', agents);
 
-    if(agents.length >5){
-      var chatCount =1
-      const intervalObj = setInterval(async () => {
-        chatCount--;
-        if(chatCount < agents.length*0.02){
-          chatCount++;
-          await chatServices.agentChat(agents,services);
+    // if(agents.length >5){
+    //   var chatCount =1
+    //   const intervalObj = setInterval(async () => {
+    //     chatCount--;
+    //     if(chatCount < agents.length*0.02){
+    //       chatCount++;
+    //       await chatServices.agentChat(agents,services);
 
-        }
-      }, 30000);  
-    }
+    //     }
+    //   }, 30000);  
+    // }
       
     let i = 0;
     while (i < 10000000) {

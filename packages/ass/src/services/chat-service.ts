@@ -64,7 +64,7 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
                                     { name: 'Chat', options: { priority: 2, duration: chatDuration } }];
     randomAgent.agenda = newAgenda1.concat(randomAgent.agenda);
 
-    var newAgenda2 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: closeAgent.actual, duration: minutes(5,5) }},
+    var newAgenda2 : ActivityList = [{name: 'Wait', options: { startTime: timesim, priority: 1, destination: closeAgent.actual, duration: minutes(5,5) }},
                                     { name: 'Chat', options: { priority: 2, duration: chatDuration } }];
     closeAgent.agenda = newAgenda2.concat(closeAgent.agenda);
 

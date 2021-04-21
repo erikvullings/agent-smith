@@ -7,7 +7,7 @@ export interface ISimConfig {
 }
 
 export interface CustomAgenda {
-  agentIds: string[];
+  agentId: string;
   agendaItems: AgendaItem[];
 }
 

@@ -2,6 +2,7 @@ import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
 import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
+import { customAgendas } from './sim-controller';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -74,16 +75,14 @@ export const envServices = ({
 };
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
+   const customAgIndex = customAgendas.findIndex(agenda => agenda.agentId === agent.id);
 
-  // const customAgIndex = simConfig.customAgendas.findIndex(el => el.agentIds[0] === agent.id);
-  // console.log(customAgIndex);
-  // if (customAgIndex > -1) {
-  //   //console.log(simConfig.customAgendas[customAgIndex].agendaItems)
-  //   agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
-  // }
-  // else{
-    agent.agenda = agendas.getAgenda(agent, services);
-  //}
+   if (customAgIndex > -1) {
+      agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
+   }
+   else{
+      agent.agenda = agendas.getAgenda(agent, services);
+   }
 };
 
 export const executeSteps = async (

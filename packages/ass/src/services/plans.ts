@@ -131,10 +131,10 @@ export const plans = {
   },
   
   'Go to specific location': {
-    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
       const steps = [] as ActivityList;
-      //const { destination = agent.destination } = options;
-      // agent.destination = destination;
+      //const { destination } = options;
+      //agent.destination = destination;
 
       steps.push({ name: 'walkTo', options: options});
       agent.steps = steps;
@@ -145,7 +145,7 @@ export const plans = {
       //prepareRoute(agent, services, options);
 
       return true;
-  },
+    },
   },
 
   'Visit doctor': {
@@ -164,7 +164,6 @@ export const plans = {
       return true;
     },
   },
-
 
   /** Go to your home address */
   'Go home': {
@@ -187,14 +186,8 @@ export const plans = {
 
   Chat: { prepare: waitFor },
 
-  // 'Chat': {
-  //   prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
-  //     const steps = [] as ActivityList;
-  //     steps.push({ name: 'waitFor', options: { duration: minutes(5,15) } });
-  //     agent.steps = steps;
-  //     return true;
-  //   },
-  // },
+  Wait: { prepare: waitFor },
+
 
   'Patrol': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {

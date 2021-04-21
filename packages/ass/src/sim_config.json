@@ -65,10 +65,18 @@
     ],
     "customAgendas": [
         {
-            "agentIds": ["51bc0240-d4fb-4a2e-a548-d3e32aa3037b"],
+            "agentId": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "agendaItems": [
                 { "name": "Go to the park", "options" : {}},
                 { "name": "Wander" },
+                { "name": "Go home" }
+            ] 
+        },
+        {
+            "agentId": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "agendaItems": [
+                { "name": "Go to work", "options" : {}},
+                { "name": "Work" },
                 { "name": "Go home" }
             ] 
         }

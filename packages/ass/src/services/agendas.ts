@@ -34,7 +34,6 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Shop', options: { duration: hours(0, 1) , priority: 2 } }]
     ],
     'wander': () => [
-      //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
       { name: 'Wander', options: { priority: 3 } }
     ],
     'doctor_visit': () => [
@@ -56,13 +55,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Wander', options: { priority: 1 } }
     ],
     'patrol': () => [
-      //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
       [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 }}, 
       { name: 'Patrol', options: { priority: 1 } },
       { name: 'Patrol', options: { priority: 1 } }]
     ],
     'guard': () => [
-      //{ name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
       [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
       { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
       [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
@@ -157,7 +154,7 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
 
     var agenda = simConfig.customAgendas[customAgIndex].agendaItems;
     agenda[0].options = {startTime:simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
-    console.log(agenda)
+    console.log( "agentId", agent.id, "custom agenda", agenda)
   return agenda;
 }
 
