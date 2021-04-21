@@ -6,34 +6,45 @@
     },
     "customAgents": [
         {
-            "id": "e6c8d80b-cdf6-44e1-b0e4-bec8a9a49378",
+            "id": "agent1",
             "type": "man",
             "force": "white",
             "status": "active",
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.496994, 51.468701]},
             "actual": {"type": "home", "coord": [5.496994, 51.468701]},
-            "occupations": [{ "type": "work", "id": "tue_innovation_forum"}]
+            "occupations": [{ "type": "work", "id": "Ingmar B.V."}]
+        },
+        {
+            "id": "child1",
+            "type": "man",
+            "force": "white",
+            "status": "active",
+            "owns": [{ "type": "car", "id": "car1" }],
+            "home": {"type": "home", "coord": [5.499309, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "memberOf": ["agent2"]
         },
         {
             "id": "f97a0292-ca8e-45ed-b9f3-c49431f755ca",
             "type": "man",
-            "force": "white",
+            "force": "blue",
             "status": "active",
-            "owns": [{ "type": "bicycle", "id": "bicycle1" }],
+            "owns": [{ "type": "bicycle", "id": "bicycle1" }, { "type": "car", "id": "car3" }],
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "home", "coord": [5.521275, 51.448302]},
             "occupations": [{ "type": "work", "id": "h_m_shop"}]
         },
         {
-            "id": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "id": "agent2",
             "type": "man",
-            "force": "white",
+            "force": "red",
             "status": "active",
             "owns": [{ "type": "car", "id": "car2" }],
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "ziekenhuis"}]
+            "occupations": [{ "type": "work", "id": "Verweg"}],
+            "group": ["child1", "object1"]
         },
         {
             "id": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
@@ -42,8 +53,58 @@
             "status": "active",
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "wander", "id": "park"}]
+            "occupations": [{ "type": "work", "id": "park"}]
+        },
+        {
+            "id": "78bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "man",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "home", "coord": [5.521275, 51.448302]},
+            "occupations": [{ "type": "work", "id": "park"}]
+        },
+        {
+            "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "type": "woman",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499555, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499555, 51.437832]},
+            "occupations": [{ "type": "work", "id": "park"}]
+        },
+        {
+            "id": "bicycle1",
+            "type": "bicycle",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.521275, 51.448302]}
+        },
+        {
+            "id": "car1",
+            "type": "car",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.496994, 51.468701]}
+        },
+        {
+            "id": "car2",
+            "type": "car",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.499309, 51.437832]}
+        },
+        {
+            "id": "car3",
+            "type": "car",
+            "status": "active",
+            "actual": { "type": "home","coord": [5.521275, 51.448302]}
+        },
+        {   "id": "object1",
+            "type": "object",
+            "force": "red",
+            "status": "active",
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "memberOf": ["agent2"]
         }
+      
     ],
     "customAgendas": [
         {

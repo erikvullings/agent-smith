@@ -250,7 +250,7 @@ export const simController = async (
     }, {} as { [id: string]: IAgent });
 
     /** Agent types that never control itself */
-    const passiveTypes = ['car', 'bicycle'];
+    const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
     const intervalObj = setInterval(async () => {

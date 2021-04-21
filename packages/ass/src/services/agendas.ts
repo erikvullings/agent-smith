@@ -40,8 +40,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'GetExamined', options: { duration: hours(0, 5) } }
     ],
-    'release_at_location': () => [
-      { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+    'release_at_random_location': () => [
+      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
     ]
   };
@@ -61,9 +61,19 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Have lunch', options: { priority: 2 } },
       { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
     ],
-    'release_at_location': () => [
-      { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+    'release_at_random_location': () => [
+      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
+    ]
+  };
+
+  const redActivities = {
+    'go home': () => [
+      { name: 'Go home', options: { priority: 3 } }
+    ],
+    'drop_at_random_location': () => [
+      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'drop object' },
     ]
   };
   
@@ -81,14 +91,14 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'learn': () => [
       Array.prototype.concat.apply([], [activities['work'](), activities['wander'](), activities['go home']()]),
     ],
-    'wander': () => [
-      Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()]),
+    'police': () => [
+      Array.prototype.concat.apply([], [blueActivities['guard']()[randomIntInRange(0,blueActivities["guard"]().length-1)], activities['go home']()]),
     ],
-    'guard': () => [
-      Array.prototype.concat.apply([], [blueActivities['guard']()[0], activities['go home']()]),
+    'red': () => [
+      Array.prototype.concat.apply([], [redActivities['drop_at_random_location'](), activities['go home']()]),
     ],
     'release_at_location': () => [
-      Array.prototype.concat.apply([], [activities['release_at_location'](), activities['go home']()]),
+      Array.prototype.concat.apply([], [activities['release_at_random_location'](), activities['go home']()]),
     ],
      null: () => [
       Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()])
@@ -101,14 +111,14 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       //return [activities['work'](),activities['go home']()];
     'learn': () => 
       (agendaVariations["learn"]())[randomIntInRange(0,activities["work"]().length-1)], 
-    'wander': () => 
-      (agendaVariations["wander"]())[randomIntInRange(0,activities["work"]().length-1)], 
     'release_at_location': () => 
       (agendaVariations["release_at_location"]())[0], 
-    'guard': () => 
-      (agendaVariations["guard"]())[0], 
+      'police_duty': () => 
+      (agendaVariations["police"]())[randomIntInRange(0,agendaVariations["police"]().length-1)],
+    'red_activity': () =>
+      (agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
     null: () => 
-      (agendaVariations["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
+      (agendaVariations["work"]())[randomIntInRange(0,agendaVariations["work"]().length-1)], 
   };
 
   if(agent.type == 'group'){
@@ -127,12 +137,12 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       }
     case 'red': { 
        //statements; 
-       return agentAgendas['work']()      
+       return agentAgendas['red_activity']()           
       } 
     case 'blue': { 
       //statements; 
       //console.log("blue agenda",agentAgendas['guard']()  )
-      return agentAgendas['guard']()    
+      return agentAgendas['police_duty']()       
     } 
     default: { 
       if(agent.occupations != undefined && agent.occupations.length != 0){

@@ -156,11 +156,9 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
   },
   properties: {
     id: agent.id,
-    title: agent.group ? String(agent.group.length): '',
+    title:((agent.type == 'group') && agent.group) ? String(agent.group.length): '',
     type: agent.type,
     children: agent.group,
-    color: agent.force ? agent.force: 'white' ,
-    visible: (agent.type == 'group' && !agent.group)? 0: 1,
     location: {
       longitude: agent.actual.coord[0],
       latitude: agent.actual.coord[1],
@@ -170,10 +168,16 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.group ? String(agent.group.length): '',
       force: agent.force ? agent.force: 'white' ,
-      visible: (agent.type == 'group' && !agent.group)? String(0): agent.memberOf? String(0): String(1),
+      visible: 
+        ((agent.type == 'group' || (agent.type == 'car') || (agent.type == 'bicycle')) && !agent.group)? String(0): 
+        (agent.steps && agent.steps[0] && (agent.steps[0].name == 'driveTo' || agent.steps[0].name == 'cycleTo'))? String(0):
+        (!(agent.type == 'car') && !(agent.type == 'bicycle') && agent.memberOf)? String(0): String(1),
     },
   },
 });
+
+
+
 
 
 /** Based on the actual lat/lon, create a place nearby */

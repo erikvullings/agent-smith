@@ -131,6 +131,7 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
       const i = agent.group.indexOf(id);
       if (a) {
         a.memberOf = undefined;
+        delete a.group;
         agent.group.splice(i, 1);
       }
     }
