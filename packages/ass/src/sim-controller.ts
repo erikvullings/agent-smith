@@ -1,15 +1,17 @@
 import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
+import { uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
+import { redisServices, chatServices } from './services';
 import { IGroup} from './models/group';
-import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
-import { redisServices } from './services';
 import * as jsonSimConfig from "./sim_config.json"
-import { ILocation, ISimConfig } from './models';
-import { close } from 'node:fs';
+import { ISimConfig } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
+
+export const simConfig = jsonSimConfig as ISimConfig;
+export const customAgendas = simConfig.customAgendas;
 
 export const simController = async (
   options: {
@@ -19,10 +21,9 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
-    const simConfig = jsonSimConfig as ISimConfig;
     const agents : Array<IAgent> = simConfig.customAgents;
 
     console.log("adapter",agents)
@@ -75,6 +76,10 @@ export const simController = async (
         type: 'work',
         coord: [5.476234, 51.442025],
       },
+      mc_donalds: {
+        type: 'work',
+        coord: [5.476625, 51.441021],
+      },
       park: {
         type: 'park',
         coord: [5.497535, 51.441965],
@@ -82,6 +87,22 @@ export const simController = async (
       'station': {
         type: 'station',
         coord: [5.479549, 51.443012],
+      },
+      'police station': {
+        type: 'police station',
+        coord: [5.499089, 51.437034],
+      },
+      bijenkorf: {
+        type: 'work',
+        coord: [5.477151, 51.441586],
+      },
+      'wilhelminaplein': {
+        type: 'parking lot',
+        coord: [5.470759, 51.437697],
+      },
+      'bioscoop': {
+        type: 'cinema',
+        coord: [5.477744, 51.437028],
       },
       'Ingmar B.V.': {
         type: 'work',
@@ -92,7 +113,18 @@ export const simController = async (
         coord : [5.576614, 51.383969]
       },
     };
+    /** Agents with transporttypes */
 
+    // const agent1 = {
+    //   id: 'agent 1',
+    //   type: 'man',
+    //   // speed: 1.4,
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   owns: [{ type: 'car', id: 'car1' }],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
+    // } as IAgent;
   
     /** Agents in groups */
 
@@ -100,9 +132,33 @@ export const simController = async (
       id: 'agent x',
       type: 'man',
       status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      force: 'white',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'work', id: 'bijenkorf' }],
+      relations: [{type:'family', id:'fam1'}] ,
+    } as IAgent;
+
+    const blue1 = {
+      id: 'blue1',
+      type: 'woman',
+      status: 'active',
+      force: 'blue',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'work', id: 'mc_donalds' }],
+      relations: [{type:'family', id:'fam1'}] ,
+    } as IAgent;
+
+    const red1 = {
+      id: 'red1',
+      type: 'man',
+      status: 'active',
+      force: 'red',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'work', id: 'bioscoop' }],
+      relations: [{type:'family', id:'fam1'}],
       memberOf: 'group2'
     } as IAgent;
 
@@ -150,10 +206,7 @@ export const simController = async (
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-
-
-    agents.push(group1, group2, agenta, agentx, agenty, ...generatedAgents);
-    //agents.push( ...generatedAgents);
+    agents.push(group1, group2, agenta, agentx, agenty, blue1, red1, ...generatedAgents);
     
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
@@ -168,51 +221,17 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
-    const intervalObj = setInterval(async () => {
-       let testArr = await redisServices.geoSearch(services.locations['station'], '3000');
-
-       const random = Math.floor(Math.random() * testArr.length);
-       var agentRand : IAgent = agents[(agents.findIndex(x => x.id === testArr[random].key))];
-
-    //   console.log("random agent1",agentRand)
-
-    //   let closeAgents: Array<any> = await redisServices.geoSearch(agentRand.actual, '20');
-
-    //   console.log("before",closeAgents);
-    //   closeAgents = closeAgents.filter(function(item) {
-    //     return item.key != agentRand.id;
-    //   });
-    //   console.log("after",closeAgents);
-      
-      
-    //   if(closeAgents.length > 1){
-    //     var agentRand2 : IAgent = agents[(agents.findIndex(x => x.id === closeAgents[0].key))];
-    //     console.log("random agent2",agentRand2)
-
-    //     var destinationCoord: ILocation = {type: "road",
-    //      coord: [(agentRand.actual.coord[0]+agentRand2.actual.coord[0])/2,
-    //      (agentRand.actual.coord[1]+agentRand2.actual.coord[1])/2]};
-      
-
-    //     if(agentRand.agenda != undefined && agentRand2.agenda != undefined){
-    //       agentRand.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
-    //       agentRand2.agenda?.splice(0,0,{ name: 'Go to specific location', options: { destination: destinationCoord, priority: 2 } })
-
-    //       agentRand.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
-    //       agentRand2.agenda?.splice(1,0,{ name: 'Chat', options: { priority: 2 } })
-
-          
-    //       console.log("agenda1",agentRand.agenda)
-    //       console.log("agenda2",agentRand2.agenda)
+    // if(agents.length >5){
+    //   var chatCount =1
+    //   const intervalObj = setInterval(async () => {
+    //     chatCount--;
+    //     if(chatCount < agents.length*0.02){
+    //       chatCount++;
+    //       await chatServices.agentChat(agents,services);
 
     //     }
-    //   }
-        if(agentRand.agenda != undefined && agentRand.agenda[1].options?.priority && 1 < agentRand.agenda[1].options?.priority){
-          agentRand.agenda?.splice(1,0,{ name: 'Wander', options: { priority: 3 } })
-          console.log(agentRand.agenda)
-        }
-
-    }, 30000);
+    //   }, 30000);  
+    // }
       
     let i = 0;
     while (i < 10000000) {

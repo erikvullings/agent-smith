@@ -108,10 +108,10 @@ export const plans = {
       agent.destination = destination;
       prepareRoute(agent, services, options);
 
-      return true;
+    return true;
     },
   },
-
+  
   'Go to the park': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
@@ -119,8 +119,8 @@ export const plans = {
       prepareRoute(agent, services, options);
   
       return true;
-      },
     },
+  },
 
   'Go to random location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -131,12 +131,21 @@ export const plans = {
       return true;      
     },
   },
-
+  
   'Go to specific location': {
-    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
       const steps = [] as ActivityList;
-      steps.push({ name: 'walkTo'});
+      //const { destination } = options;
+      //agent.destination = destination;
+
+      steps.push({ name: 'walkTo', options: options});
       agent.steps = steps;
+
+      //agent.steps = steps;
+      //const {destination = agent.destination} = options;
+      //agent.destination = destination;
+      //prepareRoute(agent, services, options);
+
       return true;
     },
   },
@@ -158,7 +167,6 @@ export const plans = {
     },
   },
 
-
   /** Go to your home address */
   'Go home': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -178,10 +186,14 @@ export const plans = {
 
   GetExamined: { prepare: waitFor },
 
-  'Chat': {
+  Chat: { prepare: waitFor },
+
+  //Wait: { prepare: waitFor },
+
+  'Wait': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
-      steps.push({ name: 'waitFor', options: { duration: minutes(5,15) } });
+      steps.push({ name: 'waitFor', options: options});
       agent.steps = steps;
       return true;
     },
