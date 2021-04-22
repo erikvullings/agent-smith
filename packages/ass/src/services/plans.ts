@@ -186,8 +186,16 @@ export const plans = {
 
   Chat: { prepare: waitFor },
 
-  Wait: { prepare: waitFor },
+  //Wait: { prepare: waitFor },
 
+  'Wait': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: options});
+      agent.steps = steps;
+      return true;
+    },
+  },
 
   'Patrol': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {

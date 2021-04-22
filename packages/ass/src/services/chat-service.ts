@@ -26,33 +26,33 @@ const agentChat = async (agents: Array<IAgent>, services: IEnvServices) => {
     });      
     
     if(closeAgents.length > 0){
-      console.log("type", closeAgents[0].key)
-
       var closeAgent : IAgent = agents[(agents.findIndex(agent => agent.id === closeAgents[0].key))];
       console.log("random agent2",closeAgent)
 
-      await chatServices.startChat(randomAgent, closeAgent, services);
+      startChat(randomAgent, closeAgent, services);
       }
   }
 
 /** Adds going to the meetup location and chatting steps in the agendas */
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
-    var destinationCoord: ILocation = {type: "road",
-    coord: [(randomAgent.actual.coord[0]+closeAgent.actual.coord[0])/2,
-    (randomAgent.actual.coord[1]+closeAgent.actual.coord[1])/2]} as ILocation;
-    console.log(destinationCoord);
-    console.log(services.locations['wilhelminaplein']);
+    // var destinationCoord: ILocation = {type: "road",
+    // coord: [(randomAgent.actual.coord[0]+closeAgent.actual.coord[0])/2,
+    // (randomAgent.actual.coord[1]+closeAgent.actual.coord[1])/2]} as ILocation;
+    // console.log(destinationCoord);
+    // console.log(services.locations['wilhelminaplein']);
 
 
    if(randomAgent.agenda != undefined && closeAgent.agenda != undefined){
     console.log("delete route", randomAgent.route)
-    randomAgent.route = [];
-    randomAgent.steps = [];
-
     closeAgent.route = [];
     closeAgent.steps == [];
 
-    randomAgent.destination = destinationCoord;
+    
+    randomAgent.route = [];
+    randomAgent.steps = [];
+
+
+    randomAgent.destination = closeAgent.actual;
     closeAgent.destination = undefined;
 
     let timesim = services.getTime();
@@ -62,11 +62,11 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
 
     var newAgenda1 : ActivityList = [{name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: closeAgent.actual, duration: minutes(5,5) }},
                                     { name: 'Chat', options: { priority: 2, duration: chatDuration } }];
-    randomAgent.agenda = newAgenda1.concat(randomAgent.agenda);
+    randomAgent.agenda = [...newAgenda1,...randomAgent.agenda];
 
-    var newAgenda2 : ActivityList = [{name: 'Wait', options: { startTime: timesim, priority: 1, destination: closeAgent.actual, duration: minutes(5,5) }},
+    var newAgenda2 : ActivityList = [{name: 'Wait', options: { startTime: timesim, priority: 1, duration: minutes(5,5) }},
                                     { name: 'Chat', options: { priority: 2, duration: chatDuration } }];
-    closeAgent.agenda = newAgenda2.concat(closeAgent.agenda);
+    closeAgent.agenda = [...newAgenda2,...closeAgent.agenda];
 
     console.log("agenda1",randomAgent.agenda)
     console.log("agenda2",closeAgent.agenda)

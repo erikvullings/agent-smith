@@ -75,46 +75,46 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   
   const agendaVariations = {
     'work': () => [
-      Array.prototype.concat.apply([], [(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
-      activities['go home'](),activities['wander']()]),
-      Array.prototype.concat.apply([], [(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
-      activities['shop']()[randomIntInRange(0,activities["shop"]().length-1)],activities['go home']()]),
-      Array.prototype.concat.apply([], [(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
-      activities['wander'](),activities['go home']()]),
-      Array.prototype.concat.apply([], [activities['shop']()[randomIntInRange(0,activities["shop"]().length-1)],(activities["work"]())[randomIntInRange(0,activities["work"]().length-1)], 
-      activities['go home']()]),
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()],      
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()],      
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()],      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()],      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()],
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()],      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()],      
+      [...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()],      
+      [...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()],      
     ],
     'learn': () => [
-      Array.prototype.concat.apply([], [activities['work']()[randomIntInRange(0,activities["work"]().length-1)], activities['wander'](), activities['go home']()]),
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['wander'](),...activities['go home']()],      
     ],
     'police': () => [
-      Array.prototype.concat.apply([], [blueActivities['guard']()[randomIntInRange(0,blueActivities["guard"]().length-1)], activities['go home']()]),
-      Array.prototype.concat.apply([], [blueActivities['patrol']()[randomIntInRange(0,blueActivities["patrol"]().length-1)], activities['go home']()]),
+      [...((blueActivities['guard']())[randomIntInRange(0,blueActivities['guard']().length-1)]),...activities['go home']()],      
+      [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()],      
     ],
     'release_at_location': () => [
-      Array.prototype.concat.apply([], [activities['release_at_location'](), activities['go home']()]),
+      [...activities['release_at_location'](),...activities['go home']()],      
     ],
-     null: () => [
-      Array.prototype.concat.apply([], [activities['wander'](), activities['go home']()])
+     'null': () => [
+      [...activities['wander'](),...activities['go home']()],      
      ]
   };
 
   const agentAgendas = {
     'work': () => 
-      (agendaVariations["work"]())[randomIntInRange(0,agendaVariations["work"]().length-1)], 
+      (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
     'learn': () => 
-      (agendaVariations["learn"]())[randomIntInRange(0,agendaVariations["learn"]().length-1)], 
+      (agendaVariations['learn']())[randomIntInRange(0,agendaVariations['learn']().length-1)], 
     'release_at_location': () => 
-      (agendaVariations["release_at_location"]())[0], 
+      (agendaVariations['release_at_location']())[0], 
     'police_duty': () => 
-      (agendaVariations["police"]())[randomIntInRange(0,agendaVariations["police"]().length-1)], 
+      (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     null: () => 
-      (agendaVariations["work"]())[randomIntInRange(0,agendaVariations["work"]().length-1)], 
+      (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
   };
 
   if(agent.type == 'group'){
     return agentAgendas['release_at_location']();
-    //return agentAgendas['shop']();
   }
   else {
   switch(agent.force) { 
@@ -129,12 +129,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
        return agentAgendas['work']()      
       } 
     case 'blue': { 
-      console.log("blue agenda",agentAgendas['police_duty']()  )
+      console.log('blue agenda',agentAgendas['police_duty']()  )
       return agentAgendas['police_duty']()    
     } 
     default: { 
       if(agent.occupations != undefined && agent.occupations.length != 0){
-        console.log(agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]() )
         return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
       }
       else{
@@ -152,9 +151,9 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
   }
   const { _day: day } = agent;
 
-    var agenda = simConfig.customAgendas[customAgIndex].agendaItems;
-    agenda[0].options = {startTime:simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
-    console.log( "agentId", agent.id, "custom agenda", agenda)
+  var agenda = simConfig.customAgendas[customAgIndex].agendaItems;
+  agenda[0].options = {startTime:simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
+  //console.log( 'agentId', agent.id, 'custom agenda', agenda)
   return agenda;
 }
 
