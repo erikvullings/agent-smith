@@ -113,100 +113,89 @@ export const simController = async (
         coord : [5.576614, 51.383969]
       },
     };
-    /** Agents with transporttypes */
-
-    // const agent1 = {
-    //   id: 'agent 1',
-    //   type: 'man',
-    //   // speed: 1.4,
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   owns: [{ type: 'car', id: 'car1' }],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
-    // } as IAgent;
+   
   
     /** Agents in groups */
 
-    const agentx = {
-      id: 'agent x',
-      type: 'man',
-      status: 'active',
-      force: 'white',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'bijenkorf' }],
-      relations: [{type:'family', id:'fam1'}] ,
-    } as IAgent;
+    // const agentx = {
+    //   id: 'agent x',
+    //   type: 'man',
+    //   status: 'active',
+    //   force: 'white',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'work', id: 'bijenkorf' }],
+    //   relations: [{type:'family', id:'fam1'}] ,
+    // } as IAgent;
 
-    const blue1 = {
-      id: 'blue1',
-      type: 'woman',
-      status: 'active',
-      force: 'blue',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'mc_donalds' }],
-      relations: [{type:'family', id:'fam1'}] ,
-    } as IAgent;
+    // const blue1 = {
+    //   id: 'blue1',
+    //   type: 'woman',
+    //   status: 'active',
+    //   force: 'blue',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'work', id: 'mc_donalds' }],
+    //   relations: [{type:'family', id:'fam1'}] ,
+    // } as IAgent;
 
-    const red1 = {
-      id: 'red1',
-      type: 'man',
-      status: 'active',
-      force: 'red',
-      home: services.locations['Antoon Derkinderenstraat 17'],
-      actual: services.locations['Antoon Derkinderenstraat 17'],
-      occupations: [{ type: 'work', id: 'bioscoop' }],
-      relations: [{type:'family', id:'fam1'}],
-      memberOf: 'group2'
-    } as IAgent;
+    // const red1 = {
+    //   id: 'red1',
+    //   type: 'man',
+    //   status: 'active',
+    //   force: 'red',
+    //   home: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   occupations: [{ type: 'work', id: 'bioscoop' }],
+    //   relations: [{type:'family', id:'fam1'}],
+    //   memberOf: 'group2'
+    // } as IAgent;
 
-    const agenty = {
-      id: 'agent y',
-      type: 'man',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-      memberOf: 'group2'
-    } as IAgent;
+    // const agenty = {
+    //   id: 'agent y',
+    //   type: 'man',
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
+    //   memberOf: 'group2'
+    // } as IAgent;
 
-    const agenta = {
-      id: 'agenta',
-      type: 'boy',
-      status: 'active',
-      home: services.locations['Monarchstraat 52'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'work', id: 'h_m_shop'  }],
-      memberOf: 'group2'
-    } as IAgent;
+    // const agenta = {
+    //   id: 'agenta',
+    //   type: 'boy',
+    //   status: 'active',
+    //   home: services.locations['Monarchstraat 52'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
+    //   memberOf: 'group2'
+    // } as IAgent;
 
-    const group2 = {
-      id: 'group2',
-      type: 'group',
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'work', id: 'ziekenhuis' }],
-      force: "white",
-      group: ['agent x', 'agenta', 'agent y'],
-    } as IGroup;
+    // const group2 = {
+    //   id: 'group2',
+    //   type: 'group',
+    //   status: 'active',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'work', id: 'ziekenhuis' }],
+    //   force: "white",
+    //   group: ['agent x', 'agenta', 'agent y'],
+    // } as IGroup;
 
-    const group1 = {
-      id: 'group1',
-      type: 'group',
-      status: 'active',
-      force: 'blue',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'work', id: 'h_m_shop' }],
-      memberOf: 'group2',
-    } as IGroup;
+    // const group1 = {
+    //   id: 'group1',
+    //   type: 'group',
+    //   status: 'active',
+    //   force: 'blue',
+    //   home: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['Firmamentlaan 5'],
+    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
+    //   memberOf: 'group2',
+    // } as IGroup;
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(group1, group2, agenta, agentx, agenty, blue1, red1, ...generatedAgents);
+    agents.push(...generatedAgents);
     
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
