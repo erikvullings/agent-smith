@@ -127,7 +127,7 @@ export const plans = {
       const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
-      console.log("random loc")
+      
       return true;      
     },
   },

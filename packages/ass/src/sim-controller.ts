@@ -133,7 +133,7 @@ export const simController = async (
       home: services.locations['Firmamentlaan 5'],
       actual: services.locations['Firmamentlaan 5'],
       occupations: [{ type: 'work', id: 'ziekenhuis' }],
-      force: "blue",
+      force: "white",
       group: ['agent x', 'agenta', 'agent y'],
     } as IGroup;
 
