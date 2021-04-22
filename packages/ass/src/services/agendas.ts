@@ -103,7 +103,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'red': () => [
-      [...redActivities['drop_at_random_location'](), ...activities['go home']()],
+      [...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
     ],
     'release_at_location': () => [
       [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,      
