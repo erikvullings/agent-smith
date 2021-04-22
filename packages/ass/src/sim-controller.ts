@@ -3,6 +3,7 @@ import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import { uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
 import { redisServices, chatServices } from './services';
+import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
 import { ISimConfig } from './models';
 
@@ -103,7 +104,14 @@ export const simController = async (
         type: 'cinema',
         coord: [5.477744, 51.437028],
       },
-
+      'Ingmar B.V.': {
+        type: 'work',
+        coord : [5.497604, 51.467525]
+      },
+      'Verweg': {
+        type: 'work',
+        coord : [5.576614, 51.383969]
+      },
     };
     /** Agents with transporttypes */
 
@@ -118,118 +126,11 @@ export const simController = async (
     //   occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
     // } as IAgent;
   
-    // const bicycle1 = {
-    //   id: 'bicycle1',
-    //   type: 'bicycle',
-    //   status: 'active',
-    //   actual: {
-    //     type: 'home',
-    //     coord: (
-    //       await services.cycle.nearest({
-    //         coordinates: [services.locations['Monarchstraat 52'].coord],
-    //       })
-    //     ).waypoints[0].location,
-    //   },
-    // } as IAgent;
-
-    // const car = {
-    //   id: 'car1',
-    //   type: 'car',
-    //   status: 'active',
-    //   actual: {
-    //     type: 'home',
-    //     coord: (
-    //       await services.drive.nearest({
-    //         coordinates: [services.locations['Firmamentlaan 5'].coord],
-    //       })
-    //     ).waypoints[0].location,
-    //   },
-    // } as IAgent;
-
-    // const car2 = {
-    //   id: 'car2',
-    //   type: 'car',
-    //   status: 'active',
-    //   actual: {
-    //     type: 'home',
-    //     coord: (
-    //       await services.drive.nearest({
-    //         coordinates: [services.locations['Antoon Derkinderenstraat 17'].coord],
-    //       })
-    //     ).waypoints[0].location,
-    //   },
-    // } as IAgent;
-
-    // const agent2 = {
-    //   id: 'agent 2',
-    //   type: 'man',
-    //   status: 'active',
-    //   owns: [{type: 'bicycle', id: 'bicycle1'}],
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['Monarchstraat 52'],
-    //   occupations: [{ type: 'shop', id: 'h_m_shop' }],
-    //   relations: [{type:'group', id:'group1'}] ,
-    // } as IAgent;
-
-
     /** Agents in groups */
 
-    // const agentx = {
-    //   id: 'agent x',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const agenty = {
-    //   id: 'agent y',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const agenta = {
-    //   id: 'agenta',
-    //   type: 'boy',
-    //   status: 'active',
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const group2 = {
-    //   id: 'group2',
-    //   type: 'group',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'ziekenhuis' }],
-    //   force: "blue",
-    //   group: ['agent x', 'agenta', 'agent y'],
-    // } as IGroup;
-
-    // const group1 = {
-    //   id: 'group1',
-    //   type: 'group',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
-    //   memberOf: 'group2',
-    // } as IGroup;
-
-    /** Agents in force */
-    const white1 = {
-      id: 'white1',
-      type: 'woman',
+    const agentx = {
+      id: 'agent x',
+      type: 'man',
       status: 'active',
       force: 'white',
       home: services.locations['Antoon Derkinderenstraat 17'],
@@ -257,13 +158,59 @@ export const simController = async (
       home: services.locations['Antoon Derkinderenstraat 17'],
       actual: services.locations['Antoon Derkinderenstraat 17'],
       occupations: [{ type: 'work', id: 'bioscoop' }],
-      relations: [{type:'family', id:'fam1'}] ,
+      relations: [{type:'family', id:'fam1'}],
+      memberOf: 'group2'
     } as IAgent;
 
+    const agenty = {
+      id: 'agent y',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
+      memberOf: 'group2'
+    } as IAgent;
+
+    const agenta = {
+      id: 'agenta',
+      type: 'boy',
+      status: 'active',
+      home: services.locations['Monarchstraat 52'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      memberOf: 'group2'
+    } as IAgent;
+
+    const group2 = {
+      id: 'group2',
+      type: 'group',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'ziekenhuis' }],
+      force: "blue",
+      group: ['agent x', 'agenta', 'agent y'],
+    } as IGroup;
+
+    const group1 = {
+      id: 'group1',
+      type: 'group',
+      status: 'active',
+      force: 'blue',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{ type: 'work', id: 'h_m_shop' }],
+      memberOf: 'group2',
+    } as IGroup;
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(white1, blue1, red1, ...generatedAgents,);
+    agents.push(group1, group2, agenta, agentx, agenty, blue1, red1, ...generatedAgents);
+    
+    agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
+    agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location),
+
     services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
@@ -271,7 +218,7 @@ export const simController = async (
     }, {} as { [id: string]: IAgent });
 
     /** Agent types that never control itself */
-    const passiveTypes = ['car', 'bicycle'];
+    const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
     // if(agents.length >5){

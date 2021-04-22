@@ -1,6 +1,15 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
-import { randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck } from '../utils';
+import { randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+
+const addGroup = (agent: IAgent, transport : IAgent, services: IEnvServices) => {
+  if(transport.group){
+    if(agent.group){
+      transport.group.push(...agent.group)
+      agent.group.filter((a) => services.agents[a].group).map((a) => addGroup(services.agents[a], transport, services)) 
+    }
+  }
+};
 
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -13,7 +22,10 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
     if (agent.owns && agent.owns.length > 0) {
       const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
       const car = ownedCar && services.agents[ownedCar.id];
-      if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500) {
+      if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500){
+        car.force = agent.force;
+        car.group = [agent.id];
+        addGroup(agent, car, services);
         steps.push({ name: 'walkTo', options: { destination: car.actual } });
         steps.push({ name: 'controlAgents', options: { control: [car.id] } });
         steps.push({ name: 'driveTo', options: { destination: agent.destination } });
@@ -21,14 +33,15 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
       } else {
         const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
         const bike = ownedBike && services.agents[ownedBike.id];
-        if (
-          bike &&
-          distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300
-        ) {
-          steps.push({ name: 'walkTo', options: { destination: bike.actual } });
-          steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
-          steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
-          steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
+        if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000){
+            bike.force = agent.force;
+            bike.group = [agent.id];
+            addGroup(agent, bike, services);
+            steps.push({ name: 'walkTo', options: { destination: bike.actual } });
+            steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
+            steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
+            steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
+          
         } else {
           steps.push({ name: 'walkTo', options: { destination: agent.destination } });
         }
@@ -91,13 +104,14 @@ export const plans = {
   /** In the options, you can set the shop location to go to */
   'Go shopping': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-    const { destination = randomPlaceNearby(agent, 10000, 'shop') } = options;
-    agent.destination = destination;
-    prepareRoute(agent, services, options);
+      const { destination = randomPlaceNearby(agent, 1000, 'shop') } = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
 
     return true;
+    },
+  },
   
-  },},
   'Go to the park': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
@@ -105,27 +119,15 @@ export const plans = {
       prepareRoute(agent, services, options);
   
       return true;
-    },},
+    },
+  },
 
-  'Go to the location': {
+  'Go to random location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-    //   if (!agent.occupations) {
-    //     return true;
-    //   }
-    //   const occupations = agent.occupations;
-    //   if (occupations.length > 0) {
-    //     const { destination } = options;
-    //     const occupation =
-    //       (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-    //     agent.destination = services.locations[occupation.id];
-    //     prepareRoute(agent, services, options);
-    //   }
-    //   return true;
-    // },
       const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
-      
+      console.log("random loc")
       return true;      
     },
   },
@@ -257,6 +259,20 @@ export const plans = {
     },
   },
 
+  'drop object':{
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      if(agent.group){
+        agent.group.filter((a) => _services.agents[a].type == 'object').map((a) => delete _services.agents[a].memberOf);
+        agent.group = agent.group.filter((a) => _services.agents[a].type !== 'object')
+      }
+      const {duration = minutes(0.5)} = options;
+      steps.push({ name: 'waitFor', options: { duration } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
   'Go to other shops': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
@@ -273,5 +289,4 @@ export const plans = {
       return true;
     },
   },
-
 }

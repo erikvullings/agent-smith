@@ -40,8 +40,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'GetExamined', options: { duration: hours(0, 5) } }
     ],
-    'release_at_location': () => [
-      { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+    'release_at_random_location': () => [
+      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
     ]
   };
@@ -67,9 +67,19 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Have lunch', options: { priority: 2 } },
       { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
     ],
-    'release_at_location': () => [
-      { name: 'Go to the location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+    'release_at_random_location': () => [
+      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
+    ]
+  };
+
+  const redActivities = {
+    'go home': () => [
+      { name: 'Go home', options: { priority: 3 } }
+    ],
+    'drop_at_random_location': () => [
+      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'drop object' },
     ]
   };
   
@@ -92,8 +102,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...((blueActivities['guard']())[randomIntInRange(0,blueActivities['guard']().length-1)]),...activities['go home']()] as ActivityList,      
       [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
+    'red': () => [
+      [...redActivities['drop_at_random_location'](), ...activities['go home']()],
+    ],
     'release_at_location': () => [
-      [...activities['release_at_location'](),...activities['go home']()] as ActivityList,      
+      [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,      
     ],
      'null': () => [
       [...activities['wander'](),...activities['go home']()] as ActivityList,      
@@ -109,6 +122,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations['release_at_location']())[0], 
     'police_duty': () => 
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
+    'red_activity': () =>
+      (agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
     null: () => 
       (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
   };
@@ -126,10 +141,10 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
         return agentAgendas['work']()  }
       }
     case 'red': { 
-       return agentAgendas['work']()      
+       return agentAgendas['red_activity']()           
       } 
     case 'blue': { 
-      console.log('blue agenda',agentAgendas['police_duty']()  )
+      //console.log('blue agenda',agentAgendas['police_duty']()  )
       return agentAgendas['police_duty']()    
     } 
     default: { 
