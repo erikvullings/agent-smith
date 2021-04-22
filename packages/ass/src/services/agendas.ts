@@ -1,4 +1,4 @@
-import { IAgent } from '../models';
+import { ActivityList, IAgent } from '../models';
 import { IGroup } from '../models';
 import { simTime, hours, randomInRange, randomIntInRange} from '../utils';
 import { IEnvServices } from '../env-services';
@@ -75,28 +75,28 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   
   const agendaVariations = {
     'work': () => [
-      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()],      
-      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()],      
-      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()],      
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()],      
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()],
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()],      
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()],      
-      [...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()],      
-      [...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()],      
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      [...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'learn': () => [
-      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['wander'](),...activities['go home']()],      
+      [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
     ],
     'police': () => [
-      [...((blueActivities['guard']())[randomIntInRange(0,blueActivities['guard']().length-1)]),...activities['go home']()],      
-      [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()],      
+      [...((blueActivities['guard']())[randomIntInRange(0,blueActivities['guard']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'release_at_location': () => [
-      [...activities['release_at_location'](),...activities['go home']()],      
+      [...activities['release_at_location'](),...activities['go home']()] as ActivityList,      
     ],
      'null': () => [
-      [...activities['wander'](),...activities['go home']()],      
+      [...activities['wander'](),...activities['go home']()] as ActivityList,      
      ]
   };
 

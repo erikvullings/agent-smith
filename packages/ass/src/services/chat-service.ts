@@ -47,10 +47,8 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
     closeAgent.route = [];
     closeAgent.steps == [];
 
-    
     randomAgent.route = [];
     randomAgent.steps = [];
-
 
     randomAgent.destination = closeAgent.actual;
     closeAgent.destination = undefined;
@@ -76,7 +74,6 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
 
     updateAgent(closeAgent,services);
     updateAgent(randomAgent,services);
-
     }
 };
 
