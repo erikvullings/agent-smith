@@ -61,8 +61,6 @@ export const envServices = ({
     walk,
     /** Agent lookup */
     agents: {},
-    /** Group lookup */
-    groups: {},
     /** Available high-level plans for agents to choose from */
     plans,
     /** Available steps i.e. basic activities that make up a plan, e.g. go to location */

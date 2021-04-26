@@ -1,7 +1,7 @@
 import { IAgent, IGroup, ILocation} from '../models';
 import { IItem } from 'test-bed-schemas';
 import { redisServices } from '../services';
-
+import { IEnvServices } from '../env-services';
 
 /**
  * Create a GUID
@@ -156,7 +156,7 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
   },
   properties: {
     id: agent.id,
-    title:((agent.type == 'group') && agent.group) ? String(agent.group.length): '',
+    title:((agent.type == 'group') && agent.membercount) ? String(agent.membercount.length): '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -166,7 +166,7 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
     tags: {
       agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
       members: agent.group ? agent.group.join(', ') : '',
-      number_of_members: agent.group ? String(agent.group.length): '',
+      number_of_members: agent.membercount ? String(agent.membercount.length): '',
       force: agent.force ? agent.force: 'white' ,
       visible: 
         ((agent.type == 'group' || (agent.type == 'car') || (agent.type == 'bicycle')) && !agent.group)? String(0): 
@@ -336,4 +336,23 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     return acc;
   }, [] as IAgent[]);
   return { agents, locations: Object.assign({}, homes, occupations) };
+};
+
+export const addGroup = (agent: IAgent, transport : IAgent, services: IEnvServices) => {
+  if(transport.group){
+    if(agent.group){
+      console.log(transport.group)
+      transport.group.push(...agent.group);
+      transport.membercount?.push(...agent.group);
+      agent.group.filter((a) => services.agents[a].group).map((a) => addGroup(services.agents[a], transport, services));
+      console.log(transport.group)
+    };
+    if(agent.type == 'group'){
+      console.log(transport.group)
+      const index = transport.membercount?.indexOf(agent.id);
+      if(index){transport.membercount?.splice(index, 1)};
+      console.log(transport.membercount);
+      console.log(transport.group)
+    }
+  }
 };

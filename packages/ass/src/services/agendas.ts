@@ -1,6 +1,6 @@
 import { ActivityList, IAgent } from '../models';
 import { IGroup } from '../models';
-import { simTime, hours, randomInRange, randomIntInRange} from '../utils';
+import { simTime, hours, randomInRange, randomIntInRange, minutes} from '../utils';
 import { IEnvServices } from '../env-services';
 import * as simConfig from "../sim_config.json";
 
@@ -80,7 +80,12 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'drop_at_random_location': () => [
       { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'drop object' },
-    ]
+    ],
+    'steal_from_shop': () => [
+      { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
+      { name: 'Shop', options: { duration: minutes(10) , priority: 1 } },
+      { name: 'Run away', options:  { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 }  } 
+    ],
   };
   
   const agendaVariations = {
@@ -104,6 +109,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'red': () => [
       [...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
+      [...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
     ],
     'release_at_location': () => [
       [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,      

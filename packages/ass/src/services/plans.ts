@@ -1,15 +1,8 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
-import { randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
 
-const addGroup = (agent: IAgent, transport : IAgent, services: IEnvServices) => {
-  if(transport.group){
-    if(agent.group){
-      transport.group.push(...agent.group)
-      agent.group.filter((a) => services.agents[a].group).map((a) => addGroup(services.agents[a], transport, services)) 
-    }
-  }
-};
+
 
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -131,6 +124,16 @@ export const plans = {
       return true;      
     },
   },
+
+  'Run away': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      const {destination = randomPlaceNearby(agent, 10000, 'any')} = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
+      agent.speed = 2;
+      return true;      
+    },
+  },
   
   'Go to specific location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
@@ -245,9 +248,12 @@ export const plans = {
         const {release = agent.group, duration = minutes(1)} = options;
         for (let i of release){
           const member = _services.agents[i];
-          delete member.memberOf;
+          if(member.memberOf == agent.id){
+            delete member.memberOf;
+          }
         }
         delete agent.group;
+        delete agent.membercount;
         steps.push({ name: 'waitFor', options: { duration } });
       }
       else{

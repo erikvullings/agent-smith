@@ -13,7 +13,7 @@
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.496994, 51.468701]},
             "actual": {"type": "home", "coord": [5.496994, 51.468701]},
-            "occupations": [{ "type": "work", "id": "Ingmar B.V."}]
+            "occupations": [{ "type": "work", "id": "h_m_shop"}]
         },
         {
             "id": "child1",
@@ -26,13 +26,13 @@
             "memberOf": ["agent2"]
         },
         {
-            "id": "f97a0292-ca8e-45ed-b9f3-c49431f755ca",
+            "id": "biker",
             "type": "man",
             "force": "blue",
             "status": "active",
             "owns": [{ "type": "bicycle", "id": "bicycle1" }, { "type": "car", "id": "car3" }],
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
-            "actual": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "work", "id": "h_m_shop"}]
         },
         {
@@ -40,10 +40,9 @@
             "type": "man",
             "force": "red",
             "status": "active",
-            "owns": [{ "type": "car", "id": "car2" }],
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "Verweg"}],
+            "occupations": [{ "type": "work", "id": "h_m_shop"}],
             "group": ["child1", "object1"]
         },
         {
@@ -56,21 +55,12 @@
             "occupations": [{ "type": "work", "id": "park"}]
         },
         {
-            "id": "78bc0240-d4fb-4a2e-a548-d3e32aa3037b",
-            "type": "man",
-            "force": "blue",
-            "status": "active",
-            "home": {"type": "home", "coord": [5.521275, 51.448302]},
-            "actual": {"type": "home", "coord": [5.521275, 51.448302]},
-            "occupations": [{ "type": "work", "id": "park"}]
-        },
-        {
             "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "type": "woman",
             "force": "blue",
             "status": "active",
             "home": {"type": "home", "coord": [5.499555, 51.437832]},
-            "actual": {"type": "home", "coord": [5.499555, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "work", "id": "park"}]
         },
         {
@@ -118,6 +108,15 @@
             "agentId": "13bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "agendaItems": [
                 { "name": "Go to work", "options" : {}},
+                { "name": "Work" },
+                { "name": "Go home" }
+            ] 
+        },
+        {
+            "agentId": "biker",
+            "agendaItems": [
+                { "name": "Go home", "options" : {}},
+                { "name": "Go to work"},
                 { "name": "Work" },
                 { "name": "Go home" }
             ] 

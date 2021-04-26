@@ -388,6 +388,18 @@
               "Open Sans Bold",
               "Arial Unicode MS Bold"
             ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              16,
+              16
+            ],
             "text-allow-overlap": true,
             "text-ignore-placement": true
           }

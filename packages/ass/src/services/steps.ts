@@ -23,7 +23,9 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const step = route[0];
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
-  agent.speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
+  if(!agent.speed){
+    agent.speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
+  }
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
