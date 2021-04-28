@@ -341,18 +341,13 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
 export const addGroup = (agent: IAgent, transport : IAgent, services: IEnvServices) => {
   if(transport.group){
     if(agent.group){
-      console.log(transport.group)
       transport.group.push(...agent.group);
       transport.membercount?.push(...agent.group);
       agent.group.filter((a) => services.agents[a].group).map((a) => addGroup(services.agents[a], transport, services));
-      console.log(transport.group)
     };
     if(agent.type == 'group'){
-      console.log(transport.group)
       const index = transport.membercount?.indexOf(agent.id);
       if(index){transport.membercount?.splice(index, 1)};
-      console.log(transport.membercount);
-      console.log(transport.group)
     }
   }
 };
