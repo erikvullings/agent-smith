@@ -23,7 +23,7 @@
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "memberOf": ["agent2"]
+            "memberOf": ["agent2"] 
         },
         {
             "id": "biker",

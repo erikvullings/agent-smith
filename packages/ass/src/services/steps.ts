@@ -14,6 +14,30 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 };
 
 const defaultWalkingSpeed = 5000 / 3600;
+/** Determine speed of agent */
+const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number =>{
+  let speed = agent.speed;
+  let child = "no";
+  if (agent.type == "boy" || agent.type == "girl"){
+    child = "yes";
+  } else if (agent.group){
+    for (let i of agent.group){
+      const member = services.agents[i];
+      if(member.type == "boy" || member.type == "girl"){
+        child = "yes";
+      }
+    }
+  }
+  speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
+  if(child == "yes"){
+    speed = speed * (3/5);
+  }
+  if(agent.running){
+    speed = 2*speed;
+  }
+  return speed;
+}
+
 /** Move agent along a route. */
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
   const { route = [] } = agent;
@@ -23,9 +47,11 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const step = route[0];
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
-  if(!agent.speed){
-    agent.speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
-  }
+  agent.speed = determineSpeed(agent, services, totDistance, totDuration);
+  console.log(agent.id);
+  console.log(agent.speed);
+  console.log(agent.running? "running": "nope");
+  console.log("");
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
@@ -141,6 +167,13 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
   return true;
 };
 
+const stopRunning =  async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  if(agent.running){
+    delete agent.running;
+  }
+  return true;
+};
+
 export const steps = {
   walkTo: moveAgent('foot'),
   cycleTo: moveAgent('bike'),
@@ -149,4 +182,5 @@ export const steps = {
   waitFor,
   controlAgents,
   releaseAgents,
+  stopRunning,
 };

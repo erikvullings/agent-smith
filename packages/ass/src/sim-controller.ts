@@ -23,8 +23,8 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    let agentstoshow = [] as IAgent[];
-    const agents : Array<IAgent> = simConfig.customAgents;
+    let agents = [] as IAgent[];
+    //const agents : Array<IAgent> = simConfig.customAgents;
 
     console.log("adapter",agents)
 
@@ -194,9 +194,33 @@ export const simController = async (
     //   memberOf: 'group2',
     // } as IGroup;
 
+
+
+    const man1 = {
+      id: 'man1',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{  type: 'work', id: 'h_m_shop' }],
+      force: 'red',
+    } as IAgent;
+
+    const man2 = {
+      id: 'man2',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: services.locations['Firmamentlaan 5'],
+      occupations: [{  type: 'work', id: 'h_m_shop' }],
+      force: 'white',
+    } as IAgent;
+
+
+
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push( ...generatedAgents);
+    agents.push(man1, man2);
     
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
@@ -231,8 +255,6 @@ export const simController = async (
       
     let i = 0;
     while (i < 10000000) {
-      agentstoshow = [];
-      agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a)),
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
       );

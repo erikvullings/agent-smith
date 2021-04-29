@@ -45,6 +45,9 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
   } else {
     steps.push({ name: 'walkTo', options: { destination: agent.destination } });
   }
+  if(agent.running){
+    steps.push({ name: 'stopRunning'});
+  }
   agent.steps = steps;
 };
 
@@ -127,10 +130,10 @@ export const plans = {
 
   'Run away': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
-      const {destination = randomPlaceNearby(agent, 10000, 'any')} = options;
+      const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
+      agent.running = true;
       prepareRoute(agent, services, options);
-      agent.speed = 2;
       return true;      
     },
   },

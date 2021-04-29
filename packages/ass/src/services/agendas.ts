@@ -84,7 +84,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'steal_from_shop': () => [
       { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Shop', options: { duration: minutes(10) , priority: 1 } },
-      { name: 'Run away', options:  { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 }  } 
+      { name: 'Run away', options:  { priority: 2 }  } 
     ],
   };
   
@@ -93,12 +93,12 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
-      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
-      [...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
-      [...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,      
+      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,
+      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      //[...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      //[...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'learn': () => [
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
@@ -109,7 +109,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'red': () => [
       [...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
-      //[...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
+      [...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
     ],
     'release_at_location': () => [
       [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,      

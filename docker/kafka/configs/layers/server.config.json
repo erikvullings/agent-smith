@@ -243,7 +243,7 @@
       "source": "girl.json",
       "style": {
         "type": "circle",
-        "icon": "img.icons8.com/ios-filled/50/000000/standing-woman.png",
+        "icon": "https://img.icons8.com/ios-filled/24/000000/standing-woman.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
