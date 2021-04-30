@@ -67,4 +67,11 @@ export interface IAgent {
   speed?: number;
   /** Route to follow from actual location to destination */
   route?: IOsrmRouteStep[];
+  /** Mailbox for messages */
+  mailbox: Array<{
+    /** Id of the sender */
+    senderId: string;
+    /** Message of the sender */
+    message: string;
+  }>;
 }

@@ -1,6 +1,8 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
 import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+import { redisServices } from './redis-service';
+import { messageServices } from './message-service';
 
 
 
@@ -72,6 +74,8 @@ export const plans = {
         const occupation =
           (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
+        let arr = await redisServices.geoSearch(agent.actual, "100", agent);
+        messageServices.sendMessage(agent, "went to work", arr); 
         prepareRoute(agent, services, options);
       }
       return true;
