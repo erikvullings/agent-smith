@@ -74,8 +74,6 @@ export const plans = {
         const occupation =
           (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
-        let arr = await redisServices.geoSearch(agent.actual, "100", agent);
-        messageServices.sendMessage(agent, "went to work", arr); 
         prepareRoute(agent, services, options);
       }
       return true;

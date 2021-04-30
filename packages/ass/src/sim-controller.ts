@@ -2,7 +2,7 @@ import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import {addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
-import { redisServices, chatServices } from './services';
+import { redisServices, chatServices, messageServices } from './services';
 import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
 import { ISimConfig } from './models';
@@ -219,14 +219,11 @@ export const simController = async (
 
     // if(agents.length >5){
     //   var chatCount =1
-    //   const intervalObj = setInterval(async () => {
-    //     chatCount--;
-    //     if(chatCount < agents.length*0.02){
-    //       chatCount++;
-    //       await chatServices.agentChat(agents,services);
-
-    //     }
-    //   }, 30000);  
+      const intervalObj = setInterval(async () => {
+        // await Promise.all(
+        //   agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => messageServices.readMailbox(a, services)),
+        //   );  
+      }, 30000);  
     // }
       
     let i = 0;
