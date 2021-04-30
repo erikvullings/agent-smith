@@ -5,7 +5,8 @@ import {addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, ra
 import { redisServices, chatServices, messageServices } from './services';
 import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
-import { ISimConfig } from './models';
+import * as planreactionConfig from "./plan_reactions.json"
+import { ISimConfig, IReaction } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -21,7 +22,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
     const agents : Array<IAgent> = simConfig.customAgents;
@@ -217,14 +218,13 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
-    // if(agents.length >5){
-    //   var chatCount =1
-      const intervalObj = setInterval(async () => {
-        // await Promise.all(
-        //   agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => messageServices.readMailbox(a, services)),
-        //   );  
-      }, 30000);  
-    // }
+    messageServices.sendMessage(agents[0], "drop object", "10000", services, 1);
+
+    const intervalObj = setInterval(async () => {
+      await Promise.all(
+        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
+        );
+    }, 10000);  
       
     let i = 0;
     while (i < 10000000) {

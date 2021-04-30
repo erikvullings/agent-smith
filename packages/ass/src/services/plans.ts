@@ -244,12 +244,12 @@ export const plans = {
     },
   },
   'Release':{
-    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       if(agent.group){
         const {release = agent.group, duration = minutes(1)} = options;
         for (let i of release){
-          const member = _services.agents[i];
+          const member = services.agents[i];
           if(member.memberOf == agent.id){
             delete member.memberOf;
           }
@@ -268,11 +268,11 @@ export const plans = {
   },
 
   'drop object':{
-    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       if(agent.group){
-        agent.group.filter((a) => _services.agents[a].type == 'object').map((a) => delete _services.agents[a].memberOf);
-        agent.group = agent.group.filter((a) => _services.agents[a].type !== 'object')
+        agent.group.filter((a) => services.agents[a].type == 'object').map((a) => delete services.agents[a].memberOf);
+        agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
       }
       const {duration = minutes(0.5)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
@@ -282,7 +282,7 @@ export const plans = {
   },
 
   'Go to other shops': {
-    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       const actual = agent.actual;
       const noshops = randomIntInRange(2,5) 

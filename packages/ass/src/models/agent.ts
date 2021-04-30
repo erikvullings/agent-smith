@@ -73,5 +73,7 @@ export interface IAgent {
     senderId: string;
     /** Message of the sender */
     message: string;
+    /** Message of the sender */
+    urgency: 1 | 2 | 3 | 4 | 5;
   }>;
 }

@@ -1,8 +1,10 @@
 import { ActivityList, IAgent } from '../models';
 import { IGroup } from '../models';
 import { simTime, hours, randomInRange, randomIntInRange, minutes} from '../utils';
-import { IEnvServices } from '../env-services';
+import { IEnvServices, updateAgent } from '../env-services';
 import * as simConfig from "../sim_config.json";
+import { reactions } from './reactions';
+import { time } from 'node:console';
 
 function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   if (typeof agent._day === 'undefined') {
@@ -178,7 +180,29 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
   return agenda;
 }
 
+
+function addReaction(agent: IAgent, services: IEnvServices) {
+  agent.route = [];
+  agent.steps == [];
+
+  let timesim = services.getTime();
+  timesim.setMinutes(timesim.getMinutes()+ 5);
+
+  if(agent.agenda){
+    var reactionAgenda : ActivityList = reactions["drop object"][agent.force][0];
+    reactionAgenda[0].options = {startTime: timesim}
+    agent.agenda = [...reactionAgenda,...agent.agenda];
+  
+    console.log("reaction agenda",agent.agenda)
+  
+    updateAgent(agent,services);
+    return reactionAgenda;
+  }
+}
+
+
 export const agendas = {
   getAgenda,
-  customAgenda
+  customAgenda,
+  addReaction
 };
