@@ -117,94 +117,82 @@ export const simController = async (
   
     /** Agents in groups */
 
-    // const agentx = {
-    //   id: 'agent x',
-    //   type: 'woman',
-    //   status: 'active',
-    //   force: 'white',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'bijenkorf' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
+    const agentx = {
+      id: 'agent x',
+      type: 'woman',
+      status: 'active',
+      force: 'white',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'work', id: 'bijenkorf' }],
+      relations: [{type:'family', id:'fam1'}] ,
+    } as IAgent;
 
-    // const blue1 = {
-    //   id: 'blue1',
-    //   type: 'woman',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'mc_donalds' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
+    const blue1 = {
+      id: 'blue1',
+      type: 'woman',
+      status: 'active',
+      force: 'blue',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: services.locations['Antoon Derkinderenstraat 17'],
+      occupations: [{ type: 'work', id: 'mc_donalds' }],
+      relations: [{type:'family', id:'fam1'}] ,
+    } as IAgent;
 
-    // const red1 = {
-    //   id: 'red1',
-    //   type: 'man',
-    //   status: 'active',
-    //   force: 'red',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'bioscoop' }],
-    //   relations: [{type:'family', id:'fam1'}],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const agenty = {
-    //   id: 'agent y',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-    //   memberOf: 'group2'
-    // } as IAgent;
-
-    // const agenta = {
-    //   id: 'agenta',
-    //   type: 'boy',
-    //   status: 'active',
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
-    //   memberOf: 'group1'
-    // } as IAgent;
-
-    // const group2 = {
-    //   id: 'group2',
-    //   type: 'group',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'ziekenhuis' }],
-    //   force: "white",
-    //   group: ['agent x', 'group1', 'agent y'],
-    // } as IGroup;
-
-    // const group1 = {
-    //   id: 'group1',
-    //   type: 'group',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
-    //   group: ['agenta'],
-    //   memberOf: 'group2',
-    // } as IGroup;
-
-
-
-    const man1 = {
-      id: 'man1',
+    const red1 = {
+      id: 'red1',
       type: 'man',
       status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{  type: 'work', id: 'h_m_shop' }],
       force: 'red',
+      home: services.locations['Antoon Derkinderenstraat 17'],
+      actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
+      occupations: [{ type: 'work', id: 'bioscoop' }],
+      relations: [{type:'family', id:'fam1'}],
+      memberOf: 'group2'
     } as IAgent;
+
+    const agenty = {
+      id: 'agent y',
+      type: 'man',
+      force: 'red',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
+      occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
+      memberOf: 'group2'
+    } as IAgent;
+
+    const agenta = {
+      id: 'agenta',
+      type: 'man',
+      status: 'active',
+      home: services.locations['Monarchstraat 52'],
+      actual: services.locations['wilhelminaplein'],
+      occupations: [{ type: 'work', id: 'h_m_shop'  }],
+      memberOf: 'group1'
+    } as IAgent;
+
+    const group2 = {
+      id: 'group2',
+      type: 'group',
+      status: 'active',
+      home: services.locations['Firmamentlaan 5'],
+      actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
+      occupations: [{ type: 'work', id: 'ziekenhuis' }],
+      force: "white",
+      group: ['agent x', 'agent y'],
+    } as IGroup;
+
+    const group1 = {
+      id: 'group1',
+      type: 'group',
+      status: 'active',
+      force: 'red',
+      home: services.locations['Monarchstraat 52'],
+      actual: services.locations['wilhelminaplein'],
+      occupations: [{ type: 'work', id: 'h_m_shop' }],
+      group: ['agenta'],
+    } as IGroup;
 
     const man2 = {
       id: 'man2',
@@ -219,9 +207,11 @@ export const simController = async (
 
 
     const agentCount = simConfig.settings.agentCount;
-    const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push(man1, man2);
-    
+    const { agents: generatedAgents1, locations: locations1 } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], 15,simConfig.settings.radius, group1, 'red');
+    const { agents: generatedAgents2, locations: locations2 } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], 10,simConfig.settings.radius, group2, 'red');
+    const { agents: generatedAgents3, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], 50,simConfig.settings.radius, group2, 'white');
+    agents.push( man2, agentx, agenty, agenta, group1, group2,  ...generatedAgents1,  ...generatedAgents2,  ...generatedAgents3);
+
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
       

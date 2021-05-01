@@ -43,6 +43,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'release_at_random_location': () => [
       { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
+    ],
+    'Release_red': () =>[
+      { name: 'Release_red', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
     ]
   };
 
@@ -86,6 +89,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Shop', options: { duration: minutes(10) , priority: 1 } },
       { name: 'Run away', options:  { priority: 2 }  } 
     ],
+    'fight': () => [
+      {name: 'Fight',options: {startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), duration: hours(3, 5)} }
+    ]
   };
   
   const agendaVariations = {
@@ -111,8 +117,12 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
       [...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
     ],
-    'release_at_location': () => [
-      [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,      
+    'group': () => [
+      //[...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,
+      [...activities['Release_red'](),...activities['go home']()] as ActivityList,       
+    ],
+    'red_group': ()=>[
+      [...redActivities['fight'](),...activities['go home']()] as ActivityList,
     ],
      'null': () => [
       [...activities['wander'](),...activities['go home']()] as ActivityList,      
@@ -124,8 +134,10 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
     'learn': () => 
       (agendaVariations['learn']())[randomIntInRange(0,agendaVariations['learn']().length-1)], 
-    'release_at_location': () => 
-      (agendaVariations['release_at_location']())[0], 
+    'group': () => 
+      (agendaVariations['group']())[randomIntInRange(0,agendaVariations['group']().length-1)], 
+    'red_group': () => 
+      (agendaVariations['red_group']())[randomIntInRange(0,agendaVariations['red_group']().length-1)],  
     'police_duty': () => 
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     'red_activity': () =>
@@ -135,7 +147,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   };
 
   if(agent.type == 'group'){
-    return agentAgendas['release_at_location']();
+    if(agent.force == 'red'){
+      return agentAgendas['red_group']();
+    }else{
+      return agentAgendas['group']();
+    }
   }
   else {
   switch(agent.force) { 

@@ -40,6 +40,19 @@ export const random = (min: number, max: number, f?: (n: number, min?: number, m
 export const randomItem = <T>(arr: T | T[]): T => (arr instanceof Array ? arr[random(0, arr.length - 1)] : arr);
 
 /**
+ * calculates the speed of a group based on the distance between members
+ */
+ export const groupSpeed = (distance: number, desiredspeed: number): number =>{
+  distance = distance + 0.35;
+  const exp1 = (0.35-distance)/0.08;
+  const exp2 = (0.35-Math.sqrt(2* Math.pow(distance,2)))/0.08;
+  const acc = 2*Math.pow(10,3)*Math.exp(exp1) + Math.sqrt(2)*2*Math.pow(10,3)*Math.exp(exp2)
+  const speed = desiredspeed - (1/80)*acc;
+  return speed;
+ }
+
+
+/**
  * Shuffle the items randomly
  *
  * @static
@@ -247,9 +260,9 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, group?: IGroup, force?: string) => {
   const offset = () => random(-radius, radius) / 100000;
-  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park' | 'school') =>
+  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park' ) =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
@@ -258,81 +271,28 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     }, {} as { [key: string]: ILocation });
   const occupations = generateLocations('work');
   const occupationIds = Object.keys(occupations);
-  const schools = generateLocations('school');
-  const schoolIds = Object.keys(schools);
   const homes = generateLocations('home');
   const homeIds = Object.keys(homes);
   const agents = range(1, count).reduce((acc) => {
     const home = homes[randomItem(homeIds)];
     const occupationId = randomItem(occupationIds);
     const occupation = occupations[occupationId];
-    // const  r= randomInRange(0, 1);
-    // if(r < 0.4){
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'man',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: occupationId, ...occupation }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else if (r < 0.8){
-    //   const occupationId = randomItem(occupationIds);
-    //   const occupation = occupations[occupationId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'woman',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: occupationId, ...occupation }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else if (r < 0.9){
-    //   const schoolId = randomItem(schoolIds);
-    //   const school = occupations[schoolId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'boy',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: schoolId, ...school }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else {
-    //   const schoolId = randomItem(schoolIds);
-    //   const school = occupations[schoolId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'girl',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: schoolId, ...school }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
     const agent = {
       id: uuid4(),
       type: 'man',
-      force: 'white',
+      force: force? force: 'white',
       status: 'active',
       home,
       // owns: [{ type: 'car', id: 'car1' }],
-      actual: home,
+      actual: group? group.actual: home,
       occupations: [{ id: occupationId, ...occupation }],
+      memberOf: group? group.id: undefined,
     } as unknown as IAgent;
     acc.push(agent);
     redisServices.geoAdd('agents', agent);
+    if(group && group.group){
+      group.group.push(agent.id);
+    }
     return acc;
   }, [] as IAgent[]);
   return { agents, locations: Object.assign({}, homes, occupations) };

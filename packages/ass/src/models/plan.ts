@@ -16,6 +16,8 @@ export interface IActivityOptions {
   control?: string[];
   /** Agents IDs you are controlling and want to release, e.g. vehicles or children */
   release?: string[];
+  /** ID of group you want to join */
+  group?: string;
   /** Priority of activity */
   priority?: 1 | 2 | 3;
 }

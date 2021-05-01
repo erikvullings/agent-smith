@@ -1,5 +1,6 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
+import { redisServices, chatServices } from '../services';
 import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
 
 
@@ -194,6 +195,8 @@ export const plans = {
 
   Chat: { prepare: waitFor },
 
+  Fight: { prepare: waitFor }, 
+
   //Wait: { prepare: waitFor },
 
   'Wait': {
@@ -249,19 +252,53 @@ export const plans = {
       const steps = [] as ActivityList;
       if(agent.group){
         const {release = agent.group, duration = minutes(1)} = options;
-        for (let i of release){
-          const member = _services.agents[i];
-          if(member.memberOf == agent.id){
-            delete member.memberOf;
-          }
-        }
-        delete agent.group;
-        delete agent.membercount;
-        steps.push({ name: 'waitFor', options: { duration } });
+        steps.push({ name: 'releaseAgents', options: { duration, release: release } });
       }
       else{
         const {duration = minutes(1)} = options;
         steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Release_red':{
+    prepare: async (agent: IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      if(agent.group && agent.force == 'white'){
+        const {release = agent.group, duration = minutes(2)} = options;
+        const red = release.filter((a) => _services.agents[a].force == 'red');
+        for (let i of red){
+          steps.push({ name: 'releaseAgents', options: { release: [i] } });
+          steps.push({ name: 'waitFor', options: { duration } });
+          const member = _services.agents[i];
+          if(member.agenda && member.agenda.length >0){
+            member.agenda.splice(0,0, {name:'Join red group'});
+          } else {
+            member.agenda = [{name:'Join red group'}];
+          }
+        }
+      }
+      else{
+        const {duration = minutes(1)} = options;
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Join red group':{
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      const in_range = await redisServices.geoSearch(agent.actual, '1000', agent);
+      const agents_in_range = in_range.map((a: any) => a = _services.agents[a.key]);
+      const red_groups = agents_in_range.filter((a: IAgent) => (a.type == 'group' && a.force == 'red'));
+      if(red_groups.length > 0){
+        const new_group = randomItem(red_groups);
+        steps.push({ name: 'walkTo', options: { destination: new_group.actual } });
+        steps.push({ name : 'joinGroup', options: {group: new_group.id}})
       }
       agent.steps = steps;
       return true;

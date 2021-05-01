@@ -1,7 +1,8 @@
 import { ILineString, Profile } from 'osrm-rest-client';
-import { IAgent, IActivityOptions } from '../models';
+import { IAgent, IActivityOptions, IGroup } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
+import { addGroup, groupSpeed } from '../utils';
 
 
 /** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
@@ -18,23 +19,48 @@ const defaultWalkingSpeed = 5000 / 3600;
 const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number =>{
   let speed = agent.speed;
   let child = "no";
-  if (agent.type == "boy" || agent.type == "girl"){
+  if (agent.type == "boy" || agent.type == "girl") {
     child = "yes";
-  } else if (agent.group){
-    for (let i of agent.group){
+  } else if (agent.group) {
+    for (let i of agent.group) {
       const member = services.agents[i];
-      if(member.type == "boy" || member.type == "girl"){
+      if(member.type == "boy" || member.type == "girl") {
         child = "yes";
       }
     }
   }
+
   speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
-  if(child == "yes"){
+  if (child == "yes") {
     speed = speed * (3/5);
   }
-  if(agent.running){
-    speed = 2*speed;
+  if (agent.running) {
+    if (agent.steps && agent.steps[0] && (agent.steps[0].name == 'driveTo')) {
+      speed = 1.5*speed;
+    } else {
+      speed = 2*speed;
+    }
   }
+
+  if(agent.membercount && agent.steps && agent.steps[0] && (agent.steps[0].name == 'walkTo')){
+    const numberofmembers = agent.membercount.length
+    if(numberofmembers < 50){
+      speed = groupSpeed(1, speed);
+    } 
+    else if(numberofmembers < 100){
+      speed = groupSpeed(0.75, speed);
+    } 
+    else if(numberofmembers < 250){
+      speed = groupSpeed(0.5, speed);
+    } 
+    else if(numberofmembers < 500){
+      speed = groupSpeed(0.3, speed);
+    } 
+    else {
+      speed = 0.2;
+    }
+  }
+
   return speed;
 }
 
@@ -48,10 +74,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
   agent.speed = determineSpeed(agent, services, totDistance, totDuration);
-  console.log(agent.id);
-  console.log(agent.speed);
-  console.log(agent.running? "running": "nope");
-  console.log("");
+
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
@@ -153,23 +176,43 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
 
 const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { release } = options;
-  if (agent.group && release && release.length > 0) {
+  if (agent.group && agent.membercount && release && release.length > 0) {
     for (const id of release) {
       const a = services.agents[id];
       const i = agent.group.indexOf(id);
-      if (a) {
-        a.memberOf = undefined;
-        delete a.group;
+      const j = agent.membercount.indexOf(id);
+      if (a){
+        delete a.memberOf;
         agent.group.splice(i, 1);
+        agent.membercount.splice(j, 1);
+        if(a.type == 'car' || a.type == 'bicycle'){
+          delete a.group;
+        }
       }
     }
   }
   return true;
 };
 
+
 const stopRunning =  async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   if(agent.running){
     delete agent.running;
+  }
+  return true;
+};
+
+const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const {group} = options;
+  console.log(group);
+  if(group){
+    const new_group = services.agents[group];
+    if(new_group.group && new_group.membercount ){
+      new_group.group.push(agent.id);
+      new_group.membercount.push(agent.id);
+      addGroup(agent, new_group, services);
+      agent.memberOf = new_group.id;
+    }
   }
   return true;
 };
@@ -183,4 +226,5 @@ export const steps = {
   controlAgents,
   releaseAgents,
   stopRunning,
+  joinGroup,
 };
