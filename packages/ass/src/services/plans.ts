@@ -261,13 +261,16 @@ export const plans = {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       if(agent.group){
-        agent.group.filter((a) => services.agents[a].type == 'object').map((a) => delete services.agents[a].memberOf);
+        var objectAgent;
+        agent.group.filter((a) => services.agents[a].type == 'object').map((a) => {objectAgent = services.agents[a]; delete services.agents[a].memberOf});
         agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
       }
       const {duration = minutes(0.5)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
-      messageServices.sendMessage(agent, "drop object", "10000", services);
+      if(objectAgent){
+        messageServices.sendMessage(objectAgent, "drop object", "10000", services);
+      }
       return true;
     },
   },

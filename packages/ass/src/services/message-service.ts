@@ -20,7 +20,6 @@ const sendMessage = async (sender: IAgent, message: string, radius: string, serv
                 rec.mailbox = [{sender: sender, location: sender.actual, message: message}];
             }
     });
-    return true;
   }
   return true;
 }
@@ -38,12 +37,8 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
                 agendas.addReaction(agent,services, actionToReact)
             }
         });
-        return true;
-        //console.log("important message", test)
     }
-    else{
-        return true;
-    }
+    return true;
   };
   
 
