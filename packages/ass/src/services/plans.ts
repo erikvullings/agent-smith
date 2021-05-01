@@ -137,19 +137,11 @@ export const plans = {
   
   'Go to specific location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
-      const steps = [] as ActivityList;
-      //const { destination } = options;
-      //agent.destination = destination;
-
-      steps.push({ name: 'walkTo', options: options});
-      agent.steps = steps;
-
-      //agent.steps = steps;
-      //const {destination = agent.destination} = options;
-      //agent.destination = destination;
-      //prepareRoute(agent, services, options);
-
-      return true;
+      console.log("agent destination", agent.destination)
+      agent.destination = options.destination;
+      prepareRoute(agent, services, options);
+      agent.speed = 2;
+      return true;      
     },
   },
 

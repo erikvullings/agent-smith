@@ -220,18 +220,21 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
-    //messageServices.sendMessage(agents[0], "Go to work", "10000", services);
+    // messageServices.sendMessage(agents[0], "drop object", "10000", services);
 
-    const intervalObj = setInterval(async () => {
-      await Promise.all(
-        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
-        );
-    }, 20000);  
+    // const intervalObj = setInterval(async () => {
+    //   await Promise.all(
+    //     agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
+    //     );
+    // }, 20000);  
       
     let i = 0;
     while (i < 10000000) {
       agentstoshow = [];
       agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a)),
+      await Promise.all(
+        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
+        );
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
       );

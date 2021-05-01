@@ -20,36 +20,30 @@ const sendMessage = async (sender: IAgent, message: string, radius: string, serv
                 rec.mailbox = [{sender: sender, location: sender.actual, message: message}];
             }
     });
-    console.log("sender mailbox",sender.mailbox)
-}
+    return true;
+  }
+  return true;
 }
 
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
     if(agent.mailbox && agent.mailbox.length > 0) {
-        //console.log("before filter",agent.mailbox);
         var actionToReact = null;
 
         agent.mailbox.forEach(message => {
-            console.log("reaction message read", reaction[message.message])
-
              if(reaction[message.message] && reaction[message.message][agent.force].urgency < 2){
                 actionToReact = message;
-                console.log("action to react", actionToReact);
-                //if(message.message === "drop object") {
-                
 
                 if(reaction[message.message][agent.force].urgency <= reaction[actionToReact.message][agent.force].urgency)
-                console.log("droped object runnnn")
                 agent.mailbox = [];
                 agendas.addReaction(agent,services, actionToReact)
             }
         });
+        return true;
         //console.log("important message", test)
     }
     else{
-
+        return true;
     }
-    
   };
   
 

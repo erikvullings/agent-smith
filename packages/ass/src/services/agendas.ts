@@ -182,7 +182,7 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
 
 async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
   agent.route = [];
-  agent.steps == [];
+  agent.steps = [];
 
   let timesim = services.getTime();
   timesim.setMinutes(timesim.getMinutes()+ 6);
