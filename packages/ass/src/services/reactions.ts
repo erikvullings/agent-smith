@@ -8,8 +8,8 @@ export const reaction = {
             "red":{urgency:1,plans:[[{ "name": "Run away", "options": {}}]]},
             "white":{urgency:1,plans:[[{ "name": "Run away", "options": {}}]]}
     },
-    "test": {
-        "blue":{urgency:1,plans:[[{ "name": "Go home", "options" : {}},
+    "Run away": {
+        "blue":{urgency:2,plans:[[{ "name": "Go to specific location", "options" : {}},
                                                 { "name": "Go to work"},
                                                 { "name": "Work" }]]},
         "red":{urgency:1,plans:[[{ "name": "Run away", "options": {}}]]},

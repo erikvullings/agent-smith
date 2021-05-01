@@ -130,6 +130,7 @@ export const plans = {
       const {destination = randomPlaceNearby(agent, 10000, 'any')} = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
+      //messageServices.sendMessage(agent, "Run away", "10000", services);
       agent.speed = 2;
       return true;      
     },
@@ -233,6 +234,7 @@ export const plans = {
       return true;
     },
   },
+
   'Release':{
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;

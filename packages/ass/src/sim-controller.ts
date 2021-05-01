@@ -233,7 +233,7 @@ export const simController = async (
       agentstoshow = [];
       agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a)),
       await Promise.all(
-        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
+        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => {if(a.mailbox && a.mailbox.length > 0){messageServices.readMailbox(a, services)}}),
         );
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),

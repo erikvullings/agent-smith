@@ -25,7 +25,7 @@ const sendMessage = async (sender: IAgent, message: string, radius: string, serv
 }
 
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
-    if(agent.mailbox && agent.mailbox.length > 0) {
+    //if(agent.mailbox && agent.mailbox.length > 0) {
         var actionToReact = null;
 
         agent.mailbox.forEach(message => {
@@ -37,7 +37,7 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
                 agendas.addReaction(agent,services, actionToReact)
             }
         });
-    }
+    //}
     return true;
   };
   
