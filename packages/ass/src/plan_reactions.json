@@ -1,0 +1,26 @@
+
+[
+    {
+    "name" : "Go to work", 
+    "reactions" : [
+        {
+            "force" : "blue",
+            "reaction": [
+                [{ "name": "Go home", "options" : {}},
+                { "name": "Go to work"},
+                { "name": "Work" }]
+        ]},
+        {
+            "force" : "red",
+            "reaction": [
+                [{ "name": "Run Away", "options" : {}}]
+        ]},
+        {
+            "force" : "white",
+            "reaction": [
+                [{ "name": "Run Away", "options" : {}}]
+        ]}]
+    }
+]
+
+

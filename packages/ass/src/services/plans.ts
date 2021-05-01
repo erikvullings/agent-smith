@@ -1,9 +1,7 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
 import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
-import { redisServices } from './redis-service';
-import { messageServices } from './message-service';
-
+import { messageServices } from '.';
 
 
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
@@ -275,6 +273,21 @@ export const plans = {
         agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
       }
       const {duration = minutes(0.5)} = options;
+      steps.push({ name: 'waitFor', options: { duration } });
+      agent.steps = steps;
+      messageServices.sendMessage(agent, "drop object", "10000", services);
+      return true;
+    },
+  },
+
+  'Check object':{
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      // if(agent.group){
+      //   agent.group.filter((a) => services.agents[a].type == 'object').map((a) => delete services.agents[a].memberOf);
+      //   agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
+      // }
+      const {duration = minutes(5,15)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       return true;

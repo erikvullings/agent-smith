@@ -68,12 +68,15 @@ export interface IAgent {
   /** Route to follow from actual location to destination */
   route?: IOsrmRouteStep[];
   /** Mailbox for messages */
-  mailbox: Array<{
+  mailbox: Array<IMail>;
+}
+
+export interface IMail {
     /** Id of the sender */
-    senderId: string;
+    sender: IAgent;
+    /** Location of the sender */
+    location: ILocation;
     /** Message of the sender */
     message: string;
-    /** Message of the sender */
-    urgency: 1 | 2 | 3 | 4 | 5;
-  }>;
-}
+
+} 

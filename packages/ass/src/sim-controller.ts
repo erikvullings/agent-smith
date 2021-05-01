@@ -5,14 +5,16 @@ import {addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, ra
 import { redisServices, chatServices, messageServices } from './services';
 import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
-import * as planreactionConfig from "./plan_reactions.json"
-import { ISimConfig, IReaction } from './models';
+
+
+import { ISimConfig } from './models';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
 export const simConfig = jsonSimConfig as ISimConfig;
 export const customAgendas = simConfig.customAgendas;
+
 
 export const simController = async (
   options: {
@@ -22,7 +24,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
     const agents : Array<IAgent> = simConfig.customAgents;
@@ -197,7 +199,7 @@ export const simController = async (
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount,simConfig.settings.radius);
-    agents.push( ...generatedAgents);
+    agents.push(...generatedAgents);
     
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
@@ -218,13 +220,13 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
-    messageServices.sendMessage(agents[0], "drop object", "10000", services, 1);
+    //messageServices.sendMessage(agents[0], "Go to work", "10000", services);
 
     const intervalObj = setInterval(async () => {
       await Promise.all(
         agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
         );
-    }, 10000);  
+    }, 20000);  
       
     let i = 0;
     while (i < 10000000) {

@@ -1,10 +1,9 @@
-import { ActivityList, IAgent } from '../models';
+import { ActivityList, IAgent, IMail, IReactionObject } from '../models';
 import { IGroup } from '../models';
 import { simTime, hours, randomInRange, randomIntInRange, minutes} from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
 import * as simConfig from "../sim_config.json";
-import { reactions } from './reactions';
-import { time } from 'node:console';
+import { reaction } from ".";
 
 function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
   if (typeof agent._day === 'undefined') {
@@ -181,22 +180,34 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
 }
 
 
-function addReaction(agent: IAgent, services: IEnvServices) {
+async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
   agent.route = [];
   agent.steps == [];
 
   let timesim = services.getTime();
-  timesim.setMinutes(timesim.getMinutes()+ 5);
+  timesim.setMinutes(timesim.getMinutes()+ 6);
 
   if(agent.agenda){
-    var reactionAgenda : ActivityList = reactions["drop object"][agent.force][0];
-    reactionAgenda[0].options = {startTime: timesim}
+
+    var reactionAgenda : ActivityList = reaction[mail.message][agent.force].plans[0];
+
+    if(reactionAgenda[0].name === "Go to specific location"){
+      console.log("i am hereee")
+      agent.destination = mail.location;
+
+      reactionAgenda[0].options = {startTime: timesim, destination: mail.location}
+    }
+    else{
+      reactionAgenda[0].options = {startTime: timesim}
+    }
+
     agent.agenda = [...reactionAgenda,...agent.agenda];
+
   
     console.log("reaction agenda",agent.agenda)
   
-    updateAgent(agent,services);
-    return reactionAgenda;
+    await updateAgent(agent,services);
+    //return reactionAgenda;
   }
 }
 
