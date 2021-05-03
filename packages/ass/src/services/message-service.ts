@@ -1,6 +1,7 @@
 import { reaction, redisServices } from ".";
 import { envServices, IEnvServices } from "../env-services";
-import { IAgent, IGroup } from "../models";
+import { IAgent, IGroup, IMail } from "../models";
+import { randomIntInRange } from "../utils";
 import { agendas } from "./agendas";
 
 
@@ -25,19 +26,51 @@ const sendMessage = async (sender: IAgent, message: string, radius: string, serv
 }
 
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
-    //if(agent.mailbox && agent.mailbox.length > 0) {
-        var actionToReact = null;
-
-        agent.mailbox.forEach(message => {
-             if(reaction[message.message] && reaction[message.message][agent.force].urgency < 2){
-                actionToReact = message;
-
-                if(reaction[message.message][agent.force].urgency <= reaction[actionToReact.message][agent.force].urgency)
-                agent.mailbox = [];
-                agendas.addReaction(agent,services, actionToReact)
-            }
+        var actionToReact = null as unknown as IMail;
+        var importantMessages: Array<IMail> = [];
+        agent.mailbox.forEach(item => {
+            let itemReaction = reaction[item.message];
+            let itemUrgency = itemReaction[agent.force].urgency
+             if(itemReaction && itemUrgency < 3){
+                
+                if(actionToReact == null){
+                    actionToReact = item;
+                }
+                else if(itemUrgency < reaction[actionToReact.message][agent.force].urgency){
+                    agent.mailbox = [];
+                    actionToReact = item;
+                    //agendas.addReaction(agent,services, actionToReact)    
+                }
+                else if(reaction[item.message][agent.force].urgency == reaction[actionToReact.message][agent.force].urgency){
+                    importantMessages.push(item);
+                }
+            } 
         });
-    //}
+    
+        if(importantMessages.length >0){
+            let itemUrgency = reaction[importantMessages[0].message][agent.force].urgency;
+            if(agent.agenda && agent.agenda[0].options?.priority != undefined && agent.agenda[0].options?.priority > itemUrgency){
+                agent.mailbox = [];
+                actionToReact = importantMessages[randomIntInRange(0,importantMessages.length-1)];
+                agendas.addReaction(agent,services, actionToReact)    
+            }
+            return true;
+        }
+        else if(actionToReact != null){
+            let itemUrgency = reaction[actionToReact.message][agent.force].urgency;
+            if(agent.agenda && agent.agenda[0].options?.priority){
+                if(agent.agenda[0].options?.priority > itemUrgency) {
+                    agent.mailbox = [];
+                    agendas.addReaction(agent,services, actionToReact)            
+                }
+                return true;
+            }
+            else{
+                agent.mailbox = [];
+                agendas.addReaction(agent,services, actionToReact)            
+            }
+            return true;
+        }
     return true;
   };
   

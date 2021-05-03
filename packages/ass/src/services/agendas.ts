@@ -15,13 +15,13 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
 
   const activities = {
     'work': () => [
-      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
       { name: 'Have lunch', options: { priority: 2 } },
       { name: 'Work', options: { duration: hours(3, 5), priority: 1 } }],
-      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Work', options: { duration: hours(3, 5), priority: 1 } }],
-      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Work', options: { duration: hours(3, 5), priority: 1 } }],
     ],
     'go home': () => [
@@ -53,20 +53,20 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'wander': () => [
       { name: 'Go to the park', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 } },
-      { name: 'Wander', options: { priority: 1 } }
+      { name: 'Wander', options: { priority: 3 } }
     ],
     'patrol': () => [
-      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 }}, 
-      { name: 'Patrol', options: { priority: 1 } },
-      { name: 'Patrol', options: { priority: 1 } }]
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 }}, 
+      { name: 'Patrol', options: { priority: 2 } },
+      { name: 'Patrol', options: { priority: 2 } }]
     ],
     'guard': () => [
-      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
-      { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
-      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 } },
-      { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } },
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
+      { name: 'Guard', options: { duration: hours(3, 5), priority: 2 } }],
+      [{ name: 'Go to work', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
+      { name: 'Guard', options: { duration: hours(3, 5), priority: 2 } },
       { name: 'Have lunch', options: { priority: 2 } },
-      { name: 'Guard', options: { duration: hours(3, 5), priority: 1 } }],
+      { name: 'Guard', options: { duration: hours(3, 5), priority: 2 } }],
     ],
     'release_at_random_location': () => [
       { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
@@ -206,7 +206,7 @@ async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
   
     console.log("reaction agenda",agent.agenda)
   
-    await updateAgent(agent,services);
+    updateAgent(agent,services);
     //return reactionAgenda;
   }
 }
