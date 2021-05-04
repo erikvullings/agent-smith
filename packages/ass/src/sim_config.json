@@ -115,9 +115,8 @@
         {
             "agentId": "biker",
             "agendaItems": [
-                { "name": "Go home", "options" : {}},
-                { "name": "Go to work"},
-                { "name": "Work" },
+                { "name": "Go to work", "options" : {}},
+                { "name": "Guard", "options" : {"duration": 4} },
                 { "name": "Go home" }
             ] 
         }

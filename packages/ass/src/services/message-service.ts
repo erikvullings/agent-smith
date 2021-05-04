@@ -6,7 +6,10 @@ import { agendas } from "./agendas";
 
 const sendMessage = async (sender: IAgent, message: string, radius: string, services: IEnvServices) => {
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as Array<any>;
-    const receiversAgents = receivers.filter(a => a.key != sender.id).map((a) => a = services.agents[a.key]) as Array<IAgent>;
+    console.log("before length", receivers.length);
+    const receiversAgents = receivers.filter(a => a.key !== sender.id).map((a) => a = services.agents[a.key]) as Array<IAgent>;
+    console.log("after length", receiversAgents.length);
+
     if(!sender.sentbox){sender.sentbox = []}
 
     if(receiversAgents.length > 0 ) {
@@ -44,7 +47,8 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:Arra
 
 
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
-    const urgentMessages = agent.mailbox.filter(item => (reaction[item.message] && reaction[item.message][agent.force].urgency < 2));
+
+    const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force].urgency != undefined && reaction[item.message][agent.force].urgency < 2));
 
     if(urgentMessages.length >0){
             //console.log("await", await reactToMessage(agent, services, urgentMessages))
@@ -56,9 +60,9 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
 const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: Array<IMail>) => {
     let actionToReact = null as unknown as IMail;
     let itemUrgency = reaction[urgentMessages[0].message][agent.force].urgency;
-
+    
     if(agent.agenda && agent.agenda[0].options.reacting !=true){
-        //not reacting agents 
+        //not reacting agents where reaction to plan is not undefined
 
         console.log("not reacting yet")
         if(agent.agenda && agent.agenda[0].options?.priority != undefined && agent.agenda[0].options?.priority < itemUrgency){
