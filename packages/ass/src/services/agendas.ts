@@ -175,7 +175,7 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
   const { _day: day } = agent;
 
   var agenda = simConfig.customAgendas[customAgIndex].agendaItems;
-  agenda[0].options = {startTime:simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
+  agenda[0].options = {startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
   //console.log( 'agentId', agent.id, 'custom agenda', agenda)
   return agenda;
 }

@@ -79,5 +79,4 @@ export interface IMail {
     location: ILocation;
     /** Message of the sender */
     message: string;
-
 } 

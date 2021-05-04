@@ -36,6 +36,16 @@
             "occupations": [{ "type": "work", "id": "h_m_shop"}]
         },
         {
+            "id": "red2",
+            "type": "man",
+            "force": "red",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499609, 51.438032]},
+            "actual": {"type": "home", "coord": [5.499609, 51.438032]},
+            "occupations": [{ "type": "work", "id": "h_m_shop"}],
+            "group": ["object2"]
+        },
+        {
             "id": "agent2",
             "type": "man",
             "force": "red",
@@ -93,7 +103,15 @@
             "status": "active",
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "memberOf": ["agent2"]
+        },
+        {   "id": "object2",
+            "type": "object",
+            "force": "red",
+            "status": "active",
+            "actual": {"type": "home", "coord": [5.499609, 51.438032]},
+            "memberOf": ["red2"]
         }
+
     ],
     "customAgendas": [
         {

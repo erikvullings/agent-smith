@@ -10,8 +10,8 @@ export const reaction = {
     },
     "Flee the scene": {
         "blue":{urgency:1,plans:[[{ "name": "Go to specific location", "options" : {}},
-                                                { "name": "Go to work"},
-                                                { "name": "Work" }]]},
+                                                { "name": "Go to work", "options" : {}},
+                                                { "name": "Work", "options" : {} }]]},
         "white":{urgency:1,plans:[[{ "name": "Run away", "options": {}}]]}
 },
 } as IReactions
