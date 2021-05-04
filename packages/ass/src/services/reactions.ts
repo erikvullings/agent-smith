@@ -9,7 +9,7 @@ export const reaction = {
             "red":{urgency:1,plans:[[{ "name": "Run away", "options": {}}]]},
             "white":{urgency:1,plans:[[{ "name": "Run away", "options": {}}]]}
     },
-    "Run away": {
+    "Flee the scene": {
         "blue":{urgency:1,plans:[[{ "name": "Go to specific location", "options" : {}},
                                                 { "name": "Go to work"},
                                                 { "name": "Work" }]]},

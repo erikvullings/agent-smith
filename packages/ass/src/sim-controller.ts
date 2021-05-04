@@ -2,9 +2,10 @@ import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import {addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomInRange } from './utils';
-import { redisServices, chatServices, messageServices } from './services';
+import { redisServices, chatServices, messageServices, reaction } from './services';
 import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
+
 
 
 import { ISimConfig } from './models';
@@ -227,14 +228,22 @@ export const simController = async (
     //     agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
     //     );
     // }, 20000);  
+
+    const intervalObj = setInterval(async () => {
+      await Promise.all(
+        // agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => messageServices.readMailbox(a, services)),
+        // );
+        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name])).map((a) => messageServices.sendMessage(a,a.agenda[0].name,"10000",services))
+    )}, 10000);  
+
       
     let i = 0;
     while (i < 10000000) {
       agentstoshow = [];
-      agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a)),
+      agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a));
       await Promise.all(
-        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox).map((a) => {if(a.mailbox && a.mailbox.length > 0){messageServices.readMailbox(a, services)}}),
-        );
+        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox && a.mailbox.length > 0).map((a) => messageServices.readMailbox(a, services)),
+        )
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
       );

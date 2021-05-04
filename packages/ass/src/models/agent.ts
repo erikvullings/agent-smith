@@ -69,6 +69,7 @@ export interface IAgent {
   route?: IOsrmRouteStep[];
   /** Mailbox for messages */
   mailbox: Array<IMail>;
+  sentbox: Array<{receiver: IAgent, mail: IMail}>;
 }
 
 export interface IMail {

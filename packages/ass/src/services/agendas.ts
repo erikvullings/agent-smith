@@ -80,12 +80,13 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'drop_at_random_location': () => [
       { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
-      { name: 'drop object' },
+      { name: 'drop object', options: { priority: 1 } },
+      { name: 'Flee the scene', options: { priority: 1 } },
     ],
     'steal_from_shop': () => [
       { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Shop', options: { duration: minutes(10) , priority: 1 } },
-      { name: 'Run away', options:  { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 }  } 
+      { name: 'Flee the scene', options:  { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 }  } 
     ],
   };
   
@@ -192,13 +193,14 @@ async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
     var reactionAgenda : ActivityList = reaction[mail.message][agent.force].plans[0];
 
     if(reactionAgenda[0].name === "Go to specific location"){
-      console.log("i am hereee")
       agent.destination = mail.location;
 
       reactionAgenda[0].options = {startTime: timesim, destination: mail.location}
+      reactionAgenda.map((item) => item.options.reacting = true)
     }
     else{
       reactionAgenda[0].options = {startTime: timesim}
+      reactionAgenda.map((item) => item.options.reacting = true)
     }
 
     agent.agenda = [...reactionAgenda,...agent.agenda];

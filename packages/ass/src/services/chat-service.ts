@@ -45,7 +45,7 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
    if(randomAgent.agenda != undefined && closeAgent.agenda != undefined){
     console.log("delete route", randomAgent.route)
     closeAgent.route = [];
-    closeAgent.steps == [];
+    closeAgent.steps = [];
 
     randomAgent.route = [];
     randomAgent.steps = [];

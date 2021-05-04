@@ -5,9 +5,9 @@ export interface IReactions {
 }
 
 export interface IReactionObject {
-  blue: IReact;
-  red: IReact;
-  white: IReact;
+  blue?: IReact;
+  red?: IReact;
+  white?: IReact;
 }
 
 export interface IReact {

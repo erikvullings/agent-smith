@@ -17,7 +17,9 @@ export interface IActivityOptions {
   /** Agents IDs you are controlling and want to release, e.g. vehicles or children */
   release?: string[];
   /** Priority of activity */
-  priority?: 1 | 2 | 3;
+  priority?: 1 | 2 | 3 | 4 | 5;
+  /** Is the agent reacting */
+  reacting?: Boolean;
 }
 
 export type IAgentActivities =  Array<IAgentActivity>;
