@@ -28,20 +28,19 @@ const sendMessage = async (sender: IAgent, message: string, radius: string, serv
 
 const sendDirectMessage = async (sender: IAgent, message: string, receivers:Array<IAgent>, services: IEnvServices) => {
     if(!sender.sentbox){sender.sentbox = []}
-
+    
     if(receivers.length > 0 ) {
-        console.log("receivers",receivers)
-        console.log("sender", sender.id)
-        receivers.forEach(rec => {
-            const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver == rec);
-            if(rec.mailbox && sentbox.length == 0) {
-                rec.mailbox.push({sender: sender, location: sender.actual, message: message});
-            }
-            else if(!rec.mailbox && sentbox.length == 0) {
-                rec.mailbox = [{sender: sender, location: sender.actual, message: message}];
-            }
+    receivers.forEach(rec => {
+        const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver == rec);
+        if(rec.mailbox && sentbox.length == 0) {
+            rec.mailbox.push({sender: sender, location: sender.actual, message: message});
+        }
+        else if(!rec.mailbox && sentbox.length == 0) {
+            rec.mailbox = [{sender: sender, location: sender.actual, message: message}];
+        }
     });
-  }
+}
+
   return true;
 }
 
@@ -59,11 +58,11 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
     let actionToReact = null as unknown as IMail;
     const itemUrgency = reaction[urgentMessages[0].message][agent.force].urgency;
 
-    if(!agent.agenda &&itemUrgency == undefined){
+    if(itemUrgency == undefined){
         return true;
     }
     
-    if(agent.agenda && (agent.agenda[0].options.reacting !=true || agent.agenda[0].options.reacting==undefined)){
+    if(agent.agenda && (agent.agenda[0].options==undefined || agent.agenda[0].options.reacting==undefined|| agent.agenda[0].options.reacting !=true)){
         //not reacting agents where reaction to plan is not undefined
 
         console.log("not reacting yet")

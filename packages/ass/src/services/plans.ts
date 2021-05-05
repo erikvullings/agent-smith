@@ -337,8 +337,10 @@ export const plans = {
       const {duration = minutes(1,10)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
-      messageServices.sendDirectMessage(agent, "Call the police", [services.agents["police1"]], services);
 
+      const receivers = await redisServices.geoSearch(agent.actual, "100000", agent) as Array<any>;
+      const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false)) as Array<IAgent>;
+      messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0],receiversAgents[1]], services);
       return true;
     },
   },
