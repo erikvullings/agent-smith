@@ -1,6 +1,6 @@
 {
     "settings": {
-        "agentCount": 10,
+        "agentCount": 30,
         "center_coord": [5.476543, 51.440208],
         "radius": 10000
     },
@@ -67,7 +67,7 @@
             "status": "active",
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "park"}],
+            "occupations": [{ "type": "work", "id": "tue_innovation_forum"}],
             "mailbox": []
         },
         {
@@ -126,6 +126,7 @@
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "police station","coord": [5.499089, 51.437034]},
             "occupations": [{ "type": "work", "id": "police station"}],
+            "department": "station",
             "mailbox": []
         },
         {
@@ -136,6 +137,7 @@
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "police station","coord": [5.499089, 51.437034]},
             "occupations": [{ "type": "work", "id": "police station"}],
+            "department": "station",
             "mailbox": []
         },
         {
@@ -146,6 +148,7 @@
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "police station","coord": [5.499089, 51.437034]},
             "occupations": [{ "type": "work", "id": "police station"}],
+            "department": "station",
             "mailbox": []
         },
         {
@@ -156,6 +159,7 @@
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "police station","coord": [5.499089, 51.437034]},
             "occupations": [{ "type": "work", "id": "police station"}],
+            "department": "station",
             "mailbox": []
         }
     ],
@@ -163,7 +167,8 @@
         {
             "agentId": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "agendaItems": [
-                { "name": "Go to the park", "options" : {}},
+                { "name": "Go to work", "options" : {}},
+                { "name": "Call the police" },
                 { "name": "Wander" },
                 { "name": "Go home" }
             ] 

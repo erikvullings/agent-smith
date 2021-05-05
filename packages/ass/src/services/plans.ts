@@ -1,7 +1,7 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
 import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters, hours } from '../utils';
-import { messageServices } from '.';
+import { messageServices, redisServices } from '.';
 
 
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
@@ -309,7 +309,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       if(objectAgent){
-        messageServices.sendMessage(objectAgent, "drop object", "10000", services);
+        messageServices.sendMessage(objectAgent, "drop object", "5000", services);
       }
       return true;
     },
@@ -326,6 +326,19 @@ export const plans = {
       const {duration = minutes(5,15)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Call the police':{
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = [];
+      const steps = [] as ActivityList;
+      const {duration = minutes(1,10)} = options;
+      steps.push({ name: 'waitFor', options: { duration } });
+      agent.steps = steps;
+      messageServices.sendDirectMessage(agent, "Call the police", [services.agents["police1"]], services);
+
       return true;
     },
   },

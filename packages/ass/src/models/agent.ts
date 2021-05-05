@@ -28,6 +28,8 @@ export interface IAgent {
     /** Id of the location where the occupation takes place */
     id: string;
   }>;
+  /** work department for police */
+  department?: 'station' | string;
   /** ID of task address */
   activities?: Array<{
     /** Type of occupation, e.g. work, shop, learn */
@@ -69,6 +71,7 @@ export interface IAgent {
   route?: IOsrmRouteStep[];
   /** Mailbox for messages */
   mailbox: Array<IMail>;
+  /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
   sentbox: Array<{receiver: IAgent, mail: IMail}>;
 }
 
