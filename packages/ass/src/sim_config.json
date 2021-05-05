@@ -13,7 +13,8 @@
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.496994, 51.468701]},
             "actual": {"type": "home", "coord": [5.496994, 51.468701]},
-            "occupations": [{ "type": "work", "id": "h_m_shop"}]
+            "occupations": [{ "type": "work", "id": "h_m_shop"}],
+            "mailbox": []
         },
         {
             "id": "child1",
@@ -23,7 +24,8 @@
             "owns": [{ "type": "car", "id": "car1" }],
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "memberOf": ["agent2"]
+            "memberOf": ["agent2"],
+            "mailbox": []
         },
         {
             "id": "biker",
@@ -33,7 +35,8 @@
             "owns": [{ "type": "bicycle", "id": "bicycle1" }, { "type": "car", "id": "car3" }],
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "h_m_shop"}]
+            "occupations": [{ "type": "work", "id": "h_m_shop"}],
+            "mailbox": []
         },
         {
             "id": "red2",
@@ -43,7 +46,8 @@
             "home": {"type": "home", "coord": [5.499609, 51.438032]},
             "actual": {"type": "home", "coord": [5.499609, 51.438032]},
             "occupations": [{ "type": "work", "id": "h_m_shop"}],
-            "group": ["object2"]
+            "group": ["object2"],
+            "mailbox": []
         },
         {
             "id": "agent2",
@@ -53,7 +57,8 @@
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "work", "id": "h_m_shop"}],
-            "group": ["child1", "object1"]
+            "group": ["child1", "object1"],
+            "mailbox": []
         },
         {
             "id": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
@@ -62,7 +67,8 @@
             "status": "active",
             "home": {"type": "home", "coord": [5.499309, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "park"}]
+            "occupations": [{ "type": "work", "id": "park"}],
+            "mailbox": []
         },
         {
             "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",
@@ -71,7 +77,8 @@
             "status": "active",
             "home": {"type": "home", "coord": [5.499555, 51.437832]},
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
-            "occupations": [{ "type": "work", "id": "park"}]
+            "occupations": [{ "type": "work", "id": "park"}],
+            "mailbox": []
         },
         {
             "id": "bicycle1",
@@ -110,8 +117,47 @@
             "status": "active",
             "actual": {"type": "home", "coord": [5.499609, 51.438032]},
             "memberOf": ["red2"]
+        },
+        {
+            "id": "police1",
+            "type": "man",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "police station","coord": [5.499089, 51.437034]},
+            "occupations": [{ "type": "work", "id": "police station"}],
+            "mailbox": []
+        },
+        {
+            "id": "police2",
+            "type": "man",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "police station","coord": [5.499089, 51.437034]},
+            "occupations": [{ "type": "work", "id": "police station"}],
+            "mailbox": []
+        },
+        {
+            "id": "police3",
+            "type": "man",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "police station","coord": [5.499089, 51.437034]},
+            "occupations": [{ "type": "work", "id": "police station"}],
+            "mailbox": []
+        },
+        {
+            "id": "police4",
+            "type": "man",
+            "force": "blue",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.521275, 51.448302]},
+            "actual": {"type": "police station","coord": [5.499089, 51.437034]},
+            "occupations": [{ "type": "work", "id": "police station"}],
+            "mailbox": []
         }
-
     ],
     "customAgendas": [
         {
@@ -136,6 +182,30 @@
                 { "name": "Go to work", "options" : {}},
                 { "name": "Guard", "options" : {"duration": 4} },
                 { "name": "Go home" }
+            ] 
+        },
+        {
+            "agentId": "police1",
+            "agendaItems": [
+                { "name": "Stay at police station", "options" : {}}
+            ] 
+        },
+        {
+            "agentId": "police2",
+            "agendaItems": [
+                { "name": "Stay at police station", "options" : {}}
+            ] 
+        },
+        {
+            "agentId": "police3",
+            "agendaItems": [
+                { "name": "Stay at police station", "options" : {}}
+            ] 
+        },
+        {
+            "agentId": "police4",
+            "agendaItems": [
+                { "name": "Stay at police station", "options" : {}}
             ] 
         }
     ]

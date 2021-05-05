@@ -3,6 +3,8 @@ import { plans, steps, agendas, messageServices } from './services';
 import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas } from './sim-controller';
+import { reaction } from "./services";
+
 
 export interface IEnvServices {
   /** Get sim time */
@@ -107,7 +109,9 @@ export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices
       const curPlan = agent.agenda?.shift();
       if (curPlan) {
         const { name, options } = curPlan;
-        //messageServices.sendMessage(agent, `${ curPlan.name }`, "10000", services, 1);
+        if(reaction[curPlan.name] != undefined){
+          //await messageServices.sendMessage(agent, curPlan.name, "10000", services);
+        }
         const plan = services.plans[name];
         if (plan && plan.cleanup) {
           await plan.cleanup(agent, services, options);
@@ -117,7 +121,9 @@ export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices
   } else if (agent.agenda && agent.agenda.length > 0) {
     const { name, options } = agent.agenda[0];
     const plan = services.plans[name];
-    //messageServices.sendMessage(agent, `${ agent.agenda[0].name }`, "10000", services, 1);
+    if(reaction[agent.agenda[0].name] != undefined){
+      //await messageServices.sendMessage(agent, agent.agenda[0].name, "10000", services);
+    }
     if (plan && plan.prepare) {
       await plan.prepare(agent, services, options);
     }

@@ -1,6 +1,6 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
-import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters, hours } from '../utils';
 import { messageServices } from '.';
 
 
@@ -213,6 +213,16 @@ export const plans = {
       agent.sentbox = [];
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: options});
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Stay at police station': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = [];
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: {duration: hours(5,8)}});
       agent.steps = steps;
       return true;
     },

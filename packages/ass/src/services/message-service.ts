@@ -6,7 +6,7 @@ import { agendas } from "./agendas";
 
 const sendMessage = async (sender: IAgent, message: string, radius: string, services: IEnvServices) => {
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as Array<any>;
-    const receiversAgents = receivers.filter(a => a.key !== sender.id).map((a) => a = services.agents[a.key]) as Array<IAgent>;
+    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => a.agenda && a.agenda[0].name != "Stay at police station" ) as Array<IAgent>;
     if(!sender.sentbox){sender.sentbox = []}
 
     if(receiversAgents.length > 0 ) {
