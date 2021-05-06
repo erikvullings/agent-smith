@@ -2,7 +2,7 @@ import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, IGroup } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { addGroup, groupSpeed, duration_drone } from '../utils';
+import { addGroup, groupSpeed, duration_drone, distanceInMeters } from '../utils';
 
 
 
@@ -116,7 +116,6 @@ const moveAgent = (profile: Profile) => async (
       });
       const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
       agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
-      console.log(agent.route);
       // console.log(JSON.stringify(agent.route, null, 2));
     } catch (e) {
       console.error(e);
@@ -128,25 +127,28 @@ const moveAgent = (profile: Profile) => async (
 const flyAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
   const { flyroute = [] } = agent;
   if (flyroute.length === 0) {
+    if(agent.actual == agent.destination){console.log('eindlocatie bereikt')};
     return true; // Done
   }
   const step = flyroute[0];
   const totDistance = step.dist || 0;
   const totDuration = step.duration || 0;
-  agent.speed = determineSpeed(agent, services, totDistance, totDuration);
+  const defaultFlyingSpeed = 70000/3600;
+  agent.speed = totDuration > 0 ? totDistance / totDuration : defaultFlyingSpeed;
 
   let distance2go = agent.speed * deltaTime;
   for (let i = 0; i < flyroute.length; i++) {
     const [x0, y0] = agent.actual.coord;
     const [x1, y1] = flyroute[i].coord;
+    if([x1, y1] == agent.destination?.coord){console.log('last step')}
     const segmentLength = services.distance(x0, y0, x1, y1);
     if (distance2go >= segmentLength) {
       agent.actual = { type: 'unnamed', coord: [x1, y1] };
       distance2go -= segmentLength;
     } else {
-      i > 0 && flyroute.splice(0, i);
+      if (i > 0){flyroute.splice(0, i)};
       const ratio = distance2go / segmentLength;
-      const coord = [x0 + (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
+      const coord = [x0+ (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
       agent.actual = { type:'unnamed', coord };
       redisServices.geoAdd('agents', agent);
       moveGroup(agent, services);
@@ -169,16 +171,24 @@ const flyTo = async (_agent: IAgent, _services: IEnvServices, options: IActivity
       let distancetodest = distance(_agent.actual.coord[0], _agent.actual.coord[1], destination.coord[0], destination.coord[1]);
       let x = _agent.actual.coord[0];
       let y = _agent.actual.coord[1];
-      const slope = 0.0001 * (destination.coord[1] - _agent.actual.coord[1])/(destination.coord[0] - _agent.actual.coord[0])
-      while(distancetodest > 0){
-        const distance_step = distance(x, y, x + 0.0001, y + slope);
-        const duration_step = duration_drone(x, y, x + 0.0001, y + slope);
-        x = x + 0.0001;
+      const slope = 0.0001 * (destination.coord[1] - _agent.actual.coord[1])/Math.abs((destination.coord[0] - _agent.actual.coord[0]));
+      const No_coords= Math.floor(Math.abs((destination.coord[0] - _agent.actual.coord[0])/0.0001));
+      let pos_neg = 1;
+      if ((destination.coord[0] - _agent.actual.coord[0]) < 0) {
+        pos_neg = -1;
+      }
+      for ( let i = 0; i < No_coords; i++) {
+        const distance_step = distance(x, y, x + (pos_neg * 0.0001), y + slope);
+        const duration_step = duration_drone(x, y, x + (pos_neg * 0.0001), y + slope);
+        x = x + (pos_neg * 0.0001);
         y = y + slope;
         flyroute.push({dist: distance_step, duration: duration_step, coord: [x,y]});
         distancetodest = distancetodest-distance_step
       }
-      _agent.flyroute 
+      const distance_step = distance(x, y, destination.coord[0], destination.coord[1]);
+      const duration_step = duration_drone(x, y, destination.coord[0], destination.coord[1]);
+      flyroute.push({dist: distance_step, duration: duration_step, coord: destination.coord});
+      _agent.flyroute = flyroute;
     } catch (e) {
       console.error(e);
     }

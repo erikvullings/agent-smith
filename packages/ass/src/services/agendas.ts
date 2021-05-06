@@ -37,8 +37,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Wander', options: { priority: 3 } }
     ],
     'hang_around_area': () => [
-      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 , AreaCentre: {type: 'park', coord: [5.482531, 51.426244]}, AreaRange: 1000} },
-      { name: 'Hang around specific area', options: { duration: hours(0, 1) , priority: 3, AreaCentre: {type: 'park', coord: [5.482531, 51.426244]}, AreaRange: 100} },
+      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 , AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 100} },
+      { name: 'Hang around specific area', options: { duration: hours(0, 1) , priority: 3, AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 100} },
     ],
     'doctor_visit': () => [
       { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
@@ -50,7 +50,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     ],
     'Release_red': () =>[
       { name: 'Release_red', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
-    ]
+    ],
+    'drone': () => [
+      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 , AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 1000} },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1) , priority: 3, AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 1000} },
+    ],
   };
 
   const blueActivities = {
@@ -131,6 +135,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'red_group': ()=>[
       [...redActivities['fight'](),...activities['go home']()] as ActivityList,
     ],
+    'drone': ()=>[
+      [...activities['drone'](),...activities['go home']()] as ActivityList,
+    ],
      'null': () => [
       [...activities['wander'](),...activities['go home']()] as ActivityList,      
      ]
@@ -151,6 +158,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     'red_activity': () =>
       (agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
+    'drone': () =>
+      (agendaVariations["drone"]())[randomIntInRange(0,agendaVariations["drone"]().length-1)],
     null: () => 
       (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
   };
@@ -161,8 +170,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     }else{
       return agentAgendas['group']();
     }
-  }
-  else {
+  } else if (agent.type == 'drone') {
+    return agentAgendas['drone']();
+  } else {
   switch(agent.force) { 
     case 'white': { 
       if(agent.occupations != undefined && agent.occupations.length != 0){

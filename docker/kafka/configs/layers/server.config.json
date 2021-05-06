@@ -409,7 +409,7 @@
       "sourceUrl": "http://localhost:3008/sources/group"
     },
     {
-      "id": "Feature",
+      "id": "drone",
       "sourceType": "geojson",
       "version": "0.0.1",
       "color": "lightgray",
@@ -419,16 +419,29 @@
       ],
       "isEditable": false,
       "tileSupport": false,
-      "title": "Feature",
-      "source": "Feature.json",
+      "title": "drone",
+      "source": "drone.json",
       "style": {
         "type": "circle",
-        "icon": "images/Feature.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 20,
-            "circle-color": "gray"
+            "circle-color": [
+              "get",
+              "force"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -437,7 +450,7 @@
         },
         "types": []
       },
-      "sourceUrl": "http://localhost:3008/sources/Feature"
+      "sourceUrl": "http://localhost:3008/sources/drone"
     },
     {
       "id": "object",
@@ -484,7 +497,7 @@
       "sourceUrl": "http://localhost:3008/sources/object"
     },
     {
-      "id": "drone",
+      "id": "Feature",
       "sourceType": "geojson",
       "version": "0.0.1",
       "color": "lightgray",
@@ -494,29 +507,16 @@
       ],
       "isEditable": false,
       "tileSupport": false,
-      "title": "drone",
-      "source": "drone.json",
+      "title": "Feature",
+      "source": "Feature.json",
       "style": {
         "type": "circle",
+        "icon": "images/Feature.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-color": [
-              "get",
-              "force"
-            ],
-            "circle-radius": [
-              "match",
-              [
-                "get",
-                "visible"
-              ],
-              "0",
-              0,
-              "1",
-              20,
-              20
-            ]
+            "circle-radius": 20,
+            "circle-color": "gray"
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -525,7 +525,7 @@
         },
         "types": []
       },
-      "sourceUrl": "http://localhost:3008/sources/object"
+      "sourceUrl": "http://localhost:3008/sources/Feature"
     }
   ],
   "featureTypes": {

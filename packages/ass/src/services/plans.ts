@@ -1,7 +1,7 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { executeSteps, IEnvServices } from '../env-services';
 import { redisServices, chatServices } from '../services';
-import { addGroup, randomItem, hours, minutes, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
 
 
 
@@ -168,13 +168,34 @@ export const plans = {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions) => {
       const steps = [] as ActivityList;
       if (options.AreaCentre && options.AreaRange) {
+        steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
         const No_places = randomIntInRange(10, 20) ;
         for(let i = 0; i < No_places; i +=1) {
           const centre = options.AreaCentre.coord;
-          const {destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any'), duration = minutes(0, 15)} = options;
+          const destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any');
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
-          steps.push({ name: 'waitFor', options: { duration } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+        }
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Hang around specific area drone': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions) => {
+      const steps = [] as ActivityList;
+      if (options.AreaCentre && options.AreaRange) {
+        //const No_places = randomIntInRange(5, 15) ;
+        const No_places = 3;
+        steps.push({ name: 'waitFor', options: { duration: minutes(0,2)} });
+        for(let i = 0; i < No_places; i +=1) {
+          const centre = options.AreaCentre.coord;
+          const destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any');
+          agent.destination = destination;
+          steps.push({ name: 'flyTo', options: { destination } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0,2)}});
         }
       }
       agent.steps = steps;
@@ -272,6 +293,21 @@ export const plans = {
       return true;
     },
   },
+
+  'Wander_drone': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
+      const steps = [] as ActivityList;
+      agent.destination = destination;
+      steps.push({ name: 'flyTo', options: { destination } });
+      if (inRangeCheck(0,10,randomIntInRange(0,100))){
+        steps.push({ name: 'flyTo', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
   'Release':{
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;

@@ -148,6 +148,10 @@ export const duration_drone = (lat1: number, lon1: number, lat2: number, lon2: n
 /** Convert a number of minutes to the number of msec */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
 
+/** Convert a number of seconds to the number of msec */
+export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
+
+
 /** Convert a number of hours to the number of msec */
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
 

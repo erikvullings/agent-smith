@@ -23,8 +23,8 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    let agents = [] as IAgent[];
-    //const agents : Array<IAgent> = simConfig.customAgents;
+    //let agents = [] as IAgent[];
+    const agents : Array<IAgent> = simConfig.customAgents;
 
     console.log("adapter",agents)
 
@@ -86,7 +86,7 @@ export const simController = async (
       },
       park2: {
         type: 'park',
-        coord: [5.482531, 51.426244],
+        coord: [5.482012, 51.426585],
       },
       'station': {
         type: 'station',
@@ -220,8 +220,8 @@ export const simController = async (
 
 
 
-    const agentCount = simConfig.settings.agentCount;
-    const { agents: generatedAgents, locations } = generateAgents(5.482531, 51.426244, 20, 1000);
+    //const agentCount = simConfig.settings.agentCount;
+    const { agents: generatedAgents, locations } = generateAgents(5.482012, 51.426585, 5, 100);
     agents.push(man2, bike1, ...generatedAgents);
 
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
@@ -256,7 +256,7 @@ export const simController = async (
     // }
       
     let i = 0;
-    while (i < 1000000000) {
+    while (i < 10000000) {
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
       );
