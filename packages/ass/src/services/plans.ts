@@ -1,5 +1,5 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
-import { executeSteps, IEnvServices } from '../env-services';
+import { IEnvServices } from '../env-services';
 import { addGroup, randomItem, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters, hours } from '../utils';
 import { messageServices, redisServices } from '.';
 
@@ -161,7 +161,7 @@ export const plans = {
       console.log("agent destination", agent.destination)
       agent.destination = options.destination;
       prepareRoute(agent, services, options);
-      agent.speed = 2;
+      //agent.speed = 2;
       return true;      
     },
   },
@@ -219,7 +219,7 @@ export const plans = {
   },
 
   'Stay at police station': {
-    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, _options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: {duration: hours(5,8)}});
@@ -340,7 +340,8 @@ export const plans = {
 
       const receivers = await redisServices.geoSearch(agent.actual, "100000", agent) as Array<any>;
       const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false)) as Array<IAgent>;
-      messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0],receiversAgents[1]], services);
+      messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
+      
       return true;
     },
   },

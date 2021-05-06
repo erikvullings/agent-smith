@@ -104,6 +104,12 @@
             "status": "active",
             "actual": { "type": "home","coord": [5.521275, 51.448302]}
         },
+        {
+            "id": "policecar",
+            "type": "car",
+            "status": "active",
+            "actual": { "type": "police station","coord": [5.499089, 51.437034]}
+        },
         {   "id": "object1",
             "type": "object",
             "force": "red",
@@ -126,6 +132,7 @@
             "home": {"type": "home", "coord": [5.521275, 51.448302]},
             "actual": {"type": "police station","coord": [5.499089, 51.437034]},
             "occupations": [{ "type": "work", "id": "police station"}],
+            "owns": [{ "type": "car", "id": "policecar" }],
             "department": "station",
             "mailbox": []
         },
@@ -192,25 +199,25 @@
         {
             "agentId": "police1",
             "agendaItems": [
-                { "name": "Stay at police station", "options" : {}}
+                { "name": "Stay at police station", "options" : {"priority": 3}}
             ] 
         },
         {
             "agentId": "police2",
             "agendaItems": [
-                { "name": "Stay at police station", "options" : {}}
+                { "name": "Stay at police station", "options" : {"priority": 3}}
             ] 
         },
         {
             "agentId": "police3",
             "agendaItems": [
-                { "name": "Stay at police station", "options" : {}}
+                { "name": "Stay at police station", "options" : {"priority": 3}}
             ] 
         },
         {
             "agentId": "police4",
             "agendaItems": [
-                { "name": "Stay at police station", "options" : {}}
+                { "name": "Stay at police station", "options" : {"priority": 3}}
             ] 
         }
     ]

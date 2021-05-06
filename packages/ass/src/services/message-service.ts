@@ -11,27 +11,27 @@ const sendMessage = async (sender: IAgent, message: string, radius: string, serv
     if(!sender.sentbox){sender.sentbox = []}
 
     if(receiversAgents.length > 0 ) {
-        receiversAgents.forEach(rec => {
-            const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver == rec);
-
-            if(rec.mailbox && sentbox.length == 0) {
-                rec.mailbox.push({sender: sender, location: sender.actual, message: message});
-            }
-            else if(!rec.mailbox && sentbox.length == 0) {
-                rec.mailbox = [{sender: sender, location: sender.actual, message: message}];
-            }
-    });
+        await send(sender, message, receivers, services);
   }
-  console.log("message sent",{sender: sender, location: sender.actual, message: message} )
-  return true;
+  
+    console.log("message sent",{sender: sender, location: sender.actual, message: message} )
+    return true;
 }
 
-const sendDirectMessage = async (sender: IAgent, message: string, receivers:Array<IAgent>, services: IEnvServices) => {
+const sendDirectMessage = async (sender: IAgent, message: string, receivers:Array<IAgent>, _services: IEnvServices) => {
     if(!sender.sentbox){sender.sentbox = []}
     
     if(receivers.length > 0 ) {
+        await send(sender, message, receivers, _services);
+    }
+
+    return true;
+}
+
+const send = async(sender:IAgent, message: string, receivers:Array<IAgent>, _services: IEnvServices) => {
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver == rec);
+
         if(rec.mailbox && sentbox.length == 0) {
             rec.mailbox.push({sender: sender, location: sender.actual, message: message});
         }
@@ -39,14 +39,12 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:Arra
             rec.mailbox = [{sender: sender, location: sender.actual, message: message}];
         }
     });
-}
-
-  return true;
+    return true;
 }
 
 
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
-    const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force].urgency != undefined && reaction[item.message][agent.force].urgency < 2));
+    const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 2));
 
     if(urgentMessages.length >0){
             return await reactToMessage(agent, services, urgentMessages);;
@@ -56,22 +54,27 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
 
 const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: Array<IMail>) => {
     let actionToReact = null as unknown as IMail;
-    const itemUrgency = reaction[urgentMessages[0].message][agent.force].urgency;
+    const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
     if(itemUrgency == undefined){
         return true;
     }
+    else if(!agent.agenda || !agent.agenda[0] || !agent.agenda[0].options){
+        return true;
+    }
+
+    const options = agent.agenda[0].options;
     
-    if(agent.agenda && (agent.agenda[0].options==undefined || agent.agenda[0].options.reacting==undefined|| agent.agenda[0].options.reacting !=true)){
+    if(options.reacting==undefined|| options.reacting !=true){
         //not reacting agents where reaction to plan is not undefined
 
         console.log("not reacting yet")
-        if(agent.agenda && agent.agenda[0].options?.priority != undefined && agent.agenda[0].options?.priority < itemUrgency){
-            //prio of agenda is smaller, so it is more important
+        if(options.priority != undefined && options.priority < itemUrgency){
+            //prio of agenda is less, so it is more important
             //stay in agenda
             return true;
         }
-        else if(agent.agenda && agent.agenda[0].options?.priority != undefined && agent.agenda[0].options?.priority == itemUrgency){
+        else if(options.priority != undefined && options.priority == itemUrgency){
             //if urgency an agenda prio is equal, pick one of them
             const randomInt = randomIntInRange(0, urgentMessages.length);
 
@@ -87,17 +90,16 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
             }
         }
         else{
-            //if prio is bigger than urgency, pick one from the reactions
+            //if prio is greater than urgency, pick one from the reactions
             actionToReact = urgentMessages[randomIntInRange(0, urgentMessages.length-1)];
             actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
             return await agendas.addReaction(agent,services, actionToReact);
         }
     }
     else {
-        console.log("already reacting");
-        //check if urgency is smaller than current reaction, if so pick the new reaction
-        if(agent.agenda && agent.agenda[0].options?.priority != undefined && agent.agenda[0].options?.priority > itemUrgency){
-            //prio of agenda is bigger
+        //check if urgency is greater than current reaction, if so pick the new reaction
+        if(options.priority != undefined && options.priority > itemUrgency){
+            //prio of agenda is greater
             //pick new reaction
             actionToReact = urgentMessages[randomIntInRange(0, urgentMessages.length-1)];
             actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})

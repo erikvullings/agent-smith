@@ -1,4 +1,4 @@
-import { ActivityList, IAgent, IMail, IReactionObject } from '../models';
+import { ActivityList, IAgent, IMail } from '../models';
 import { IGroup } from '../models';
 import { simTime, hours, randomInRange, randomIntInRange, minutes} from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
@@ -175,10 +175,9 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
     agent._day++;
   }
   const { _day: day } = agent;
+  const agenda = simConfig.customAgendas[customAgIndex].agendaItems;
 
-  var agenda = simConfig.customAgendas[customAgIndex].agendaItems;
-  agenda[0].options = {startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3))};
-  //console.log( 'agentId', agent.id, 'custom agenda', agenda)
+  agenda[0].options.startTime = simTime(day, randomInRange(0, 4), randomInRange(0, 3));
   return agenda;
 }
 
@@ -198,11 +197,13 @@ async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
       agent.destination = mail.location;
 
       reactionAgenda[0].options = {startTime: timesim, destination: mail.location}
-      reactionAgenda.map((item) => item.options.reacting = true)
+
+      reactionAgenda.map((item) => item.options!.reacting = true)
     }
     else{
       reactionAgenda[0].options = {startTime: timesim}
-      reactionAgenda.map((item) => item.options.reacting = true)
+      reactionAgenda.map((item) => item.options!.reacting = true)
+
     }
 
     agent.agenda = [...reactionAgenda,...agent.agenda];

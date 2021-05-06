@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/erikvullings/agent-smith#readme",
   "devDependencies": {
+    "eslint": "^7.25.0",
     "pnpm": "^5.17.2",
     "rimraf": "^3.0.2"
   },
