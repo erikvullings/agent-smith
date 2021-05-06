@@ -42,13 +42,28 @@ export const randomItem = <T>(arr: T | T[]): T => (arr instanceof Array ? arr[ra
 /**
  * calculates the speed of a group based on the distance between members
  */
- export const groupSpeed = (distance: number, desiredspeed: number): number =>{
-  distance = distance + 0.35;
-  const exp1 = (0.35-distance)/0.08;
-  const exp2 = (0.35-Math.sqrt(2* Math.pow(distance,2)))/0.08;
-  const acc = 2*Math.pow(10,3)*Math.exp(exp1) + Math.sqrt(2)*2*Math.pow(10,3)*Math.exp(exp2)
-  const speed = desiredspeed - (1/80)*acc;
-  return speed;
+ export const groupSpeed = (Nomembers: number, desiredspeed: number): number =>{
+  if (Nomembers < 500) {
+    let distance = 0.65;  
+    if (Nomembers < 50) {
+      distance = 1.35;
+    } else if (Nomembers < 100) {
+      distance = 1;
+    } else if (Nomembers < 250) {
+      distance = 0.85;
+    } else {
+      distance = 0.65;
+    } 
+    const exp1 = (0.35-distance)/0.08;
+    const exp2 = (0.35-Math.sqrt(2* Math.pow(distance,2)))/0.08;
+    const acc = 2*Math.pow(10,3)*Math.exp(exp1) + Math.sqrt(2)*2*Math.pow(10,3)*Math.exp(exp2)
+    const speed = desiredspeed - (1/80)*acc;
+    return speed;
+  }
+  else {
+    const speed = 0.2;
+    return speed;
+  }
  }
 
 
@@ -122,6 +137,13 @@ export const randomIntInRange = (min: number, max: number) => {
 export const inRangeCheck = (min: number, max: number, value:number) => {
   return (((value-min)*(value-max)) <=0);
 };
+/** Calculate duration of drone over certain distance */
+export const duration_drone = (lat1: number, lon1: number, lat2: number, lon2: number) =>{
+  const dist = distanceInMeters(lat1, lon1, lat2, lon2);
+  const sec_per_meter = 3600/70000;
+  const dur = sec_per_meter * dist;
+  return dur;
+}
 
 /** Convert a number of minutes to the number of msec */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
@@ -158,6 +180,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
 });
 
 const transport = ['car' , 'bicycle' , 'bus' , 'train']
+const controlling = ['driveTo', 'cycleTo']
 
 export const agentToFeature = (agent: IAgent|IGroup) => ({
   type: 'Feature',
@@ -177,14 +200,15 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
       latitude: agent.actual.coord[1],
     },
     tags: {
+      id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.membercount ? String(agent.membercount.length): '',
       force: agent.force ? agent.force: 'white' ,
       visible: 
-        ((agent.type == 'group' || (agent.type == 'car') || (agent.type == 'bicycle')) && !agent.group)? String(0): 
-        (agent.steps && agent.steps[0] && (agent.steps[0].name == 'driveTo' || agent.steps[0].name == 'cycleTo'))? String(0):
-        (!(agent.type == 'car') && !(agent.type == 'bicycle') && agent.memberOf)? String(0): String(1),
+        ((agent.type == 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)? String(0): 
+        (agent.steps && agent.steps[0] && controlling.indexOf(agent.steps[0].name) >= 0)? String(0):
+        ((transport.indexOf(agent.type) < 0) && agent.memberOf)? String(0): String(1),
     },
   },
 });
@@ -200,6 +224,16 @@ export const randomPlaceNearby = (a: IAgent | IGroup, rangeInMeter: number, type
       coord: [lon, lat],
     },
   } = a;
+  const r = rangeInMeter / 111139;
+  return {
+    type,
+    // 1 degree is approximately 111111 meters
+    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+  };
+};
+
+/** Based on the coordinates of centre of area, create a place nearby */
+export const randomPlaceInArea = (lon: number, lat: number, rangeInMeter: number, type: string): ILocation => {
   const r = rangeInMeter / 111139;
   return {
     type,
@@ -285,7 +319,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
       home,
       // owns: [{ type: 'car', id: 'car1' }],
       actual: group? group.actual: home,
-      occupations: [{ id: occupationId, ...occupation }],
+      //occupations: [{ id: occupationId, ...occupation }],
       memberOf: group? group.id: undefined,
     } as unknown as IAgent;
     acc.push(agent);

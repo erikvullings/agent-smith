@@ -36,6 +36,10 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'wander': () => [
       { name: 'Wander', options: { priority: 3 } }
     ],
+    'hang_around_area': () => [
+      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 , AreaCentre: {type: 'park', coord: [5.482531, 51.426244]}, AreaRange: 1000} },
+      { name: 'Hang around specific area', options: { duration: hours(0, 1) , priority: 3, AreaCentre: {type: 'park', coord: [5.482531, 51.426244]}, AreaRange: 100} },
+    ],
     'doctor_visit': () => [
       { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'GetExamined', options: { duration: hours(0, 5) } }
@@ -99,15 +103,18 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
-      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
-      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,
-      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
-      //[...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
-      //[...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
-      //[...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home'](),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
+      [...activities['wander'](),...((activities['shop']())[randomIntInRange(0,activities['shop']().length-1)]),...activities['go home']()] as ActivityList,      
+      [...activities['wander'](),...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'learn': () => [
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
+    ],
+    'tourist': () => [
+      [...activities['hang_around_area'](),...activities['go home']()] as ActivityList,   
     ],
     'police': () => [
       [...((blueActivities['guard']())[randomIntInRange(0,blueActivities['guard']().length-1)]),...activities['go home']()] as ActivityList,      
@@ -118,8 +125,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
     ],
     'group': () => [
-      //[...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,
-      [...activities['Release_red'](),...activities['go home']()] as ActivityList,       
+      [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,
+      //[...activities['Release_red'](),...activities['go home']()] as ActivityList,       
     ],
     'red_group': ()=>[
       [...redActivities['fight'](),...activities['go home']()] as ActivityList,
@@ -133,7 +140,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'work': () => 
       (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
     'learn': () => 
-      (agendaVariations['learn']())[randomIntInRange(0,agendaVariations['learn']().length-1)], 
+      (agendaVariations['learn']())[randomIntInRange(0,agendaVariations['learn']().length-1)],
+    'tourist': () => 
+      (agendaVariations['tourist']())[randomIntInRange(0,agendaVariations['tourist']().length-1)],  
     'group': () => 
       (agendaVariations['group']())[randomIntInRange(0,agendaVariations['group']().length-1)], 
     'red_group': () => 
@@ -160,7 +169,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
         return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
       }
       else{
-        return agentAgendas['work']()  }
+        return agentAgendas['tourist']()  }
       }
     case 'red': { 
        return agentAgendas['red_activity']()           

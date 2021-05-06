@@ -93,9 +93,27 @@
             "status": "active",
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "memberOf": ["agent2"]
+        },
+        {
+            "id": "drone1",
+            "type": "drone",
+            "force": "red",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499555, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499309, 51.437832]},
+            "occupations": [{ "type": "work", "id": "park"}]
         }
+
     ],
     "customAgendas": [
+        {
+            "agentId": "drone1",
+            "agendaItems": [
+                { "name": "Go to the park", "options" : {}},
+                { "name": "Wander" },
+                { "name": "Go home" }
+            ] 
+        },
         {
             "agentId": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "agendaItems": [

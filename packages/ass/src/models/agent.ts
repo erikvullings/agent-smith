@@ -3,7 +3,7 @@ import { ActivityList } from '.';
 import { ILocation } from './location';
 
 export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
-export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' ;
+export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' | 'drone';
 export type ObjectType = 'object' ;
 
 export interface IAgent {
@@ -69,4 +69,13 @@ export interface IAgent {
   running?: boolean;
   /** Route to follow from actual location to destination */
   route?: IOsrmRouteStep[];
+  /** Route to follow from actual location to destination when flying*/
+  flyroute?: Array<{ 
+    /** distance of step */
+    dist: number;
+    /** duration of step */
+    duration: number;
+    /** coordinates of step */
+    coord: number[];
+  }>;
 }
