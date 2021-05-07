@@ -177,7 +177,8 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
   const agenda = simConfig.customAgendas[customAgIndex].agendaItems;
 
   if(agenda.length>0){
-    agenda[0].options.startTime = simTime(day, randomInRange(0, 4), randomInRange(0, 3));
+    const agendaOptions = Object.assign({},agenda[0].options, {startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3))});
+    agenda[0].options = agendaOptions;
     return agenda;  
   }
   else{
@@ -192,9 +193,9 @@ async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
   let timesim = services.getTime();
   timesim.setMinutes(timesim.getMinutes()+ 6);
 
-  if(agent.agenda){
+  if(agent.agenda && reaction[mail.message][agent.force] && reaction[mail.message][agent.force]!.plans.length >0){
 
-    var reactionAgenda : ActivityList = reaction[mail.message][agent.force].plans[0];
+    var reactionAgenda : ActivityList = reaction[mail.message][agent.force]!.plans[0];
 
     if(reactionAgenda[0].name === "Go to specific location"){
       agent.destination = mail.location;
