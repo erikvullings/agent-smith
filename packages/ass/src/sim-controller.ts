@@ -27,11 +27,11 @@ export const simController = async (
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
-    const blueAgents : Array<IDefenseAgent> = simConfig.customAgents.blue;
+    const blueAgents : Array<IAgent & IDefenseAgent> = simConfig.customAgents.blue;
     const redAgents : Array<IAgent> = simConfig.customAgents.red;
     const whiteAgents : Array<IAgent> = simConfig.customAgents.white;
 
-    const agents: Array<IDefenseAgent | IAgent> = [...blueAgents, ...redAgents, ...whiteAgents];
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as Array<IAgent | IDefenseAgent>;
 
     let currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -213,7 +213,7 @@ export const simController = async (
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
-    }, {} as { [id: string]: IAgent });
+    }, {} as { [id: string]: IAgent | IDefenseAgent });
 
      /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
@@ -226,7 +226,7 @@ export const simController = async (
 
     const intervalObj = setInterval(async () => {
       await Promise.all(
-        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name])).map((a) => messageServices.sendMessage(a,a.agenda![0].name,"1000",services))
+        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name]&& a.agenda[0].name !== "Call the police")).map((a) => messageServices.sendMessage(a,a.agenda![0].name,"1000",services))
     )}, 10000);  
 
     let i = 0;

@@ -8,7 +8,9 @@ import { agendas } from "./agendas";
 
 const sendMessage = async (sender: IAgent, message: string, radius: string, services: IEnvServices) => {
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as Array<any>;
-    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => !a.department || a.department != 'station' ) as Array<IAgent|IDefenseAgent>;
+    console.log("receivers before", receivers.length)
+    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => !("department" in a) || a.department != 'station' );
+    console.log("receivers after", receiversAgents.length)
 
     if(receiversAgents.length > 0 ) {
         await send(sender, message, receiversAgents, services);

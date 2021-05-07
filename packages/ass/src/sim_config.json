@@ -15,6 +15,7 @@
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "work", "id": "h_m_shop"}],
             "mailbox": [],
+            "department": "none",
             "defenseType": "police"
         },
         {
@@ -26,6 +27,7 @@
             "actual": {"type": "home", "coord": [5.499309, 51.437832]},
             "occupations": [{ "type": "work", "id": "park"}],
             "mailbox": [],
+            "department": "none",
             "defenseType": "police"
         },
         {

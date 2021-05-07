@@ -339,7 +339,7 @@ export const plans = {
       agent.steps = steps;
 
       const receivers = await redisServices.geoSearch(agent.actual, "100000", agent) as Array<any>;
-      const receiversAgents = (receivers.map((a) => a = services.agents[a.key]) as Array<IDefenseAgent>).filter(a => a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
+      const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
       console.log("receivers", receiversAgents)
       messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
       
