@@ -1,4 +1,4 @@
-import { ActivityList, IAgent, IMail } from '../models';
+import { ActivityList, IAgent, IMail, IStep } from '../models';
 import { IGroup } from '../models';
 import { simTime, hours, randomInRange, randomIntInRange, minutes} from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
@@ -131,8 +131,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'police_duty': () => 
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     'red_activity': () =>
-    (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
-
+      (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
       //(agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
     null: () => 
       (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
@@ -177,10 +176,14 @@ function customAgenda(agent: IAgent, _services: IEnvServices, customAgIndex: num
   const { _day: day } = agent;
   const agenda = simConfig.customAgendas[customAgIndex].agendaItems;
 
-  agenda[0].options.startTime = simTime(day, randomInRange(0, 4), randomInRange(0, 3));
-  return agenda;
+  if(agenda.length>0){
+    agenda[0].options.startTime = simTime(day, randomInRange(0, 4), randomInRange(0, 3));
+    return agenda;  
+  }
+  else{
+    return getAgenda(agent,_services)
+  }
 }
-
 
 async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
   agent.route = [];

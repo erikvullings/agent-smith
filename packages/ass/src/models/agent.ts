@@ -28,8 +28,6 @@ export interface IAgent {
     /** Id of the location where the occupation takes place */
     id: string;
   }>;
-  /** work department for police */
-  department?: 'station' | string;
   /** ID of task address */
   activities?: Array<{
     /** Type of occupation, e.g. work, shop, learn */

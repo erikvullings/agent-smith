@@ -32,10 +32,12 @@ export interface IAgentActivity {
 /** A typical step that can be executed. When the step returns true, it signals completion. */
 export type Activity = (agent: IAgent | IGroup, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 
-export type ActivityList = Array<{
+export type ActivityList = Array<IStep>;
+
+export interface IStep{
   name: string;
   options?: IActivityOptions;
-}>;
+}
 
 export interface IPlan {
   /** Prepare the plan, e.g. select a destination and prepare all steps */

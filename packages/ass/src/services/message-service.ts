@@ -1,26 +1,23 @@
 import { reaction, redisServices } from ".";
 import { IEnvServices } from "../env-services";
 import { IAgent, IGroup, IMail } from "../models";
+import { IDefenseAgent } from "../models/defense-agent";
 import { randomIntInRange } from "../utils";
 import { agendas } from "./agendas";
 
 
 const sendMessage = async (sender: IAgent, message: string, radius: string, services: IEnvServices) => {
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as Array<any>;
-    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => !a.department || a.department != 'station' ) as Array<IAgent>;
-    if(!sender.sentbox){sender.sentbox = []}
+    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => !a.department || a.department != 'station' ) as Array<IAgent|IDefenseAgent>;
 
     if(receiversAgents.length > 0 ) {
-        await send(sender, message, receivers, services);
-  }
-  
-    console.log("message sent",{sender: sender, location: sender.actual, message: message} )
+        await send(sender, message, receiversAgents, services);
+    }
+
     return true;
 }
 
 const sendDirectMessage = async (sender: IAgent, message: string, receivers:Array<IAgent>, _services: IEnvServices) => {
-    if(!sender.sentbox){sender.sentbox = []}
-    
     if(receivers.length > 0 ) {
         await send(sender, message, receivers, _services);
     }
@@ -29,6 +26,8 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:Arra
 }
 
 const send = async(sender:IAgent, message: string, receivers:Array<IAgent>, _services: IEnvServices) => {
+    if(!sender.sentbox){sender.sentbox = []}
+
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver == rec);
 
@@ -42,14 +41,13 @@ const send = async(sender:IAgent, message: string, receivers:Array<IAgent>, _ser
     return true;
 }
 
-
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
     const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 2));
 
     if(urgentMessages.length >0){
             return await reactToMessage(agent, services, urgentMessages);;
         }
-        return false;
+    return false;
 };
 
 const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: Array<IMail>) => {
@@ -67,8 +65,6 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
     
     if(options.reacting==undefined|| options.reacting !=true){
         //not reacting agents where reaction to plan is not undefined
-
-        console.log("not reacting yet")
         if(options.priority != undefined && options.priority < itemUrgency){
             //prio of agenda is less, so it is more important
             //stay in agenda
@@ -111,8 +107,8 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
     }
 };
 
-  export const messageServices = {
+export const messageServices = {
     sendMessage,
     readMailbox,
     sendDirectMessage
-  };
+};

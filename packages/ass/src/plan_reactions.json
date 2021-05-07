@@ -1,26 +1,11 @@
 
 [
-    {
-    "name" : "Go to work", 
-    "reactions" : [
-        {
-            "force" : "blue",
-            "reaction": [
-                [{ "name": "Go home", "options" : {}},
-                { "name": "Go to work"},
-                { "name": "Work" }]
-        ]},
-        {
-            "force" : "red",
-            "reaction": [
-                [{ "name": "Run Away", "options" : {}}]
-        ]},
-        {
-            "force" : "white",
-            "reaction": [
-                [{ "name": "Run Away", "options" : {}}]
-        ]}]
-    }
+    {"Call the police": {
+        "blue":{"urgency":1, "plans":[[{ "name": "Go to specific location", "options" : {}},
+                                        { "name": "Wait", "options" : {"duration": 1}},
+                                                { "name": "Go to work", "options" : {}},
+                                                { "name": "Stay at police station", "options" : {} }]]}
+    }}
 ]
 
 

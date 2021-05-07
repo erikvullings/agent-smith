@@ -7,6 +7,7 @@ import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
 
 import { ISimConfig } from './models';
+import { IDefenseAgent } from './models/defense-agent';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -26,9 +27,11 @@ export const simController = async (
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
-    const agents : Array<IAgent> = simConfig.customAgents;
+    const blueAgents : Array<IDefenseAgent> = simConfig.customAgents.blue;
+    const redAgents : Array<IAgent> = simConfig.customAgents.red;
+    const whiteAgents : Array<IAgent> = simConfig.customAgents.white;
 
-    console.log("adapter",agents)
+    const agents: Array<IDefenseAgent | IAgent> = [...blueAgents, ...redAgents, ...whiteAgents];
 
     let currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -198,6 +201,8 @@ export const simController = async (
 
     const agentCount = simConfig.settings.agentCount;
     const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount, simConfig.settings.radius);
+   //const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
+
     agents.push(...generatedAgents);
     
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
@@ -221,7 +226,7 @@ export const simController = async (
 
     const intervalObj = setInterval(async () => {
       await Promise.all(
-        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name])).map((a) => messageServices.sendMessage(a,a.agenda![0].name,"10000",services))
+        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name])).map((a) => messageServices.sendMessage(a,a.agenda![0].name,"1000",services))
     )}, 10000);  
 
     let i = 0;

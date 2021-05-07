@@ -1,33 +1,27 @@
+import { IActivityOptions, IStep } from ".";
 import { IAgent } from "./agent";
+import { IDefenseAgent } from "./defense-agent";
 
 export interface ISimConfig {
   settings: Settings;
-  customAgents: IAgent[];
+  customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
+}
+
+interface CustomAgents {
+  blue: Array<IAgent & IDefenseAgent>;
+  white: Array<IAgent>;
+  red: Array<IAgent>;
 }
 
 export interface CustomAgenda {
   agentId: string;
-  agendaItems: AgendaItem[];
+  agendaItems: Array<IStep>;
 }
 
 export interface AgendaItem {
   name: string;
-  options?: Options;
-}
-
-export interface Options {
-  simTime?: Date;  
-}
-
-export interface Home {
-  type: string;
-  coord: number[];
-}
-
-export interface Own {
-  type: string;
-  id: string;
+  options?: IActivityOptions;
 }
 
 export interface Settings {

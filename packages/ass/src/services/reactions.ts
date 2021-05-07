@@ -19,5 +19,5 @@ export const reaction = {
                                         { "name": "Wait", "options" : {"duration": 1}},
                                                 { "name": "Go to work", "options" : {}},
                                                 { "name": "Stay at police station", "options" : {} }]]},
-    },
+    }
 } as IReactions
