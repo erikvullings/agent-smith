@@ -14,3 +14,14 @@ export interface IReact {
   urgency: number;
   plans: Array<ActivityList>;
 }
+
+export interface IPlanEffects {
+  [key: string]: IPlanEffectObject;
+}
+
+export interface IPlanEffectObject {
+  damageRadius: number;
+  damageLevel: number,
+  damageCount?: number,
+  messageRadius: number;
+}

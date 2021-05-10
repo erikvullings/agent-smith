@@ -4,9 +4,16 @@ import { IAgent, IGroup, IMail } from "../models";
 import { IDefenseAgent } from "../models/defense-agent";
 import { randomIntInRange } from "../utils";
 import { agendas } from "./agendas";
+import { planEffects } from "./plan-effects";
 
 
-const sendMessage = async (sender: IAgent, message: string, radius: string, services: IEnvServices) => {
+const sendMessage = async (sender: IAgent, message: string, services: IEnvServices) => {
+    let radius = 10;
+    if(planEffects[message]){
+        radius = planEffects[message].messageRadius;
+        console.log(message,radius)
+    }
+
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as Array<any>;
     console.log("receivers before", receivers.length)
     const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => !("department" in a) || a.department != 'station' );

@@ -309,7 +309,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       if(objectAgent){
-        messageServices.sendMessage(objectAgent, "drop object", "5000", services);
+        messageServices.sendMessage(objectAgent, "drop object", services);
       }
       return true;
     },
@@ -338,7 +338,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
 
-      const receivers = await redisServices.geoSearch(agent.actual, "100000", agent) as Array<any>;
+      const receivers = await redisServices.geoSearch(agent.actual, 100000, agent) as Array<any>;
       const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
       console.log("receivers", receiversAgents)
       messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
