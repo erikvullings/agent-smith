@@ -2,7 +2,7 @@ import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, IGroup } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { addGroup, groupSpeed, duration_drone, distanceInMeters } from '../utils';
+import { addGroup, groupSpeed, durationDroneStep, distanceInMeters } from '../utils';
 
 
 
@@ -16,8 +16,13 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 };
 
 const defaultWalkingSpeed = 5000 / 3600;
+const defaultFlyingSpeed = 70000 / 3600;
 /** Determine speed of agent */
 const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number =>{
+  if (agent.steps && agent.steps[0] && agent.steps[0].name == 'flyTo' ) {
+    return defaultFlyingSpeed
+  } 
+   
   let speed = agent.speed;
   let child = "no";
   if (agent.type == "boy" || agent.type == "girl") {
@@ -116,6 +121,7 @@ const moveAgent = (profile: Profile) => async (
       });
       const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
       agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
+      // console.log(agent.route)
       // console.log(JSON.stringify(agent.route, null, 2));
     } catch (e) {
       console.error(e);
@@ -124,76 +130,26 @@ const moveAgent = (profile: Profile) => async (
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
-const flyAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
-  const { flyroute = [] } = agent;
-  if (flyroute.length === 0) {
-    if(agent.actual == agent.destination){console.log('eindlocatie bereikt')};
-    return true; // Done
-  }
-  const step = flyroute[0];
-  const totDistance = step.dist || 0;
-  const totDuration = step.duration || 0;
-  const defaultFlyingSpeed = 70000/3600;
-  agent.speed = totDuration > 0 ? totDistance / totDuration : defaultFlyingSpeed;
-
-  let distance2go = agent.speed * deltaTime;
-  for (let i = 0; i < flyroute.length; i++) {
-    const [x0, y0] = agent.actual.coord;
-    const [x1, y1] = flyroute[i].coord;
-    if([x1, y1] == agent.destination?.coord){console.log('last step')}
-    const segmentLength = services.distance(x0, y0, x1, y1);
-    if (distance2go >= segmentLength) {
-      agent.actual = { type: 'unnamed', coord: [x1, y1] };
-      distance2go -= segmentLength;
-    } else {
-      if (i > 0){flyroute.splice(0, i)};
-      const ratio = distance2go / segmentLength;
-      const coord = [x0+ (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
-      agent.actual = { type:'unnamed', coord };
-      redisServices.geoAdd('agents', agent);
-      moveGroup(agent, services);
-      return false;
-    }
-  }
-  flyroute.splice(0, 1);
-  agent.flyroute = flyroute;
-  return flyAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed);
-};
-
-const flyTo = async (_agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-  const { flyroute = [], memberOf } = _agent;
-  const { distance } = _services;
+const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const { route = [], memberOf } = agent;
+  const { distance } = services;
   if (memberOf) return false; 
   const { destination } = options;
-  if (flyroute.length === 0) {
+  console.log(destination);
+  if (route.length === 0) {
     if (!destination) return true;
     try {
-      let distancetodest = distance(_agent.actual.coord[0], _agent.actual.coord[1], destination.coord[0], destination.coord[1]);
-      let x = _agent.actual.coord[0];
-      let y = _agent.actual.coord[1];
-      const slope = 0.0001 * (destination.coord[1] - _agent.actual.coord[1])/Math.abs((destination.coord[0] - _agent.actual.coord[0]));
-      const No_coords= Math.floor(Math.abs((destination.coord[0] - _agent.actual.coord[0])/0.0001));
-      let pos_neg = 1;
-      if ((destination.coord[0] - _agent.actual.coord[0]) < 0) {
-        pos_neg = -1;
-      }
-      for ( let i = 0; i < No_coords; i++) {
-        const distance_step = distance(x, y, x + (pos_neg * 0.0001), y + slope);
-        const duration_step = duration_drone(x, y, x + (pos_neg * 0.0001), y + slope);
-        x = x + (pos_neg * 0.0001);
-        y = y + slope;
-        flyroute.push({dist: distance_step, duration: duration_step, coord: [x,y]});
-        distancetodest = distancetodest-distance_step
-      }
-      const distance_step = distance(x, y, destination.coord[0], destination.coord[1]);
-      const duration_step = duration_drone(x, y, destination.coord[0], destination.coord[1]);
-      flyroute.push({dist: distance_step, duration: duration_step, coord: destination.coord});
-      _agent.flyroute = flyroute;
+      console.log(agent.destination);
+      console.log(destination);
+      const distanceToDestination = distance(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
+      const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
+      route.push({distance: distanceToDestination, duration, geometry: {coordinates: [[destination.coord[0], destination.coord[1]]], type: 'LineString'} });
+      agent.route = route;
     } catch (e) {
       console.error(e);
     }
   }
-  return flyAgentAlongRoute(_agent, _services, _services.getDeltaTime() / 1000);
+  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
 /** Wait until a start time before continuing */

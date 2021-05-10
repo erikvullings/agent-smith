@@ -189,13 +189,13 @@ export const plans = {
       if (options.AreaCentre && options.AreaRange) {
         //const No_places = randomIntInRange(5, 15) ;
         const No_places = 3;
-        steps.push({ name: 'waitFor', options: { duration: minutes(0,2)} });
+        steps.push({ name: 'waitFor', options: { duration: minutes(0,5)} });
         for(let i = 0; i < No_places; i +=1) {
           const centre = options.AreaCentre.coord;
           const destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any');
           agent.destination = destination;
           steps.push({ name: 'flyTo', options: { destination } });
-          steps.push({ name: 'waitFor', options: { duration: minutes(0,2)}});
+          steps.push({ name: 'waitFor', options: { duration: minutes(0,5)}});
         }
       }
       agent.steps = steps;

@@ -138,7 +138,7 @@ export const inRangeCheck = (min: number, max: number, value:number) => {
   return (((value-min)*(value-max)) <=0);
 };
 /** Calculate duration of drone over certain distance */
-export const duration_drone = (lat1: number, lon1: number, lat2: number, lon2: number) =>{
+export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) =>{
   const dist = distanceInMeters(lat1, lon1, lat2, lon2);
   const sec_per_meter = 3600/70000;
   const dur = sec_per_meter * dist;

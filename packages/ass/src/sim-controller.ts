@@ -200,13 +200,13 @@ export const simController = async (
 
     const man2 = {
       id: 'man2',
-      type: 'woman',
+      type: 'man',
       status: 'active',
       home: services.locations['Firmamentlaan 5'],
       actual: services.locations['park2'],
       owns: [{type: 'bicycle', id: 'bike1' }],
       //occupations: [{  type: 'work', id: 'h_m_shop' }],
-      force: 'white',
+      force: 'red',
     } as IAgent;
 
     const bike1 = {
