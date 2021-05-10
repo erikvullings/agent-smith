@@ -6,4 +6,4 @@ export * from './chat-service';
 export * from './message-service';
 export * from './reactions';
 export * from './plan-effects';
-
+export * from './dispatch-service';

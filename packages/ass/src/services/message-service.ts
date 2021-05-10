@@ -61,9 +61,10 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
 
 const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: Array<IMail>) => {
     let actionToReact = null as unknown as IMail;
+    const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
-    if(itemUrgency == undefined){
+    if(itemUrgency == undefined || itemReaction == undefined){
         return true;
     }
     else if(!agent.agenda || !agent.agenda[0] || !agent.agenda[0].options){
@@ -89,16 +90,13 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
             }
             else {
                 //pick one of the reactions
-                actionToReact = urgentMessages[randomInt];
-                actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
-                return await agendas.addReaction(agent,services, actionToReact);
+                return await react(agent,services,urgentMessages,randomInt)
             }
         }
         else{
             //if prio is greater than urgency, pick one from the reactions
-            actionToReact = urgentMessages[randomIntInRange(0, urgentMessages.length-1)];
-            actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
-            return await agendas.addReaction(agent,services, actionToReact);
+            const randomInt = randomIntInRange(0, urgentMessages.length-1);
+            return await react(agent,services,urgentMessages,randomInt)
         }
     }
     else {
@@ -106,15 +104,24 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
         if(options.priority != undefined && options.priority > itemUrgency){
             //prio of agenda is greater
             //pick new reaction
-            actionToReact = urgentMessages[randomIntInRange(0, urgentMessages.length-1)];
-            actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
-            return await agendas.addReaction(agent,services, actionToReact);
+            const randomInt = randomIntInRange(0, urgentMessages.length-1);
+            return await react(agent,services,urgentMessages,randomInt)
         }
         else{
             return true;
         }
     }
 };
+
+const react = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: Array<IMail>, itemIndex: number) => {
+    let actionToReact = null as unknown as IMail;
+    const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
+
+    actionToReact = urgentMessages[itemIndex];
+    actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
+    return await agendas.addReaction(agent,services, actionToReact);
+}
+
 
 export const messageServices = {
     sendMessage,

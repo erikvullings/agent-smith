@@ -226,7 +226,7 @@ export const simController = async (
 
     const intervalObj = setInterval(async () => {
       await Promise.all(
-        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name]&& a.agenda[0].name !== "Call the police")).map((a) => messageServices.sendMessage(a,a.agenda![0].name,"1000",services))
+        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name]&& a.agenda[0].name !== "Call the police")).map((a) => messageServices.sendMessage(a,a.agenda![0].name,services))
     )}, 10000);  
 
     let i = 0;

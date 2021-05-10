@@ -13,7 +13,7 @@ export const planEffects = {
         messageRadius: 10000
     },
     "Flee the scene": {
-        damageRadius: 100,
+        damageRadius: 0,
         damageLevel: 0,
         messageRadius: 20
     },

@@ -71,6 +71,7 @@ export interface IAgent {
   mailbox: Array<IMail>;
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
   sentbox: Array<{receiver: IAgent, mail: IMail}>;
+  reactedTo?: string
 }
 
 export interface IMail {
