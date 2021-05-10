@@ -16,6 +16,7 @@ export interface IEnvServices {
   drive: IOsrm;
   cycle: IOsrm;
   walk: IOsrm;
+  fly: IOsrm;
   /** Agent lookup */
   agents: { [id: string]: IAgent | IDefenseAgent };
   /** Available plans */

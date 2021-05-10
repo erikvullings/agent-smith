@@ -3,7 +3,7 @@ import { ActivityList } from '.';
 import { ILocation } from './location';
 
 export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
-export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' ;
+export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' | 'drone';
 export type ObjectType = 'object' ;
 
 export interface IAgent {
@@ -65,6 +65,8 @@ export interface IAgent {
   steps?: ActivityList;
   /** Speed factor, where 1 is the actual speed suggested by the routing engine */
   speed?: number;
+  /** True if agent is running */
+  running?: boolean;
   /** Route to follow from actual location to destination */
   route?: IOsrmRouteStep[];
   /** Mailbox for messages */

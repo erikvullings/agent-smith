@@ -40,6 +40,34 @@ export const random = (min: number, max: number, f?: (n: number, min?: number, m
 export const randomItem = <T>(arr: T | T[]): T => (arr instanceof Array ? arr[random(0, arr.length - 1)] : arr);
 
 /**
+ * calculates the speed of a group based on the distance between members
+ */
+ export const groupSpeed = (Nomembers: number, desiredspeed: number): number =>{
+  if (Nomembers < 500) {
+    let distance = 0.65;  
+    if (Nomembers < 50) {
+      distance = 1.35;
+    } else if (Nomembers < 100) {
+      distance = 1;
+    } else if (Nomembers < 250) {
+      distance = 0.85;
+    } else {
+      distance = 0.65;
+    } 
+    const exp1 = (0.35-distance)/0.08;
+    const exp2 = (0.35-Math.sqrt(2* Math.pow(distance,2)))/0.08;
+    const acc = 2*Math.pow(10,3)*Math.exp(exp1) + Math.sqrt(2)*2*Math.pow(10,3)*Math.exp(exp2)
+    const speed = desiredspeed - (1/80)*acc;
+    return speed;
+  }
+  else {
+    const speed = 0.2;
+    return speed;
+  }
+ }
+
+
+/**
  * Shuffle the items randomly
  *
  * @static
@@ -109,9 +137,20 @@ export const randomIntInRange = (min: number, max: number) => {
 export const inRangeCheck = (min: number, max: number, value:number) => {
   return (((value-min)*(value-max)) <=0);
 };
+/** Calculate duration of drone over certain distance */
+export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) =>{
+  const dist = distanceInMeters(lat1, lon1, lat2, lon2);
+  const sec_per_meter = 3600/70000;
+  const dur = sec_per_meter * dist;
+  return dur;
+}
 
 /** Convert a number of minutes to the number of msec */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
+
+/** Convert a number of seconds to the number of msec */
+export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
+
 
 /** Convert a number of hours to the number of msec */
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
@@ -145,6 +184,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
 });
 
 const transport = ['car' , 'bicycle' , 'bus' , 'train']
+const controlling = ['driveTo', 'cycleTo']
 
 export const agentToFeature = (agent: IAgent|IGroup) => ({
   type: 'Feature',
@@ -164,14 +204,15 @@ export const agentToFeature = (agent: IAgent|IGroup) => ({
       latitude: agent.actual.coord[1],
     },
     tags: {
+      id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.membercount ? String(agent.membercount.length): '',
       force: agent.force ? agent.force: 'white' ,
       visible: 
-        ((agent.type == 'group' || (agent.type == 'car') || (agent.type == 'bicycle')) && !agent.group)? String(0): 
-        (agent.steps && agent.steps[0] && (agent.steps[0].name == 'driveTo' || agent.steps[0].name == 'cycleTo'))? String(0):
-        (!(agent.type == 'car') && !(agent.type == 'bicycle') && agent.memberOf)? String(0): String(1),
+        ((agent.type == 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)? String(0): 
+        (agent.steps && agent.steps[0] && controlling.indexOf(agent.steps[0].name) >= 0)? String(0):
+        ((transport.indexOf(agent.type) < 0) && agent.memberOf)? String(0): String(1),
     },
   },
 });
@@ -187,6 +228,16 @@ export const randomPlaceNearby = (a: IAgent | IGroup, rangeInMeter: number, type
       coord: [lon, lat],
     },
   } = a;
+  const r = rangeInMeter / 111139;
+  return {
+    type,
+    // 1 degree is approximately 111111 meters
+    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+  };
+};
+
+/** Based on the coordinates of centre of area, create a place nearby */
+export const randomPlaceInArea = (lon: number, lat: number, rangeInMeter: number, type: string): ILocation => {
   const r = rangeInMeter / 111139;
   return {
     type,
@@ -247,9 +298,9 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, group?: IGroup, force?: string) => {
   const offset = () => random(-radius, radius) / 100000;
-  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park' | 'school') =>
+  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park' ) =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
@@ -258,81 +309,28 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     }, {} as { [key: string]: ILocation });
   const occupations = generateLocations('work');
   const occupationIds = Object.keys(occupations);
-  const schools = generateLocations('school');
-  const schoolIds = Object.keys(schools);
   const homes = generateLocations('home');
   const homeIds = Object.keys(homes);
   const agents = range(1, count).reduce((acc) => {
     const home = homes[randomItem(homeIds)];
     const occupationId = randomItem(occupationIds);
     const occupation = occupations[occupationId];
-    // const  r= randomInRange(0, 1);
-    // if(r < 0.4){
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'man',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: occupationId, ...occupation }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else if (r < 0.8){
-    //   const occupationId = randomItem(occupationIds);
-    //   const occupation = occupations[occupationId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'woman',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: occupationId, ...occupation }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else if (r < 0.9){
-    //   const schoolId = randomItem(schoolIds);
-    //   const school = occupations[schoolId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'boy',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: schoolId, ...school }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else {
-    //   const schoolId = randomItem(schoolIds);
-    //   const school = occupations[schoolId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'girl',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: schoolId, ...school }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
     const agent = {
       id: uuid4(),
       type: 'man',
-      force: 'white',
+      force: force? force: 'white',
       status: 'active',
       home,
       // owns: [{ type: 'car', id: 'car1' }],
-      actual: home,
-      occupations: [{ id: occupationId, ...occupation }]
+      actual: group? group.actual: home,
+      occupations: [{ id: occupationId, ...occupation }],
+      memberOf: group? group.id: undefined,
     } as unknown as IAgent;
     acc.push(agent);
     redisServices.geoAdd('agents', agent);
+    if(group && group.group){
+      group.group.push(agent.id);
+    }
     return acc;
   }, [] as IAgent[]);
   return { agents, locations: Object.assign({}, homes, occupations) };

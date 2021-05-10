@@ -37,6 +37,10 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'wander': () => [
       { name: 'Wander', options: { priority: 3 } }
     ],
+    'hang_around_area': () => [
+      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 , AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 100} },
+      { name: 'Hang around specific area', options: { duration: hours(0, 1) , priority: 3, AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 100} },
+    ],
     'doctor_visit': () => [
       { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'GetExamined', options: { duration: hours(0, 5) } }
@@ -44,7 +48,14 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'release_at_random_location': () => [
       { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
       { name: 'Release' },
-    ]
+    ],
+    'Release_red': () =>[
+      { name: 'Release_red', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+    ],
+    'drone': () => [
+      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 , AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 1000} },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1) , priority: 3, AreaCentre: {type: 'park', coord: [5.482012, 51.426585]}, AreaRange: 1000} },
+    ],
   };
 
   const blueActivities = {
@@ -88,6 +99,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'Shop', options: { duration: minutes(10) , priority: 1 } },
       { name: 'Flee the scene', options:  { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 }  } 
     ],
+    'fight': () => [
+      {name: 'Fight',options: {startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), duration: hours(3, 5)} }
+    ]
   };
   
   const agendaVariations = {
@@ -105,16 +119,26 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'learn': () => [
       [...((activities['work']())[randomIntInRange(0,activities['work']().length-1)]),...activities['wander'](),...activities['go home']()] as ActivityList,      
     ],
+    'tourist': () => [
+      [...activities['hang_around_area'](),...activities['go home']()] as ActivityList,   
+    ],
     'police': () => [
       [...((blueActivities['guard']())[randomIntInRange(0,blueActivities['guard']().length-1)]),...activities['go home']()] as ActivityList,      
       [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'red': () => [
       [...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
-      //[...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
+      [...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
     ],
-    'release_at_location': () => [
-      [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,      
+    'group': () => [
+      [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,
+      //[...activities['Release_red'](),...activities['go home']()] as ActivityList,       
+    ],
+    'red_group': ()=>[
+      [...redActivities['fight'](),...activities['go home']()] as ActivityList,
+    ],
+    'drone': ()=>[
+      [...activities['drone'](),...activities['go home']()] as ActivityList,
     ],
      'null': () => [
       [...activities['wander'](),...activities['go home']()] as ActivityList,      
@@ -125,29 +149,39 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'work': () => 
       (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
     'learn': () => 
-      (agendaVariations['learn']())[randomIntInRange(0,agendaVariations['learn']().length-1)], 
-    'release_at_location': () => 
-      (agendaVariations['release_at_location']())[0], 
+      (agendaVariations['learn']())[randomIntInRange(0,agendaVariations['learn']().length-1)],
+    'tourist': () => 
+      (agendaVariations['tourist']())[randomIntInRange(0,agendaVariations['tourist']().length-1)],  
+    'group': () => 
+      (agendaVariations['group']())[randomIntInRange(0,agendaVariations['group']().length-1)], 
+    'red_group': () => 
+      (agendaVariations['red_group']())[randomIntInRange(0,agendaVariations['red_group']().length-1)],  
     'police_duty': () => 
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     'red_activity': () =>
-      (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
-      //(agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
+      (agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
+    'drone': () =>
+      (agendaVariations["drone"]())[randomIntInRange(0,agendaVariations["drone"]().length-1)],
     null: () => 
       (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
   };
 
   if(agent.type == 'group'){
-    return agentAgendas['release_at_location']();
-  }
-  else {
+    if(agent.force == 'red'){
+      return agentAgendas['red_group']();
+    }else{
+      return agentAgendas['group']();
+    }
+  } else if (agent.type == 'drone') {
+    return agentAgendas['drone']();
+  } else {
   switch(agent.force) { 
     case 'white': { 
       if(agent.occupations != undefined && agent.occupations.length != 0){
         return agentAgendas[agent.occupations[0].type as keyof typeof agentAgendas]()  
       }
       else{
-        return agentAgendas['work']()  }
+        return agentAgendas['tourist']()  }
       }
     case 'red': { 
        return agentAgendas['red_activity']()           

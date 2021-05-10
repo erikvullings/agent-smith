@@ -176,6 +176,15 @@
             "status": "active",
             "actual": {"type": "home", "coord": [5.499609, 51.438032]},
             "memberOf": ["red2"]
+        },
+        {
+            "id": "drone1",
+            "type": "drone",
+            "force": "red",
+            "status": "active",
+            "home": {"type": "home", "coord": [5.499555, 51.437832]},
+            "actual": {"type": "home", "coord": [5.499555, 51.437832]},
+            "occupations": [{ "type": "work", "id": "park2"}]
         }]
     },
     "customAgendas": [
