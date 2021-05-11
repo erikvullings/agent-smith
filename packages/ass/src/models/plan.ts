@@ -12,10 +12,16 @@ export interface IActivityOptions {
   duration?: number;
   /** Destination when travelling */
   destination?: ILocation;
+  /** Centre of area when travelling inside specific area */
+  AreaCentre?: ILocation;
+  /** Range of area when travelling inside specific area in meters*/
+  AreaRange?: number;
   /** Agents IDs you want to start controlling, e.g. vehicles or children */
   control?: string[];
   /** Agents IDs you are controlling and want to release, e.g. vehicles or children */
   release?: string[];
+  /** ID of group you want to join */
+  group?: string;
   /** Priority of activity */
   priority?: 1 | 2 | 3 | 4 | 5;
   /** Is the agent reacting */

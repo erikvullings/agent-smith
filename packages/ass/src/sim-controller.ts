@@ -84,9 +84,13 @@ export const simController = async (
         type: 'work',
         coord: [5.476625, 51.441021],
       },
-      park: {
+      park1: {
         type: 'park',
         coord: [5.497535, 51.441965],
+      },
+      park2: {
+        type: 'park',
+        coord: [5.482012, 51.426585],
       },
       'station': {
         type: 'station',
@@ -149,7 +153,7 @@ export const simController = async (
     //   status: 'active',
     //   force: 'red',
     //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
+    //   actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
     //   occupations: [{ type: 'work', id: 'bioscoop' }],
     //   relations: [{type:'family', id:'fam1'}],
     //   memberOf: 'group2'
@@ -158,19 +162,20 @@ export const simController = async (
     // const agenty = {
     //   id: 'agent y',
     //   type: 'man',
+    //   force: 'red',
     //   status: 'active',
     //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
+    //   actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
     //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
     //   memberOf: 'group2'
     // } as IAgent;
 
     // const agenta = {
     //   id: 'agenta',
-    //   type: 'boy',
+    //   type: 'man',
     //   status: 'active',
     //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['Firmamentlaan 5'],
+    //   actual: services.locations['wilhelminaplein'],
     //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
     //   memberOf: 'group1'
     // } as IAgent;
@@ -180,22 +185,21 @@ export const simController = async (
     //   type: 'group',
     //   status: 'active',
     //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
+    //   actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
     //   occupations: [{ type: 'work', id: 'ziekenhuis' }],
     //   force: "white",
-    //   group: ['agent x', 'group1', 'agent y'],
+    //   group: ['agent x', 'agent y'],
     // } as IGroup;
 
     // const group1 = {
     //   id: 'group1',
     //   type: 'group',
     //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: services.locations['Firmamentlaan 5'],
+    //   force: 'red',
+    //   home: services.locations['Monarchstraat 52'],
+    //   actual: services.locations['wilhelminaplein'],
     //   occupations: [{ type: 'work', id: 'h_m_shop' }],
     //   group: ['agenta'],
-    //   memberOf: 'group2',
     // } as IGroup;
 
     const agentCount = simConfig.settings.agentCount;
@@ -231,8 +235,6 @@ export const simController = async (
 
     let i = 0;
     while (i < 10000000) {
-      agentstoshow = [];
-      agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a));
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox && a.mailbox.length > 0 && (!a.health || a.health>0) && a.status != "inactive").map((a) => messageServices.readMailbox(a, services)),
       )
