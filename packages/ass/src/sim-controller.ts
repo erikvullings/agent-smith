@@ -15,7 +15,6 @@ const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 export const simConfig = jsonSimConfig as unknown as ISimConfig;
 export const customAgendas = simConfig.customAgendas;
 
-
 export const simController = async (
   options: {
     /** Simulation speed. 0 is paused, 1 is real-time. */
@@ -224,6 +223,7 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
+    /** Send message to agents in range, if reaction exists */
     const intervalObj = setInterval(async () => {
       await Promise.all(
         agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name]&& a.agenda[0].name !== "Call the police")).map((a) => messageServices.sendMessage(a,a.agenda![0].name,services))
@@ -234,10 +234,10 @@ export const simController = async (
       agentstoshow = [];
       agents.filter((a) => !a.memberOf).map((a) => agentstoshow.push(a));
       await Promise.all(
-      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox && a.mailbox.length > 0).map((a) => messageServices.readMailbox(a, services)),
+      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox && a.mailbox.length > 0 && (!a.health || a.health>0) && a.status != "inactive").map((a) => messageServices.readMailbox(a, services)),
       )
       await Promise.all(
-      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services)),
+      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.health && a.health>0 && a.status != "inactive").map((a) => updateAgent(a, services)),
       );
       updateTime();
       await sleep(100);

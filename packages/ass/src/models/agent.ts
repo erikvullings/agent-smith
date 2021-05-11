@@ -12,11 +12,13 @@ export interface IAgent {
   /** Type of agent */
   type: AgentType | TransportType | ObjectType;
   /** Status of the agent */
-  status: 'active' | 'walking' | 'cycling' | 'driving';
+  status: 'active' | 'walking' | 'cycling' | 'driving' | 'inactive';
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
   force: 'white'|'red'|'blue';
+  /** Health of agent, maximum of 100 */
+  health?: number;
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */

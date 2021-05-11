@@ -308,6 +308,9 @@ export const plans = {
       const {duration = minutes(0.5)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
+
+      //messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
+
       if(objectAgent){
         messageServices.sendMessage(objectAgent, "drop object", services);
       }

@@ -131,8 +131,8 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
     'police_duty': () => 
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     'red_activity': () =>
-      (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
-      //(agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
+      //(agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
+      (agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
     null: () => 
       (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
   };

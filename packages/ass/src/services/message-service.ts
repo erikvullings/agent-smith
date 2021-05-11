@@ -16,7 +16,7 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
 
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as Array<any>;
     console.log("receivers before", receivers.length)
-    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => !("department" in a) || a.department != 'station' );
+    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => (!("department" in a) || a.department != 'station') && a.status != "inactive" );
     console.log("receivers after", receiversAgents.length)
 
     if(receiversAgents.length > 0 ) {
@@ -31,6 +31,23 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:Arra
         await send(sender, message, receivers, _services);
     }
 
+    return true;
+}
+
+const sendDamage = async (sender: IAgent, action: string, receivers:Array<IAgent>, _services: IEnvServices) => {
+    //_services.agents["biker"].health = 100;
+    console.log("health",_services.agents["biker"].health)
+
+    if(receivers.length > 0) {
+        receivers.filter((a) => a.health).map((a) => (a.health! -= planEffects[action].damageLevel));
+        
+        const deadAgents = receivers.filter((a) => a.health && a.health<=0)
+        if(deadAgents.length>0){
+            deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = "inactive"))
+        }
+    }
+
+    console.log("health",_services.agents["biker"].health)
     return true;
 }
 
@@ -89,7 +106,13 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
                 return true;
             }
             else {
+                // if(itemReaction[0].name == "Call the police"){
+                    
+                // }
                 //pick one of the reactions
+                // actionToReact = urgentMessages[randomInt];
+                // actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
+                // return await agendas.addReaction(agent,services, actionToReact);
                 return await react(agent,services,urgentMessages,randomInt)
             }
         }
@@ -126,5 +149,6 @@ const react = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessa
 export const messageServices = {
     sendMessage,
     readMailbox,
-    sendDirectMessage
+    sendDirectMessage,
+    sendDamage
 };
