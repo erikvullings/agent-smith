@@ -1,11 +1,11 @@
-import { IAgent } from ".";
+import { IAgent } from '.';
 
 export interface IDefenseAgent extends IAgent {
   defenseType: 'kmar' | 'police'
   /** work department */
   department: 'station' | string;
   /** Equpment that the agent carries */
-  equipment?: Array<IEquipment>
+  equipment?: IEquipment[]
 }
 
 export interface IEquipment {

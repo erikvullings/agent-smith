@@ -1,10 +1,9 @@
-import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
-import { IAgent } from './models/agent';
-import {addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
-import { redisServices, messageServices, reaction, behaviourServices, chatServices } from './services';
-import { IGroup} from './models/group';
-import * as jsonSimConfig from "./sim_config.json"
+import { envServices, updateAgent } from './env-services';
+import { IAgent, TransportType } from './models/agent';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { redisServices, messageServices, reaction, chatServices } from './services';
+import * as jsonSimConfig from './sim_config.json';
 
 import { ISimConfig } from './models';
 import { IDefenseAgent } from './models/defense-agent';
@@ -12,8 +11,29 @@ import { IDefenseAgent } from './models/defense-agent';
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
-export const simConfig = jsonSimConfig as unknown as ISimConfig;
-export const customAgendas = simConfig.customAgendas;
+export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
+export const { customAgendas } = simConfig;
+
+/** Connect to Kafka and create a connector */
+const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
+  const tb = new TestBedAdapter({
+    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
+    schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
+    clientId: 'agent-smith',
+    produce: [SimEntityFeatureCollectionTopic],
+    logging: {
+      logToConsole: LogLevel.Info,
+      logToKafka: LogLevel.Warn,
+    },
+  });
+  tb.on('error', (e) => console.error(e));
+  tb.on('ready', () => {
+    log(`Current simulation time: ${tb.simulationTime}`);
+    log('Producer is connected');
+    callback(tb);
+  });
+  tb.connect();
+};
 
 export const simController = async (
   options: {
@@ -26,13 +46,13 @@ export const simController = async (
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     let agentstoshow = [] as IAgent[];
-    const blueAgents : Array<IAgent & IDefenseAgent> = simConfig.customAgents.blue;
-    const redAgents : Array<IAgent> = simConfig.customAgents.red;
-    const whiteAgents : Array<IAgent> = simConfig.customAgents.white;
+    const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
+    const redAgents: IAgent[] = simConfig.customAgents.red;
+    const whiteAgents: IAgent[] = simConfig.customAgents.white;
 
-    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as Array<IAgent | IDefenseAgent>;
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent)[];
 
-    let currentSpeed = simSpeed;
+    const currentSpeed = simSpeed;
     let currentTime = startTime;
 
     const updateTime = () => {
@@ -58,7 +78,7 @@ export const simController = async (
     services.locations = {
       ziekenhuis: {
         type: 'medical',
-        coord: [5.487755, 51.454860],
+        coord: [5.487755, 51.45486],
       },
       tue_innovation_forum: {
         type: 'work',
@@ -92,7 +112,7 @@ export const simController = async (
         type: 'park',
         coord: [5.482012, 51.426585],
       },
-      'station': {
+      station: {
         type: 'station',
         coord: [5.479549, 51.443012],
       },
@@ -104,25 +124,24 @@ export const simController = async (
         type: 'work',
         coord: [5.477151, 51.441586],
       },
-      'wilhelminaplein': {
+      wilhelminaplein: {
         type: 'parking lot',
         coord: [5.470759, 51.437697],
       },
-      'bioscoop': {
+      bioscoop: {
         type: 'cinema',
         coord: [5.477744, 51.437028],
       },
       'Ingmar B.V.': {
         type: 'work',
-        coord : [5.497604, 51.467525]
+        coord: [5.497604, 51.467525],
       },
-      'Verweg': {
+      Verweg: {
         type: 'work',
-        coord : [5.576614, 51.383969]
+        coord: [5.576614, 51.383969],
       },
     };
-   
-  
+
     /** Agents in groups */
 
     // const agentx = {
@@ -202,26 +221,64 @@ export const simController = async (
     //   group: ['agenta'],
     // } as IGroup;
 
-    const agentCount = simConfig.settings.agentCount;
-    const { agents: generatedAgents, locations } = generateAgents(simConfig.settings.center_coord[0], simConfig.settings.center_coord[1], agentCount, simConfig.settings.radius);
-   //const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
+    const { agentCount } = simConfig.settings;
+    const { agents: generatedAgents, locations } = generateAgents(
+      simConfig.settings.center_coord[0],
+      simConfig.settings.center_coord[1],
+      agentCount,
+      simConfig.settings.radius
+    );
+    // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
 
     agents.push(...generatedAgents);
-    
-    agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
-    agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
-      
 
-    services.locations = Object.assign({}, services.locations, locations);
+    const nearest = {
+      car: services.drive.nearest,
+      bicycle: services.cycle.nearest,
+      walk: services.walk.nearest,
+      bus: services.drive.nearest, // fake
+      train: services.drive.nearest, // fake
+    };
+    for (const agent of agents) {
+      const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
+      if (!transportType || !['car', 'bicycle', 'walk'].indexOf(transportType)) continue;
+      const coord = (await nearest[transportType]({ coordinates: [agent.actual.coord] })).waypoints[0]
+        .location;
+      if (!coord) continue;
+      agent.actual.coord = coord;
+    }
+    // Drie opmerkingen:
+    // - je loopt hier 2x over dezelfde lijst.
+    // - de .map function werkt niet met async/await
+    // - de location can undefined zijn, en dat gaf een TS error
+    // Zie ook https://advancedweb.hu/how-to-use-async-functions-with-array-map-in-javascript/
+    // agents
+    //   .filter((a) => a.type == 'car')
+    //   .map(
+    //     async (a) =>
+    //       (a.actual.coord = (
+    //         await services.drive.nearest({ coordinates: [a.actual.coord] })
+    //       ).waypoints[0].location)
+    //   );
+    // agents
+    //   .filter((a) => a.type == 'bicycle')
+    //   .map(
+    //     async (a) =>
+    //       (a.actual.coord = (
+    //         await services.cycle.nearest({ coordinates: [a.actual.coord] })
+    //       ).waypoints[0].location)
+    //   );
+
+    services.locations = { ...services.locations, ...locations };
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
     }, {} as { [id: string]: IAgent | IDefenseAgent });
 
-     /** Insert members of subgroups into groups */
+    /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
-    groups.map((g) => g.group? g.membercount = [...g.group]: "");
-    groups.map((g) => g.group?.map((a) => addGroup(services.agents[a], g, services)));    
+    groups.map((g) => (g.group ? (g.membercount = [...g.group]) : ''));
+    groups.map((g) => g.group?.map((a) => addGroup(services.agents[a], g, services)));
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle', 'object'];
@@ -230,8 +287,17 @@ export const simController = async (
     /** Send message to agents in range, if reaction exists */
     const intervalObj = setInterval(async () => {
       await Promise.all(
-        agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name]&& a.agenda[0].name !== "Call the police")).map((a) => messageServices.sendMessage(a,a.agenda![0].name,services))
-    )}, 10000);  
+        agents
+          .filter(
+            (a) =>
+              a.agenda &&
+              a.agenda[0].name &&
+              reaction[a.agenda[0].name] &&
+              a.agenda[0].name !== 'Call the police'
+          )
+          .map((a) => messageServices.sendMessage(a, a.agenda![0].name, services))
+      );
+    }, 10000);
 
     const chatInterval = setInterval(async () => {
       const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
@@ -240,43 +306,37 @@ export const simController = async (
         chatServices.agentChat(agents,services);
     }, 60000);  
 
-
     let i = 0;
     while (i < 10000000) {
       await Promise.all(
-      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox && a.mailbox.length > 0 && (!a.health || a.health>0) && a.status != "inactive").map((a) => messageServices.readMailbox(a, services)),
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
+              !a.memberOf &&
+              a.mailbox &&
+              a.mailbox.length > 0 &&
+              (!a.health || a.health > 0) &&
+              a.status != 'inactive'
+          )
+          .map((a) => messageServices.readMailbox(a, services))
       );
-      // await Promise.all(
-      //   agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && (!a.health || a.health>0) && a.status != "inactive").map((a) => behaviourServices.checkSurroundings(a,services)),
-      // );  
       await Promise.all(
-      agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.health && a.health>0 && a.status != "inactive").map((a) => updateAgent(a, services)),
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
+              !a.memberOf &&
+              a.health &&
+              a.health > 0 &&
+              a.status != 'inactive'
+          )
+          .map((a) => updateAgent(a, services))
       );
       updateTime();
       await sleep(100);
       i % 5 === 0 && notifyOthers();
       i++;
-      }
+    }
   });
-};
-
-/** Connect to Kafka and create a connector */
-const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
-  const tb = new TestBedAdapter({
-    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
-    schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
-    clientId: 'agent-smith',
-    produce: [SimEntityFeatureCollectionTopic],
-    logging: {
-      logToConsole: LogLevel.Info,
-      logToKafka: LogLevel.Warn,
-    },
-  });
-  tb.on('error', (e) => console.error(e));
-  tb.on('ready', () => {
-    log(`Current simulation time: ${tb.simulationTime}`);
-    log('Producer is connected');
-    callback(tb);
-  });
-  tb.connect();
 };

@@ -28,17 +28,17 @@ export interface IActivityOptions {
   reacting?: Boolean;
 }
 
-export type IAgentActivities =  Array<IAgentActivity>;
+export type IAgentActivities =  IAgentActivity[];
 
 export interface IAgentActivity {
-  [key : string]: Array<ActivityList>;
+  [key : string]: ActivityList[];
 };
 
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
 export type Activity = (agent: IAgent | IGroup, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 
-export type ActivityList = Array<IStep>;
+export type ActivityList = IStep[];
 
 export interface IStep{
   name: string;

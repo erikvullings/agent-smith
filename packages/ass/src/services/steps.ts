@@ -6,6 +6,10 @@ import { addGroup, groupSpeed, durationDroneStep, distanceInMeters } from '../ut
 
 
 
+/**
+ *  @param agent
+ * @param services
+*/
 /** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
 const moveGroup = (agent: IAgent, services: IEnvServices) => {
   if (!agent.group || agent.group.length === 0) return;
@@ -56,6 +60,11 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
   return speed;
 }
 
+/** 
+ * @param agent
+ * @param services
+ * @param deltaTime
+*/
 /** Move agent along a route. */
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
   const { route = [] } = agent;
@@ -77,7 +86,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
-      //redisServices.geoAdd('agents', agent);
+      // redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
     } else {
       i > 0 && (step.geometry as ILineString).coordinates.splice(0, i);
@@ -99,6 +108,9 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed);
 };
 
+/** 
+ *  @param profile
+ */
 /** Move the agent along its trajectory */
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
@@ -152,12 +164,22 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
+/** 
+ * @param _agent
+ * @param services
+ * @param options 
+*/
 /** Wait until a start time before continuing */
 const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { startTime } = options;
   return startTime ? startTime < services.getTime() : true;
 };
 
+/** 
+ * @param agent
+ * @param services
+ * @param options 
+*/
 /** Wait for a certain duration before continuing */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration = 0 } = options;
