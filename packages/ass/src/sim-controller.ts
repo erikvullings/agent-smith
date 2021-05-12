@@ -2,7 +2,7 @@ import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { IAgent } from './models/agent';
 import {addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
-import { redisServices, messageServices, reaction } from './services';
+import { redisServices, messageServices, reaction, behaviourServices, chatServices } from './services';
 import { IGroup} from './models/group';
 import * as jsonSimConfig from "./sim_config.json"
 
@@ -233,11 +233,22 @@ export const simController = async (
         agents.filter((a) => (a.agenda && a.agenda[0].name && reaction[a.agenda[0].name]&& a.agenda[0].name !== "Call the police")).map((a) => messageServices.sendMessage(a,a.agenda![0].name,services))
     )}, 10000);  
 
+    const chatInterval = setInterval(async () => {
+      const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
+
+      if(chattingAgents.length <= agents.length*0.01)
+        chatServices.agentChat(agents,services);
+    }, 60000);  
+
+
     let i = 0;
     while (i < 10000000) {
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.mailbox && a.mailbox.length > 0 && (!a.health || a.health>0) && a.status != "inactive").map((a) => messageServices.readMailbox(a, services)),
-      )
+      );
+      // await Promise.all(
+      //   agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && (!a.health || a.health>0) && a.status != "inactive").map((a) => behaviourServices.checkSurroundings(a,services)),
+      // );  
       await Promise.all(
       agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf && a.health && a.health>0 && a.status != "inactive").map((a) => updateAgent(a, services)),
       );

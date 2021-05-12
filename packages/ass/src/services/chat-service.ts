@@ -5,28 +5,20 @@ import { redisServices } from './redis-service';
 
 /** Picks one random agent and the closest agent */
 const agentChat = async (agents: Array<IAgent>, services: IEnvServices) => {
-    let redisAgents = await redisServices.geoSearch(services.locations['station'], '3000');
-    var availableAgents : Array<IAgent> = []
+    const redisAgents = await redisServices.geoSearch(services.locations['station'], 10000) as Array<any>;
 
-    redisAgents.forEach((redisAgent: { key: string; }) => {
-      var currAgent : IAgent = agents[(agents.findIndex(agent => agent.id === redisAgent.key))];
-      if(currAgent.type != 'car' || 'bicycle' || 'bus' || 'train' && currAgent.steps != undefined 
-          && currAgent.steps[0].name != 'driveTo' || 'cycleTo'){
-          availableAgents.push(currAgent);
-      }
-    });
-  
-    const random = Math.floor(Math.random() * availableAgents.length);
-    var randomAgent : IAgent = availableAgents[random];
+    const availableAgents = (redisAgents.map((a) => a = services.agents[a.key]))
+          .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting != true) 
+                  && (!("department" in a) || a.department != 'station') && a.status != "inactive" && 
+                  (!a.visibleForce || a.visibleForce != 'red') );
+                  //&& a.steps[0].name != 'driveTo' || 'cycleTo'
+                
+    const randomAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)] as IAgent;
     console.log("random agent1",randomAgent)
-    let closeAgents: Array<any> = await redisServices.geoSearch(randomAgent.actual, '1000');
-
-    closeAgents = closeAgents.filter(function(agent) {
-      return agent.key != randomAgent.id;
-    });      
+    const closeAgents = (await redisServices.geoSearch(randomAgent.actual, 1000) as Array<any>).filter(a => a.key != randomAgent.id);;
     
     if(closeAgents.length > 0){
-      var closeAgent : IAgent = agents[(agents.findIndex(agent => agent.id === closeAgents[0].key))];
+      const closeAgent = closeAgents[0] as IAgent;
       console.log("random agent2",closeAgent)
 
       startChat(randomAgent, closeAgent, services);
@@ -35,15 +27,7 @@ const agentChat = async (agents: Array<IAgent>, services: IEnvServices) => {
 
 /** Adds going to the meetup location and chatting steps in the agendas */
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
-    // var destinationCoord: ILocation = {type: "road",
-    // coord: [(randomAgent.actual.coord[0]+closeAgent.actual.coord[0])/2,
-    // (randomAgent.actual.coord[1]+closeAgent.actual.coord[1])/2]} as ILocation;
-    // console.log(destinationCoord);
-    // console.log(services.locations['wilhelminaplein']);
-
-
    if(randomAgent.agenda != undefined && closeAgent.agenda != undefined){
-    console.log("delete route", randomAgent.route)
     closeAgent.route = [];
     closeAgent.steps = [];
 

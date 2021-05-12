@@ -17,6 +17,8 @@ export interface IAgent {
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
   force: 'white'|'red'|'blue';
+  /** Force of the agent that is visible to other agents */
+  visibleForce?: 'white'|'red'|'blue';
   /** Health of agent, maximum of 100 */
   health?: number;
   /** ID of home address */

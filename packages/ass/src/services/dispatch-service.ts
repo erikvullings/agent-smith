@@ -6,7 +6,6 @@ import { planEffects } from "./plan-effects";
 const sendDefence = async (agent: IAgent | IGroup, services: IEnvServices) => {
     console.log("hereee")
     let n = 0;
-
     
     if(agent.reactedTo == undefined || planEffects[agent.reactedTo] == undefined) {
         agent.reactedTo = 'drop object'; //To test function
