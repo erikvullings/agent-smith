@@ -1,7 +1,7 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList, IDefenseAgent } from '../models';
 import { IEnvServices } from '../env-services';
-import { dispatchServices, messageServices, redisServices } from '.';
-import { addGroup, randomItem, hours, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters} from '../utils';
+import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters} from '../utils';
+import { messageServices, redisServices } from '.';
 
 
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
@@ -140,7 +140,7 @@ export const plans = {
   'Flee the scene': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
-      const {destination = randomPlaceNearby(agent, 10000, 'any')} = options;
+      const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
       agent.running = true;
       prepareRoute(agent, services, options);
@@ -151,12 +151,23 @@ export const plans = {
   'Run away': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
-      //const {destination = randomPlaceNearby(agent, 10000, 'any')} = options;
-      const destination = randomPlaceNearby(agent, 1000, 'any');
-      options.destination = destination;
-      agent.destination = destination;
+      const { distance } = services;
+      const danger = options.AreaCentre;
+
+      if (danger) {
+        const slope = (agent.actual.coord[1] - danger.coord[1])/(agent.actual.coord[0] - danger.coord[0]);
+        const distanceDegrees = 1500/111139;
+        const dx = distanceDegrees/slope;
+        if (agent.actual.coord[0] > danger.coord[0]) {
+          
+        } else {
+
+        }
+
+      }
+      //options.destination = destination;
+      //agent.destination = destination;
       prepareRoute(agent, services, options);
-      agent.speed = 2;
       return true;      
     },
   },
@@ -170,6 +181,36 @@ export const plans = {
       prepareRoute(agent, services, options);
       //agent.speed = 2;
       return true;      
+    },
+  },
+
+  'Go to specific area': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions) => {
+      if (options.AreaCentre && options.AreaRange) {
+        const centre = options.AreaCentre.coord;
+        const {destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any')} = options;
+        agent.destination = destination;
+        prepareRoute(agent, _services, options);
+      }
+      return true;
+    },
+  },
+
+  'Hang around specific area': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions) => {
+      const steps = [] as ActivityList;
+      if (options.AreaCentre && options.AreaRange) {
+        const No_places = randomIntInRange(10, 20) ;
+        for(let i = 0; i < No_places; i +=1) {
+          const centre = options.AreaCentre.coord;
+          const {destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any'), duration = minutes(0, 15)} = options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+          steps.push({ name: 'waitFor', options: { duration } });
+        }
+      }
+      agent.steps = steps;
+      return true;
     },
   },
 
@@ -365,9 +406,6 @@ export const plans = {
       const {duration = minutes(0.5)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
-
-      //messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
-
       if(objectAgent){
         messageServices.sendMessage(objectAgent, "drop object", services);
       }
@@ -398,13 +436,10 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
 
-      // const receivers = await redisServices.geoSearch(agent.actual, 100000, agent) as Array<any>;
-      // const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
-      // console.log("receivers", receiversAgents)
-      // messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
+      const receivers = await redisServices.geoSearch(agent.actual, 100000, agent) as Array<any>;
+      const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
+      messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
       
-      dispatchServices.sendDefence(agent,services)
-
       return true;
     },
   },

@@ -152,6 +152,7 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
+
 /** Wait until a start time before continuing */
 const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { startTime } = options;
