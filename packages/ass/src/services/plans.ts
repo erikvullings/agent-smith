@@ -384,10 +384,10 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       agent.visibleForce = 'red';
-      messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
+      //messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
 
       if(objectAgent){
-        //messageServices.sendMessage(objectAgent, "drop object", services);
+        messageServices.sendMessage(objectAgent, "drop object", services);
       }
       return true;
     },

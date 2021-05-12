@@ -232,21 +232,24 @@ export const simController = async (
 
     agents.push(...generatedAgents);
 
-    const nearest = {
-      car: services.drive.nearest,
-      bicycle: services.cycle.nearest,
-      walk: services.walk.nearest,
-      bus: services.drive.nearest, // fake
-      train: services.drive.nearest, // fake
-    };
-    for (const agent of agents) {
-      const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
-      if (!transportType || !['car', 'bicycle', 'walk'].indexOf(transportType)) continue;
-      const coord = (await nearest[transportType]({ coordinates: [agent.actual.coord] })).waypoints[0]
-        .location;
-      if (!coord) continue;
-      agent.actual.coord = coord;
-    }
+    agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
+    agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
+
+    // const nearest = {
+    //   car: services.drive.nearest,
+    //   bicycle: services.cycle.nearest,
+    //   walk: services.walk.nearest,
+    //   bus: services.drive.nearest, // fake
+    //   train: services.drive.nearest, // fake
+    // };
+    // for (const agent of agents) {
+    //   const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
+    //   if (!transportType || !['car', 'bicycle', 'walk'].indexOf(transportType)) continue;
+    //   const coord = (await nearest[transportType]({ coordinates: [agent.actual.coord] })).waypoints[0]
+    //     .location;
+    //   if (!coord) continue;
+    //   agent.actual.coord = coord;
+    // }
     // Drie opmerkingen:
     // - je loopt hier 2x over dezelfde lijst.
     // - de .map function werkt niet met async/await

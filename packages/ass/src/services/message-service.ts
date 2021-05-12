@@ -14,9 +14,9 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     }
 
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
-    //console.log('receivers before', receivers.length)
+    console.log('receivers before', receivers.length)
     const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => (!('department' in a) || a.department != 'station') && a.status != 'inactive' );
-    //console.log('receivers after', receiversAgents.length)
+    console.log('receivers after', receiversAgents.length)
 
     if(receiversAgents.length > 0 ) {
         await send(sender, message, receiversAgents, services);
@@ -79,7 +79,7 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
     //const actionToReact = null as unknown as IMail;
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
-
+    console.log("in here")
     if(itemUrgency == undefined || itemReaction == undefined){
         return true;
     }
