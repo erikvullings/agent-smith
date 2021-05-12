@@ -8,8 +8,10 @@ redis.on('error', (err: any) => {
   console.log(`Error${  err}`)
 });
 
+/** 
 * @param agent1
 * @param agent2
+*/
 /** Calculate distance between two points */
 const geoDist = async (agent1: IAgent, agent2: IAgent) => {
   redis.geodist(
@@ -68,8 +70,10 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
       return resArray;
 };
 
+/** 
 * @param key
 * @param agent
+*/
 /** Add new value to key */
 const geoAdd = async (key: string, agent: IAgent) => {
   redis.geoadd(
@@ -79,9 +83,10 @@ const geoAdd = async (key: string, agent: IAgent) => {
     agent.id
   );
 }
-
+/** 
 * @param key
 * @param agents
+*/
 /** Add multiple values to key */
 const geoAddBatch = async (key: string, agents: IAgent[]) => {
   const arr: string[][] = [];

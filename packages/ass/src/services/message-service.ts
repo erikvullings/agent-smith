@@ -1,7 +1,6 @@
 import { reaction, redisServices } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent, IGroup, IMail } from '../models';
-import { IDefenseAgent } from '../models/defense-agent';
 import { randomIntInRange } from '../utils';
 import { agendas } from './agendas';
 import { planEffects } from './plan-effects';
@@ -34,7 +33,7 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:IAge
     return true;
 }
 
-const sendDamage = async (sender: IAgent, action: string, receivers:IAgent[], _services: IEnvServices) => {
+const sendDamage = async (_sender: IAgent, action: string, receivers:IAgent[], _services: IEnvServices) => {
     // _services.agents["biker"].health = 100;
     console.log('health',_services.agents.biker.health)
 
@@ -77,7 +76,7 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
 };
 
 const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: IMail[]) => {
-    const actionToReact = null as unknown as IMail;
+    //const actionToReact = null as unknown as IMail;
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
@@ -138,7 +137,7 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
 
 const react = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: IMail[], itemIndex: number) => {
     let actionToReact = null as unknown as IMail;
-    const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
+    //const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})

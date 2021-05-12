@@ -1,8 +1,8 @@
 import { ILineString, Profile } from 'osrm-rest-client';
-import { IAgent, IActivityOptions, IGroup } from '../models';
+import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { addGroup, groupSpeed, durationDroneStep, distanceInMeters } from '../utils';
+import { addGroup, groupSpeed, durationDroneStep } from '../utils';
 
 
 

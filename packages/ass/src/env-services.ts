@@ -27,9 +27,6 @@ export interface IEnvServices {
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
 }
 
-* @param root0
-* @param root0.time
-* @param root0.latitudeAvg
 /** Create services so an agent can deal with the environment, e.g. for navigation. */
 export const envServices = ({
   time = new Date(),
