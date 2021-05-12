@@ -1,4 +1,4 @@
-import { ActivityList, IAgent, IMail, IStep , IGroup } from '../models';
+import { ActivityList, IAgent, IMail, IGroup } from '../models';
 
 import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';

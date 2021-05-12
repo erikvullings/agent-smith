@@ -1,4 +1,4 @@
-import { IAgent, IGroup, IActivityOptions, ActivityList, IDefenseAgent } from '../models';
+import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
 import { dispatchServices, messageServices, redisServices } from '.';
 import { addGroup, randomItem, hours, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters} from '../utils';
@@ -58,6 +58,7 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
     } else {
       steps.push({ name: 'walkTo', options: { destination: agent.destination } });
     }
+  }
   }
   if(agent.running){
     steps.push({ name: 'stopRunning'});
@@ -444,3 +445,4 @@ export const plans = {
     },
   },
 }
+
