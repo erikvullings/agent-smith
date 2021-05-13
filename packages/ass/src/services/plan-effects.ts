@@ -12,6 +12,7 @@ export const planEffects = {
         damageCount: 0.7,
         panicLevel: 100,
         delayLevel: 0,
+        severity: 5,
         messageRadius: 10000,
     },
     'Flee the scene': {
@@ -19,6 +20,7 @@ export const planEffects = {
         damageLevel: 0,
         panicLevel: 30,
         delayLevel: 0,
+        severity: 3,
         messageRadius: 20,
     },
     'Call the police': {
@@ -26,6 +28,7 @@ export const planEffects = {
         damageLevel: 0,
         panicLevel: 0,
         delayLevel: 0,
+        severity: 2,
         messageRadius: 10000,
     },
 } as IPlanEffects

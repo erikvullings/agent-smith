@@ -26,6 +26,8 @@ export interface IActivityOptions {
   priority?: 1 | 2 | 3 | 4 | 5;
   /** Is the agent reacting */
   reacting?: boolean;
+  /** Targets of the action */
+  targets?: IAgent[];
 }
 
 export type IAgentActivities =  IAgentActivity[];

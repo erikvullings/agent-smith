@@ -3,15 +3,15 @@ import { IReactions } from '../models';
 
 export const reaction = {
     'drop object': {
-            'blue':{urgency:1,plans:[[{ 'name': 'Go to specific location', 'options' : {}}
+            'blue':{urgency:2,plans:[[{ 'name': 'Go to specific location', 'options' : {}}
                                     ,{ 'name': 'Check object', 'options' : {}},
                                     { 'name': 'Go to work', 'options' : {}}]]},
     },
     'Run away': {
-        'blue':{urgency:1,plans:[[{ 'name': 'Follow person', 'options' : {}},
+        'blue':{urgency:2,plans:[[{ 'name': 'Follow person', 'options' : {}},
                                                 { 'name': 'Go to work', 'options' : {}},
                                                 { 'name': 'Work', 'options' : {} }]]},
-        'white':{urgency:1,plans:[[{ 'name': 'Follow person', 'options': {}}]]},
+        'white':{urgency:2,plans:[[{ 'name': 'Follow person', 'options': {}}]]},
     },
     'Call the police': {
         'blue':{urgency:1,plans:[[{ 'name': 'Go to specific location', 'options' : {}},

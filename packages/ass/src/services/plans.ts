@@ -365,6 +365,23 @@ export const plans = {
     },
   },
 
+  //Maybe also add "spot targets" to pick targets
+  'Attack targets': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = [];
+      agent.route = [];
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options});
+      agent.steps = steps;
+
+      if(agent.targets){
+        messageServices.sendDamage(agent,'Attack targets',agent.targets,_services)
+      }
+      return true;
+    },
+  },
+
+
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
