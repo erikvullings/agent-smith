@@ -1,10 +1,8 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
-import { plans, steps, agendas } from './services';
+import { plans, steps, agendas, reaction } from './services';
 import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas } from './sim-controller';
-import { reaction } from "./services";
-
 
 export interface IEnvServices {
   /** Get sim time */
@@ -27,7 +25,7 @@ export interface IEnvServices {
   locations: { [id: string]: ILocation };
   /** Approximate distance calculator in meters */
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
-}
+};
 
 /** Create services so an agent can deal with the environment, e.g. for navigation. */
 export const envServices = ({
@@ -43,16 +41,16 @@ export const envServices = ({
   let deltaTime = 0;
   let currentTime = time;
 
-  const setTime = (time: Date) => {
-    deltaTime = time.valueOf() - currentTime.valueOf();
-    currentTime = time;
+  const setTime = (t: Date) => {
+    deltaTime = t.valueOf() - currentTime.valueOf();
+    currentTime = t;
   };
 
   const getTime = () => currentTime;
 
   const getDeltaTime = () => deltaTime;
 
-  return {
+  return ({
     setTime,
     getTime,
     getDeltaTime,
@@ -71,23 +69,20 @@ export const envServices = ({
     /** Empty object with locations */
     locations: {},
     /** Approximate distance function in meters */
-    distance: simplifiedDistanceFactory()
-  } as unknown as IEnvServices;
+    distance: simplifiedDistanceFactory(),
+  } as unknown) as IEnvServices;
 };
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
-   const customAgIndex = customAgendas.findIndex(agenda => agenda.agentId === agent.id);
-   console.log(agent.type);
-   if (customAgIndex > -1) {
-      agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
-   }
-   else{
-      agent.agenda = agendas.getAgenda(agent, services);
-   }
+  const customAgIndex = customAgendas.findIndex((agenda) => agenda.agentId === agent.id);
+
+  return customAgIndex > -1
+    ? agendas.customAgenda(agent, services, customAgIndex)
+    : agendas.getAgenda(agent, services);
 };
 
 export const executeSteps = async (
-  agent: (IAgent | IGroup) & { steps: Array<{ name: string; options?: IActivityOptions }> },
+  agent: (IAgent | IGroup) & { steps: { name: string; options?: IActivityOptions }[] },
   services: IEnvServices
 ) => {
   const { name, options } = agent.steps[0];
@@ -99,19 +94,18 @@ export const executeSteps = async (
   return agent.steps.length === 0;
 };
 
-
 export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices) => {
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
-      agent as (IAgent | IGroup) & { steps: Array<{ name: string; options?: IActivityOptions }> },
+      agent as (IAgent | IGroup) & { steps: { name: string; options?: IActivityOptions }[] },
       services
     );
     if (result) {
       const curPlan = agent.agenda?.shift();
       if (curPlan) {
         const { name, options } = curPlan;
-        if(reaction[curPlan.name] != undefined){
-          //await messageServices.sendMessage(agent, curPlan.name, "10000", services);
+        if (reaction[curPlan.name] !== undefined) {
+          // await messageServices.sendMessage(agent, curPlan.name, "10000", services);
         }
         const plan = services.plans[name];
         if (plan && plan.cleanup) {
@@ -122,14 +116,14 @@ export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices
   } else if (agent.agenda && agent.agenda.length > 0) {
     const { name, options } = agent.agenda[0];
     const plan = services.plans[name];
-    if(reaction[agent.agenda[0].name] != undefined){
-      //await messageServices.sendMessage(agent, agent.agenda[0].name, "10000", services);
+    if (reaction[agent.agenda[0].name] !== undefined) {
+      // await messageServices.sendMessage(agent, agent.agenda[0].name, "10000", services);
     }
     if (plan && plan.prepare) {
       await plan.prepare(agent, services, options);
     }
   } else {
-    createAgenda(agent, services);
+    agent.agenda = await createAgenda(agent, services);
     updateAgent(agent, services);
   }
 };

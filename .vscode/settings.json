@@ -1,10 +1,9 @@
 {
-  "spellright.language": [
-    "en-GB",
-    "nl-NL"
-  ],
-  "spellright.documentTypes": [
-    "markdown",
-    "latex"
-  ]
+  "spellright.language": ["en-GB", "nl-NL"],
+  "spellright.documentTypes": ["markdown", "latex"],
+  "editor.formatOnSave": true,
+  "eslint.alwaysShowStatus": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

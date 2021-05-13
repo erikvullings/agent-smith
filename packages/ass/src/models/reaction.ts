@@ -1,4 +1,4 @@
-import { ActivityList } from "./plan";
+import { ActivityList } from './plan';
 
 export interface IReactions {
   [key: string]: IReactionObject;
@@ -12,7 +12,7 @@ export interface IReactionObject {
 
 export interface IReact {
   urgency: number;
-  plans: Array<ActivityList>;
+  plans: ActivityList[];
 }
 
 export interface IPlanEffects {

@@ -1,6 +1,6 @@
-import { IActivityOptions, IStep } from ".";
-import { IAgent } from "./agent";
-import { IDefenseAgent } from "./defense-agent";
+import { IActivityOptions, IStep } from '.';
+import { IAgent } from './agent';
+import { IDefenseAgent } from './defense-agent';
 
 export interface ISimConfig {
   settings: Settings;
@@ -9,14 +9,14 @@ export interface ISimConfig {
 }
 
 interface CustomAgents {
-  blue: Array<IAgent & IDefenseAgent>;
-  white: Array<IAgent>;
-  red: Array<IAgent>;
+  blue: (IAgent & IDefenseAgent)[];
+  white: IAgent[];
+  red: IAgent[];
 }
 
 export interface CustomAgenda {
   agentId: string;
-  agendaItems: Array<IStep>;
+  agendaItems: IStep[];
 }
 
 export interface AgendaItem {
@@ -26,6 +26,6 @@ export interface AgendaItem {
 
 export interface Settings {
   agentCount: number;
-  center_coord: number[];
+  centerCoord: number[];
   radius: number;
 }

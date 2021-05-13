@@ -13,9 +13,9 @@ export interface IActivityOptions {
   /** Destination when travelling */
   destination?: ILocation;
   /** Centre of area when travelling inside specific area */
-  AreaCentre?: ILocation;
+  areaCentre?: ILocation;
   /** Range of area when travelling inside specific area in meters*/
-  AreaRange?: number;
+  areaRange?: number;
   /** Agents IDs you want to start controlling, e.g. vehicles or children */
   control?: string[];
   /** Agents IDs you are controlling and want to release, e.g. vehicles or children */
@@ -25,20 +25,20 @@ export interface IActivityOptions {
   /** Priority of activity */
   priority?: 1 | 2 | 3 | 4 | 5;
   /** Is the agent reacting */
-  reacting?: Boolean;
+  reacting?: boolean;
 }
 
-export type IAgentActivities =  Array<IAgentActivity>;
+export type IAgentActivities =  IAgentActivity[];
 
 export interface IAgentActivity {
-  [key : string]: Array<ActivityList>;
+  [key : string]: ActivityList[];
 };
 
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
 export type Activity = (agent: IAgent | IGroup, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 
-export type ActivityList = Array<IStep>;
+export type ActivityList = IStep[];
 
 export interface IStep{
   name: string;
