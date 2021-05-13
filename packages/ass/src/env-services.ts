@@ -77,7 +77,7 @@ export const envServices = ({
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
    const customAgIndex = customAgendas.findIndex(agenda => agenda.agentId === agent.id);
-
+   console.log(agent.type);
    if (customAgIndex > -1) {
       agent.agenda = agendas.customAgenda(agent,services,customAgIndex);
    }

@@ -298,7 +298,7 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number, group?: IGroup, force?: string) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, force?: string, group?: IGroup,) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park' ) =>
     range(1, count / 2).reduce((acc) => {
@@ -319,7 +319,6 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
       id: uuid4(),
       type: 'man',
       force: force? force: 'white',
-      health: 100,
       status: 'active',
       home,
       // owns: [{ type: 'car', id: 'car1' }],

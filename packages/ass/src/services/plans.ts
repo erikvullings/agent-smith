@@ -151,22 +151,28 @@ export const plans = {
   'Run away': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
-      const { distance } = services;
       const danger = options.AreaCentre;
+      const range = options.AreaRange?options.AreaRange: 500;
 
       if (danger) {
         const slope = (agent.actual.coord[1] - danger.coord[1])/(agent.actual.coord[0] - danger.coord[0]);
         const distanceDegrees = 1500/111139;
-        const dx = distanceDegrees/slope;
+        const dx = Math.sqrt(2*Math.pow(distanceDegrees,2)*Math.pow(slope,2));
         if (agent.actual.coord[0] > danger.coord[0]) {
-          
+          const x = agent.actual.coord[0] + dx;
+          const y = agent.actual.coord[1] + dx * slope;
+          const destination = randomPlaceInArea(x, y, range, 'any');
+          options.destination = destination;
+          agent.destination = destination;
         } else {
-
+          const x = agent.actual.coord[0] - dx;
+          const y = agent.actual.coord[1] - dx * slope;
+          const destination = randomPlaceInArea(x, y, range, 'any');
+          options.destination = destination;
+          agent.destination = destination;
         }
-
       }
-      //options.destination = destination;
-      //agent.destination = destination;
+      agent.running = true;
       prepareRoute(agent, services, options);
       return true;      
     },
@@ -175,11 +181,12 @@ export const plans = {
   
   'Go to specific location': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
-      agent.sentbox = [];
-      console.log("agent destination", agent.destination)
-      agent.destination = options.destination;
-      prepareRoute(agent, services, options);
+      if (options.destination) {
+        agent.sentbox = [];
+        agent.destination = options.destination;
+        prepareRoute(agent, services, options);
       //agent.speed = 2;
+      }
       return true;      
     },
   },
@@ -187,6 +194,7 @@ export const plans = {
   'Go to specific area': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions) => {
       if (options.AreaCentre && options.AreaRange) {
+        agent.sentbox = [];
         const centre = options.AreaCentre.coord;
         const {destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any')} = options;
         agent.destination = destination;
@@ -203,10 +211,30 @@ export const plans = {
         const No_places = randomIntInRange(10, 20) ;
         for(let i = 0; i < No_places; i +=1) {
           const centre = options.AreaCentre.coord;
-          const {destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any'), duration = minutes(0, 15)} = options;
+          const {destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any')} = options;
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
-          steps.push({ name: 'waitFor', options: { duration } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+        }
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Hang around specific area drone': {
+    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions) => {
+      const steps = [] as ActivityList;
+      if (options.AreaCentre && options.AreaRange) {
+        //const No_places = randomIntInRange(5, 15) ;
+        const No_places = 3;
+        steps.push({ name: 'waitFor', options: { duration: minutes(0,2)} });
+        for(let i = 0; i < No_places; i +=1) {
+          const centre = options.AreaCentre.coord;
+          const destination = randomPlaceInArea(centre[0], centre[1], options.AreaRange, 'any');
+          agent.destination = destination;
+          steps.push({ name: 'flyTo', options: { destination } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0,2)}});
         }
       }
       agent.steps = steps;

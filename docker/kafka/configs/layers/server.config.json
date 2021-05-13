@@ -423,6 +423,7 @@
       "source": "drone.json",
       "style": {
         "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/64/000000/drone.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
@@ -439,13 +440,14 @@
               "0",
               0,
               "1",
-              20,
-              20
+              15,
+              15
             ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": 0.3
           }
         },
         "types": []

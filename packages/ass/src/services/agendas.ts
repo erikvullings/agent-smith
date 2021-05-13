@@ -94,6 +94,11 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       { name: 'drop object', options: { priority: 1 } },
       { name: 'Flee the scene', options: { priority: 1 } },
     ],
+    'drop_at_specific_location': () => [
+      { name: 'Go to specific location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), destination:{type: 'any', coord: [5.482012, 51.426585] } } },
+      { name: 'drop object', options: { priority: 1 } },
+      { name: 'Flee the scene', options: { priority: 1 } },
+    ],
     'steal_from_shop': () => [
       { name: 'Go shopping', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 } },
       { name: 'Shop', options: { duration: minutes(10) , priority: 1 } },
@@ -127,8 +132,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       [...((blueActivities['patrol']())[randomIntInRange(0,blueActivities['patrol']().length-1)]),...activities['go home']()] as ActivityList,      
     ],
     'red': () => [
-      [...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
-      [...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
+      //[...redActivities['drop_at_random_location'](), ...activities['go home']()] as ActivityList,
+      [...redActivities['drop_at_specific_location'](), ...activities['go home']()] as ActivityList,
+      //[...redActivities['steal_from_shop'](), ...activities['go home']()] as ActivityList,
     ],
     'group': () => [
       [...activities['release_at_random_location'](),...activities['go home']()] as ActivityList,
@@ -160,9 +166,9 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       (agendaVariations['police']())[randomIntInRange(0,agendaVariations['police']().length-1)], 
     'red_activity': () =>
       //(agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)], 
-      (agendaVariations["red"]())[randomIntInRange(0,agendaVariations["red"]().length-1)],
+      (agendaVariations['red']())[randomIntInRange(0,agendaVariations['red']().length-1)],
     'drone': () =>
-      (agendaVariations["drone"]())[randomIntInRange(0,agendaVariations["drone"]().length-1)],
+      (agendaVariations['drone']())[randomIntInRange(0,agendaVariations['drone']().length-1)],
     null: () => 
       (agendaVariations['null']())[randomIntInRange(0,agendaVariations['null']().length-1)], 
   };
@@ -174,6 +180,7 @@ function getAgenda(agent: IAgent | IGroup, _services: IEnvServices) {
       return agentAgendas['group']();
     }
   } else if (agent.type == 'drone') {
+    console.log('drone');
     return agentAgendas['drone']();
   } else {
   switch(agent.force) { 
@@ -232,14 +239,17 @@ async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
 
     var reactionAgenda : ActivityList = reaction[mail.message][agent.force]!.plans[0];
 
-    if(reactionAgenda[0].name === "Go to specific location"){
+    if (reactionAgenda[0].name === "Go to specific location") {
       agent.destination = mail.location;
 
       reactionAgenda[0].options = {startTime: timesim, destination: mail.location}
 
       reactionAgenda.map((item) => item.options!.reacting = true)
-    }
-    else{
+    } else if (reactionAgenda[0].name === "Run away") {
+      reactionAgenda[0].options = {startTime: timesim, AreaCentre: mail.location}
+
+      reactionAgenda.map((item) => item.options!.reacting = true)
+    } else {
       reactionAgenda[0].options = {startTime: timesim}
       reactionAgenda.map((item) => item.options!.reacting = true)
 
@@ -248,7 +258,6 @@ async function addReaction(agent: IAgent, services: IEnvServices, mail: IMail) {
     agent.agenda = [...reactionAgenda,...agent.agenda];
 
   
-    console.log("reaction agenda",agent.agenda)
     agent.reactedTo = mail.message;
     updateAgent(agent,services);
     //return reactionAgenda;
