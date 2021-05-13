@@ -52,7 +52,8 @@ export const randomItem = <T>(arr: T | T[]): T =>
  * @param Nomembers
  * @param desiredspeed
  */
-export const groupSpeed = (Nomembers: number, desiredspeed: number): number => {
+export const groupSpeed = (Nomembers: number, desiredspeed: number, panic?: number): number => {
+  let speed = 1;
   if (Nomembers < 500) {
     let distance = 0.65;
     if (Nomembers < 50) {
@@ -61,17 +62,30 @@ export const groupSpeed = (Nomembers: number, desiredspeed: number): number => {
       distance = 1;
     } else if (Nomembers < 250) {
       distance = 0.85;
-    } else {
+    } else if (Nomembers < 500) {
       distance = 0.65;
+    } else {
+      distance = 0.5;
     }
+
+    if (panic && panic > 5) {
+      distance -= 0.1;
+    }
+    if (panic && panic > 7) {
+      distance -= 0.1;
+    }
+    if (panic && panic > 9) {
+      distance -= 0.1;
+    }
+
     const exp1 = (0.35 - distance) / 0.08;
     const exp2 = (0.35 - Math.sqrt(2 * Math.pow(distance, 2))) / 0.08;
     const acc = 2 * Math.pow(10, 3) * Math.exp(exp1) + Math.sqrt(2) * 2 * Math.pow(10, 3) * Math.exp(exp2)
-    const speed = desiredspeed - (1 / 80) * acc;
-    return speed;
+    speed = desiredspeed - (1 / 80) * acc;
   }
-
-  const speed = 0.2;
+  if (speed < 0) {
+    speed = 0.2;
+  }
   return speed;
 
 }

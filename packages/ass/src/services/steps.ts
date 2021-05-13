@@ -59,7 +59,7 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
 
   if (agent.membercount && agent.steps && agent.steps[0] && (agent.steps[0].name == 'walkTo')) {
     const numberofmembers = agent.membercount.length
-    speed = groupSpeed(numberofmembers, speed);
+    speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic : undefined);
   }
 
   return speed;
