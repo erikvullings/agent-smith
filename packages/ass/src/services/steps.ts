@@ -2,7 +2,7 @@ import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { addGroup, groupSpeed, durationDroneStep } from '../utils';
+import { addGroup, groupSpeed, durationDroneStep, inRangeCheck } from '../utils';
 
 
 /**
@@ -152,12 +152,9 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
   const { distance } = services;
   if (memberOf) return false;
   const { destination } = options;
-  console.log(destination);
   if (route.length === 0) {
     if (!destination) return true;
     try {
-      console.log(agent.destination);
-      console.log(destination);
       const distanceToDestination = distance(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
       const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
       route.push({ distance: distanceToDestination, duration, geometry: { coordinates: [[destination.coord[0], destination.coord[1]]], type: 'LineString' } });
@@ -246,7 +243,6 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
 
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
-  console.log(group);
   if (group) {
     const new_group = services.agents[group];
     if (new_group.group && new_group.membercount) {

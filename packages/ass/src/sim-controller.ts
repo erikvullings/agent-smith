@@ -1,7 +1,7 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
-import { IAgent, TransportType } from './models/agent';
-import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { IAgent, TransportType, ObjectType } from './models';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
 import * as jsonSimConfig from './sim_config.json';
 
@@ -266,3 +266,4 @@ export const simController = async (
     }
   });
 };
+

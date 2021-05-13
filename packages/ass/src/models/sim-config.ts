@@ -1,6 +1,7 @@
 import { IActivityOptions, IStep } from '.';
 import { IAgent } from './agent';
 import { IDefenseAgent } from './defense-agent';
+import { IThreatAgent } from './threat-agent';
 
 export interface ISimConfig {
   settings: Settings;
@@ -11,7 +12,7 @@ export interface ISimConfig {
 interface CustomAgents {
   blue: (IAgent & IDefenseAgent)[];
   white: IAgent[];
-  red: IAgent[];
+  red: (IAgent & IThreatAgent)[];
 }
 
 export interface CustomAgenda {

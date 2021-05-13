@@ -1,4 +1,4 @@
-import { ActivityList, IAgent, IMail, IGroup } from '../models';
+import { ActivityList, IAgent, IMail } from '../models';
 
 import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
@@ -9,7 +9,7 @@ import { reaction } from '.';
  * @param agent
  * @param _services
  */
-const getAgenda = (agent: IAgent | IGroup, _services: IEnvServices) => {
+const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;
   } else {
@@ -344,7 +344,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
 
     agent.agenda = [...reactionAgenda, ...agent.agenda];
 
-    console.log('reaction agenda', agent.agenda);
+    // console.log('reaction agenda', agent.agenda);
     agent.reactedTo = mail.message;
     updateAgent(agent, services);
     // return reactionAgenda;

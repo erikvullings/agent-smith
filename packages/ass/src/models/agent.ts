@@ -4,10 +4,10 @@ import { ILocation } from './location';
 
 export type TransportType = 'car' | 'bicycle' | 'bus' | 'train';
 export type AgentType = 'man' | 'woman' | 'boy' | 'girl' | 'group' | 'drone';
-export type ObjectType = 'object' ;
+export type ObjectType = 'object' | 'bomb' | 'gas';
 
 export interface IAgent {
-   /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */
+  /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */ /** When the agent is not moving by itself, e.g. is inside a car, or a child travelling with its parents. */
   id: string;
   /** Type of agent */
   type: AgentType | TransportType | ObjectType;
@@ -16,9 +16,9 @@ export interface IAgent {
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
-  force: 'white'|'red'|'blue';
+  force: 'white' | 'red' | 'blue';
   /** Force of the agent that is visible to other agents */
-  visibleForce?: 'white'|'red'|'blue';
+  visibleForce?: 'white' | 'red' | 'blue';
   /** Health of agent, maximum of 100 */
   health?: number;
   /** ID of home address */
@@ -76,15 +76,15 @@ export interface IAgent {
   /** Mailbox for messages */
   mailbox: IMail[];
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
-  sentbox: {receiver: IAgent, mail: IMail}[];
+  sentbox: { receiver: IAgent, mail: IMail }[];
   reactedTo?: string
 }
 
 export interface IMail {
-    /** Id of the sender */
-    sender: IAgent;
-    /** Location of the sender */
-    location: ILocation;
-    /** Message of the sender */
-    message: string;
+  /** Id of the sender */
+  sender: IAgent;
+  /** Location of the sender */
+  location: ILocation;
+  /** Message of the sender */
+  message: string;
 }

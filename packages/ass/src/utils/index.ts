@@ -1,5 +1,5 @@
 import { IItem } from 'test-bed-schemas';
-import { IAgent, IGroup, ILocation } from '../models';
+import { IAgent, ILocation } from '../models';
 import { redisServices } from '../services';
 import { IEnvServices } from '../env-services';
 
@@ -196,7 +196,7 @@ export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =
  * @param agent
  */
 /** Convert agent to entity item */
-export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
+export const agentToEntityItem = (agent: IAgent): IItem => ({
   id: agent.id,
   type: agent.type,
   location: {
@@ -212,10 +212,14 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
   },
 });
 
-const transport = ['car', 'bicycle', 'bus', 'train']
+const bomb = '//img.icons8.com/ios-filled/50/000000/bomb-with-timer.png';
+const gas = "https://img.icons8.com/metro/26/000000/cloud.png";
+
+const transport = ['car', 'bicycle', 'bus', 'train'];
 const controlling = ['driveTo', 'cycleTo'];
 
-export const agentToFeature = (agent: IAgent | IGroup) => ({
+
+export const agentToFeature = (agent: IAgent) => ({
   type: 'Feature',
   geometry: {
     'eu.driver.model.sim.support.geojson.geometry.Point': {
@@ -234,7 +238,7 @@ export const agentToFeature = (agent: IAgent | IGroup) => ({
     },
     tags: {
       id: agent.id,
-      agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
+      agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.membercount ? String(agent.membercount.length) : '',
       force: agent.force ? agent.force : 'white',
@@ -259,7 +263,7 @@ export const agentToFeature = (agent: IAgent | IGroup) => ({
  * @param type
  */
 /** Based on the actual lat/lon, create a place nearby */
-export const randomPlaceNearby = (a: IAgent | IGroup, rangeInMeter: number, type: string): ILocation => {
+export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string): ILocation => {
   const {
     actual: {
       coord: [lon, lat],
@@ -348,7 +352,7 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number, force?: string, group?: IGroup,) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, force?: string, group?: IAgent,) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
@@ -365,61 +369,6 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     const home = homes[randomItem(homeIds)];
     const occupationId = randomItem(occupationIds);
     const occupation = occupations[occupationId];
-    // const  r= randomInRange(0, 1);
-    // if(r < 0.4){
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'man',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: occupationId, ...occupation }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else if (r < 0.8){
-    //   const occupationId = randomItem(occupationIds);
-    //   const occupation = occupations[occupationId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'woman',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: occupationId, ...occupation }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else if (r < 0.9){
-    //   const schoolId = randomItem(schoolIds);
-    //   const school = occupations[schoolId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'boy',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: schoolId, ...school }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
-    // else {
-    //   const schoolId = randomItem(schoolIds);
-    //   const school = occupations[schoolId];
-    //   const agent = {
-    //     id: uuid4(),
-    //     type: 'girl',
-    //     status: 'active',
-    //     home,
-    //     // owns: [{ type: 'car', id: 'car1' }],
-    //     actual: home,
-    //     occupations: [{ id: schoolId, ...school }],
-    //   } as IAgent;
-    //   acc.push(agent);
-    // }
     const agent = {
       id: uuid4(),
       type: 'man',

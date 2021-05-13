@@ -1,7 +1,7 @@
 {
     "settings": {
         "agentCount": 2,
-        "center_coord": [
+        "centerCoord": [
             5.476543,
             51.440208
         ],
@@ -428,36 +428,6 @@
                 "mailbox": []
             },
             {
-                "id": "object1",
-                "type": "object",
-                "force": "red",
-                "status": "active",
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        5.499309,
-                        51.437832
-                    ]
-                },
-                "memberOf": [
-                    "agent2"
-                ]
-            },
-            {
-                "id": "object2",
-                "type": "object",
-                "force": "red",
-                "status": "active",
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        5.499609,
-                        51.438032
-                    ]
-                },
-                "memberOf": "red2"
-            },
-            {
                 "id": "drone1",
                 "type": "drone",
                 "force": "red",
@@ -484,6 +454,34 @@
                     }
                 ],
                 "mailbox": []
+            },
+            {
+                "id": "object1",
+                "type": "bomb",
+                "force": "red",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        5.499309,
+                        51.437832
+                    ]
+                },
+                "memberOf": "agent2"
+            },
+            {
+                "id": "object2",
+                "type": "gas",
+                "force": "red",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        5.499609,
+                        51.438032
+                    ]
+                },
+                "memberOf": "red2"
             }
         ]
     },

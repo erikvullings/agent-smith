@@ -1,6 +1,6 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas, reaction } from './services';
-import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas } from './sim-controller';
 
@@ -82,7 +82,7 @@ const createAgenda = async (agent: IAgent, services: IEnvServices) => {
 };
 
 export const executeSteps = async (
-  agent: (IAgent | IGroup) & { steps: { name: string; options?: IActivityOptions }[] },
+  agent: (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
   services: IEnvServices
 ) => {
   const { name, options } = agent.steps[0];
@@ -94,10 +94,10 @@ export const executeSteps = async (
   return agent.steps.length === 0;
 };
 
-export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices) => {
+export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
-      agent as (IAgent | IGroup) & { steps: { name: string; options?: IActivityOptions }[] },
+      agent as (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
       services
     );
     if (result) {
