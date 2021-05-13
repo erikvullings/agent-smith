@@ -15,7 +15,7 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
 
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
     console.log('receivers before', receivers.length)
-    const receiversAgents = (receivers.filter(a => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => (!('department' in a) || a.department != 'station') && a.status != 'inactive' );
+    const receiversAgents = (receivers.filter((a) => a.key !== sender.id ).map((a) => a = services.agents[a.key])).filter(a => (!('department' in a) || a.department !== 'station') && a.status !== 'inactive' );
     console.log('receivers after', receiversAgents.length)
 
     if(receiversAgents.length > 0 ) {
@@ -54,12 +54,12 @@ const send = async(sender:IAgent, message: string, receivers:IAgent[], _services
     if(!sender.sentbox){sender.sentbox = []}
 
     receivers.forEach(rec => {
-        const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver == rec);
+        const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
-        if(rec.mailbox && sentbox.length == 0) {
+        if(rec.mailbox && sentbox.length === 0) {
             rec.mailbox.push({sender, location: sender.actual, message});
         }
-        else if(!rec.mailbox && sentbox.length == 0) {
+        else if(!rec.mailbox && sentbox.length === 0) {
             rec.mailbox = [{sender, location: sender.actual, message}];
         }
     });
@@ -70,17 +70,17 @@ const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
     const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 3));
 
     if(urgentMessages.length >0){
-            return await reactToMessage(agent, services, urgentMessages);;
+            return reactToMessage(agent, services, urgentMessages);;
         }
     return false;
 };
 
 const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: IMail[]) => {
-    //const actionToReact = null as unknown as IMail;
+    // const actionToReact = null as unknown as IMail;
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
-    console.log("in here")
-    if(itemUrgency == undefined || itemReaction == undefined){
+    console.log('in here')
+    if(itemUrgency === undefined || itemReaction === undefined){
         return true;
     }
     if(!agent.agenda || !agent.agenda[0] || !agent.agenda[0].options){
@@ -89,45 +89,46 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
 
     const {options} = agent.agenda[0];
 
-    if(options.reacting==undefined|| options.reacting !=true){
+    if(options.reacting === undefined|| options.reacting !== true){
         // not reacting agents where reaction to plan is not undefined
-        if(options.priority != undefined && options.priority < itemUrgency){
+        if(options.priority !== undefined && options.priority < itemUrgency){
             // prio of agenda is less, so it is more important
             // stay in agenda
             return true;
         }
-        if(options.priority != undefined && options.priority == itemUrgency){
+        if(options.priority !== undefined && options.priority === itemUrgency){
             // if urgency an agenda prio is equal, pick one of them
             const randomInt = randomIntInRange(0, urgentMessages.length);
 
-            if(randomInt == urgentMessages.length){
+            if(randomInt === urgentMessages.length){
                 // stay in agenda
                 return true;
             }
 
-                // if(itemReaction[0].name == "Call the police"){
+                // if(itemReaction[0].name === "Call the police"){
 
                 // }
                 // pick one of the reactions
                 // actionToReact = urgentMessages[randomInt];
                 // actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
                 // return await agendas.addReaction(agent,services, actionToReact);
-                return await react(agent,services,urgentMessages,randomInt)
+                return react(agent,services,urgentMessages,randomInt)
 
         }
 
             // if prio is greater than urgency, pick one from the reactions
             const randomInt = randomIntInRange(0, urgentMessages.length-1);
-            return await react(agent,services,urgentMessages,randomInt)
+            return react(agent,services,urgentMessages,randomInt)
+
 
     }
 
         // check if urgency is greater than current reaction, if so pick the new reaction
-        if(options.priority != undefined && options.priority > itemUrgency){
+        if(options.priority !== undefined && options.priority > itemUrgency){
             // prio of agenda is greater
             // pick new reaction
             const randomInt = randomIntInRange(0, urgentMessages.length-1);
-            return await react(agent,services,urgentMessages,randomInt)
+            return react(agent,services,urgentMessages,randomInt)
         }
 
             return true;
@@ -137,11 +138,11 @@ const reactToMessage = async (agent: IAgent | IGroup, services: IEnvServices, ur
 
 const react = async (agent: IAgent | IGroup, services: IEnvServices, urgentMessages: IMail[], itemIndex: number) => {
     let actionToReact = null as unknown as IMail;
-    //const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
+    // const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
-    return await agendas.addReaction(agent,services, actionToReact);
+    return agendas.addReaction(agent,services, actionToReact);
 }
 
 

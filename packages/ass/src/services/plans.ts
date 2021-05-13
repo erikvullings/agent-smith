@@ -11,10 +11,9 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
   if (startTime) {
     steps.push({ name: 'waitUntil', options });
   }
-  if(agent.type == 'drone'){
+  if(agent.type === 'drone'){
     steps.push({ name: 'flyTo', options: { destination: agent.destination } });
-  } else {
-  if ('owns' in agent){
+  } else if ('owns' in agent){
     if (agent.owns && agent.owns.length > 0) {
       const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
       const car = ownedCar && services.agents[ownedCar.id];
@@ -39,8 +38,9 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
             steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
 
         } else {
-          const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
-          const bike = ownedBike && services.agents[ownedBike.id];
+          // const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
+          // const bike = ownedBike && services.agents[ownedBike.id];
+          // remove if it still works
           if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000){
               bike.force = agent.force;
               bike.group = [agent.id];
@@ -49,7 +49,7 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
               steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
               steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
               steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
-            
+
           } else {
             steps.push({ name: 'walkTo', options: { destination: agent.destination } });
           }
@@ -59,7 +59,6 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
       steps.push({ name: 'walkTo', options: { destination: agent.destination } });
     }
   }
-  }
   if(agent.running){
     steps.push({ name: 'stopRunning'});
   } else {
@@ -68,7 +67,7 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
   agent.steps = steps;
 };
 
-/** 
+/**
  * @param agent
  * @param services
  * @param options
@@ -157,11 +156,11 @@ export const plans = {
   'Flee the scene': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
-      const {destination = randomPlaceNearby(agent, 10000, 'any')} = options;
+      const {destination = randomPlaceNearby(agent, 1000, 'any')} = options;
       agent.destination = destination;
       agent.running = true;
       prepareRoute(agent, services, options);
-      agent.speed = 2;
+
       return true;
     },
   },
@@ -175,6 +174,8 @@ export const plans = {
       agent.destination = destination;
       prepareRoute(agent, services, options);
       agent.speed = 2;
+      messageServices.sendDirectMessage(agent, 'Run away',[services.agents['51bc0240-d4fb-4a2e-a548-d3e32aa3037b']],services);
+
       return true;
     },
   },
@@ -190,6 +191,18 @@ export const plans = {
       return true;
     },
   },
+
+  'Follow person': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
+      agent.sentbox = [];
+      console.log('agent destination', agent.destination)
+      agent.destination = options.destination;
+      prepareRoute(agent, services, options);
+      // agent.speed = 2;
+      return true;
+    },
+  },
+
 
   'Visit doctor': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -231,9 +244,9 @@ export const plans = {
 
   Chat: { prepare: waitFor },
 
-  Fight: { prepare: waitFor }, 
+  Fight: { prepare: waitFor },
 
-  //Wait: { prepare: waitFor },
+  // Wait: { prepare: waitFor },
 
   'Wait': {
     prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
@@ -318,7 +331,7 @@ export const plans = {
       const steps = [] as ActivityList;
       if(agent.group){
         const {release = agent.group, duration = minutes(1)} = options;
-        steps.push({ name: 'releaseAgents', options: { duration, release: release } });
+        steps.push({ name: 'releaseAgents', options: { duration, release } });
       }
       else{
         const {duration = minutes(1)} = options;
@@ -332,10 +345,10 @@ export const plans = {
   'Release_red':{
     prepare: async (agent: IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
-      if(agent.group && agent.force == 'white'){
+      if(agent.group && agent.force === 'white'){
         const {release = agent.group, duration = minutes(2)} = options;
-        const red = release.filter((a) => _services.agents[a].force == 'red');
-        for (let i of red){
+        const red = release.filter((a) => _services.agents[a].force === 'red');
+        for (const i of red){
           steps.push({ name: 'releaseAgents', options: { release: [i] } });
           steps.push({ name: 'waitFor', options: { duration } });
           const member = _services.agents[i];
@@ -358,36 +371,37 @@ export const plans = {
   'Join red group':{
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
-      const in_range = await redisServices.geoSearch(agent.actual, 1000, agent);
-      const agents_in_range = in_range.map((a: any) => a = _services.agents[a.key]);
-      const red_groups = agents_in_range.filter((a: IAgent) => (a.type == 'group' && a.force == 'red'));
-      if(red_groups.length > 0){
-        const new_group = randomItem(red_groups);
-        steps.push({ name: 'walkTo', options: { destination: new_group.actual } });
-        steps.push({ name : 'joinGroup', options: {group: new_group.id}})
+      const inRange = await redisServices.geoSearch(agent.actual, 1000, agent);
+      const agentsInRange = inRange.map((a: any) => a = _services.agents[a.key]);
+      const redGroups = agentsInRange.filter((a: IAgent) => (a.type === 'group' && a.force === 'red'));
+      if(redGroups.length > 0){
+        const newGroup = randomItem(redGroups);
+        steps.push({ name: 'walkTo', options: { destination: newGroup.actual } });
+        steps.push({ name : 'joinGroup', options: {group: newGroup.id}})
       }
       agent.steps = steps;
       return true;
     },
   },
 
-  'drop object':{
+  'Drop object':{
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
+      let objectAgent;
+      
       if(agent.group){
-        var objectAgent;
-        agent.group.filter((a) => services.agents[a].type == 'object').map((a) => {objectAgent = services.agents[a]; delete services.agents[a].memberOf});
+        agent.group.filter((a) => services.agents[a].type === 'object').map((a) => {objectAgent = services.agents[a]; delete services.agents[a].memberOf});
         agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
       }
       const {duration = minutes(0.5)} = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       agent.visibleForce = 'red';
-      //messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
+      // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
 
       if(objectAgent){
-        messageServices.sendMessage(objectAgent, "drop object", services);
+        messageServices.sendMessage(objectAgent, 'drop object', services);
       }
       return true;
     },
@@ -398,7 +412,7 @@ export const plans = {
       agent.sentbox = [];
       const steps = [] as ActivityList;
       // if(agent.group){
-      //   agent.group.filter((a) => services.agents[a].type == 'object').map((a) => delete services.agents[a].memberOf);
+      //   agent.group.filter((a) => services.agents[a].type === 'object').map((a) => delete services.agents[a].memberOf);
       //   agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
       // }
       const {duration = minutes(5,15)} = options;
@@ -417,7 +431,7 @@ export const plans = {
       agent.steps = steps;
 
       // const receivers = await redisServices.geoSearch(agent.actual, 100000, agent) as Array<any>;
-      // const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
+      // const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department === 'station' && a.agenda && (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
       // console.log("receivers", receiversAgents)
       // messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
 

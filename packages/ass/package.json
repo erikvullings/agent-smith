@@ -17,6 +17,7 @@
   "dependencies": {
     "@turf/distance": "^6.3.0",
     "@turf/helpers": "^6.3.0",
+    "eslint-plugin-markdown": "^2.1.0",
     "ioredis": "^4.24.2",
     "node-test-bed-adapter": "^2.0.8",
     "osrm-rest-client": "^0.1.6",
@@ -30,7 +31,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^34.0.1",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "esm": "3.2.25",

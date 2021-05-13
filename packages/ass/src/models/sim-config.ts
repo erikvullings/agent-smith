@@ -26,6 +26,6 @@ export interface AgendaItem {
 
 export interface Settings {
   agentCount: number;
-  center_coord: number[];
+  centerCoord: number[];
   radius: number;
 }

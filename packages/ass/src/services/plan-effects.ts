@@ -6,7 +6,7 @@ import { IPlanEffects } from '../models';
  * Damage count: the percentage of agents -in the damage radius- that will get damaged
  */
 export const planEffects = {
-    'drop object': {
+    'Drop object': {
         damageRadius: 100,
         damageLevel: 100,
         damageCount: 0.7,

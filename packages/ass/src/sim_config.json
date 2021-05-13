@@ -1,7 +1,7 @@
 {
     "settings": {
         "agentCount": 30,
-        "center_coord": [5.476543, 51.440208],
+        "centerCoord": [5.476543, 51.440208],
         "radius": 10000
   },
     "customAgents": {

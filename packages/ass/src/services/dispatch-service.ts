@@ -7,7 +7,7 @@ const sendDefence = async (agent: IAgent | IGroup, services: IEnvServices) => {
     console.log('hereee')
     let n = 0;
 
-    if(agent.reactedTo == undefined || planEffects[agent.reactedTo] == undefined) {
+    if(agent.reactedTo === undefined || planEffects[agent.reactedTo] === undefined) {
         agent.reactedTo = 'drop object'; // To test function
     }
 
@@ -25,10 +25,15 @@ const sendDefence = async (agent: IAgent | IGroup, services: IEnvServices) => {
     }
 
     const receivers = await redisServices.geoSearch(agent.actual, messageRadius, agent) as any[];
-    const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ('department' in a) && a.department == 'station' && a.agenda && (a.agenda[0].options?.reacting == undefined || a.agenda[0].options?.reacting == false));
+    const receiversAgents = (receivers.map((a) => a = services.agents[a.key]))
+        .filter(
+            a => ('department' in a) &&
+            a.department === 'station' &&
+            a.agenda &&
+            (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
     // console.log("receivers", receiversAgents.slice(0,n))
 
-    return await messageServices.sendDirectMessage(agent, 'Call the police', receiversAgents.slice(0,n), services);;
+    return messageServices.sendDirectMessage(agent, 'Call the police', receiversAgents.slice(0,n), services);;
 };
 
 export const dispatchServices = {

@@ -6,13 +6,12 @@ export const reaction = {
             'blue':{urgency:1,plans:[[{ 'name': 'Go to specific location', 'options' : {}}
                                     ,{ 'name': 'Check object', 'options' : {}},
                                     { 'name': 'Go to work', 'options' : {}}]]},
-            'white':{urgency:1,plans:[[{ 'name': 'Run away', 'options': {}}]]},
     },
-    'Flee the scene': {
-        'blue':{urgency:1,plans:[[{ 'name': 'Go to specific location', 'options' : {}},
+    'Run away': {
+        'blue':{urgency:1,plans:[[{ 'name': 'Follow person', 'options' : {}},
                                                 { 'name': 'Go to work', 'options' : {}},
                                                 { 'name': 'Work', 'options' : {} }]]},
-        'white':{urgency:1,plans:[[{ 'name': 'Run away', 'options': {}}]]},
+        'white':{urgency:1,plans:[[{ 'name': 'Follow person', 'options': {}}]]},
     },
     'Call the police': {
         'blue':{urgency:1,plans:[[{ 'name': 'Go to specific location', 'options' : {}},

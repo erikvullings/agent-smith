@@ -41,6 +41,7 @@ export const random = (
 
 /**
  * Returns a random item from an array
+ *
  * @param arr
  */
 export const randomItem = <T>(arr: T | T[]): T =>
@@ -48,6 +49,8 @@ export const randomItem = <T>(arr: T | T[]): T =>
 
 /**
  * calculates the speed of a group based on the distance between members
+ * @param Nomembers
+ * @param desiredspeed
  */
  export const groupSpeed = (Nomembers: number, desiredspeed: number): number =>{
   if (Nomembers < 500) {
@@ -67,10 +70,10 @@ export const randomItem = <T>(arr: T | T[]): T =>
     const speed = desiredspeed - (1/80)*acc;
     return speed;
   }
-  else {
+  
     const speed = 0.2;
     return speed;
-  }
+  
  }
 
 
@@ -125,6 +128,7 @@ export const range = (from: number, to: number, step: number = 1) => {
 
 /**
  * Returns a random number between min (inclusive) and max (exclusive)
+ *
  * @param min
  * @param max
  */
@@ -136,6 +140,7 @@ export const randomInRange = (min: number, max: number) => Math.random() * (max 
  * if min isn't an integer) and no greater than max (or the next integer
  * lower than max if max isn't an integer).
  * Using Math.round() will give you a non-uniform distribution!
+ *
  * @param min
  * @param max
  */
@@ -146,18 +151,19 @@ export const randomIntInRange = (min: number, max: number) => {
 };
 
 /** Calculate duration of drone over certain distance */
-export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) =>{
+export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const dist = distanceInMeters(lat1, lon1, lat2, lon2);
   const sec_per_meter = 3600/70000;
   const dur = sec_per_meter * dist;
   return dur;
-}
+};
+
 export const inRangeCheck = (min: number, max: number, value: number) => (value - min) * (value - max) <= 0;
 
 /** 
  * @param min
  * @param max
-*/
+ */
 /** Convert a number of minutes to the number of msec */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
 
@@ -167,7 +173,7 @@ export const seconds = (min: number, max?: number) => (max ? randomInRange(min, 
 /** 
  * @param min
  * @param max
-*/ 
+ */ 
 /** Convert a number of hours to the number of msec */
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
 
@@ -181,14 +187,14 @@ const day = now.getDate();
  * @param hours
  * @param minutes
  * @param seconds
-*/
+ */
 /** Create a date relative to today */
 export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
   new Date(year, month, day + days, hours, minutes, seconds);
 
 /** 
  * @param agent
-*/
+ */
 /** Convert agent to entity item */
 export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
   id: agent.id,
@@ -207,7 +213,7 @@ export const agentToEntityItem = (agent: IAgent | IGroup): IItem => ({
 });
 
 const transport = ['car' , 'bicycle' , 'bus' , 'train']
-const controlling = ['driveTo', 'cycleTo']
+const controlling = ['driveTo', 'cycleTo'];
 
 export const agentToFeature = (agent: IAgent | IGroup) => ({
   type: 'Feature',
@@ -232,11 +238,11 @@ export const agentToFeature = (agent: IAgent | IGroup) => ({
       members: agent.group ? agent.group.join(', ') : '',
       number_of_members: agent.membercount ? String(agent.membercount.length): '',
       force: agent.force ? agent.force: 'white' ,
-      visible: 
+      visible:
         ((agent.type == 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
           ? String(0)
-          : agent.steps && 
-            agent.steps[0] && 
+          : agent.steps &&
+            agent.steps[0] &&
             controlling.indexOf(agent.steps[0].name) >= 0
           ? String(0)
           : transport.indexOf(agent.type) < 0 &&
@@ -248,10 +254,10 @@ export const agentToFeature = (agent: IAgent | IGroup) => ({
 });
 
 /** 
-* @param a
-* @param rangeInMeter
-* @param type
-*/
+ * @param a
+ * @param rangeInMeter
+ * @param type
+ */
 /** Based on the actual lat/lon, create a place nearby */
 export const randomPlaceNearby = (a: IAgent | IGroup, rangeInMeter: number, type: string): ILocation => {
   const {
@@ -311,6 +317,7 @@ export const distanceInMeters = (lat1: number, lon1: number, lat2: number, lon2:
 export const simplifiedDistanceFactory = () => {
   // const coslat = Math.cos((latitudeAvg * Math.PI) / 180);
   const f = Math.PI / 360;
+
   /** Distance between WGS84 coordinates in meters */
   return (lat0: number, lng0: number, lat1: number, lng1: number) => {
     const x = lat0 - lat1;
@@ -322,8 +329,8 @@ export const simplifiedDistanceFactory = () => {
 };
 
 /** 
-* @param ms
-*/
+ * @param ms
+ */
 /** Delay function */
 export const sleep = (ms: number) =>
   new Promise((resolve) => {
@@ -331,9 +338,9 @@ export const sleep = (ms: number) =>
   });
 
 /** 
-* @param n
-* @param decimals
-*/
+ * @param n
+ * @param decimals
+ */
 /** Round a number or array of numbers to a fixed number of decimals */
 export const round = (n: number | number[], decimals = 6) => {
   const factor = Math.pow(10, decimals);
@@ -416,7 +423,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     const agent = {
       id: uuid4(),
       type: 'man',
-      force: force? force: 'white',
+      force: force || 'white',
       health: 100,
       status: 'active',
       home,

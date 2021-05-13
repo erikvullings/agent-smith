@@ -45,7 +45,7 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    let agentstoshow = [] as IAgent[];
+    const agentstoshow = [] as IAgent[];
     const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
@@ -223,8 +223,8 @@ export const simController = async (
 
     const { agentCount } = simConfig.settings;
     const { agents: generatedAgents, locations } = generateAgents(
-      simConfig.settings.center_coord[0],
-      simConfig.settings.center_coord[1],
+      simConfig.settings.centerCoord[0],
+      simConfig.settings.centerCoord[1],
       agentCount,
       simConfig.settings.radius
     );
@@ -250,6 +250,7 @@ export const simController = async (
     //   if (!coord) continue;
     //   agent.actual.coord = coord;
     // }
+
     // Drie opmerkingen:
     // - je loopt hier 2x over dezelfde lijst.
     // - de .map function werkt niet met async/await
@@ -307,7 +308,7 @@ export const simController = async (
 
       if(chattingAgents.length <= agents.length*0.01)
         chatServices.agentChat(agents,services);
-    }, 60000);  
+    }, 60000);
 
     let i = 0;
     while (i < 10000000) {

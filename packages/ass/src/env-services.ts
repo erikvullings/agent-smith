@@ -25,7 +25,7 @@ export interface IEnvServices {
   locations: { [id: string]: ILocation };
   /** Approximate distance calculator in meters */
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
-}
+};
 
 /** Create services so an agent can deal with the environment, e.g. for navigation. */
 export const envServices = ({
