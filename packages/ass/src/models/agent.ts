@@ -16,7 +16,7 @@ export interface IAgent {
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
-  force: 'white'|'red'|'blue';
+  force: 'white'|'red'|'blue'|'vip';
   /** Force of the agent that is visible to other agents */
   visibleForce?: 'white'|'red'|'blue';
   /** Health of agent, maximum of 100 */
@@ -77,7 +77,8 @@ export interface IAgent {
   mailbox: IMail[];
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
   sentbox: {receiver: IAgent, mail: IMail}[];
-  reactedTo?: string
+  reactedTo?: string;
+  targets?: IAgent[];
 }
 
 export interface IMail {

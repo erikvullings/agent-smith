@@ -17,7 +17,8 @@
             "occupations": [{ "type": "work", "id": "h_m_shop"}],
             "mailbox": [],
             "department": "none",
-            "defenseType": "police"
+            "defenseType": "police",
+            "equipment": [{"type": "firearm", "damageLevel": 3}]
     },
         {
             "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",

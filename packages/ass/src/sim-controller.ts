@@ -49,7 +49,7 @@ export const simController = async (
   
     const reactionImport : IReactions = reactionConfig;
 
-    if(reactionImport != {}){
+    if(reactionImport){
       for(const key in reactionImport){
         reaction[key] = reactionImport[key];
       }

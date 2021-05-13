@@ -1,6 +1,6 @@
 import { reaction, redisServices } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IGroup, IMail } from '../models';
+import { IAgent, IDefenseAgent, IEquipment, IGroup, IMail } from '../models';
 import { randomIntInRange } from '../utils';
 import { agendas } from './agendas';
 import { planEffects } from './plan-effects';
@@ -33,12 +33,14 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:IAge
     return true;
 }
 
-const sendDamage = async (_sender: IAgent, action: string, receivers:IAgent[], _services: IEnvServices) => {
+const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, receivers:IAgent[], _services: IEnvServices) => {
     // _services.agents["biker"].health = 100;
     console.log('health',_services.agents.biker.health)
 
+    const damage = await pickEquipment(sender,agentAction)
+
     if(receivers.length > 0) {
-        receivers.filter((a) => a.health).map((a) => (a.health! -= planEffects[action].damageLevel));
+        receivers.filter((a) => a.health).map((a) => (a.health! -= damage));
 
         const deadAgents = receivers.filter((a) => a.health && a.health<=0)
         if(deadAgents.length>0){
@@ -49,6 +51,18 @@ const sendDamage = async (_sender: IAgent, action: string, receivers:IAgent[], _
     console.log('health',_services.agents.biker.health)
     return true;
 }
+
+// const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string) => {
+//     if(agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment){
+//         const severity = planEffects[agent.reactedTo].severity;
+//         // switch(severity){
+//         //     case 1: 
+//         // }
+//     }
+//     else if(agent.force === 'red'){
+//         return planEffects[agentAction].damageLevel
+//     }    
+// }
 
 const send = async(sender:IAgent, message: string, receivers:IAgent[], _services: IEnvServices) => {
     if(!sender.sentbox){sender.sentbox = []}

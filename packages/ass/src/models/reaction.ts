@@ -8,6 +8,7 @@ export interface IReactionObject {
   blue?: IReact;
   red?: IReact;
   white?: IReact;
+  vip?: IReact;
 }
 
 export interface IReact {
@@ -21,9 +22,10 @@ export interface IPlanEffects {
 
 export interface IPlanEffectObject {
   damageRadius: number;
-  damageLevel: number,
-  damageCount?: number,
-  panicLevel: number,
-  delayLevel: number,
+  damageLevel: number;
+  damageCount?: number;
+  panicLevel: number;
+  delayLevel: number;
+  severity: 1|2|3|4|5;
   messageRadius: number;
 }
