@@ -3,10 +3,10 @@ import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType } from './models/agent';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import * as jsonSimConfig from './sim_config.json';
-
-import { ISimConfig } from './models';
+import { IReactions, ISimConfig } from './models';
 import { IDefenseAgent } from './models/defense-agent';
+import jsonSimConfig from './sim_config.json';
+import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -46,6 +46,18 @@ export const simController = async (
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     const agentstoshow = [] as IAgent[];
+  
+    const reactionImport : IReactions = reactionConfig;
+
+    if(reactionImport != {}){
+      for(const key in reactionImport){
+        reaction[key] = reactionImport[key];
+      }
+    }
+
+    console.log("call the police", reaction["Call the police"])
+    console.log("test", reaction["Run away"])
+
     const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
