@@ -10,7 +10,6 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     let radius = 10;
     if(planEffects[message]){
         radius = planEffects[message].messageRadius;
-        console.log(message,radius)
     }
 
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
@@ -33,14 +32,14 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:IAge
     return true;
 }
 
-const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, receivers:IAgent[], _services: IEnvServices) => {
+const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, receivers:IAgent[], equipment: IEquipment, _services: IEnvServices) => {
     // _services.agents["biker"].health = 100;
-    console.log('health',_services.agents.biker.health)
+    console.log('health',_services.agents.red2.health)
 
-    const damage = await pickEquipment(sender,agentAction)
+    //const damage = await pickEquipment(sender,agentAction)
 
     if(receivers.length > 0) {
-        receivers.filter((a) => a.health).map((a) => (a.health! -= damage));
+        receivers.filter((a) => a.health).map((a) => (a.health! -= equipment.damageLevel*20));
 
         const deadAgents = receivers.filter((a) => a.health && a.health<=0)
         if(deadAgents.length>0){
@@ -48,8 +47,8 @@ const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, r
         }
     }
 
-    console.log('health',_services.agents.biker.health)
-    return true;
+     console.log('health',_services.agents.red2.health)
+    // return true;
 }
 
 // const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string) => {

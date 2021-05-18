@@ -18,22 +18,48 @@
             "mailbox": [],
             "department": "none",
             "defenseType": "police",
-            "equipment": [{"type": "firearm", "damageLevel": 3}]
+            "equipment": [{"type": "firearm", "damageLevel": 5}]
     },
         {
-            "id": "57bc0240-d4fb-4a2e-a548-d3e32aa3037b",
+            "id": "kmar1",
             "type": "woman",
             "force": "blue",
             "health": 100,
             "status": "active",
             "home": { "type": "home", "coord": [5.499555, 51.437832] },
             "actual": { "type": "home", "coord": [5.499309, 51.437832] },
-            "occupations": [{ "type": "work", "id": "park"}],
+            "occupations": [{ "type": "work", "id": "park1"}],
             "mailbox": [],
             "department": "none",
-            "defenseType": "police"
+            "defenseType": "kmar"
     },
         {
+            "id": "kmar2",
+            "type": "man",
+            "force": "blue",
+            "health": 100,
+            "status": "active",
+            "home": { "type": "home", "coord": [5.499555, 51.437832] },
+            "actual": { "type": "home", "coord": [5.499309, 51.437832] },
+            "occupations": [{ "type": "work", "id": "park2"}],
+            "mailbox": [],
+            "department": "none",
+            "defenseType": "kmar"
+        },
+        {
+            "id": "kmar3",
+            "type": "man",
+            "force": "blue",
+            "health": 100,
+            "status": "active",
+            "home": { "type": "home", "coord": [5.499555, 51.437832] },
+            "actual": { "type": "home", "coord": [5.499309, 51.437832] },
+            "occupations": [{ "type": "work", "id": "h_m_shop"}],
+            "mailbox": [],
+            "department": "none",
+            "defenseType": "kmar"
+        },
+    {
             "id": "police1",
             "type": "man",
             "force": "blue",
@@ -209,23 +235,6 @@
                 { "name": "Go home", "options" : {} }]
         },
         {
-            "agentId": "biker",
-            "agendaItems": [
-                { "name": "Go to work", "options" : {} },
-                { "name": "Guard", "options" : { "duration": 4 } },
-                { "name": "Go home", "options" : {} }]
-        },
-        {
-            "agentId": "police1",
-            "agendaItems": [
-                { "name": "Stay at police station", "options" : { "priority": 3 } }]
-        },
-        {
-            "agentId": "police2",
-            "agendaItems": [
-                { "name": "Stay at police station", "options" : { "priority": 3 } }]
-        },
-        {
             "agentId": "police3",
             "agendaItems": [
                 { "name": "Stay at police station", "options" : { "priority": 3 } }] 
@@ -234,6 +243,13 @@
             "agentId": "police4",
             "agendaItems": [
                 { "name": "Stay at police station", "options" : { "priority": 3 } }]
+        },
+        {
+            "agentId": "biker",
+            "agendaItems": [
+                { "name": "Attack targets", "options" : { "priority": 1 } },
+                { "name": "Go home", "options" : { "priority": 1 } }
+            ]
         }
   ]
 }

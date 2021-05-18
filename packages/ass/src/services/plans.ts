@@ -298,16 +298,16 @@ export const plans = {
 
   //Maybe also add "spot targets" to pick targets
   'Attack targets': {
-    prepare: async (agent: IAgent | IGroup, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       agent.route = [];
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options});
       agent.steps = steps;
 
-      if(agent.targets){
-        messageServices.sendDamage(agent,'Attack targets',agent.targets,_services)
-      }
+      //if(agent.targets){
+        //messageServices.sendDamage(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
+      //}
       return true;
     },
   },
@@ -418,7 +418,7 @@ export const plans = {
       // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
 
       if(objectAgent){
-        messageServices.sendMessage(objectAgent, 'drop object', services);
+        messageServices.sendMessage(objectAgent, 'Drop object', services);
       }
       return true;
     },
@@ -451,8 +451,8 @@ export const plans = {
       // const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("department" in a) && a.department === 'station' && a.agenda && (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
       // console.log("receivers", receiversAgents)
       // messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
-
-      dispatchServices.sendDefence(agent,services)
+      agent.reactedTo = 'Drop object'
+      dispatchServices.sendDefence(agent,services);
 
       return true;
     },
