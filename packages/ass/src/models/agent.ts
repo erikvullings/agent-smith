@@ -20,11 +20,13 @@ export interface IAgent {
   /** Force of the agent that is visible to other agents */
   visibleForce?: 'white'|'red'|'blue';
   /** Health of agent, maximum of 100 */
-  health?: number;
+  health: number;
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
   destination?: ILocation;
+  /** Location that agents wants to reach, as [lon, lat] */
+  attire?: 'bulletproof vest';
   /** ID of work address */
   occupations?: {
     /** Type of occupation, e.g. work, shop, learn */
@@ -88,4 +90,6 @@ export interface IMail {
     location: ILocation;
     /** Message of the sender */
     message: string;
+    /** Eqipment of the sender */
+    equipment?: string;
 }

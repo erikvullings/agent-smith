@@ -32,37 +32,6 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers:IAge
     return true;
 }
 
-const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, receivers:IAgent[], equipment: IEquipment, _services: IEnvServices) => {
-    // _services.agents["biker"].health = 100;
-    console.log('health',_services.agents.red2.health)
-
-    //const damage = await pickEquipment(sender,agentAction)
-
-    if(receivers.length > 0) {
-        receivers.filter((a) => a.health).map((a) => (a.health! -= equipment.damageLevel*20));
-
-        const deadAgents = receivers.filter((a) => a.health && a.health<=0)
-        if(deadAgents.length>0){
-            deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
-        }
-    }
-
-     console.log('health',_services.agents.red2.health)
-    // return true;
-}
-
-// const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string) => {
-//     if(agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment){
-//         const severity = planEffects[agent.reactedTo].severity;
-//         // switch(severity){
-//         //     case 1: 
-//         // }
-//     }
-//     else if(agent.force === 'red'){
-//         return planEffects[agentAction].damageLevel
-//     }    
-// }
-
 const send = async(sender:IAgent, message: string, receivers:IAgent[], _services: IEnvServices) => {
     if(!sender.sentbox){sender.sentbox = []}
 
@@ -82,7 +51,7 @@ const send = async(sender:IAgent, message: string, receivers:IAgent[], _services
 const readMailbox = async (agent: IAgent | IGroup, services: IEnvServices) => {
     const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 3));
 
-    if(urgentMessages.length >0){
+    if(urgentMessages.length >0 && agent.health >0){
             return reactToMessage(agent, services, urgentMessages);;
         }
     return false;
@@ -163,5 +132,4 @@ export const messageServices = {
     sendMessage,
     readMailbox,
     sendDirectMessage,
-    sendDamage,
 };
