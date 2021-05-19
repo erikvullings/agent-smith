@@ -1,6 +1,6 @@
 import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { dispatchServices, messageServices, redisServices } from '.';
+import { dispatchServices, damageServices, messageServices, redisServices } from '.';
 import { addGroup, randomItem, hours, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters} from '../utils';
 
 
@@ -306,7 +306,7 @@ export const plans = {
       agent.steps = steps;
 
       //if(agent.targets){
-        //messageServices.sendDamage(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
+        //damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
       //}
       return true;
     },
