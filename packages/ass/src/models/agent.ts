@@ -53,7 +53,7 @@ export interface IAgent {
   /** IDs of the members, e.g. the people inside a car or the children of a parent. */
   group?: string[];
   /** IDs of the members that do not have type "group" */
-  membercount?: string[];
+  memberCount?: string[];
   /** Items that the agent owns, e.g. a car or bicycle. */
   owns?: {
     /** Type of object that the agent owns, e.g. car or bicyle */

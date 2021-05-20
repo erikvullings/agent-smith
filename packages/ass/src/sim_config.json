@@ -208,6 +208,37 @@
         ],
         "white": [
             {
+                "id": "group1",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892419,
+                        52.373312
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "ziekenhuis"
+                    }
+                ],
+                "force": "white",
+                "group": [
+                    "agent1"
+                ],
+                "mailbox": []
+            },
+            {
                 "id": "agent1",
                 "type": "man",
                 "force": "white",
@@ -222,15 +253,15 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        5.496994,
-                        51.468701
+                        4.891674,
+                        52.378101
                     ]
                 },
                 "actual": {
-                    "type": "home",
+                    "type": "any",
                     "coord": [
-                        5.499128,
-                        51.438427
+                        4.892419,
+                        52.373312
                     ]
                 },
                 "occupations": [
@@ -238,6 +269,213 @@
                         "type": "work",
                         "id": "h_m_shop"
                     }
+                ],
+                "memberOf": [
+                    "group1"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "group2",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.893023,
+                        52.373177
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "ziekenhuis"
+                    }
+                ],
+                "force": "white",
+                "group": [
+                    "agent2"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "agent2",
+                "type": "man",
+                "force": "white",
+                "health": 100,
+                "status": "active",
+                "owns": [
+                    {
+                        "type": "car",
+                        "id": "car1"
+                    }
+                ],
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.893023,
+                        52.373177
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "h_m_shop"
+                    }
+                ],
+                "memberOf": [
+                    "group2"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "group3",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892788,
+                        52.372828
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "ziekenhuis"
+                    }
+                ],
+                "force": "white",
+                "group": [
+                    "agent3"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "agent3",
+                "type": "man",
+                "force": "white",
+                "health": 100,
+                "status": "active",
+                "owns": [
+                    {
+                        "type": "car",
+                        "id": "car1"
+                    }
+                ],
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892788,
+                        52.372828
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "h_m_shop"
+                    }
+                ],
+                "memberOf": [
+                    "group3"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "group4",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892067,
+                        52.372871
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "ziekenhuis"
+                    }
+                ],
+                "force": "white",
+                "group": [
+                    "agent4"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "agent4",
+                "type": "man",
+                "force": "white",
+                "health": 100,
+                "status": "active",
+                "owns": [
+                    {
+                        "type": "car",
+                        "id": "car1"
+                    }
+                ],
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891674,
+                        52.378101
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892067,
+                        52.372871
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "h_m_shop"
+                    }
+                ],
+                "memberOf": [
+                    "group4"
                 ],
                 "mailbox": []
             },

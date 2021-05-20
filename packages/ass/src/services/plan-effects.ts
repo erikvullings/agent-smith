@@ -7,6 +7,15 @@ import { IPlanEffects } from '../models';
  */
 export const planEffects = {
     'Drop object': {
+        damageRadius: 0,
+        damageLevel: 0,
+        damageCount: 0,
+        panicLevel: 30,
+        delayLevel: 0,
+        severity: 3,
+        messageRadius: 1000,
+    },
+    'Drop bomb': {
         damageRadius: 100,
         damageLevel: 100,
         damageCount: 0.7,
@@ -14,6 +23,24 @@ export const planEffects = {
         delayLevel: 0,
         severity: 5,
         messageRadius: 10000,
+    },
+    'Drop gas': {
+        damageRadius: 0,
+        damageLevel: 0,
+        damageCount: 0,
+        panicLevel: 50,
+        delayLevel: 0,
+        severity: 4,
+        messageRadius: 10000,
+    },
+    'Play Message': {
+        damageRadius: 0,
+        damageLevel: 0,
+        damageCount: 0,
+        panicLevel: 20,
+        delayLevel: 0,
+        severity: 3,
+        messageRadius: 1000,
     },
     'Flee the scene': {
         damageRadius: 0,

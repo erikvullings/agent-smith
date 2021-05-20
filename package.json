@@ -34,6 +34,8 @@
   },
   "dependencies": {
     "@types/redis": "^2.8.28",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
     "ioredis": "^4.24.2",
     "node-test-bed-adapter": "^2.0.8",
     "osrm-rest-client": "^0.1.6",

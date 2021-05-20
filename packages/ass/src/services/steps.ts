@@ -57,8 +57,8 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
     }
   }
 
-  if (agent.membercount && agent.steps && agent.steps[0] && (agent.steps[0].name == 'walkTo')) {
-    const numberofmembers = agent.membercount.length
+  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name == 'walkTo')) {
+    const numberofmembers = agent.memberCount.length
     speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic : undefined);
   }
 
@@ -215,15 +215,15 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
 
 const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { release } = options;
-  if (agent.group && agent.membercount && release && release.length > 0) {
+  if (agent.group && agent.memberCount && release && release.length > 0) {
     for (const id of release) {
       const a = services.agents[id];
       const i = agent.group.indexOf(id);
-      const j = agent.membercount.indexOf(id);
+      const j = agent.memberCount.indexOf(id);
       if (a) {
         delete a.memberOf;
         agent.group.splice(i, 1);
-        agent.membercount.splice(j, 1);
+        agent.memberCount.splice(j, 1);
         if (a.type == 'car' || a.type == 'bicycle') {
           delete a.group;
         }
@@ -245,9 +245,9 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
   const { group } = options;
   if (group) {
     const new_group = services.agents[group];
-    if (new_group.group && new_group.membercount) {
+    if (new_group.group && new_group.memberCount) {
       new_group.group.push(agent.id);
-      new_group.membercount.push(agent.id);
+      new_group.memberCount.push(agent.id);
       addGroup(agent, new_group, services);
       agent.memberOf = new_group.id;
     }

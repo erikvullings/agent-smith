@@ -173,10 +173,10 @@ export const plans = {
       const range = options.areaRange ? options.areaRange : 500;
 
       if (danger) {
-        const slope = (agent.actual.coord[1] - danger.coord[1]) / (agent.actual.coord[0] - danger.coord[0]);
+        const slope = (agent.actual.coord[1] - danger[1]) / (agent.actual.coord[0] - danger[0]);
         const distanceDegrees = 1500 / 111139;
         const dx = Math.sqrt(2 * Math.pow(distanceDegrees, 2) * Math.pow(slope, 2));
-        if (agent.actual.coord[0] > danger.coord[0]) {
+        if (agent.actual.coord[0] > danger[0]) {
           const x = agent.actual.coord[0] + dx;
           const y = agent.actual.coord[1] + dx * slope;
           const destination = randomPlaceInArea(x, y, range, 'any');
@@ -213,7 +213,7 @@ export const plans = {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
       if (options.areaCentre && options.areaRange) {
         agent.sentbox = [];
-        const centre = options.areaCentre.coord;
+        const centre = options.areaCentre;
         const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
         agent.destination = destination;
         prepareRoute(agent, _services, options);
@@ -228,7 +228,7 @@ export const plans = {
       if (options.areaCentre && options.areaRange) {
         const No_places = randomIntInRange(10, 20);
         for (let i = 0; i < No_places; i += 1) {
-          const centre = options.areaCentre.coord;
+          const centre = options.areaCentre;
           const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
@@ -248,7 +248,7 @@ export const plans = {
         const No_places = 3;
         steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
         for (let i = 0; i < No_places; i += 1) {
-          const centre = options.areaCentre.coord;
+          const centre = options.areaCentre;
           const destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any');
           agent.destination = destination;
           steps.push({ name: 'flyTo', options: { destination } });
@@ -473,21 +473,49 @@ export const plans = {
   'Drop object': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
+      const objectTypes = ['bomb', 'gas', 'object']
       const steps = [] as ActivityList;
-      let objectAgent;
+      let objects: string[];
+      let objectAgent: IAgent;
       if (agent.group) {
-        agent.group.filter((a) => objects.indexOf(services.agents[a].type) >= 0).map((a) => { objectAgent = services.agents[a]; delete services.agents[a].memberOf });
-        agent.group = agent.group.filter((a) => objects.indexOf(services.agents[a].type) < 0);
+        objects = agent.group.filter((a) => objectTypes.indexOf(services.agents[a].type) >= 0);
+        if (objects && objects.length > 0) {
+          objectAgent = services.agents[objects[0]];
+          delete objectAgent.memberOf;
+          agent.group = agent.group.filter((a) => a !== objectAgent.id);
+
+          agent.visibleForce = 'red';
+          if (objectAgent.type == 'bomb') {
+            messageServices.sendMessage(objectAgent, 'drop bomb', services);
+          } else if (objectAgent.type == 'gas') {
+            messageServices.sendMessage(objectAgent, 'drop gas', services);
+            const objectSteps = [] as ActivityList;
+            objectSteps.push({ name: 'waitFor', options: { duration: minutes(5) } });
+            objectAgent.actual = agent.actual;
+            objectAgent.steps = objectSteps;
+          } else {
+            messageServices.sendMessage(objectAgent, 'drop object', services);
+          }
+        }
       }
-      const { duration = minutes(0.5) } = options;
+      const duration = minutes(1);
+      steps.push({ name: 'waitFor', options: { duration } });
+      console.log('drop');
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Play Message': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = [];
+      const steps = [] as ActivityList;
+      const duration = minutes(1);
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       agent.visibleForce = 'red';
       // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
-
-      if (objectAgent) {
-        messageServices.sendMessage(objectAgent, 'drop object', services);
-      }
+      messageServices.sendMessage(agent, 'Play Message', services);
       return true;
     },
   },

@@ -1,7 +1,7 @@
 import { IEnvServices } from '../env-services';
 import { IAgent } from '.';
 import { ILocation } from './location';
-import { IGroup } from './group';
+import { Coord } from '@turf/helpers';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */
@@ -13,7 +13,7 @@ export interface IActivityOptions {
   /** Destination when travelling */
   destination?: ILocation;
   /** Centre of area when travelling inside specific area */
-  areaCentre?: ILocation;
+  areaCentre?: [number, number];
   /** Range of area when travelling inside specific area in meters*/
   areaRange?: number;
   /** Agents IDs you want to start controlling, e.g. vehicles or children */
@@ -30,19 +30,19 @@ export interface IActivityOptions {
   targets?: IAgent[];
 }
 
-export type IAgentActivities =  IAgentActivity[];
+export type IAgentActivities = IAgentActivity[];
 
 export interface IAgentActivity {
-  [key : string]: ActivityList[];
+  [key: string]: ActivityList[];
 };
 
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
-export type Activity = (agent: IAgent | IGroup, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
+export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
 
 export type ActivityList = IStep[];
 
-export interface IStep{
+export interface IStep {
   name: string;
   options?: IActivityOptions;
 }

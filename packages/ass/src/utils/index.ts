@@ -243,7 +243,7 @@ export const agentToFeature = (agent: IAgent) => ({
   },
   properties: {
     id: agent.id,
-    title: agent.type == 'group' && agent.membercount ? String(agent.membercount.length) : '',
+    title: agent.type == 'group' && agent.memberCount ? String(agent.memberCount.length) : '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -253,8 +253,7 @@ export const agentToFeature = (agent: IAgent) => ({
     tags: {
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
-      members: agent.group ? agent.group.join(', ') : '',
-      number_of_members: agent.membercount ? String(agent.membercount.length) : '',
+      number_of_members: agent.memberCount ? String(agent.memberCount.length) : '',
       force: agent.force ? agent.force : 'white',
       visible:
         ((agent.type == 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
@@ -267,6 +266,7 @@ export const agentToFeature = (agent: IAgent) => ({
               agent.memberOf
               ? String(0)
               : String(1),
+      members: agent.group ? agent.group.join(', ') : '',
     },
   },
 });
@@ -366,7 +366,7 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number, force?: string, group?: IAgent,) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent,) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
@@ -385,8 +385,8 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     const occupation = occupations[occupationId];
     const agent = {
       id: uuid4(),
-      type: 'man',
-      force: force || 'white',
+      type: type ? type : 'man',
+      force: force ? force : 'white',
       health: 100,
       status: 'active',
       home,
@@ -399,6 +399,8 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     redisServices.geoAdd('agents', agent);
     if (group && group.group) {
       group.group.push(agent.id);
+    } else if (group) {
+      group.group = [agent.id];
     }
     return acc;
   }, [] as IAgent[]);
@@ -409,15 +411,15 @@ export const addGroup = (agent: IAgent, transport: IAgent, services: IEnvService
   if (transport.group) {
     if (agent.group) {
       transport.group.push(...agent.group);
-      transport.membercount?.push(...agent.group);
+      transport.memberCount?.push(...agent.group);
       agent.group
         .filter((a) => services.agents[a].group)
         .map((a) => addGroup(services.agents[a], transport, services));
     }
     if (agent.type == 'group') {
-      const index = transport.membercount?.indexOf(agent.id);
+      const index = transport.memberCount?.indexOf(agent.id);
       if (index) {
-        transport.membercount?.splice(index, 1);
+        transport.memberCount?.splice(index, 1);
       }
     }
   }

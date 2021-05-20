@@ -1,8 +1,8 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas, reaction } from './services';
-import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent, CustomAgenda, CustomTypeAgenda } from './models';
 import { simplifiedDistanceFactory } from './utils';
-import { customAgendas } from './sim-controller';
+import { customAgendas, customTypeAgendas } from './sim-controller';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -75,9 +75,12 @@ export const envServices = ({
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
   const customAgIndex = customAgendas.findIndex((agenda) => agenda.agentId === agent.id);
-
-  return customAgIndex > -1
-    ? agendas.customAgenda(agent, services, customAgIndex)
+  if (customAgIndex > -1) {
+    return agendas.customAgenda(agent, services, customAgIndex)
+  }
+  const customTypeAgIndex = customTypeAgendas.findIndex((agenda) => (agenda.agentType === agent.type && agenda.agentForce === agent.force));
+  return customTypeAgIndex > -1
+    ? agendas.customTypeAgenda(agent, services, customTypeAgIndex)
     : agendas.getAgenda(agent, services);
 };
 
@@ -123,7 +126,8 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
       await plan.prepare(agent, services, options);
     }
   } else {
-    agent.agenda = await createAgenda(agent, services);
+    agent.agenda = [...await createAgenda(agent, services)];
     updateAgent(agent, services);
+
   }
 };

@@ -5,14 +5,18 @@ import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, a
 import { redisServices, messageServices, reaction, chatServices } from './services';
 import { IReactions, ISimConfig } from './models';
 import { IDefenseAgent } from './models/defense-agent';
-import jsonSimConfig from './sim_config.json';
+//import jsonSimConfig2 from './sim_config.json';
+import jsonSimConfig from './verstoring_openbare_orde.json';
 import reactionConfig from './plan_reactions.json';
+import { IThreatAgent } from './models/threat-agent';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
+//export const simConfig2 = (jsonSimConfig2 as unknown) as ISimConfig;
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customAgendas } = simConfig;
+export const { customTypeAgendas } = simConfig;
 
 /** Connect to Kafka and create a connector */
 const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
@@ -45,12 +49,12 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    const agentstoshow = [] as IAgent[];
-  
-    const reactionImport : IReactions = reactionConfig;
+    //const agentstoshow = [] as IAgent[];
 
-    if(reactionImport){
-      for(const key in reactionImport){
+    const reactionImport: IReactions = reactionConfig;
+
+    if (reactionImport) {
+      for (const key in reactionImport) {
         reaction[key] = reactionImport[key];
       }
     }
@@ -61,8 +65,9 @@ export const simController = async (
     const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
+    const whiteGroups: IAgent[] = simConfig.customAgents.whiteGroups;
 
-    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent)[];
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents, ...whiteGroups] as (IAgent | IDefenseAgent | IThreatAgent)[];
 
     const currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -160,11 +165,48 @@ export const simController = async (
       simConfig.settings.centerCoord[0],
       simConfig.settings.centerCoord[1],
       agentCount,
-      simConfig.settings.radius
+      simConfig.settings.radius,
+      simConfig.settings.type,
+      simConfig.settings.force,
     );
-    // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
 
     agents.push(...generatedAgents);
+
+    if (simConfig.settings.object) {
+      for (const a of generatedAgents) {
+        const { agents: generatedObject } = generateAgents(
+          simConfig.settings.centerCoord[0],
+          simConfig.settings.centerCoord[1],
+          1,
+          simConfig.settings.radius,
+          simConfig.settings.object,
+          simConfig.settings.force,
+          a
+        );
+        agents.push(...generatedObject);
+      }
+    }
+
+
+
+    //const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
+    const membersConfig = simConfig.settings.groupMembers;
+
+    if (whiteGroups && membersConfig) {
+      for (const g of whiteGroups) {
+        const { agents: generatedAgentsGroup } = generateAgents(
+          simConfig.settings.centerCoord[0],
+          simConfig.settings.centerCoord[1],
+          membersConfig,
+          simConfig.settings.radius,
+          "man",
+          "white",
+          g
+        );
+        agents.push(...generatedAgentsGroup);
+      }
+    }
+
 
     agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
     agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
@@ -213,10 +255,11 @@ export const simController = async (
       return acc;
     }, {} as { [id: string]: IAgent | IDefenseAgent });
 
+
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
-    groups.map((g) => (g.group ? (g.membercount = [...g.group]) : ''));
-    groups.map((g) => g.group?.map((a) => addGroup(services.agents[a], g, services)));
+    groups.map((g) => (g.group ? (g.memberCount = [...g.group]) : ''));
+    groups.map((g) => g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : '');
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle', 'object'];
@@ -229,6 +272,7 @@ export const simController = async (
           .filter(
             (a) =>
               a.agenda &&
+              a.agenda[0] &&
               a.agenda[0].name &&
               reaction[a.agenda[0].name] &&
               a.agenda[0].name !== 'Call the police'
@@ -237,12 +281,12 @@ export const simController = async (
       );
     }, 10000);
 
-    const chatInterval = setInterval(async () => {
-      const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
+    // const chatInterval = setInterval(async () => {
+    //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
 
-      if (chattingAgents.length <= agents.length * 0.01)
-        chatServices.agentChat(agents, services);
-    }, 60000);
+    //   if (chattingAgents.length <= agents.length * 0.01)
+    //     chatServices.agentChat(agents, services);
+    // }, 60000);
 
     let i = 0;
     while (i < 10000000) {
