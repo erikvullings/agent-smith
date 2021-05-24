@@ -272,6 +272,7 @@ export const agentToFeature = (agent: IAgent) => ({
             agent.steps[0] &&
             controlling.indexOf(agent.steps[0].name) >= 0
             ? String(0)
+            // eslint-disable-next-line no-nested-ternary
             : transport.indexOf(agent.type) < 0 &&
               agent.memberOf
               ? String(0)

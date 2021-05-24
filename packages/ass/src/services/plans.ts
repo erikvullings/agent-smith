@@ -44,11 +44,11 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
     } else {
       steps.push({ name: 'walkTo', options: { destination: agent.destination } });
     }
+  } else {
+    steps.push({ name: 'walkTo', options: { destination: agent.destination } });
   }
   if (agent.running) {
     steps.push({ name: 'stopRunning' });
-  } else {
-    steps.push({ name: 'walkTo', options: { destination: agent.destination } });
   }
   agent.steps = steps;
 };
@@ -446,16 +446,15 @@ export const plans = {
           objectAgent = services.agents[objects[0]];
           delete objectAgent.memberOf;
           agent.group = agent.group.filter((a) => a !== objectAgent.id);
-
           agent.visibleForce = 'red';
           if (objectAgent.type === 'bomb') {
             messageServices.sendMessage(objectAgent, 'drop bomb', services);
+            objectAgent.actual = agent.actual;
+            objectAgent.agenda = [{ name: 'Bomb', options: { priority: 1 } }];
           } else if (objectAgent.type === 'gas') {
             messageServices.sendMessage(objectAgent, 'drop gas', services);
-            const objectSteps = [] as ActivityList;
-            objectSteps.push({ name: 'waitFor', options: { duration: minutes(5) } });
             objectAgent.actual = agent.actual;
-            objectAgent.steps = objectSteps;
+            objectAgent.agenda = [{ name: 'Gas', options: { priority: 1 } }];
           } else {
             messageServices.sendMessage(objectAgent, 'drop object', services);
           }
@@ -530,6 +529,26 @@ export const plans = {
         steps.push({ name: 'waitFor', options: { duration } });
       }
       steps.push({ name: 'walkTo', options: { destination: actual } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Gas': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(5, 10) } });
+      steps.push({ name: 'disappear', options: {} });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Bomb': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(10, 15) } });
+      steps.push({ name: 'disappear', options: {} });
       agent.steps = steps;
       return true;
     },

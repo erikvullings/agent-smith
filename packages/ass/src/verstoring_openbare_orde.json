@@ -1,7 +1,7 @@
 {
     "settings": [
         {
-            "agentCount": 10,
+            "agentCount": 3,
             "centerCoord": [
                 4.892401,
                 52.373104
@@ -35,7 +35,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 500,
+                "memberCount": 5000,
                 "mailbox": []
             },
             {
@@ -58,7 +58,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 500,
+                "memberCount": 5000,
                 "mailbox": []
             },
             {
@@ -81,7 +81,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 500,
+                "memberCount": 5000,
                 "mailbox": []
             },
             {
@@ -104,7 +104,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 500,
+                "memberCount": 5000,
                 "mailbox": []
             }
         ],
@@ -141,37 +141,6 @@
                 "mailbox": []
             },
             {
-                "id": "drone2",
-                "type": "drone",
-                "force": "blue",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.901674,
-                        52.388101
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.901674,
-                        52.388101
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "park2"
-                    }
-                ],
-                "group": [
-                    "object2"
-                ],
-                "mailbox": []
-            },
-            {
                 "id": "object2",
                 "type": "gas",
                 "health": 100,
@@ -203,27 +172,7 @@
             }
         ]
     },
-    "customAgendas": [
-        {
-            "agentId": "drone2",
-            "agendaItems": [
-                {
-                    "name": "Go to specific area",
-                    "options": {
-                        "areaCentre": [
-                            4.892401,
-                            52.373104
-                        ],
-                        "areaRange": 5
-                    }
-                },
-                {
-                    "name": "Drop object",
-                    "options": {}
-                }
-            ]
-        }
-    ],
+    "customAgendas": [],
     "customTypeAgendas": [
         {
             "agentType": "group",
@@ -232,7 +181,7 @@
                 {
                     "name": "Wait",
                     "options": {
-                        "duration": 1800
+                        "duration": 7200000
                     }
                 },
                 {

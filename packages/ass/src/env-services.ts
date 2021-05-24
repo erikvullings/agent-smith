@@ -14,7 +14,6 @@ export interface IEnvServices {
   drive: IOsrm;
   cycle: IOsrm;
   walk: IOsrm;
-  fly: IOsrm;
   /** Agent lookup */
   agents: { [id: string]: IAgent | IDefenseAgent };
   /** Available plans */
@@ -98,22 +97,24 @@ const createAgenda = async (agent: IAgent, services: IEnvServices) => {
 
 export const executeSteps = async (
   agent: (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
-  services: IEnvServices
+  services: IEnvServices,
+  agents: IAgent[]
 ) => {
   const { name, options } = agent.steps[0];
   const step = services.steps[name];
-  if (step && (await step(agent, services, options))) {
+  if (step && (await step(agent, services, options, agents))) {
     // Task completed: remove
     agent.steps.shift();
   }
   return agent.steps.length === 0;
 };
 
-export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
+export const updateAgent = async (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
       agent as (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
-      services
+      services,
+      agents
     );
     if (result) {
       const curPlan = agent.agenda?.shift();
@@ -139,7 +140,7 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
     }
   } else {
     agent.agenda = [...await createAgenda(agent, services)];
-    updateAgent(agent, services);
+    updateAgent(agent, services, agents);
 
   }
 };

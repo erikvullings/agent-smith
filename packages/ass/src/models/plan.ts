@@ -38,7 +38,7 @@ export interface IAgentActivity {
 
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
-export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
+export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions, agents?: IAgent[]) => Promise<boolean>;
 
 export type ActivityList = IStep[];
 

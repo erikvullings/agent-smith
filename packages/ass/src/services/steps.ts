@@ -58,7 +58,6 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
       speed *= 2;
     }
   }
-
   if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
     const numberofmembers = agent.memberCount
     speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic : undefined);
@@ -72,8 +71,9 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
  * @param services
  * @param deltaTime
  * Move agent along a route.
+ * @param agents
  */
-const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
+const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
     return true; // Done
@@ -82,7 +82,6 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
   agent.speed = determineSpeed(agent, services, totDistance, totDuration);
-
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
@@ -120,11 +119,13 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
 /**
  * @param profile
  * Move the agent along its trajectory
+ * @param agents
  */
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
   services: IEnvServices,
-  options: IActivityOptions = {}
+  options: IActivityOptions = {},
+  agents: IAgent[]
 ) => {
   const { route = [], memberOf } = agent;
   if (memberOf) return false; // TODO Or can we return true?
@@ -148,10 +149,10 @@ const moveAgent = (profile: Profile) => async (
       console.error(e);
     }
   }
-  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
+  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
 };
 
-const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { route = [], memberOf } = agent;
   const { distance } = services;
   if (memberOf) return false;
@@ -167,7 +168,7 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
       console.error(e);
     }
   }
-  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
+  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
 };
 
 /**
@@ -258,6 +259,14 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
   return true;
 };
 
+const disappear = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  agent.memberOf = 'invisible';
+  agent.status = 'inactive';
+  console.log('foetsie');
+  return true;
+};
+
+
 export const steps = {
   walkTo: moveAgent('foot'),
   cycleTo: moveAgent('bike'),
@@ -269,4 +278,5 @@ export const steps = {
   releaseAgents,
   stopRunning,
   joinGroup,
+  disappear,
 };

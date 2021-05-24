@@ -78,7 +78,6 @@ export const simController = async (
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
       services.setTime(currentTime);
     };
-
     const notifyOthers = () => {
       const payload = {
         topic: SimEntityFeatureCollectionTopic,
@@ -254,7 +253,6 @@ export const simController = async (
       }
       if (g.group && g.memberCount) {
         const extraMembers = g.memberCount - g.group.length;
-        console.log(extraMembers)
         for (let i = 0; i < extraMembers; i++) {
           const id = String(i) + g.id;
           g.group.push(id);
@@ -314,7 +312,7 @@ export const simController = async (
               a.health > 0 &&
               a.status !== 'inactive'
           )
-          .map((a) => updateAgent(a, services))
+          .map((a) => updateAgent(a, services, agents))
       );
       updateTime();
       await sleep(100);
