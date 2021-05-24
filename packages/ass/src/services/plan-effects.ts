@@ -6,7 +6,7 @@ import { IPlanEffects } from '../models';
  * Damage count: the percentage of agents -in the damage radius- that will get damaged
  */
 export const planEffects = {
-    'Drop object': {
+    'dropObject': {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
@@ -15,7 +15,7 @@ export const planEffects = {
         severity: 3,
         messageRadius: 1000,
     },
-    'Drop bomb': {
+    'dropBomb': {
         damageRadius: 100,
         damageLevel: 100,
         damageCount: 0.7,
@@ -24,7 +24,7 @@ export const planEffects = {
         severity: 5,
         messageRadius: 10000,
     },
-    'Drop gas': {
+    'dropGas': {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
@@ -33,7 +33,7 @@ export const planEffects = {
         severity: 4,
         messageRadius: 10000,
     },
-    'Play Message': {
+    'playMessage': {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
@@ -42,7 +42,7 @@ export const planEffects = {
         severity: 3,
         messageRadius: 1000,
     },
-    'Flee the scene': {
+    'fleeTheScene': {
         damageRadius: 0,
         damageLevel: 0,
         panicLevel: 30,
@@ -50,7 +50,7 @@ export const planEffects = {
         severity: 3,
         messageRadius: 20,
     },
-    'Call the police': {
+    'callThePolice': {
         damageRadius: 0,
         damageLevel: 0,
         panicLevel: 0,

@@ -49,20 +49,22 @@ export const randomItem = <T>(arr: T | T[]): T =>
 
 /**
  * calculates the speed of a group based on the distance between members
- * @param Nomembers
+ *
+ * @param nOMembers
  * @param desiredspeed
+ * @param panic
  */
-export const groupSpeed = (Nomembers: number, desiredspeed: number, panic?: number): number => {
+export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: number): number => {
   let speed = 1;
-  if (Nomembers < 500) {
+  if (nOMembers < 500) {
     let distance = 0.65;
-    if (Nomembers < 50) {
+    if (nOMembers < 50) {
       distance = 1.35;
-    } else if (Nomembers < 100) {
+    } else if (nOMembers < 100) {
       distance = 1;
-    } else if (Nomembers < 250) {
+    } else if (nOMembers < 250) {
       distance = 0.85;
-    } else if (Nomembers < 500) {
+    } else if (nOMembers < 500) {
       distance = 0.65;
     } else {
       distance = 0.5;
@@ -79,8 +81,8 @@ export const groupSpeed = (Nomembers: number, desiredspeed: number, panic?: numb
     }
 
     const exp1 = (0.35 - distance) / 0.08;
-    const exp2 = (0.35 - Math.sqrt(2 * Math.pow(distance, 2))) / 0.08;
-    const acc = 2 * Math.pow(10, 3) * Math.exp(exp1) + Math.sqrt(2) * 2 * Math.pow(10, 3) * Math.exp(exp2)
+    const exp2 = (0.35 - Math.sqrt(2 * (distance ** 2))) / 0.08;
+    const acc = 2 * (10 ** 3) * Math.exp(exp1) + Math.sqrt(2) * 2 * (10 ** 3) * Math.exp(exp2)
     speed = desiredspeed - (1 / 80) * acc;
   }
   if (speed < 0) {
@@ -164,31 +166,40 @@ export const randomIntInRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-/** Calculate duration of drone over certain distance */
+/**
+ * @param lat1
+ * @param lon1
+ * @param lat2
+ * @param lon2
+ * Calculate duration of drone over certain distance
+ */
 export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const dist = distanceInMeters(lat1, lon1, lat2, lon2);
-  const sec_per_meter = 3600 / 70000;
-  const dur = sec_per_meter * dist;
+  const secPerMeter = 3600 / 70000;
+  const dur = secPerMeter * dist;
   return dur;
 };
 
 export const inRangeCheck = (min: number, max: number, value: number) => (value - min) * (value - max) <= 0;
 
-/** 
+/**
  * @param min
  * @param max
+ * Convert a number of minutes to the number of msec
  */
-/** Convert a number of minutes to the number of msec */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
-
-/** Convert a number of seconds to the number of msec */
+/**
+ * @param min
+ * @param max
+ * Convert a number of seconds to the number of msec
+ */
 export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
 
-/** 
+/**
  * @param min
  * @param max
+ * Convert a number of hours to the number of msec
  */
-/** Convert a number of hours to the number of msec */
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
 
 const now = new Date();
@@ -196,20 +207,20 @@ const year = now.getFullYear();
 const month = now.getMonth();
 const day = now.getDate();
 
-/** 
+/**
  * @param days
  * @param hours
  * @param minutes
  * @param seconds
+ * Create a date relative to today
  */
-/** Create a date relative to today */
 export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
   new Date(year, month, day + days, hours, minutes, seconds);
 
-/** 
+/**
  * @param agent
+ * Convert agent to entity item
  */
-/** Convert agent to entity item */
 export const agentToEntityItem = (agent: IAgent): IItem => ({
   id: agent.id,
   type: agent.type,
@@ -220,14 +231,11 @@ export const agentToEntityItem = (agent: IAgent): IItem => ({
   children: agent.group,
   tags: {
     agenda: agent.agenda ? agent.agenda.map((i) => i.name).join(', ') : '',
-    number_of_members: agent.group ? String(agent.group.length) : '',
     members: agent.group ? agent.group.join(', ') : '',
     force: agent.force ? agent.force : 'white',
   },
 });
 
-const bomb = '//img.icons8.com/ios-filled/50/000000/bomb-with-timer.png';
-const gas = "https://img.icons8.com/metro/26/000000/cloud.png";
 
 const transport = ['car', 'bicycle', 'bus', 'train'];
 const controlling = ['driveTo', 'cycleTo'];
@@ -243,7 +251,7 @@ export const agentToFeature = (agent: IAgent) => ({
   },
   properties: {
     id: agent.id,
-    title: agent.type == 'group' && agent.memberCount ? String(agent.memberCount.length) : '',
+    title: agent.type === 'group' && agent.memberCount ? String(agent.memberCount) : '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -253,11 +261,13 @@ export const agentToFeature = (agent: IAgent) => ({
     tags: {
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
-      number_of_members: agent.memberCount ? String(agent.memberCount.length) : '',
+      numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
       force: agent.force ? agent.force : 'white',
       visible:
-        ((agent.type == 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
+        // eslint-disable-next-line no-nested-ternary
+        ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
           ? String(0)
+          // eslint-disable-next-line no-nested-ternary
           : agent.steps &&
             agent.steps[0] &&
             controlling.indexOf(agent.steps[0].name) >= 0
@@ -271,12 +281,12 @@ export const agentToFeature = (agent: IAgent) => ({
   },
 });
 
-/** 
+/**
  * @param a
  * @param rangeInMeter
  * @param type
+ * Based on the actual lat/lon, create a place nearby
  */
-/** Based on the actual lat/lon, create a place nearby */
 export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string): ILocation => {
   const {
     actual: {
@@ -291,7 +301,13 @@ export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string)
   };
 };
 
-/** Based on the coordinates of centre of area, create a place nearby */
+/**
+ * @param lon
+ * @param lat
+ * @param rangeInMeter
+ * @param type
+ * Based on the coordinates of centre of area, create a place nearby
+ */
 export const randomPlaceInArea = (lon: number, lat: number, rangeInMeter: number, type: string): ILocation => {
   const r = rangeInMeter / 111139;
   return {
@@ -335,8 +351,13 @@ export const distanceInMeters = (lat1: number, lon1: number, lat2: number, lon2:
 export const simplifiedDistanceFactory = () => {
   // const coslat = Math.cos((latitudeAvg * Math.PI) / 180);
   const f = Math.PI / 360;
-
-  /** Distance between WGS84 coordinates in meters */
+  /**
+   * @param lat0
+   * @param lng0
+   * @param lat1
+   * @param lng1
+   * Distance between WGS84 coordinates in meters
+   */
   return (lat0: number, lng0: number, lat1: number, lng1: number) => {
     const x = lat0 - lat1;
     // const y = (lng0 - lng1) * coslat;
@@ -346,27 +367,27 @@ export const simplifiedDistanceFactory = () => {
   };
 };
 
-/** 
+/**
  * @param ms
+ * Delay function
  */
-/** Delay function */
 export const sleep = (ms: number) =>
   new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 
-/** 
+/**
  * @param n
  * @param decimals
+ * Round a number or array of numbers to a fixed number of decimals
  */
-/** Round a number or array of numbers to a fixed number of decimals */
 export const round = (n: number | number[], decimals = 6) => {
-  const factor = Math.pow(10, decimals);
+  const factor = 10 ** decimals;
   const r = (x: number) => Math.round(x * factor) / factor;
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent,) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
@@ -385,8 +406,8 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     const occupation = occupations[occupationId];
     const agent = {
       id: uuid4(),
-      type: type ? type : 'man',
-      force: force ? force : 'white',
+      type: type || 'man',
+      force: force || 'white',
       health: 100,
       status: 'active',
       home,
@@ -409,18 +430,16 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
 
 export const addGroup = (agent: IAgent, transport: IAgent, services: IEnvServices) => {
   if (transport.group) {
+    transport.memberCount = transport.memberCount ? transport.memberCount : 0;
     if (agent.group) {
       transport.group.push(...agent.group);
-      transport.memberCount?.push(...agent.group);
+      transport.memberCount += agent.group.length;
       agent.group
         .filter((a) => services.agents[a].group)
         .map((a) => addGroup(services.agents[a], transport, services));
     }
-    if (agent.type == 'group') {
-      const index = transport.memberCount?.indexOf(agent.id);
-      if (index) {
-        transport.memberCount?.splice(index, 1);
-      }
+    if (agent.type === 'group') {
+      transport.memberCount -= 1;
     }
   }
 };

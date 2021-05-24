@@ -1,6 +1,6 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas, reaction } from './services';
-import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent, CustomAgenda, CustomTypeAgenda } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas, customTypeAgendas } from './sim-controller';
 
@@ -27,7 +27,19 @@ export interface IEnvServices {
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
 };
 
-/** Create services so an agent can deal with the environment, e.g. for navigation. */
+
+/**
+ * @param param0
+ * @param root0
+ * @param root0.time
+ * @param root0.latitudeAvg
+ * @param param0.time
+ * @param param0.latitudeAvg
+ * @param param0.time
+ * @param param0.latitudeAvg
+ * @returns
+ * Create services so an agent can deal with the environment, e.g. for navigation.
+ */
 export const envServices = ({
   time = new Date(),
 }: {

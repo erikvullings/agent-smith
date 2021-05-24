@@ -1,121 +1,20 @@
 {
-    "settings": {
-        "agentCount": 10,
-        "centerCoord": [
-            4.892401,
-            52.373104
-        ],
-        "radius": 10000,
-        "type": "drone",
-        "object": "gas",
-        "force": "red",
-        "groupMembers": 499
-    },
+    "settings": [
+        {
+            "agentCount": 10,
+            "centerCoord": [
+                4.892401,
+                52.373104
+            ],
+            "radius": 10000,
+            "type": "drone",
+            "object": "gas",
+            "force": "red"
+        }
+    ],
     "customAgents": {
         "blue": [],
         "white": [
-            {
-                "id": "agent1",
-                "type": "man",
-                "force": "white",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.891674,
-                        52.378101
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892419,
-                        52.373312
-                    ]
-                },
-                "memberOf": [
-                    "group1"
-                ],
-                "mailbox": []
-            },
-            {
-                "id": "agent2",
-                "type": "man",
-                "force": "white",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.891674,
-                        52.378101
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.893023,
-                        52.373177
-                    ]
-                },
-                "memberOf": [
-                    "group2"
-                ],
-                "mailbox": []
-            },
-            {
-                "id": "agent3",
-                "type": "man",
-                "force": "white",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.891674,
-                        52.378101
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892788,
-                        52.372828
-                    ]
-                },
-                "memberOf": [
-                    "group3"
-                ],
-                "mailbox": []
-            },
-            {
-                "id": "agent4",
-                "type": "man",
-                "force": "white",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.891674,
-                        52.378101
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892067,
-                        52.372871
-                    ]
-                },
-                "memberOf": [
-                    "group4"
-                ],
-                "mailbox": []
-            }
-        ],
-        "whiteGroups": [
             {
                 "id": "group1",
                 "type": "group",
@@ -136,9 +35,7 @@
                     ]
                 },
                 "force": "white",
-                "group": [
-                    "agent1"
-                ],
+                "memberCount": 500,
                 "mailbox": []
             },
             {
@@ -161,9 +58,7 @@
                     ]
                 },
                 "force": "white",
-                "group": [
-                    "agent2"
-                ],
+                "memberCount": 500,
                 "mailbox": []
             },
             {
@@ -186,9 +81,7 @@
                     ]
                 },
                 "force": "white",
-                "group": [
-                    "agent3"
-                ],
+                "memberCount": 500,
                 "mailbox": []
             },
             {
@@ -211,9 +104,7 @@
                     ]
                 },
                 "force": "white",
-                "group": [
-                    "agent4"
-                ],
+                "memberCount": 500,
                 "mailbox": []
             }
         ],
@@ -341,11 +232,15 @@
                 {
                     "name": "Wait",
                     "options": {
-                        "duration": 1800000
+                        "duration": 1800
                     }
                 },
                 {
-                    "name": "Go home",
+                    "name": "Go to random location",
+                    "options": {}
+                },
+                {
+                    "name": "Release",
                     "options": {}
                 }
             ]

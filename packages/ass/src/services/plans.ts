@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-param-reassign */
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
 import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
 import { messageServices, redisServices } from '.';
-
-const objects = ['object', 'bomb', 'gas'];
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -37,23 +37,8 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
           steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
           steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
           steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
-
         } else {
-          // const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
-          // const bike = ownedBike && services.agents[ownedBike.id];
-          // remove if it still works
-          if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
-            bike.force = agent.force;
-            bike.group = [agent.id];
-            addGroup(agent, bike, services);
-            steps.push({ name: 'walkTo', options: { destination: bike.actual } });
-            steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
-            steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
-            steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
-
-          } else {
-            steps.push({ name: 'walkTo', options: { destination: agent.destination } });
-          }
+          steps.push({ name: 'walkTo', options: { destination: agent.destination } });
         }
       }
     } else {
@@ -102,24 +87,7 @@ export const plans = {
       return true;
     },
   },
-  /** In the options, you can set the school location to go to */
-  'Go to school': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
-      if (!agent.occupations) {
-        return true;
-      }
-      const occupations = agent.occupations.filter((o) => o.type === 'school');
-      if (occupations.length > 0) {
-        const { destination } = options;
-        const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-        agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services, options);
-      }
-      return true;
-    },
-  },
+
   /** In the options, you can set the shop location to go to */
   'Go shopping': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -132,7 +100,7 @@ export const plans = {
     },
   },
 
-  'Go to the park': {
+  'Go to park': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
@@ -175,7 +143,7 @@ export const plans = {
       if (danger) {
         const slope = (agent.actual.coord[1] - danger[1]) / (agent.actual.coord[0] - danger[0]);
         const distanceDegrees = 1500 / 111139;
-        const dx = Math.sqrt(2 * Math.pow(distanceDegrees, 2) * Math.pow(slope, 2));
+        const dx = Math.sqrt(2 * (distanceDegrees ** 2) * (slope ** 2));
         if (agent.actual.coord[0] > danger[0]) {
           const x = agent.actual.coord[0] + dx;
           const y = agent.actual.coord[1] + dx * slope;
@@ -203,7 +171,7 @@ export const plans = {
         agent.sentbox = [];
         agent.destination = options.destination;
         prepareRoute(agent, services, options);
-        //agent.speed = 2;
+        // agent.speed = 2;
       }
       return true;
     },
@@ -226,13 +194,18 @@ export const plans = {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
       const steps = [] as ActivityList;
       if (options.areaCentre && options.areaRange) {
-        const No_places = randomIntInRange(10, 20);
-        for (let i = 0; i < No_places; i += 1) {
+        const nOPlaces = randomIntInRange(10, 20);
+        for (let i = 0; i < nOPlaces; i += 1) {
           const centre = options.areaCentre;
           const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
           agent.destination = destination;
-          steps.push({ name: 'walkTo', options: { destination } });
-          steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+          if (agent.type === 'drone') {
+            steps.push({ name: 'flyTo', options: { destination } });
+            steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
+          } else {
+            steps.push({ name: 'walkTo', options: { destination } });
+            steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+          }
         }
       }
       agent.steps = steps;
@@ -240,25 +213,6 @@ export const plans = {
     },
   },
 
-  'Hang around specific area drone': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
-      const steps = [] as ActivityList;
-      if (options.areaCentre && options.areaRange) {
-        //const No_places = randomIntInRange(5, 15) ;
-        const No_places = 3;
-        steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
-        for (let i = 0; i < No_places; i += 1) {
-          const centre = options.areaCentre;
-          const destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any');
-          agent.destination = destination;
-          steps.push({ name: 'flyTo', options: { destination } });
-          steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
-        }
-      }
-      agent.steps = steps;
-      return true;
-    },
-  },
 
 
   'Follow person': {
@@ -365,7 +319,7 @@ export const plans = {
     },
   },
 
-  //Maybe also add "spot targets" to pick targets
+  // Maybe also add "spot targets" to pick targets
   'Attack targets': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
@@ -385,12 +339,21 @@ export const plans = {
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
-      const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
       const steps = [] as ActivityList;
-      agent.destination = destination;
-      steps.push({ name: 'walkTo', options: { destination } });
-      if (inRangeCheck(0, 10, randomIntInRange(0, 100))) {
-        steps.push({ name: 'waitFor', options: { duration } });
+      if (agent.type === 'drone') {
+        const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
+        agent.destination = destination;
+        steps.push({ name: 'flyTo', options: { destination } });
+        if (inRangeCheck(0, 10, randomIntInRange(0, 100))) {
+          steps.push({ name: 'flyTo', options: { duration } });
+        }
+      } else {
+        const { destination = randomPlaceNearby(agent, 1000, 'any'), duration = minutes(0, 10) } = options;
+        agent.destination = destination;
+        steps.push({ name: 'walkTo', options: { destination } });
+        if (inRangeCheck(0, 10, randomIntInRange(0, 100))) {
+          steps.push({ name: 'waitFor', options: { duration } });
+        }
       }
       agent.steps = steps;
       return true;
@@ -412,12 +375,12 @@ export const plans = {
   },
 
   'Release': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
       if (agent.group) {
-        const { release = agent.group, duration = minutes(1) } = options;
-        steps.push({ name: 'releaseAgents', options: { duration, release } });
+        const release = agent.group.filter((a) => a in services.agents)
+        steps.push({ name: 'releaseAgents', options: { duration: minutes(1), release } });
       }
       else {
         const { duration = minutes(1) } = options;
@@ -429,15 +392,15 @@ export const plans = {
   },
 
   'Release_red': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       if (agent.group && agent.force === 'white') {
-        const { release = agent.group, duration = minutes(2) } = options;
-        const red = release.filter((a) => _services.agents[a].force === 'red');
+        const existing = agent.group.filter((a) => a in services.agents)
+        const red = existing.filter((a) => services.agents[a].force === 'red');
         for (const i of red) {
           steps.push({ name: 'releaseAgents', options: { release: [i] } });
-          steps.push({ name: 'waitFor', options: { duration } });
-          const member = _services.agents[i];
+          steps.push({ name: 'waitFor', options: { duration: minutes(2) } });
+          const member = services.agents[i];
           if (member.agenda && member.agenda.length > 0) {
             member.agenda.splice(0, 0, { name: 'Join red group' });
           } else {
@@ -485,9 +448,9 @@ export const plans = {
           agent.group = agent.group.filter((a) => a !== objectAgent.id);
 
           agent.visibleForce = 'red';
-          if (objectAgent.type == 'bomb') {
+          if (objectAgent.type === 'bomb') {
             messageServices.sendMessage(objectAgent, 'drop bomb', services);
-          } else if (objectAgent.type == 'gas') {
+          } else if (objectAgent.type === 'gas') {
             messageServices.sendMessage(objectAgent, 'drop gas', services);
             const objectSteps = [] as ActivityList;
             objectSteps.push({ name: 'waitFor', options: { duration: minutes(5) } });

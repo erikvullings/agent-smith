@@ -54,9 +54,9 @@ const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, r
 
 const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string) => {
     if (agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment) {
-        const severity = planEffects[agent.reactedTo].severity;
+        const {severity} = planEffects[agent.reactedTo];
         // switch(severity){
-        //     case 1: 
+        //     case 1:
         // }
     }
     else if (agent.force === 'red') {

@@ -4,7 +4,7 @@ import { IDefenseAgent } from './defense-agent';
 import { IThreatAgent } from './threat-agent';
 
 export interface ISimConfig {
-  settings: Settings;
+  settings: Settings[];
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
@@ -13,7 +13,6 @@ export interface ISimConfig {
 interface CustomAgents {
   blue: (IAgent & IDefenseAgent)[];
   white: IAgent[];
-  whiteGroups: IAgent[];
   red: (IAgent & IThreatAgent)[];
 }
 
@@ -40,5 +39,4 @@ export interface Settings {
   type?: string;
   object?: string;
   force?: string;
-  groupMembers?: number;
 }

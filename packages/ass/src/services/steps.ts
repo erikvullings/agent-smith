@@ -6,10 +6,10 @@ import { addGroup, groupSpeed, durationDroneStep, inRangeCheck } from '../utils'
 
 
 /**
- *  @param agent
+ * @param agent
  * @param services
+ * Move a group of agents, so compute the new position of one agent, and set the others based on that.
  */
-/** Move a group of agents, so compute the new position of one agent, and set the others based on that. */
 const moveGroup = (agent: IAgent, services: IEnvServices) => {
   if (!agent.group || agent.group.length === 0) return;
   for (const id of agent.group) {
@@ -20,57 +20,59 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 
 const defaultWalkingSpeed = 5000 / 3600;
 const defaultFlyingSpeed = 70000 / 3600;
-/** 
-* @param agent
-* @param services
-* @param totDistance
-* @param totDuration
-*/
-/** Determine speed of agent */
+/**
+ * @param agent
+ * @param services
+ * @param totDistance
+ * @param totDuration
+ * Determine speed of agent
+ */
 const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number => {
-  if (agent.steps && agent.steps[0] && agent.steps[0].name == 'flyTo') {
+  if (agent.steps && agent.steps[0] && agent.steps[0].name === 'flyTo') {
     return defaultFlyingSpeed
   }
 
   let { speed } = agent;
   let child = 'no';
-  if (agent.type == 'boy' || agent.type == 'girl') {
+  if (agent.type === 'boy' || agent.type === 'girl') {
     child = 'yes';
   } else if (agent.group) {
     for (const i of agent.group) {
-      const member = services.agents[i];
-      if (member.type == 'boy' || member.type == 'girl') {
-        child = 'yes';
+      if (i in services.agents) {
+        const member = services.agents[i];
+        if (member.type === 'boy' || member.type === 'girl') {
+          child = 'yes';
+        }
       }
     }
   }
 
   speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
-  if (child == 'yes') {
+  if (child === 'yes') {
     speed *= (3 / 5);
   }
   if (agent.running) {
-    if (agent.steps && agent.steps[0] && (agent.steps[0].name == 'driveTo')) {
-      speed = 1.5 * speed;
+    if (agent.steps && agent.steps[0] && (agent.steps[0].name === 'driveTo')) {
+      speed *= 1.5;
     } else {
-      speed = 2 * speed;
+      speed *= 2;
     }
   }
 
-  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name == 'walkTo')) {
-    const numberofmembers = agent.memberCount.length
+  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
+    const numberofmembers = agent.memberCount
     speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic : undefined);
   }
 
   return speed;
 };
 
-/** 
+/**
  * @param agent
  * @param services
  * @param deltaTime
+ * Move agent along a route.
  */
-/** Move agent along a route. */
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
@@ -94,7 +96,9 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       // redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
     } else {
-      i > 0 && (step.geometry as ILineString).coordinates.splice(0, i);
+      if (i > 0) {
+        (step.geometry as ILineString).coordinates.splice(0, i);
+      }
       const ratio = distance2go / segmentLength;
       const coord = [x0 + (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
       agent.actual = { type: step.name || 'unnamed', coord };
@@ -114,9 +118,9 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
 };
 
 /**
- *  @param profile
+ * @param profile
+ * Move the agent along its trajectory
  */
-/** Move the agent along its trajectory */
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
   services: IEnvServices,
@@ -166,23 +170,23 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
-/** 
+/**
  * @param _agent
  * @param services
- * @param options 
+ * @param options
+ * Wait until a start time before continuing
  */
-/** Wait until a start time before continuing */
 const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { startTime } = options;
   return startTime ? startTime < services.getTime() : true;
 };
 
-/** 
+/**
  * @param agent
  * @param services
- * @param options 
+ * @param options
+ * Wait for a certain duration before continuing
  */
-/** Wait for a certain duration before continuing */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration = 0 } = options;
   if (duration === 0) {
@@ -219,12 +223,11 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
     for (const id of release) {
       const a = services.agents[id];
       const i = agent.group.indexOf(id);
-      const j = agent.memberCount.indexOf(id);
       if (a) {
         delete a.memberOf;
         agent.group.splice(i, 1);
-        agent.memberCount.splice(j, 1);
-        if (a.type == 'car' || a.type == 'bicycle') {
+        agent.memberCount -= 1;
+        if (a.type === 'car' || a.type === 'bicycle') {
           delete a.group;
         }
       }
@@ -244,12 +247,12 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
   if (group) {
-    const new_group = services.agents[group];
-    if (new_group.group && new_group.memberCount) {
-      new_group.group.push(agent.id);
-      new_group.memberCount.push(agent.id);
-      addGroup(agent, new_group, services);
-      agent.memberOf = new_group.id;
+    const newGroup = services.agents[group];
+    if (newGroup.group && newGroup.memberCount) {
+      newGroup.group.push(agent.id);
+      newGroup.memberCount.push(agent.id);
+      addGroup(agent, newGroup, services);
+      agent.memberOf = newGroup.id;
     }
   }
   return true;

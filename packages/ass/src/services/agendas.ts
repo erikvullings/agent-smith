@@ -2,7 +2,7 @@ import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent,
 
 import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
-//import * as simConfig from '../sim_config.json';
+// import * as simConfig from '../sim_config.json';
 import * as simConfig from '../verstoring_openbare_orde.json';
 import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
@@ -316,11 +316,11 @@ const customTypeAgenda = (agent: IAgent, _services: IEnvServices, customTypeAgIn
   const { _day: day } = agent;
 
   const agenda = customTypeAgendas[customTypeAgIndex].agendaItems;
-  if (agent.id == "group3") {
+  if (agent.id == 'group3') {
     // console.log("customTypeAgendas group: ", customTypeAgendas[customTypeAgIndex]);
     // console.log("customTypeAgendas group: ", simConfig.customTypeAgendas[customTypeAgIndex]);
-    //console.log(customTypeAgIndex);
-    //console.log(agenda);
+    // console.log(customTypeAgIndex);
+    // console.log(agenda);
   }
   if (agenda.length > 0) {
     const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
@@ -338,7 +338,7 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
     agent._day += 1;
   }
   const { _day: day } = agent;
-  //const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
+  // const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
   const agenda = customAgendas[customAgIndex].agendaItems;
   if (agenda.length > 0) {
     const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };

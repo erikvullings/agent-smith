@@ -1,11 +1,11 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
-import { IAgent, TransportType, ObjectType } from './models';
+import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import { IReactions, ISimConfig } from './models';
+
 import { IDefenseAgent } from './models/defense-agent';
-//import jsonSimConfig2 from './sim_config.json';
+// import jsonSimConfig2 from './sim_config.json';
 import jsonSimConfig from './verstoring_openbare_orde.json';
 import reactionConfig from './plan_reactions.json';
 import { IThreatAgent } from './models/threat-agent';
@@ -13,12 +13,15 @@ import { IThreatAgent } from './models/threat-agent';
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
-//export const simConfig2 = (jsonSimConfig2 as unknown) as ISimConfig;
+// export const simConfig2 = (jsonSimConfig2 as unknown) as ISimConfig;
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customAgendas } = simConfig;
 export const { customTypeAgendas } = simConfig;
 
-/** Connect to Kafka and create a connector */
+/**
+ * @param callback
+ * Connect to Kafka and create a connector
+ */
 const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
   const tb = new TestBedAdapter({
     kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
@@ -49,7 +52,7 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 10, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    //const agentstoshow = [] as IAgent[];
+    // const agentstoshow = [] as IAgent[];
 
     const reactionImport: IReactions = reactionConfig;
 
@@ -59,15 +62,14 @@ export const simController = async (
       }
     }
 
-    console.log("call the police", reaction["Call the police"])
-    console.log("test", reaction["Run away"])
+    console.log('call the police', reaction['Call the police'])
+    console.log('test', reaction['Run away'])
 
     const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
-    const whiteGroups: IAgent[] = simConfig.customAgents.whiteGroups;
 
-    const agents = [...blueAgents, ...redAgents, ...whiteAgents, ...whiteGroups] as (IAgent | IDefenseAgent | IThreatAgent)[];
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent | IThreatAgent)[];
 
     const currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -96,10 +98,6 @@ export const simController = async (
       ziekenhuis: {
         type: 'medical',
         coord: [5.487755, 51.45486],
-      },
-      tue_innovation_forum: {
-        type: 'work',
-        coord: [5.486752, 51.446421],
       },
       'Firmamentlaan 5': {
         type: 'home',
@@ -153,63 +151,48 @@ export const simController = async (
         type: 'work',
         coord: [5.497604, 51.467525],
       },
-      Verweg: {
+      verweg: {
         type: 'work',
         coord: [5.576614, 51.383969],
       },
     };
 
+    for (const s of simConfig.settings) {
+      const { agents: generatedAgents, locations } = generateAgents(
+        s.centerCoord[0],
+        s.centerCoord[1],
+        s.agentCount,
+        s.radius,
+        s.type,
+        s.force
+      );
 
-    const { agentCount } = simConfig.settings;
-    const { agents: generatedAgents, locations } = generateAgents(
-      simConfig.settings.centerCoord[0],
-      simConfig.settings.centerCoord[1],
-      agentCount,
-      simConfig.settings.radius,
-      simConfig.settings.type,
-      simConfig.settings.force,
-    );
+      services.locations = { ...services.locations, ...locations };
+      agents.push(...generatedAgents);
 
-    agents.push(...generatedAgents);
-
-    if (simConfig.settings.object) {
-      for (const a of generatedAgents) {
-        const { agents: generatedObject } = generateAgents(
-          simConfig.settings.centerCoord[0],
-          simConfig.settings.centerCoord[1],
-          1,
-          simConfig.settings.radius,
-          simConfig.settings.object,
-          simConfig.settings.force,
-          a
-        );
-        agents.push(...generatedObject);
+      if (s.object) {
+        for (const a of generatedAgents) {
+          const { agents: generatedObject } = generateAgents(
+            s.centerCoord[0],
+            s.centerCoord[1],
+            1,
+            s.radius,
+            s.object,
+            s.force,
+            a
+          );
+          agents.push(...generatedObject);
+        }
       }
     }
 
 
 
-    //const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
-    const membersConfig = simConfig.settings.groupMembers;
-
-    if (whiteGroups && membersConfig) {
-      for (const g of whiteGroups) {
-        const { agents: generatedAgentsGroup } = generateAgents(
-          simConfig.settings.centerCoord[0],
-          simConfig.settings.centerCoord[1],
-          membersConfig,
-          simConfig.settings.radius,
-          "man",
-          "white",
-          g
-        );
-        agents.push(...generatedAgentsGroup);
-      }
-    }
+    // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
 
 
-    agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
-    agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
+    // agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
+    // agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
 
     // const nearest = {
     //   car: services.drive.nearest,
@@ -249,7 +232,7 @@ export const simController = async (
     //       ).waypoints[0].location)
     //   );
 
-    services.locations = { ...services.locations, ...locations };
+
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
@@ -258,8 +241,26 @@ export const simController = async (
 
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
-    groups.map((g) => (g.group ? (g.memberCount = [...g.group]) : ''));
     groups.map((g) => g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : '');
+
+    /** add members that or not generated to groups */
+    const groupType = agents.filter((g) => g.type === 'group');
+    for (const g of groupType) {
+      if (!g.group) {
+        g.group = [];
+      }
+      if (!g.memberCount) {
+        g.memberCount = 0;
+      }
+      if (g.group && g.memberCount) {
+        const extraMembers = g.memberCount - g.group.length;
+        console.log(extraMembers)
+        for (let i = 0; i < extraMembers; i++) {
+          const id = String(i) + g.id;
+          g.group.push(id);
+        }
+      }
+    }
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle', 'object'];
@@ -299,7 +300,7 @@ export const simController = async (
               a.mailbox &&
               a.mailbox.length > 0 &&
               (!a.health || a.health > 0) &&
-              a.status != 'inactive'
+              a.status !== 'inactive'
           )
           .map((a) => messageServices.readMailbox(a, services))
       );
@@ -311,7 +312,7 @@ export const simController = async (
               !a.memberOf &&
               a.health &&
               a.health > 0 &&
-              a.status != 'inactive'
+              a.status !== 'inactive'
           )
           .map((a) => updateAgent(a, services))
       );
