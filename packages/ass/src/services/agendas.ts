@@ -1,4 +1,4 @@
-import { ActivityList, IAgent, IMail, IGroup, IDefenseAgent } from '../models';
+import { ActivityList, IAgent, IMail, IGroup } from '../models';
 
 import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
@@ -9,7 +9,7 @@ import { reaction } from '.';
  * @param agent
  * @param _services
  */
-const getAgenda = (agent: IAgent | (IAgent & IDefenseAgent) | IGroup, _services: IEnvServices) => {
+const getAgenda = (agent: IAgent | IGroup, _services: IEnvServices) => {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;
   } else {
@@ -221,7 +221,7 @@ const getAgenda = (agent: IAgent | (IAgent & IDefenseAgent) | IGroup, _services:
       [
         ...blueActivities.guard()[randomIntInRange(0, blueActivities.guard().length - 1)],
         ...activities.goHome(),
-      ] as ActivityList
+      ] as ActivityList,
     ],
     red: () => [
       [...redActivities.dropAtRandomLocation(), ...activities.goHome()] as ActivityList,
@@ -250,8 +250,8 @@ const getAgenda = (agent: IAgent | (IAgent & IDefenseAgent) | IGroup, _services:
     policeDuty: () => agendaVariations.police()[randomIntInRange(0, agendaVariations.police().length - 1)],
     kmarDuty: () => agendaVariations.kmar()[randomIntInRange(0, agendaVariations.kmar().length - 1)],
     redActivity: () =>
-      // (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)],
-      agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
+       (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)],
+      //agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
     null: () => agendaVariations.null()[randomIntInRange(0, agendaVariations.null().length - 1)],
 
     tourist: () => (agendaVariations.tourist())[randomIntInRange(0,agendaVariations.tourist().length-1)],
@@ -269,6 +269,9 @@ const getAgenda = (agent: IAgent | (IAgent & IDefenseAgent) | IGroup, _services:
   } if (agent.type === 'drone') {
     return agentAgendas.drone();
   }
+  else if(agent.following){
+
+  }
     switch (agent.force) {
       case 'white': {
         if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
@@ -283,9 +286,9 @@ const getAgenda = (agent: IAgent | (IAgent & IDefenseAgent) | IGroup, _services:
         if(agent.defenseType && agent.defenseType === 'kmar'){
           return agentAgendas.kmarDuty();
         }
-        else{
+
           return agentAgendas.policeDuty();
-        }
+
         // console.log('blue agenda',agentAgendas['policeDuty']()  )
       }
       default: {

@@ -49,12 +49,13 @@ export const randomItem = <T>(arr: T | T[]): T =>
 
 /**
  * calculates the speed of a group based on the distance between members
+ *
  * @param Nomembers
  * @param desiredspeed
  */
  export const groupSpeed = (Nomembers: number, desiredspeed: number): number =>{
   if (Nomembers < 500) {
-    let distance = 0.65;  
+    let distance = 0.65;
     if (Nomembers < 50) {
       distance = 1.35;
     } else if (Nomembers < 100) {
@@ -63,17 +64,17 @@ export const randomItem = <T>(arr: T | T[]): T =>
       distance = 0.85;
     } else {
       distance = 0.65;
-    } 
+    }
     const exp1 = (0.35-distance)/0.08;
     const exp2 = (0.35-Math.sqrt(2* Math.pow(distance,2)))/0.08;
     const acc = 2*Math.pow(10,3)*Math.exp(exp1) + Math.sqrt(2)*2*Math.pow(10,3)*Math.exp(exp2)
     const speed = desiredspeed - (1/80)*acc;
     return speed;
   }
-  
+
     const speed = 0.2;
     return speed;
-  
+
  }
 
 
@@ -160,7 +161,7 @@ export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2
 
 export const inRangeCheck = (min: number, max: number, value: number) => (value - min) * (value - max) <= 0;
 
-/** 
+/**
  * @param min
  * @param max
  */
@@ -170,10 +171,10 @@ export const minutes = (min: number, max?: number) => (max ? randomInRange(min, 
 /** Convert a number of seconds to the number of msec */
 export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
 
-/** 
+/**
  * @param min
  * @param max
- */ 
+ */
 /** Convert a number of hours to the number of msec */
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
 
@@ -182,7 +183,7 @@ const year = now.getFullYear();
 const month = now.getMonth();
 const day = now.getDate();
 
-/** 
+/**
  * @param days
  * @param hours
  * @param minutes
@@ -192,7 +193,7 @@ const day = now.getDate();
 export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
   new Date(year, month, day + days, hours, minutes, seconds);
 
-/** 
+/**
  * @param agent
  */
 /** Convert agent to entity item */
@@ -253,7 +254,7 @@ export const agentToFeature = (agent: IAgent | IGroup) => ({
   },
 });
 
-/** 
+/**
  * @param a
  * @param rangeInMeter
  * @param type
@@ -318,7 +319,7 @@ export const simplifiedDistanceFactory = () => {
   // const coslat = Math.cos((latitudeAvg * Math.PI) / 180);
   const f = Math.PI / 360;
 
-  /** Distance between WGS84 coordinates in meters */
+/** Distance between WGS84 coordinates in meters */
   return (lat0: number, lng0: number, lat1: number, lng1: number) => {
     const x = lat0 - lat1;
     // const y = (lng0 - lng1) * coslat;
@@ -328,7 +329,7 @@ export const simplifiedDistanceFactory = () => {
   };
 };
 
-/** 
+/**
  * @param ms
  */
 /** Delay function */
@@ -337,7 +338,7 @@ export const sleep = (ms: number) =>
     setTimeout(resolve, ms);
   });
 
-/** 
+/**
  * @param n
  * @param decimals
  */

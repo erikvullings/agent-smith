@@ -21,11 +21,11 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 const defaultWalkingSpeed = 5000 / 3600;
 const defaultFlyingSpeed = 70000 / 3600;
 /** 
-* @param agent
-* @param services
-* @param totDistance
-* @param totDuration
-*/
+ * @param agent
+ * @param services
+ * @param totDistance
+ * @param totDuration
+ */
 /** Determine speed of agent */
 const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number =>{
   if (agent.steps && agent.steps[0] && agent.steps[0].name == 'flyTo' ) {
@@ -65,7 +65,7 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
   return speed;
 };
 
-/** 
+/**
  * @param agent
  * @param services
  * @param deltaTime
@@ -169,10 +169,10 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
 };
 
-/** 
+/**
  * @param _agent
  * @param services
- * @param options 
+ * @param options
  */
 /** Wait until a start time before continuing */
 const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -180,10 +180,10 @@ const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActiv
   return startTime ? startTime < services.getTime() : true;
 };
 
-/** 
+/**
  * @param agent
  * @param services
- * @param options 
+ * @param options
  */
 /** Wait for a certain duration before continuing */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {

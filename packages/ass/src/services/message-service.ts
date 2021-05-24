@@ -1,6 +1,6 @@
 import { reaction, redisServices } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IDefenseAgent, IEquipment, IGroup, IMail } from '../models';
+import { IAgent, IEquipment, IGroup, IMail } from '../models';
 import { randomIntInRange } from '../utils';
 import { agendas } from './agendas';
 import { planEffects } from './plan-effects';

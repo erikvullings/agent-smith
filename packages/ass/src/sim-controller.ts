@@ -4,7 +4,6 @@ import { IAgent, TransportType } from './models/agent';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
 import { IReactions, ISimConfig } from './models';
-import { IDefenseAgent } from './models/defense-agent';
 import jsonSimConfig from './sim_config.json';
 import reactionConfig from './plan_reactions.json';
 
@@ -43,10 +42,10 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     const agentstoshow = [] as IAgent[];
-  
+
     const reactionImport : IReactions = reactionConfig;
 
     if(reactionImport){
@@ -55,14 +54,14 @@ export const simController = async (
       }
     }
 
-    console.log("call the police", reaction["Call the police"])
-    console.log("test", reaction["Run away"])
+    console.log('call the police', reaction['Call the police'])
+    console.log('test', reaction['Run away'])
 
-    const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
+    const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
 
-    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent)[];
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as IAgent[];
 
     const currentSpeed = simSpeed;
     let currentTime = startTime;
@@ -289,7 +288,7 @@ export const simController = async (
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
-    }, {} as { [id: string]: IAgent | IDefenseAgent });
+    }, {} as { [id: string]: IAgent });
 
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);

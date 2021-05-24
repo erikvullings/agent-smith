@@ -7,4 +7,4 @@ export * from './message-service';
 export * from './reactions';
 export * from './plan-effects';
 export * from './dispatch-service';
-export * from './health-service';
+export * from './damage-service';

@@ -27,14 +27,14 @@ const sendDefence = async (agent: IAgent | IGroup, services: IEnvServices) => {
                     a => (('department' in a) && a.department === 'station') &&
                     a.agenda &&
                     (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
-                
+
             const receiverAgents  = [...closeAgents,...farStationAgents];
             n = effect.damageLevel*10;
-            
+
             return messageServices.sendDirectMessage(agent, 'Call the police', receiverAgents.slice(0,n), services);
 
     }
-    //messageServices.sendDirectMessage(agent, 'Call the police', receiversAgents.slice(0,n), services);
+    // messageServices.sendDirectMessage(agent, 'Call the police', receiversAgents.slice(0,n), services);
 
     return true;
 };
