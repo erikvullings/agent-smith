@@ -97,7 +97,8 @@
             "occupations": [{ "type": "work", "id": "police station"}],
             "department": "station",
             "mailbox": [],
-            "defenseType": "police"
+            "defenseType": "police",
+            "following": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b"
     },
         {
             "id": "police4",
@@ -223,7 +224,7 @@
             "agentId": "51bc0240-d4fb-4a2e-a548-d3e32aa3037b",
             "agendaItems": [
                 { "name": "Go to work", "options" : {} },
-                { "name": "Call the police", "options" : {} },
+                { "name": "Work", "options" : {} },
                 { "name": "Wander", "options" : {} },
                 { "name": "Go home", "options" : {} }] 
         },
@@ -237,7 +238,8 @@
         {
             "agentId": "police3",
             "agendaItems": [
-                { "name": "Stay at police station", "options" : { "priority": 3 } }] 
+                { "name": "Follow person", "options" : { "priority": 3 } }
+            ] 
         },
         {
             "agentId": "police4",

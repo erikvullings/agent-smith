@@ -2,6 +2,7 @@ import { IAgent, IGroup, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
 import { dispatchServices, damageServices, messageServices, redisServices } from '.';
 import { addGroup, randomItem, hours, minutes, randomPlaceNearby, randomIntInRange, inRangeCheck, distanceInMeters} from '../utils';
+import { planEffects } from './plan-effects';
 
 
 const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
@@ -58,12 +59,12 @@ const prepareRoute = (agent: IAgent | IGroup, services: IEnvServices, options: I
     } else {
       steps.push({ name: 'walkTo', options: { destination: agent.destination } });
     }
-  }
-  if(agent.running){
-    steps.push({ name: 'stopRunning'});
   } else {
     steps.push({ name: 'walkTo', options: { destination: agent.destination } });
   }
+  if(agent.running){
+    steps.push({ name: 'stopRunning'});
+  } 
   agent.steps = steps;
 };
 
@@ -192,11 +193,57 @@ export const plans = {
     },
   },
 
-  'Follow person': {
+  'Go to the police station': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
       agent.sentbox = [];
       console.log('agent destination', agent.destination)
       agent.destination = options.destination;
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
+
+  'Follow person': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
+      agent.sentbox = [];
+      if(agent.following && agent.following !== ""){
+        const followedAgent = services.agents[agent.following]
+        agent.destination = followedAgent.actual;
+        agent.running = true;
+        agent.reactedTo = "Drop object";
+
+        
+        const distanceBetween = distanceInMeters(agent.actual.coord[1],agent.actual.coord[0],followedAgent.actual.coord[1],followedAgent.actual.coord[0]);
+        if(distanceBetween < 4){
+
+          if(planEffects[agent.reactedTo].damageLevel > 30){
+            // if distance is smaller than 4 meters send direct message to the agent 
+            // to talk to the agent, if agent is dangerous
+            // use weapon
+            damageServices.damageAgent(agent,[followedAgent],services);
+            agent.following = "";
+            //take the red agent to the station and wait
+
+          }
+          else{
+            agent.following = "";
+
+          }
+        }
+        
+        if(agent.following && agent.following !== ""){
+          const followAgenda = [{ name: 'Follow person', options : {}}];
+
+          if(agent.agenda){
+            agent.agenda = [...followAgenda, ...agent.agenda];
+          }
+          else{
+            agent.agenda = [...followAgenda]
+          }
+        }
+        }
+
       prepareRoute(agent, services, options);
       // agent.speed = 2;
       return true;
@@ -296,7 +343,7 @@ export const plans = {
     },
   },
 
-  //Maybe also add "spot targets" to pick targets
+  // Maybe also add "spot targets" to pick targets
   'Attack targets': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
@@ -305,9 +352,9 @@ export const plans = {
       steps.push({ name: 'waitFor', options});
       agent.steps = steps;
 
-      //if(agent.targets){
-        //damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
-      //}
+      // if(agent.targets){
+        // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
+      // }
       return true;
     },
   },
@@ -406,7 +453,7 @@ export const plans = {
       agent.sentbox = [];
       const steps = [] as ActivityList;
       let objectAgent;
-      
+
       if(agent.group){
         agent.group.filter((a) => services.agents[a].type === 'object').map((a) => {objectAgent = services.agents[a]; delete services.agents[a].memberOf});
         agent.group = agent.group.filter((a) => services.agents[a].type !== 'object')
