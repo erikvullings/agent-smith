@@ -195,7 +195,11 @@ export const plans = {
   },
 
   'Go to the police station': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {},
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+
+    }
+  },
+  
 
   'Hang around specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
@@ -608,4 +612,4 @@ export const plans = {
     },
   },
 }
-}
+

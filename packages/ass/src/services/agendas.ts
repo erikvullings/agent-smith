@@ -301,8 +301,9 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       if(agent.defenseType && agent.defenseType === 'kmar'){
         return agentAgendas.kmarDuty();
       }
-
+      else{
         return agentAgendas.policeDuty();}
+      }
   default: {
       if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
         return agentAgendas[agent.occupations![0].type as keyof typeof agentAgendas]();
