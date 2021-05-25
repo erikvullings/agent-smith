@@ -16,7 +16,7 @@ export interface IAgent {
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
-  force: 'white'|'red'|'blue';
+  force: 'white'|'red'|'blue'|'tbp';
   /** Force of the agent that is visible to other agents */
   visibleForce?: 'white'|'red'|'blue';
   /** Health of agent, maximum of 100 */

@@ -11,6 +11,7 @@ interface CustomAgents {
   blue: IAgent[];
   white: IAgent[];
   red: IAgent[];
+  tbp: IAgent[];
 }
 
 export interface CustomAgenda {

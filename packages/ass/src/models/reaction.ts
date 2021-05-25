@@ -8,7 +8,7 @@ export interface IReactionObject {
   blue?: IReact;
   red?: IReact;
   white?: IReact;
-  vip?: IReact;
+  tbp?: IReact;
 }
 
 export interface IReact {

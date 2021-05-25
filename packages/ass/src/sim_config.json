@@ -5,6 +5,16 @@
         "radius": 10000
   },
     "customAgents": {
+        "tbp":[{
+            "id": "tbp",
+            "type": "man",
+            "force": "tbp",
+            "health": 100,
+            "status": "active",
+            "home": { "type": "home", "coord": [5.521275, 51.448302] },
+            "actual": { "type": "home", "coord": [5.499309, 51.437832] },
+            "occupations": [{ "type": "work", "id": "park1"}]
+    }],
         "blue": [{
             "id": "biker",
             "type": "man",
@@ -238,7 +248,7 @@
         {
             "agentId": "police3",
             "agendaItems": [
-                { "name": "Follow person", "options" : { "priority": 3 } }
+                { "name": "Stay at police station", "options" : { "priority": 3 } }
             ] 
         },
         {
@@ -250,6 +260,14 @@
             "agentId": "biker",
             "agendaItems": [
                 { "name": "Attack targets", "options" : { "priority": 1 } },
+                { "name": "Go home", "options" : { "priority": 1 } }
+            ]
+        },
+        {
+            "agentId": "tbp",
+            "agendaItems": [
+                { "name": "Go to work", "options" : { "priority": 1 } },
+                { "name": "Work", "options" : { "priority": 1 } },
                 { "name": "Go home", "options" : { "priority": 1 } }
             ]
         }
