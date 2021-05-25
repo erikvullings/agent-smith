@@ -338,12 +338,12 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
     if (reactionAgenda[0].name === 'Go to specific location' || reactionAgenda[0].name === 'Follow person') {
       agent.destination = mail.location;
 
-      reactionAgenda[0].options = { startTime: timesim, destination: mail.location };
+      reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
     else {
-      reactionAgenda[0].options = { startTime: timesim };
+      reactionAgenda[0].options = { startTime: timesim, priority:1 };
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
 

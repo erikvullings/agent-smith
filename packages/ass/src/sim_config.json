@@ -31,19 +31,6 @@
             "equipment": [{"type": "firearm", "damageLevel": 5}]
     },
         {
-            "id": "kmar1",
-            "type": "woman",
-            "force": "blue",
-            "health": 100,
-            "status": "active",
-            "home": { "type": "home", "coord": [5.499555, 51.437832] },
-            "actual": { "type": "home", "coord": [5.499309, 51.437832] },
-            "occupations": [{ "type": "work", "id": "park1"}],
-            "mailbox": [],
-            "department": "none",
-            "defenseType": "kmar"
-    },
-        {
             "id": "kmar2",
             "type": "man",
             "force": "blue",

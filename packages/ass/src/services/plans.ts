@@ -207,6 +207,8 @@ export const plans = {
   'Follow person': {
     prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
       agent.sentbox = [];
+      console.log("agent target", [services.agents[agent.following]])
+      //console.log('agent destination', agent.destination)
       if(agent.following && agent.following !== ""){
         const followedAgent = services.agents[agent.following]
         agent.destination = followedAgent.actual;
@@ -215,9 +217,11 @@ export const plans = {
 
         
         const distanceBetween = distanceInMeters(agent.actual.coord[1],agent.actual.coord[0],followedAgent.actual.coord[1],followedAgent.actual.coord[0]);
+        console.log("distance between", distanceBetween)
         if(distanceBetween < 4){
 
           if(planEffects[agent.reactedTo].damageLevel > 30){
+            console.log("We will use weapons")
             // if distance is smaller than 4 meters send direct message to the agent 
             // to talk to the agent, if agent is dangerous
             // use weapon
@@ -227,6 +231,7 @@ export const plans = {
 
           }
           else{
+            console.log("We will talk to agent");
             agent.following = "";
 
           }
@@ -243,6 +248,30 @@ export const plans = {
           }
         }
         }
+
+      prepareRoute(agent, services, options);
+      // agent.speed = 2;
+      return true;
+    },
+  },
+
+  'Protect person': {
+    prepare: async (agent: IAgent | IGroup, services: IEnvServices, options: IActivityOptions) => {
+      agent.sentbox = [];
+      console.log("agent target", [services.agents[agent.following]])
+      //console.log('agent destination', agent.destination)
+      if(agent.following && agent.following !== ""){
+        const followedAgent = services.agents[agent.following]
+        agent.destination = followedAgent.actual;
+        const followAgenda : ActivityList = [{ name: 'Protect person', options : {priority:1}}];
+
+        if(agent.agenda){
+          agent.agenda = [...followAgenda, ...agent.agenda];
+        }
+        else{
+          agent.agenda = [...followAgenda]
+        }}
+        
 
       prepareRoute(agent, services, options);
       // agent.speed = 2;
