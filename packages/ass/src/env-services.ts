@@ -1,8 +1,8 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas, reaction } from './services';
-import { IGroup, IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
-import { customAgendas } from './sim-controller';
+import { customAgendas, customTypeAgendas } from './sim-controller';
 
 export interface IEnvServices {
   /** Get sim time */
@@ -27,7 +27,19 @@ export interface IEnvServices {
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
 };
 
-/** Create services so an agent can deal with the environment, e.g. for navigation. */
+
+/**
+ * @param param0
+ * @param root0
+ * @param root0.time
+ * @param root0.latitudeAvg
+ * @param param0.time
+ * @param param0.latitudeAvg
+ * @param param0.time
+ * @param param0.latitudeAvg
+ * @returns
+ * Create services so an agent can deal with the environment, e.g. for navigation.
+ */
 export const envServices = ({
   time = new Date(),
 }: {
@@ -75,14 +87,17 @@ export const envServices = ({
 
 const createAgenda = async (agent: IAgent, services: IEnvServices) => {
   const customAgIndex = customAgendas.findIndex((agenda) => agenda.agentId === agent.id);
-
-  return customAgIndex > -1
-    ? agendas.customAgenda(agent, services, customAgIndex)
+  if (customAgIndex > -1) {
+    return agendas.customAgenda(agent, services, customAgIndex)
+  }
+  const customTypeAgIndex = customTypeAgendas.findIndex((agenda) => (agenda.agentType === agent.type && agenda.agentForce === agent.force));
+  return customTypeAgIndex > -1
+    ? agendas.customTypeAgenda(agent, services, customTypeAgIndex)
     : agendas.getAgenda(agent, services);
 };
 
 export const executeSteps = async (
-  agent: (IAgent | IGroup) & { steps: { name: string; options?: IActivityOptions }[] },
+  agent: (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
   services: IEnvServices
 ) => {
   const { name, options } = agent.steps[0];
@@ -94,10 +109,10 @@ export const executeSteps = async (
   return agent.steps.length === 0;
 };
 
-export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices) => {
+export const updateAgent = async (agent: IAgent, services: IEnvServices) => {
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
-      agent as (IAgent | IGroup) & { steps: { name: string; options?: IActivityOptions }[] },
+      agent as (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
       services
     );
     if (result) {
@@ -123,7 +138,8 @@ export const updateAgent = async (agent: IAgent | IGroup, services: IEnvServices
       await plan.prepare(agent, services, options);
     }
   } else {
-    agent.agenda = await createAgenda(agent, services);
+    agent.agenda = [...await createAgenda(agent, services)];
     updateAgent(agent, services);
+
   }
 };

@@ -423,6 +423,7 @@
       "source": "drone.json",
       "style": {
         "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/64/000000/drone.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
@@ -439,18 +440,145 @@
               "0",
               0,
               "1",
-              20,
-              20
+              15,
+              15
             ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.3,
+              0.3
+            ]
           }
         },
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/drone"
+    },
+    {
+      "id": "bomb",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "bomb.json",
+      "style": {
+        "type": "circle",
+        "icon": "//img.icons8.com/ios-filled/50/000000/bomb-with-timer.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "get",
+              "force"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              25,
+              25
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.5,
+              0.5
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/bomb"
+    },
+    {
+      "id": "gas",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "gas.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/metro/26/000000/cloud.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "get",
+              "force"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              35,
+              35
+            ],
+            "circle-opacity": 0.5
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/gas"
     },
     {
       "id": "object",
@@ -483,8 +611,8 @@
               "0",
               0,
               "1",
-              10,
-              10
+              25,
+              25
             ]
           },
           "symbolLayout": {

@@ -1,19 +1,23 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
-import { IAgent, TransportType } from './models/agent';
-import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import { IReactions, ISimConfig } from './models';
-import jsonSimConfig from './sim_config.json';
+import jsonSimConfig from './verstoring_openbare_orde.json';
 import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
+// export const simConfig2 = (jsonSimConfig2 as unknown) as ISimConfig;
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customAgendas } = simConfig;
+export const { customTypeAgendas } = simConfig;
 
-/** Connect to Kafka and create a connector */
+/**
+ * @param callback
+ * Connect to Kafka and create a connector
+ */
 const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
   const tb = new TestBedAdapter({
     kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
@@ -44,12 +48,12 @@ export const simController = async (
   createAdapter(async (tb) => {
     const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
-    const agentstoshow = [] as IAgent[];
+    // const agentstoshow = [] as IAgent[];
 
-    const reactionImport : IReactions = reactionConfig;
+    const reactionImport: IReactions = reactionConfig;
 
-    if(reactionImport){
-      for(const key in reactionImport){
+    if (reactionImport) {
+      for (const key in reactionImport) {
         reaction[key] = reactionImport[key];
       }
     }
@@ -91,10 +95,6 @@ export const simController = async (
       ziekenhuis: {
         type: 'medical',
         coord: [5.487755, 51.45486],
-      },
-      tue_innovation_forum: {
-        type: 'work',
-        coord: [5.486752, 51.446421],
       },
       'Firmamentlaan 5': {
         type: 'home',
@@ -148,104 +148,48 @@ export const simController = async (
         type: 'work',
         coord: [5.497604, 51.467525],
       },
-      Verweg: {
+      verweg: {
         type: 'work',
         coord: [5.576614, 51.383969],
       },
     };
 
-    /** Agents in groups */
+    for (const s of simConfig.settings) {
+      const { agents: generatedAgents, locations } = generateAgents(
+        s.centerCoord[0],
+        s.centerCoord[1],
+        s.agentCount,
+        s.radius,
+        s.type,
+        s.force
+      );
 
-    // const agentx = {
-    //   id: 'agent x',
-    //   type: 'woman',
-    //   status: 'active',
-    //   force: 'white',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'bijenkorf' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
+      services.locations = { ...services.locations, ...locations };
+      agents.push(...generatedAgents);
 
-    // const blue1 = {
-    //   id: 'blue1',
-    //   type: 'woman',
-    //   status: 'active',
-    //   force: 'blue',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: services.locations['Antoon Derkinderenstraat 17'],
-    //   occupations: [{ type: 'work', id: 'mc_donalds' }],
-    //   relations: [{type:'family', id:'fam1'}] ,
-    // } as IAgent;
+      if (s.object) {
+        for (const a of generatedAgents) {
+          const { agents: generatedObject } = generateAgents(
+            s.centerCoord[0],
+            s.centerCoord[1],
+            1,
+            s.radius,
+            s.object,
+            s.force,
+            a
+          );
+          agents.push(...generatedObject);
+        }
+      }
+    }
 
-    // const red1 = {
-    //   id: 'red1',
-    //   type: 'man',
-    //   status: 'active',
-    //   force: 'red',
-    //   home: services.locations['Antoon Derkinderenstraat 17'],
-    //   actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
-    //   occupations: [{ type: 'work', id: 'bioscoop' }],
-    //   relations: [{type:'family', id:'fam1'}],
-    //   memberOf: 'group2'
-    // } as IAgent;
 
-    // const agenty = {
-    //   id: 'agent y',
-    //   type: 'man',
-    //   force: 'red',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
-    //   occupations: [{  type: 'work', id: 'tue_innovation_forum' }],
-    //   memberOf: 'group2'
-    // } as IAgent;
 
-    // const agenta = {
-    //   id: 'agenta',
-    //   type: 'man',
-    //   status: 'active',
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['wilhelminaplein'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop'  }],
-    //   memberOf: 'group1'
-    // } as IAgent;
-
-    // const group2 = {
-    //   id: 'group2',
-    //   type: 'group',
-    //   status: 'active',
-    //   home: services.locations['Firmamentlaan 5'],
-    //   actual: {type: 'parking lot' ,coord: [5.472759, 51.437697]},
-    //   occupations: [{ type: 'work', id: 'ziekenhuis' }],
-    //   force: "white",
-    //   group: ['agent x', 'agent y'],
-    // } as IGroup;
-
-    // const group1 = {
-    //   id: 'group1',
-    //   type: 'group',
-    //   status: 'active',
-    //   force: 'red',
-    //   home: services.locations['Monarchstraat 52'],
-    //   actual: services.locations['wilhelminaplein'],
-    //   occupations: [{ type: 'work', id: 'h_m_shop' }],
-    //   group: ['agenta'],
-    // } as IGroup;
-
-    const { agentCount } = simConfig.settings;
-    const { agents: generatedAgents, locations } = generateAgents(
-      simConfig.settings.centerCoord[0],
-      simConfig.settings.centerCoord[1],
-      agentCount,
-      simConfig.settings.radius
-    );
     // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
 
-    agents.push(...generatedAgents);
 
-    agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
-    agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] }) ).waypoints[0].location);
+    // agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
+    // agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
 
     // const nearest = {
     //   car: services.drive.nearest,
@@ -285,16 +229,35 @@ export const simController = async (
     //       ).waypoints[0].location)
     //   );
 
-    services.locations = { ...services.locations, ...locations };
+
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
     }, {} as { [id: string]: IAgent });
 
+
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
-    groups.map((g) => (g.group ? (g.membercount = [...g.group]) : ''));
-    groups.map((g) => g.group?.map((a) => addGroup(services.agents[a], g, services)));
+    groups.map((g) => g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : '');
+
+    /** add members that or not generated to groups */
+    const groupType = agents.filter((g) => g.type === 'group');
+    for (const g of groupType) {
+      if (!g.group) {
+        g.group = [];
+      }
+      if (!g.memberCount) {
+        g.memberCount = 0;
+      }
+      if (g.group && g.memberCount) {
+        const extraMembers = g.memberCount - g.group.length;
+        console.log(extraMembers)
+        for (let i = 0; i < extraMembers; i++) {
+          const id = String(i) + g.id;
+          g.group.push(id);
+        }
+      }
+    }
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle', 'object'];
@@ -307,6 +270,7 @@ export const simController = async (
           .filter(
             (a) =>
               a.agenda &&
+              a.agenda[0] &&
               a.agenda[0].name &&
               reaction[a.agenda[0].name] &&
               a.agenda[0].name !== 'Call the police'
@@ -315,12 +279,12 @@ export const simController = async (
       );
     }, 10000);
 
-    const chatInterval = setInterval(async () => {
-      const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
+    // const chatInterval = setInterval(async () => {
+    //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
 
-      if(chattingAgents.length <= agents.length*0.01)
-        chatServices.agentChat(agents,services);
-    }, 60000);
+    //   if (chattingAgents.length <= agents.length * 0.01)
+    //     chatServices.agentChat(agents, services);
+    // }, 60000);
 
     let i = 0;
     while (i < 10000000) {
@@ -333,7 +297,7 @@ export const simController = async (
               a.mailbox &&
               a.mailbox.length > 0 &&
               (!a.health || a.health > 0) &&
-              a.status != 'inactive'
+              a.status !== 'inactive'
           )
           .map((a) => messageServices.readMailbox(a, services))
       );
@@ -345,7 +309,7 @@ export const simController = async (
               !a.memberOf &&
               a.health &&
               a.health > 0 &&
-              a.status != 'inactive'
+              a.status !== 'inactive'
           )
           .map((a) => updateAgent(a, services))
       );
@@ -356,3 +320,4 @@ export const simController = async (
     }
   });
 };
+
