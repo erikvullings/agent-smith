@@ -50,7 +50,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 3, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     // const agentstoshow = [] as IAgent[];
 

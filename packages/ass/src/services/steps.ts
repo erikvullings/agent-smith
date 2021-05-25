@@ -262,7 +262,6 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
 const disappear = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   agent.memberOf = 'invisible';
   agent.status = 'inactive';
-  console.log('foetsie');
   return true;
 };
 

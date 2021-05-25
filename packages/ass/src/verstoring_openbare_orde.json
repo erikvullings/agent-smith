@@ -1,7 +1,7 @@
 {
     "settings": [
         {
-            "agentCount": 3,
+            "agentCount": 9,
             "centerCoord": [
                 4.892401,
                 52.373104
@@ -216,6 +216,10 @@
                 },
                 {
                     "name": "Drop object",
+                    "options": {}
+                },
+                {
+                    "name": "Play Message",
                     "options": {}
                 },
                 {

@@ -7,7 +7,7 @@ import { planEffects } from './plan-effects';
 
 
 const sendMessage = async (sender: IAgent, message: string, services: IEnvServices) => {
-    let radius = 10;
+    let radius = 10000;
     if (planEffects[message]) {
         radius = planEffects[message].messageRadius;
         console.log(message, radius)
@@ -35,7 +35,6 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
 
 const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, receivers: IAgent[], _services: IEnvServices) => {
     // _services.agents["biker"].health = 100;
-    console.log('health', _services.agents.biker.health)
 
     const damage = await pickEquipment(sender, agentAction)
 
@@ -47,14 +46,12 @@ const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, r
             deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
         }
     }
-
-    console.log('health', _services.agents.biker.health)
     return true;
 }
 
 const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string) => {
     if (agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment) {
-        const {severity} = planEffects[agent.reactedTo];
+        const { severity } = planEffects[agent.reactedTo];
         // switch(severity){
         //     case 1:
         // }
@@ -66,7 +63,6 @@ const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string)
 
 const send = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (!sender.sentbox) { sender.sentbox = [] }
-
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
@@ -76,13 +72,21 @@ const send = async (sender: IAgent, message: string, receivers: IAgent[], _servi
         else if (!rec.mailbox && sentbox.length === 0) {
             rec.mailbox = [{ sender, location: sender.actual, message }];
         }
+
+        if (planEffects[message].panicLevel && rec.force === 'white') {
+            const panic = planEffects[message].panicLevel;
+            if (rec.panicLevel) {
+                rec.panicLevel += panic;
+            } else {
+                rec.panicLevel = panic;
+            }
+        }
     });
     return true;
 }
 
 const readMailbox = async (agent: IAgent, services: IEnvServices) => {
     const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 3));
-
     if (urgentMessages.length > 0) {
         return reactToMessage(agent, services, urgentMessages);;
     }

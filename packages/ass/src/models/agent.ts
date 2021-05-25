@@ -21,8 +21,8 @@ export interface IAgent {
   visibleForce?: 'white' | 'red' | 'blue';
   /** Health of agent, maximum of 100 */
   health?: number;
-  /** 0 if there is no panic, 10 if there is extreme panic*/
-  panic?: number;
+  /** 0 if there is no panic, 100 if there is extreme panic*/
+  panicLevel?: number;
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */

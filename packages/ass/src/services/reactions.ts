@@ -35,6 +35,17 @@ export const reaction = {
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
+    'play message': {
+        'blue': {
+            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': {} }
+                , { 'name': 'Check object', 'options': {} },
+            { 'name': 'Go to work', 'options': {} }]],
+        },
+        'white': {
+            urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Go home', 'options': {} }]],
+        },
+    },
     'Run away': {
         'blue': {
             urgency: 2, plans: [[{ 'name': 'Follow person', 'options': {} },

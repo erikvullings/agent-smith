@@ -460,8 +460,6 @@ export const plans = {
           }
         }
       }
-      const duration = minutes(1);
-      steps.push({ name: 'waitFor', options: { duration } });
       console.log('drop');
       agent.steps = steps;
       return true;
@@ -472,12 +470,11 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
-      const duration = minutes(1);
-      steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       agent.visibleForce = 'red';
       // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
-      messageServices.sendMessage(agent, 'Play Message', services);
+      messageServices.sendMessage(agent, 'play message', services);
+      console.log('play message')
       return true;
     },
   },
@@ -554,4 +551,3 @@ export const plans = {
     },
   },
 }
-
