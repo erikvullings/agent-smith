@@ -3,7 +3,7 @@ import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import jsonSimConfig from './verstoring_openbare_orde.json';
+import jsonSimConfig from './amok.json';
 import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -91,68 +91,8 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-    services.locations = {
-      ziekenhuis: {
-        type: 'medical',
-        coord: [5.487755, 51.45486],
-      },
-      'Firmamentlaan 5': {
-        type: 'home',
-        coord: [5.496994, 51.468701],
-      },
-      'Monarchstraat 52': {
-        type: 'home',
-        coord: [5.521275, 51.448302],
-      },
-      'Antoon Derkinderenstraat 17': {
-        type: 'home',
-        coord: [5.499309, 51.437832],
-      },
-      h_m_shop: {
-        type: 'work',
-        coord: [5.476234, 51.442025],
-      },
-      mc_donalds: {
-        type: 'work',
-        coord: [5.476625, 51.441021],
-      },
-      park1: {
-        type: 'park',
-        coord: [5.497535, 51.441965],
-      },
-      park2: {
-        type: 'park',
-        coord: [5.482012, 51.426585],
-      },
-      station: {
-        type: 'station',
-        coord: [5.479549, 51.443012],
-      },
-      'police station': {
-        type: 'police station',
-        coord: [5.499089, 51.437034],
-      },
-      bijenkorf: {
-        type: 'work',
-        coord: [5.477151, 51.441586],
-      },
-      wilhelminaplein: {
-        type: 'parking lot',
-        coord: [5.470759, 51.437697],
-      },
-      bioscoop: {
-        type: 'cinema',
-        coord: [5.477744, 51.437028],
-      },
-      'Ingmar B.V.': {
-        type: 'work',
-        coord: [5.497604, 51.467525],
-      },
-      verweg: {
-        type: 'work',
-        coord: [5.576614, 51.383969],
-      },
-    };
+    services.locations = simConfig.locations;
+    console.log("locations", services.locations)
 
     for (const s of simConfig.settings) {
       const { agents: generatedAgents, locations } = generateAgents(
