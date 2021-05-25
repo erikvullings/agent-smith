@@ -1,9 +1,9 @@
 import { messageServices, redisServices } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IGroup } from '../models';
+import { IAgent } from '../models';
 import { planEffects } from './plan-effects';
 
-const sendDefence = async (agent: IAgent | IGroup, services: IEnvServices) => {
+const sendDefence = async (agent: IAgent, services: IEnvServices) => {
     console.log('hereee')
     let n = 0;
 

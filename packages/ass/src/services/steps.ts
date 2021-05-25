@@ -250,7 +250,7 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
     const newGroup = services.agents[group];
     if (newGroup.group && newGroup.memberCount) {
       newGroup.group.push(agent.id);
-      newGroup.memberCount.push(agent.id);
+      newGroup.memberCount += 1;
       addGroup(agent, newGroup, services);
       agent.memberOf = newGroup.id;
     }
