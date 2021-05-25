@@ -229,27 +229,6 @@
     },
     "customAgendas": [
         {
-            "agentId": "drone2",
-            "agendaItems": [
-                {
-                    "name": "Go to specific area",
-                    "options": {
-                        "areaCentre": [
-                            4.892401,
-                            52.373104
-                        ],
-                        "areaRange": 5
-                    }
-                },
-                {
-                    "name": "Drop object",
-                    "options": {}
-                }
-            ]
-        }
-    ],
-    "customTypeAgendas": [
-        {
             "agentId": "tbp",
             "agendaItems": [
                 {
@@ -284,5 +263,8 @@
                 { "name": "Go home", "options" : { "priority": 2 } }
             ]
         }
+    ],
+    "customTypeAgendas": [
+
     ]
 }
