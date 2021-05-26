@@ -1,7 +1,5 @@
 import { IActivityOptions, IStep } from '.';
 import { IAgent } from './agent';
-import { IDefenseAgent } from './defense-agent';
-import { IThreatAgent } from './threat-agent';
 
 export interface ISimConfig {
   settings: Settings[];
@@ -11,19 +9,27 @@ export interface ISimConfig {
 }
 
 interface CustomAgents {
-  blue: (IAgent & IDefenseAgent)[];
+  blue: (IAgent)[];
   white: IAgent[];
-  red: (IAgent & IThreatAgent)[];
+  red: (IAgent)[];
 }
 
 export interface CustomAgenda {
   agentId: string;
+  starttimeHours?: number;
+  starttimeMinutes?: number;
+  destinationtimeHours?: number;
+  destinationtimeMinutes?: number;
   agendaItems: IStep[];
 }
 
 export interface CustomTypeAgenda {
   agentType: string;
   agentForce: string;
+  starttimeHours?: number;
+  starttimeMinutes?: number;
+  destinationtimeHours?: number;
+  destinationtimeMinutes?: number;
   agendaItems: IStep[];
 }
 

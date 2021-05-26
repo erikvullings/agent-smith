@@ -335,8 +335,13 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
   // const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
   const agenda = customAgendas[customAgIndex].agendaItems;
   if (agenda.length > 0) {
-    const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
-    agenda[0].options = agendaOptions;
+    if (customAgendas[customAgIndex].destinationtimeHours) {
+      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, customAgendas[customAgIndex].destinationtimeHours!, customAgendas[customAgIndex].destinationtimeMinutes) };
+      agenda[0].options = agendaOptions;
+    } else {
+      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
+      agenda[0].options = agendaOptions;
+    }
     return agenda as ActivityList;
   }
 

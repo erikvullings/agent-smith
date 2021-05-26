@@ -262,7 +262,8 @@ export const agentToFeature = (agent: IAgent) => ({
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
       numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
-      force: agent.force ? agent.force : 'white',
+      // eslint-disable-next-line no-nested-ternary
+      force: agent.force && (agent.force === 'vip') ? 'purple' : agent.force ? agent.force : 'white',
       visible:
         // eslint-disable-next-line no-nested-ternary
         ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
@@ -390,11 +391,11 @@ export const round = (n: number | number[], decimals = 6) => {
 
 export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent) => {
   const offset = () => random(-radius, radius) / 100000;
-  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
+  const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
-      acc[id] = { type, coord };
+      acc[id] = { type: locType, coord };
       return acc;
     }, {} as { [key: string]: ILocation });
   const occupations = generateLocations('work');
@@ -427,6 +428,29 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
     return acc;
   }, [] as IAgent[]);
   return { agents, locations: { ...homes, ...occupations } };
+};
+
+export const generateExistingAgent = (lng: number, lat: number, radius: number, agentId?: string, group?: IAgent, type?: string) => {
+  const offset = () => random(-radius, radius) / 100000;
+  const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') => {
+    const coord = [lng + offset(), lat + offset()] as [number, number];
+    return { type: locType, coord } as ILocation;
+  };
+  const occupation = generateLocations('work');
+  const occupationId = Object.keys(occupation);
+  const home = generateLocations('home');
+  const agent = {
+    id: agentId,
+    type: type || 'man',
+    force: group && group.force ? group.force : 'white',
+    health: 100,
+    status: 'active',
+    home,
+    actual: group ? group.actual : home,
+    occupations: [{ id: occupationId, ...occupation }],
+  } as unknown as IAgent;
+  redisServices.geoAdd('agents', agent);
+  return { agent, locations: { ...home, ...occupation } };
 };
 
 export const addGroup = (agent: IAgent, transport: IAgent, services: IEnvServices) => {

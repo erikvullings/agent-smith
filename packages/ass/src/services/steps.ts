@@ -2,7 +2,8 @@ import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { addGroup, groupSpeed, durationDroneStep, inRangeCheck } from '../utils';
+import { generateExistingAgent, addGroup, groupSpeed, durationDroneStep, inRangeCheck, randomItem } from '../utils';
+
 
 
 /**
@@ -60,7 +61,7 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
   }
   if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
     const numberofmembers = agent.memberCount
-    speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic : undefined);
+    speed = groupSpeed(numberofmembers, speed, agent.panicLevel ? agent.panicLevel : undefined);
   }
 
   return speed;
@@ -70,10 +71,10 @@ const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: numb
  * @param agent
  * @param services
  * @param deltaTime
- * Move agent along a route.
  * @param agents
+ * Move agent along a route.
  */
-const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents): boolean => {
+const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
     return true; // Done
@@ -113,13 +114,21 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   }
   route.splice(0, 1);
   agent.route = route;
-  return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed);
+  if (agent.type === 'group' && agent.group && agent.group.length > 0) {
+    if (agent.panicLevel) {
+      const a = randomItem(agent.group);
+      releaseAgents(agent, services, { release: [a] }, agents);
+      const released = services.agents[a];
+      released.health = 0;
+      released.status = 'inactive';
+    }
+  }
+  return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
 };
 
 /**
  * @param profile
  * Move the agent along its trajectory
- * @param agents
  */
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
@@ -218,11 +227,28 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
   return true;
 };
 
-const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+/**
+ * Release agents from group
+ *
+ * @param agent
+ * @param services
+ * @param options
+ * @param agents
+ */
+const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents?: IAgent[]) => {
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
     for (const id of release) {
-      const a = services.agents[id];
+      let a: IAgent;
+      if (id in services.agents) {
+        a = services.agents[id];
+      } else {
+        const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
+        a = newAgent.agent;
+        agents.push(a);
+        services.agents[id] = a;
+        console.log(a);
+      }
       const i = agent.group.indexOf(id);
       if (a) {
         delete a.memberOf;
