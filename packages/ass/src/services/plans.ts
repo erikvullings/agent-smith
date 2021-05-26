@@ -5,6 +5,7 @@ import { IEnvServices } from '../env-services';
 import { dispatchServices, damageServices, messageServices, redisServices } from '.';
 import { planEffects } from './plan-effects';
 import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+import { agendas } from './agendas';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -45,9 +46,6 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
     } else {
       steps.push({ name: 'walkTo', options: { destination: agent.destination } });
     }
-  }
-  if (agent.running) {
-    steps.push({ name: 'stopRunning' });
   } else {
     steps.push({ name: 'walkTo', options: { destination: agent.destination } });
   }
@@ -227,10 +225,11 @@ export const plans = {
   'Follow person': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       agent.sentbox = [];
-      console.log("agent target", [services.agents[agent.following]])
+      console.log("agent target", [services.agents[agent.following]]);
+      const agentArr : IAgent[] = [agent,services.agents[agent.following]];
       //console.log('agent destination', agent.destination)
       if(agent.following && agent.following !== ""){
-        const followedAgent = services.agents[agent.following]
+        const followedAgent = services.agents[agent.following];
         agent.destination = followedAgent.actual;
         agent.running = true;
         agent.reactedTo = "Drop object";
@@ -245,20 +244,23 @@ export const plans = {
             // if distance is smaller than 4 meters send direct message to the agent 
             // to talk to the agent, if agent is dangerous
             // use weapon
-            damageServices.damageAgent(agent,[followedAgent],services);
+
+            //add damage to agenda
+            //damageServices.damageAgent(agent,[followedAgent],services);
             agent.following = "";
             //take the red agent to the station and wait
 
           }
           else{
-            console.log("We will talk to agent");
+            console.log("We will talk to the agent");
+
             agent.following = "";
 
           }
         }
         
         if(agent.following && agent.following !== ""){
-          const followAgenda = [{ name: 'Follow person', options : {}}];
+          const followAgenda = [{ name: 'Follow person', options : { destination : followedAgent.actual}}];
 
           if(agent.agenda){
             agent.agenda = [...followAgenda, ...agent.agenda];
