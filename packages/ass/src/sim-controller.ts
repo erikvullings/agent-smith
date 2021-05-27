@@ -8,7 +8,6 @@ import { IDefenseAgent } from './models/defense-agent';
 // import jsonSimConfig2 from './sim_config.json';
 import jsonSimConfig from './verstoring_openbare_orde.json';
 import reactionConfig from './plan_reactions.json';
-import { IThreatAgent } from './models/threat-agent';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -69,7 +68,7 @@ export const simController = async (
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
 
-    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent | IThreatAgent)[];
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent)[];
 
     const currentSpeed = simSpeed;
     let currentTime = startTime;

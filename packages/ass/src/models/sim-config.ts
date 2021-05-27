@@ -16,20 +16,20 @@ interface CustomAgents {
 
 export interface CustomAgenda {
   agentId: string;
-  starttimeHours?: number;
-  starttimeMinutes?: number;
-  destinationtimeHours?: number;
-  destinationtimeMinutes?: number;
+  startTimeHours?: number;
+  startTimeMinutes?: number;
+  endTimeFirstPlanHours?: number;
+  endTimeFirstPlanMinutes?: number;
   agendaItems: IStep[];
 }
 
 export interface CustomTypeAgenda {
   agentType: string;
   agentForce: string;
-  starttimeHours?: number;
-  starttimeMinutes?: number;
-  destinationtimeHours?: number;
-  destinationtimeMinutes?: number;
+  startTimeHours?: number;
+  startTimeMinutes?: number;
+  endTimeFirstPlanHours?: number;
+  endTimeFirstPlanMinutes?: number;
   agendaItems: IStep[];
 }
 

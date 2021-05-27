@@ -1,9 +1,8 @@
-import { ILineString, Profile } from 'osrm-rest-client';
-import { IAgent, IActivityOptions } from '../models';
+import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
+import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { generateExistingAgent, addGroup, groupSpeed, durationDroneStep, inRangeCheck, randomItem } from '../utils';
-
+import { generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, randomItem, determineSpeed } from '../utils';
 
 
 /**
@@ -17,54 +16,6 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
     const a = services.agents[id];
     if (a) a.actual = agent.actual;
   }
-};
-
-const defaultWalkingSpeed = 5000 / 3600;
-const defaultFlyingSpeed = 70000 / 3600;
-/**
- * @param agent
- * @param services
- * @param totDistance
- * @param totDuration
- * Determine speed of agent
- */
-const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number => {
-  if (agent.steps && agent.steps[0] && agent.steps[0].name === 'flyTo') {
-    return defaultFlyingSpeed
-  }
-
-  let { speed } = agent;
-  let child = 'no';
-  if (agent.type === 'boy' || agent.type === 'girl') {
-    child = 'yes';
-  } else if (agent.group) {
-    for (const i of agent.group) {
-      if (i in services.agents) {
-        const member = services.agents[i];
-        if (member.type === 'boy' || member.type === 'girl') {
-          child = 'yes';
-        }
-      }
-    }
-  }
-
-  speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
-  if (child === 'yes') {
-    speed *= (3 / 5);
-  }
-  if (agent.running) {
-    if (agent.steps && agent.steps[0] && (agent.steps[0].name === 'driveTo')) {
-      speed *= 1.5;
-    } else {
-      speed *= 2;
-    }
-  }
-  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
-    const numberofmembers = agent.memberCount
-    speed = groupSpeed(numberofmembers, speed, agent.panicLevel ? agent.panicLevel : undefined);
-  }
-
-  return speed;
 };
 
 /**
@@ -159,6 +110,45 @@ const moveAgent = (profile: Profile) => async (
     }
   }
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
+};
+
+/**
+ * @param profile
+ * find route to destination
+ * @param routeToFind
+ * @param routeToFind.actual
+ * @param routeToFind.destination
+ * @param routeToFind.route
+ * @param routeToFind.actual
+ * @param routeToFind.destination
+ * @param routeToFind.route
+ * @param routeToFind.actual
+ * @param routeToFind.destination
+ * @param routeToFind.route
+ */
+export const findRoute = (profile: Profile, routeToFind: { actual: ILocation, destination: ILocation, route?: IOsrmRouteResult }) => async (
+  services: IEnvServices
+) => {
+  const { destination } = routeToFind;
+  if (!destination) return undefined;
+  try {
+    const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
+    const routeResult = await routeService.route({
+      coordinates: [routeToFind.actual.coord, destination.coord],
+      continue_straight: true,
+      steps: true,
+      overview: 'full',
+      geometries: 'geojson',
+    });
+    routeToFind.route = routeResult;
+    return true
+    // console.log(agent.route)
+    // console.log(JSON.stringify(agent.route, null, 2));
+  } catch (e) {
+    console.error(e);
+  }
+
+  return undefined;
 };
 
 const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {

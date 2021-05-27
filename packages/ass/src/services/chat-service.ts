@@ -67,8 +67,8 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
         console.log('agent1.steps.length', randomAgent.steps.length)
         console.log('agent1.agenda.length', randomAgent.agenda.length)
 
-        updateAgent(closeAgent, services);
-        updateAgent(randomAgent, services);
+        updateAgent(closeAgent, services, agents);
+        updateAgent(randomAgent, services, agents);
     }
 };
 

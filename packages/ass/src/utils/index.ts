@@ -1,7 +1,9 @@
 import { IItem } from 'test-bed-schemas';
 import { IAgent, ILocation } from '../models';
-import { redisServices } from '../services';
+import { redisServices, findRoute } from '../services';
 import { IEnvServices } from '../env-services';
+import { IOsrmRouteResult, Profile } from 'osrm-rest-client';
+
 
 /**
  * Create a GUID
@@ -89,8 +91,8 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
     speed = 0.2;
   }
   return speed;
-
 }
+
 
 
 /**
@@ -468,3 +470,95 @@ export const addGroup = (agent: IAgent, transport: IAgent, services: IEnvService
     }
   }
 };
+
+export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number => {
+  const defaultWalkingSpeed = 5000 / 3600;
+  const defaultFlyingSpeed = 70000 / 3600;
+  if (agent.steps && agent.steps[0] && agent.steps[0].name === 'flyTo') {
+    return defaultFlyingSpeed
+  }
+
+  let { speed } = agent;
+  let child = 'no';
+  if (agent.type === 'boy' || agent.type === 'girl') {
+    child = 'yes';
+  } else if (agent.group) {
+    for (const i of agent.group) {
+      if (i in services.agents) {
+        const member = services.agents[i];
+        if (member.type === 'boy' || member.type === 'girl') {
+          child = 'yes';
+        }
+      }
+    }
+  }
+
+  speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
+  if (child === 'yes') {
+    speed *= (3 / 5);
+  }
+  if (agent.running) {
+    if (agent.steps && agent.steps[0] && (agent.steps[0].name === 'driveTo')) {
+      speed *= 1.5;
+    } else {
+      speed *= 2;
+    }
+  }
+  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
+    const numberofmembers = agent.memberCount
+    speed = groupSpeed(numberofmembers, speed, agent.panicLevel ? agent.panicLevel : undefined);
+  }
+
+  return speed;
+};
+
+
+export const determineStartTime = (agent: IAgent, services: IEnvServices, endTime: Date): Date | undefined => {
+  console.log('tjierp');
+  const { destination } = agent;
+  const { distance } = services;
+  let profile: Profile = 'foot';
+  let startTime: Date | undefined;
+
+  startTime = undefined;
+  if (agent.type === 'drone') {
+    if (destination) {
+      const distanceToDestination = distance(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
+      let duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1])
+      duration *= determineSpeed(agent, services, distanceToDestination, duration);
+      startTime = endTime;
+      startTime.setMilliseconds(duration ? endTime.getMilliseconds() - duration : endTime.getMilliseconds());
+    }
+  }
+  else {
+    if ('owns' in agent) {
+      if (agent.owns && agent.owns.length > 0) {
+        const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
+        const car = ownedCar && services.agents[ownedCar.id];
+        if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500) {
+          profile = 'driving'
+        } else {
+          const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
+          const bike = ownedBike && services.agents[ownedBike.id];
+          if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
+            profile = 'bike'
+          }
+        }
+      }
+    }
+    if (destination) {
+      const routeResult: { actual: ILocation, destination: ILocation, route?: IOsrmRouteResult } = { actual: agent.actual, destination };
+      findRoute(profile, routeResult);
+      if (routeResult.route !== undefined) {
+        let duration = routeResult.route.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
+        const distanceToDestination = routeResult.route.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
+        if (distanceToDestination && duration) {
+          duration *= determineSpeed(agent, services, distanceToDestination, duration);
+        }
+        startTime = endTime;
+        startTime.setMilliseconds(duration ? endTime.getMilliseconds() - duration : endTime.getMilliseconds());
+      }
+    }
+  }
+  return startTime;
+}

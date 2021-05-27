@@ -1,7 +1,7 @@
 {
     "settings": [
         {
-            "agentCount": 9,
+            "agentCount": 5,
             "centerCoord": [
                 4.892401,
                 52.373104
@@ -108,69 +108,7 @@
                 "mailbox": []
             }
         ],
-        "red": [
-            {
-                "id": "drone1",
-                "type": "drone",
-                "force": "red",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.901674,
-                        52.388101
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.901674,
-                        52.388101
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "park2"
-                    }
-                ],
-                "group": [
-                    "object1"
-                ],
-                "mailbox": []
-            },
-            {
-                "id": "object2",
-                "type": "gas",
-                "health": 100,
-                "force": "blue",
-                "status": "active",
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        5.499609,
-                        51.438032
-                    ]
-                },
-                "memberOf": "drone2"
-            },
-            {
-                "id": "object1",
-                "type": "gas",
-                "health": 100,
-                "force": "red",
-                "status": "active",
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        5.499609,
-                        51.438032
-                    ]
-                },
-                "memberOf": "drone1"
-            }
-        ]
+        "red": []
     },
     "customAgendas": [],
     "customTypeAgendas": [
@@ -197,6 +135,8 @@
         {
             "agentType": "drone",
             "agentForce": "red",
+            "endTimeFirstPlanHours": 0,
+            "endTimeFirstPlanMinutes": 20,
             "agendaItems": [
                 {
                     "name": "Go to specific area",
@@ -211,7 +151,7 @@
                 {
                     "name": "Wait",
                     "options": {
-                        "duration": 300000
+                        "duration": 150000
                     }
                 },
                 {

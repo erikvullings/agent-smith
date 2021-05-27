@@ -2,13 +2,20 @@
 /* eslint-disable no-param-reassign */
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
+import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
 import { messageServices, redisServices } from '.';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
   const { distance } = services;
-  const { startTime } = options;
+  const { endTime } = options;
+  let { startTime } = options;
+  if (endTime) {
+    console.log('endTime')
+    startTime = determineStartTime(agent, services, endTime);
+    console.log('startTime')
+    console.log(startTime)
+  }
   if (startTime) {
     steps.push({ name: 'waitUntil', options });
   }
