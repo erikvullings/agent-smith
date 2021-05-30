@@ -17,14 +17,14 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
             const closeReceivers = (await redisServices.geoSearch(agent.actual, 1000, agent) as any[]).map((a) => a = services.agents[a.key]);
             const closeAgents = closeReceivers
                 .filter(
-                    a => (('department' in a) && a.department !== 'station') &&
+                    a => (('baseLocation' in a) && a.baseLocation !== 'station') &&
                     a.agenda &&
                     (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
 
             const farReceivers = (await redisServices.geoSearch(agent.actual, 15000, agent) as any[]).map((a) => a = services.agents[a.key]);
             const farStationAgents = farReceivers
                 .filter(
-                    a => (('department' in a) && a.department === 'station') &&
+                    a => (('baseLocation' in a) && a.baseLocation === 'station') &&
                     a.agenda &&
                     (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
 

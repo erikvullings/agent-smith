@@ -51,4 +51,12 @@ export const reaction = {
             { 'name': 'Stay at police station', 'options': {} }]],
         },
     },
+    'Interrogation': {
+        'white': {
+            urgency: 1, plans: [[{ 'name': 'Interrogation', 'options': {} }]],
+        },
+        'red': {
+            urgency: 1, plans: [[{ 'name': 'Interrogation', 'options': {} }]],
+        },
+    },
 } as IReactions

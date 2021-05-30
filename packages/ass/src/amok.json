@@ -107,7 +107,7 @@
             "actual": { "type": "home", "coord": [4.303899, 52.074553] },
             "occupations": [{ "type": "work", "id": "mauritspoort"}],
             "mailbox": [],
-            "department": "none",
+            "baseLocation": "none",
             "defenseType": "police",
             "equipment": [{"type": "firearm", "damageLevel": 5}]
     },
@@ -121,7 +121,7 @@
             "actual": { "type": "home", "coord": [4.308954, 52.087801] },
             "occupations": [{ "type": "work", "id": "langepoort"}],
             "mailbox": [],
-            "department": "none",
+            "baseLocation": "none",
             "defenseType": "kmar"
         },
         {
@@ -134,7 +134,7 @@
             "actual": { "type": "home", "coord": [4.283629, 52.078477] },
             "occupations": [{ "type": "work", "id": "mauritspoort"}],
             "mailbox": [],
-            "department": "none",
+            "baseLocation": "none",
             "defenseType": "kmar"
         },
     {
@@ -147,7 +147,7 @@
             "actual": { "type": "police station", "coord": [4.306952, 52.075691] },
             "occupations": [{ "type": "work", "id": "police station"}],
             "owns": [{ "type": "car", "id": "policecar" }],
-            "department": "station",
+            "baseLocation": "station",
             "mailbox": [],
             "defenseType": "police"
     },
@@ -160,7 +160,7 @@
             "home": { "type": "home", "coord": [4.306952, 52.075691] },
             "actual": { "type": "police station jan hendrikstraat", "coord": [4.306952, 52.075691] },
             "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
-            "department": "station",
+            "baseLocation": "station",
             "mailbox": [],
             "defenseType": "police"
     },
@@ -173,7 +173,7 @@
             "home": { "type": "home", "coord": [4.364151, 52.091361] },
             "actual": { "type": "home", "coord": [4.364151, 52.091361] },
             "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
-            "department": "station",
+            "baseLocation": "station",
             "mailbox": [],
             "defenseType": "police",
             "following": "whiteAgent"
@@ -187,9 +187,69 @@
             "home": { "type": "home", "coord": [4.306952, 52.075691] },
             "actual": { "type": "police station jan hendrikstraat", "coord": [4.306952, 52.075691] },
             "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
-            "department": "station",
+            "baseLocation": "station",
             "mailbox": [],
             "defenseType": "police"
+    },
+    {
+        "id": "tbp_bodyguard",
+        "type": "man",
+        "force": "blue",
+        "health": 100,
+        "status": "active",
+        "home": { "type": "home", "coord": [4.364151, 52.091361] },
+        "actual": {
+            "type": "any",
+            "coord": [
+                4.304155,
+                52.079523
+        ]
+        },
+        "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
+        "baseLocation": "station",
+        "mailbox": [],
+        "defenseType": "police",
+        "following": "tbp"    
+    },
+    {
+        "id": "tbp_bodyguard1",
+        "type": "man",
+        "force": "blue",
+        "health": 100,
+        "status": "active",
+        "home": { "type": "home", "coord": [4.306952, 52.075691] },
+        "actual": {
+            "type": "any",
+            "coord": [
+                4.304155,
+                52.079523
+        ]
+        },
+        "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
+        "baseLocation": "station",
+        "mailbox": [],
+        "defenseType": "police",
+        "following": "tbp"
+    },
+    {
+        "id": "tbp_bodyguard2",
+        "type": "man",
+        "force": "blue",
+        "health": 100,
+        "status": "active",
+        "home": { "type": "home", "coord": [4.306952, 52.075691] },
+        "actual": {
+            "type": "any",
+            "coord": [
+                4.304155,
+                52.079523
+        ]
+        },
+        "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
+        "baseLocation": "station",
+        "mailbox": [],
+        "defenseType": "police",
+        "following": "tbp"
     }],
         "white": [
             {
@@ -242,6 +302,12 @@
             "agentId": "tbp",
             "agendaItems": [
                 {
+                    "name": "Wait",
+                    "options": {
+                        "duration":1
+                    }
+                },
+                {
                     "name": "Go to work",
                     "options": {
                     }
@@ -279,6 +345,27 @@
             "agendaItems": [
                 { "name": "Go to work", "options" : { "priority": 2 } },
                 { "name": "Work", "options" : { "priority": 2 } },
+                { "name": "Go home", "options" : { "priority": 2 } }
+            ]
+        },
+        {
+            "agentId": "tbp_bodyguard",
+            "agendaItems": [
+                { "name": "Protect person", "options" : { "priority": 2 } },
+                { "name": "Go home", "options" : { "priority": 2 } }
+            ]
+        },
+        {
+            "agentId": "tbp_bodyguard1",
+            "agendaItems": [
+                { "name": "Protect person", "options" : { "priority": 2 } },
+                { "name": "Go home", "options" : { "priority": 2 } }
+            ]
+        },
+        {
+            "agentId": "tbp_bodyguard2",
+            "agendaItems": [
+                { "name": "Protect person", "options" : { "priority": 2 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ]
         }

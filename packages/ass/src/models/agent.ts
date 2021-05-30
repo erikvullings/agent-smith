@@ -83,10 +83,10 @@ export interface IAgent {
   sentbox: { receiver: IAgent, mail: IMail }[];
   reactedTo?: string;
   targets?: IAgent[];
-  following: string;
+  following?: string;
   defenseType: 'kmar' | 'police'
-  /** work department */
-  department: 'station' | string;
+  /** work baseLocation */
+  baseLocation: 'station' | string;
   /** Equpment that the agent carries */
   equipment?: IEquipment[],
   /** Equpment that is in use */
