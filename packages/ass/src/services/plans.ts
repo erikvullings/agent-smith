@@ -2,21 +2,26 @@
 /* eslint-disable no-param-reassign */
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
+import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime, simTime } from '../utils';
 import { messageServices, redisServices } from '.';
 
-const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
   const { distance } = services;
   const { endTime } = options;
-  let { startTime } = options;
+  const { startTime } = options;
   if (endTime) {
-    console.log('endTime')
-    startTime = determineStartTime(agent, services, endTime);
-    console.log('startTime')
-    console.log(startTime)
+    const times: { [id: string]: Date } = {};
+    await determineStartTime(agent, services, options, times);
+    console.log('');
+    console.log(agent.type);
+    options.startTime = times[agent.id];
+    console.log(options.startTime);
+    console.log(services.getTime())
+    console.log('');
+    steps.push({ name: 'waitUntil', options });
   }
-  if (startTime) {
+  else if (startTime) {
     steps.push({ name: 'waitUntil', options });
   }
   if (agent.type === 'drone') {
@@ -89,7 +94,7 @@ export const plans = {
         const occupation =
           (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services, options);
+        await prepareRoute(agent, services, options);
       }
       return true;
     },
@@ -101,7 +106,7 @@ export const plans = {
       agent.sentbox = [];
       const { destination = randomPlaceNearby(agent, 1000, 'shop') } = options;
       agent.destination = destination;
-      prepareRoute(agent, services, options);
+      await prepareRoute(agent, services, options);
 
       return true;
     },
@@ -112,7 +117,7 @@ export const plans = {
       agent.sentbox = [];
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
       agent.destination = destination;
-      prepareRoute(agent, services, options);
+      await prepareRoute(agent, services, options);
 
       return true;
     },
@@ -123,7 +128,7 @@ export const plans = {
       agent.sentbox = [];
       const { destination = randomPlaceNearby(agent, 1000, 'any') } = options;
       agent.destination = destination;
-      prepareRoute(agent, services, options);
+      await prepareRoute(agent, services, options);
 
       return true;
     },
@@ -135,7 +140,7 @@ export const plans = {
       const { destination = randomPlaceNearby(agent, 1000, 'any') } = options;
       agent.destination = destination;
       agent.running = true;
-      prepareRoute(agent, services, options);
+      await prepareRoute(agent, services, options);
 
       return true;
     },
@@ -166,7 +171,7 @@ export const plans = {
         }
       }
       agent.running = true;
-      prepareRoute(agent, services, options);
+      await prepareRoute(agent, services, options);
       return true;
     },
   },
@@ -177,7 +182,7 @@ export const plans = {
       if (options.destination) {
         agent.sentbox = [];
         agent.destination = options.destination;
-        prepareRoute(agent, services, options);
+        await prepareRoute(agent, services, options);
         // agent.speed = 2;
       }
       return true;
@@ -191,7 +196,7 @@ export const plans = {
         const centre = options.areaCentre;
         const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
         agent.destination = destination;
-        prepareRoute(agent, _services, options);
+        await prepareRoute(agent, _services, options);
       }
       return true;
     },
@@ -227,7 +232,7 @@ export const plans = {
       agent.sentbox = [];
       // console.log('agent destination', agent.destination)
       agent.destination = options.destination;
-      prepareRoute(agent, services, options);
+      await prepareRoute(agent, services, options);
       // agent.speed = 2;
       return true;
     },
@@ -246,7 +251,7 @@ export const plans = {
         const occupation =
           (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
         agent.destination = services.locations[occupation.id];
-        prepareRoute(agent, services, options);
+        await prepareRoute(agent, services, options);
       }
       return true;
     },
@@ -258,7 +263,7 @@ export const plans = {
       agent.sentbox = [];
       if (agent.home) {
         agent.destination = agent.home;
-        prepareRoute(agent, services, options);
+        await prepareRoute(agent, services, options);
       }
       return true;
     },

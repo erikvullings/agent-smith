@@ -1,8 +1,10 @@
 import { IItem } from 'test-bed-schemas';
-import { IAgent, ILocation } from '../models';
-import { redisServices, findRoute } from '../services';
+import { IAgent, ILocation, IActivityOptions } from '../models';
+import { redisServices } from '../services';
 import { IEnvServices } from '../env-services';
 import { IOsrmRouteResult, Profile } from 'osrm-rest-client';
+import { start } from 'repl';
+import { timeStamp } from 'console';
 
 
 /**
@@ -513,24 +515,25 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
 };
 
 
-export const determineStartTime = (agent: IAgent, services: IEnvServices, endTime: Date): Date | undefined => {
-  console.log('tjierp');
+export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions, times: { [id: string]: Date }) => {
   const { destination } = agent;
   const { distance } = services;
+  const { endTime } = options;
   let profile: Profile = 'foot';
-  let startTime: Date | undefined;
 
-  startTime = undefined;
-  if (agent.type === 'drone') {
+  if (agent.type === 'drone' && endTime) {
     if (destination) {
-      const distanceToDestination = distance(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
-      let duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1])
-      duration *= determineSpeed(agent, services, distanceToDestination, duration);
-      startTime = endTime;
-      startTime.setMilliseconds(duration ? endTime.getMilliseconds() - duration : endTime.getMilliseconds());
+      const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
+      const mSecs = duration ? endTime.getTime() - duration : endTime.getTime();
+      const startTime = new Date(0, 0, 0, 0);
+      startTime.setTime(mSecs);
+      times[agent.id] = startTime;
+      console.log(startTime.getTime())
+      console.log('')
+
     }
   }
-  else {
+  else if (endTime) {
     if ('owns' in agent) {
       if (agent.owns && agent.owns.length > 0) {
         const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
@@ -547,18 +550,25 @@ export const determineStartTime = (agent: IAgent, services: IEnvServices, endTim
       }
     }
     if (destination) {
-      const routeResult: { actual: ILocation, destination: ILocation, route?: IOsrmRouteResult } = { actual: agent.actual, destination };
-      findRoute(profile, routeResult);
-      if (routeResult.route !== undefined) {
-        let duration = routeResult.route.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
-        const distanceToDestination = routeResult.route.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
+      const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
+      const routeResult = await routeService.route({
+        coordinates: [agent.actual.coord, destination.coord],
+        continue_straight: true,
+        steps: true,
+        overview: 'full',
+        geometries: 'geojson',
+      })
+      if (routeResult !== undefined) {
+        let duration = routeResult.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
+        const distanceToDestination = routeResult.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
         if (distanceToDestination && duration) {
-          duration *= determineSpeed(agent, services, distanceToDestination, duration);
+          duration /= determineSpeed(agent, services, distanceToDestination, duration);
         }
-        startTime = endTime;
-        startTime.setMilliseconds(duration ? endTime.getMilliseconds() - duration : endTime.getMilliseconds());
+        const mSecs = duration ? endTime.getTime() - duration : endTime.getTime();
+        const startTime = new Date(0, 0, 0, 0);
+        startTime.setTime(mSecs);
+        times[agent.id] = startTime;
       }
     }
   }
-  return startTime;
 }

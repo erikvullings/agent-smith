@@ -307,7 +307,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
 
 }
 
-const customTypeAgenda = (agent: IAgent, _services: IEnvServices, customTypeAgIndex: number) => {
+const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgIndex: number) => {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;
   } else {
@@ -318,12 +318,25 @@ const customTypeAgenda = (agent: IAgent, _services: IEnvServices, customTypeAgIn
   const agenda = customTypeAgendas[customTypeAgIndex].agendaItems;
   if (agenda.length > 0) {
     // console.log(customTypeAgendas[customTypeAgIndex].endTimeHours === 0 ? 'yes' : 'no')
-    if (customTypeAgendas[customTypeAgIndex].startTimeHours) {
-      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, customTypeAgendas[customTypeAgIndex].startTimeHours!, customTypeAgendas[customTypeAgIndex].startTimeMinutes) };
+    let hours = services.getTime().getHours();
+    let minutes = services.getTime().getMinutes();
+    if (customTypeAgendas[customTypeAgIndex].startTimeHours || customTypeAgendas[customTypeAgIndex].startTimeMinutes) {
+      if (customTypeAgendas[customTypeAgIndex].startTimeHours) {
+        hours += customTypeAgendas[customTypeAgIndex].startTimeHours!;
+      }
+      if (customTypeAgendas[customTypeAgIndex].startTimeMinutes) {
+        minutes += customTypeAgendas[customTypeAgIndex].startTimeMinutes!;
+      }
+      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
       agenda[0].options = agendaOptions;
-    } else if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours || customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours === 0) {
-      console.log('tjierp2');
-      const agendaOptions = { ...(agenda[0].options), endTime: simTime(day, customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours!, customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes) };
+    } else if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours || customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes) {
+      if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours) {
+        hours += customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours!;
+      }
+      if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes) {
+        minutes += customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes!;
+      }
+      const agendaOptions = { ...(agenda[0].options), endTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
       agenda[0].options = agendaOptions;
     } else {
       const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
@@ -331,11 +344,11 @@ const customTypeAgenda = (agent: IAgent, _services: IEnvServices, customTypeAgIn
     }
     return agenda as ActivityList;
   }
-  return getAgenda(agent, _services);
+  return getAgenda(agent, services);
 
 };
 
-const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: number) => {
+const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: number) => {
   if (typeof agent._day === 'undefined') {
     agent._day = 0;
   } else {
@@ -345,11 +358,25 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
   // const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
   const agenda = customAgendas[customAgIndex].agendaItems;
   if (agenda.length > 0) {
-    if (customAgendas[customAgIndex].startTimeHours) {
-      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, customAgendas[customAgIndex].startTimeHours!, customAgendas[customAgIndex].startTimeMinutes) };
+    let hours = services.getTime().getHours();
+    let minutes = services.getTime().getMinutes();
+    if (customAgendas[customAgIndex].startTimeHours || customAgendas[customAgIndex].startTimeMinutes) {
+      if (customAgendas[customAgIndex].startTimeHours) {
+        hours += customAgendas[customAgIndex].startTimeHours!;
+      }
+      if (customAgendas[customAgIndex].startTimeMinutes) {
+        minutes += customAgendas[customAgIndex].startTimeMinutes!;
+      }
+      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
       agenda[0].options = agendaOptions;
-    } else if (customAgendas[customAgIndex].endTimeHours) {
-      const agendaOptions = { ...(agenda[0].options), endTime: simTime(day, customAgendas[customAgIndex].endTimeHours!, customAgendas[customAgIndex].endTimeMinutes) };
+    } else if (customAgendas[customAgIndex].endTimeFirstPlanHours || customAgendas[customAgIndex].endTimeFirstPlanMinutes) {
+      if (customAgendas[customAgIndex].endTimeFirstPlanHours) {
+        hours += customAgendas[customAgIndex].endTimeFirstPlanHours!;
+      }
+      if (customAgendas[customAgIndex].endTimeFirstPlanMinutes) {
+        minutes += customAgendas[customAgIndex].endTimeFirstPlanMinutes!;
+      }
+      const agendaOptions = { ...(agenda[0].options), endTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
       agenda[0].options = agendaOptions;
     } else {
       const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
@@ -358,7 +385,7 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
     return agenda as ActivityList;
   }
 
-  return getAgenda(agent, _services);
+  return getAgenda(agent, services);
 
 };
 

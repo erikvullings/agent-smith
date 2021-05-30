@@ -76,6 +76,7 @@ export const simController = async (
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
       services.setTime(currentTime);
+      console.log(services.getTime())
     };
     const notifyOthers = () => {
       const payload = {

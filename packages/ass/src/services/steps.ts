@@ -112,44 +112,6 @@ const moveAgent = (profile: Profile) => async (
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
 };
 
-/**
- * @param profile
- * find route to destination
- * @param routeToFind
- * @param routeToFind.actual
- * @param routeToFind.destination
- * @param routeToFind.route
- * @param routeToFind.actual
- * @param routeToFind.destination
- * @param routeToFind.route
- * @param routeToFind.actual
- * @param routeToFind.destination
- * @param routeToFind.route
- */
-export const findRoute = (profile: Profile, routeToFind: { actual: ILocation, destination: ILocation, route?: IOsrmRouteResult }) => async (
-  services: IEnvServices
-) => {
-  const { destination } = routeToFind;
-  if (!destination) return undefined;
-  try {
-    const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
-    const routeResult = await routeService.route({
-      coordinates: [routeToFind.actual.coord, destination.coord],
-      continue_straight: true,
-      steps: true,
-      overview: 'full',
-      geometries: 'geojson',
-    });
-    routeToFind.route = routeResult;
-    return true
-    // console.log(agent.route)
-    // console.log(JSON.stringify(agent.route, null, 2));
-  } catch (e) {
-    console.error(e);
-  }
-
-  return undefined;
-};
 
 const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { route = [], memberOf } = agent;
