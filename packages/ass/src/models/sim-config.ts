@@ -2,7 +2,8 @@ import { IActivityOptions, IStep } from '.';
 import { IAgent } from './agent';
 
 export interface ISimConfig {
-  settings: Settings[];
+  settings: Settings;
+  generateSettings: GenerateSettings[];
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
@@ -38,11 +39,16 @@ export interface AgendaItem {
   options?: IActivityOptions;
 }
 
-export interface Settings {
+export interface GenerateSettings {
   agentCount: number;
   centerCoord: number[];
   radius: number;
   type?: string;
   object?: string;
   force?: string;
+}
+
+export interface Settings {
+  startTimeHours?: number;
+  startTimeMinutes?: number;
 }

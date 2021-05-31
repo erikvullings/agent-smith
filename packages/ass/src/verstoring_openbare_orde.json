@@ -1,5 +1,9 @@
 {
-    "settings": [
+    "settings": {
+        "startTimeHours": 19,
+        "startTimeMinutes": 45
+    },
+    "generateSettings": [
         {
             "agentCount": 10,
             "centerCoord": [
@@ -106,28 +110,6 @@
                 "force": "white",
                 "memberCount": 5000,
                 "mailbox": []
-            },
-            {
-                "id": "man",
-                "type": "man",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.891674,
-                        52.378101
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892367,
-                        52.374871
-                    ]
-                },
-                "force": "blue",
-                "mailbox": []
             }
         ],
         "red": []
@@ -155,38 +137,10 @@
             ]
         },
         {
-            "agentType": "man",
-            "agentForce": "blue",
-            "endTimeFirstPlanHours": 0,
-            "endTimeFirstPlanMinutes": 5,
-            "agendaItems": [
-                {
-                    "name": "Go to specific area",
-                    "options": {
-                        "areaCentre": [
-                            4.892401,
-                            52.373104
-                        ],
-                        "areaRange": 20
-                    }
-                },
-                {
-                    "name": "Wait",
-                    "options": {
-                        "duration": 150000
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {}
-                }
-            ]
-        },
-        {
             "agentType": "drone",
             "agentForce": "red",
-            "endTimeFirstPlanHours": 0,
-            "endTimeFirstPlanMinutes": 5,
+            "endTimeFirstPlanHours": 20,
+            "endTimeFirstPlanMinutes": 0,
             "agendaItems": [
                 {
                     "name": "Go to specific area",

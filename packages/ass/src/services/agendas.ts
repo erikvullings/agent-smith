@@ -318,8 +318,10 @@ const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgInd
   const agenda = customTypeAgendas[customTypeAgIndex].agendaItems;
   if (agenda.length > 0) {
     // console.log(customTypeAgendas[customTypeAgIndex].endTimeHours === 0 ? 'yes' : 'no')
-    let hours = services.getTime().getHours();
-    let minutes = services.getTime().getMinutes();
+    // let hours = services.getTime().getHours();
+    // let minutes = services.getTime().getMinutes();
+    let hours = 0;
+    let minutes = 0;
     if (customTypeAgendas[customTypeAgIndex].startTimeHours || customTypeAgendas[customTypeAgIndex].startTimeMinutes) {
       if (customTypeAgendas[customTypeAgIndex].startTimeHours) {
         hours += customTypeAgendas[customTypeAgIndex].startTimeHours!;
@@ -358,8 +360,10 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
   // const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
   const agenda = customAgendas[customAgIndex].agendaItems;
   if (agenda.length > 0) {
-    let hours = services.getTime().getHours();
-    let minutes = services.getTime().getMinutes();
+    // let hours = services.getTime().getHours();
+    // let minutes = services.getTime().getMinutes();
+    let hours = 0;
+    let minutes = 0;
     if (customAgendas[customAgIndex].startTimeHours || customAgendas[customAgIndex].startTimeMinutes) {
       if (customAgendas[customAgIndex].startTimeHours) {
         hours += customAgendas[customAgIndex].startTimeHours!;

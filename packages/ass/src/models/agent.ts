@@ -88,6 +88,8 @@ export interface IAgent {
   equipment?: IEquipment[],
   /** Equpment that is in use */
   currentEquipment?: IEquipment
+  /** start time of the first plan of the agent */
+  startTime?: Date;
 }
 
 export interface IMail {

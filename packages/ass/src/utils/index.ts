@@ -515,7 +515,7 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
 };
 
 
-export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions, times: { [id: string]: Date }) => {
+export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const { destination } = agent;
   const { distance } = services;
   const { endTime } = options;
@@ -524,13 +524,10 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
   if (agent.type === 'drone' && endTime) {
     if (destination) {
       const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
-      const mSecs = duration ? endTime.getTime() - duration : endTime.getTime();
+      const mSecs = duration ? endTime.getTime() - (duration * 1000) : endTime.getTime();
       const startTime = new Date(0, 0, 0, 0);
       startTime.setTime(mSecs);
-      times[agent.id] = startTime;
-      console.log(startTime.getTime())
-      console.log('')
-
+      agent.startTime = startTime;
     }
   }
   else if (endTime) {
@@ -562,12 +559,13 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
         let duration = routeResult.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
         const distanceToDestination = routeResult.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
         if (distanceToDestination && duration) {
-          duration /= determineSpeed(agent, services, distanceToDestination, duration);
+          const speedFactor = (distanceToDestination / duration) / determineSpeed(agent, services, distanceToDestination, duration)
+          duration *= speedFactor;
         }
-        const mSecs = duration ? endTime.getTime() - duration : endTime.getTime();
+        const mSecs = duration ? endTime.getTime() - (duration * 1000) : endTime.getTime();
         const startTime = new Date(0, 0, 0, 0);
         startTime.setTime(mSecs);
-        times[agent.id] = startTime;
+        agent.startTime = startTime;
       }
     }
   }

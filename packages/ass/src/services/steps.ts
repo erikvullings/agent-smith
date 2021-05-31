@@ -146,6 +146,16 @@ const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActiv
 /**
  * @param agent
  * @param services
+ * Wait until a start time before continuing
+ */
+const waitUntilList = async (agent: IAgent, services: IEnvServices) => {
+  const { startTime } = agent;
+  return startTime ? startTime < services.getTime() : true;
+};
+
+/**
+ * @param agent
+ * @param services
  * @param options
  * Wait for a certain duration before continuing
  */
@@ -250,6 +260,7 @@ export const steps = {
   driveTo: moveAgent('driving'),
   flyTo,
   waitUntil,
+  waitUntilList,
   waitFor,
   controlAgents,
   releaseAgents,

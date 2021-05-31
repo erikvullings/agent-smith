@@ -11,15 +11,11 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
   const { endTime } = options;
   const { startTime } = options;
   if (endTime) {
-    const times: { [id: string]: Date } = {};
-    await determineStartTime(agent, services, options, times);
-    console.log('');
-    console.log(agent.type);
-    options.startTime = times[agent.id];
-    console.log(options.startTime);
+    await determineStartTime(agent, services, options);
+    console.log(agent.startTime)
     console.log(services.getTime())
-    console.log('');
-    steps.push({ name: 'waitUntil', options });
+    console.log('')
+    steps.push({ name: 'waitUntilList', options });
   }
   else if (startTime) {
     steps.push({ name: 'waitUntil', options });

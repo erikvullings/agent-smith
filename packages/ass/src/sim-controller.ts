@@ -49,8 +49,9 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 3, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 3, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
+    services.setTime(startTime);
     // const agentstoshow = [] as IAgent[];
 
     const reactionImport: IReactions = reactionConfig;
@@ -76,8 +77,8 @@ export const simController = async (
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
       services.setTime(currentTime);
-      console.log(services.getTime())
     };
+
     const notifyOthers = () => {
       const payload = {
         topic: SimEntityFeatureCollectionTopic,
@@ -156,7 +157,7 @@ export const simController = async (
       },
     };
 
-    for (const s of simConfig.settings) {
+    for (const s of simConfig.generateSettings) {
       const { agents: generatedAgents, locations } = generateAgents(
         s.centerCoord[0],
         s.centerCoord[1],

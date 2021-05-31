@@ -73,7 +73,7 @@ const send = async (sender: IAgent, message: string, receivers: IAgent[], _servi
             rec.mailbox = [{ sender, location: sender.actual, message }];
         }
 
-        if (planEffects[message].panicLevel && rec.force === 'white') {
+        if (planEffects[message] && planEffects[message].panicLevel && rec.force === 'white') {
             const panic = planEffects[message].panicLevel;
             if (rec.panicLevel) {
                 rec.panicLevel += panic;
