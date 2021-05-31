@@ -12,9 +12,6 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
   const { startTime } = options;
   if (endTime) {
     await determineStartTime(agent, services, options);
-    console.log(agent.startTime)
-    console.log(services.getTime())
-    console.log('')
     steps.push({ name: 'waitUntilList', options });
   }
   else if (startTime) {
@@ -37,6 +34,9 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
       } else {
         const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
         const bike = ownedBike && services.agents[ownedBike.id];
+        console.log(bike);
+        console.log(distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]));
+        console.log(distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]));
         if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
           bike.force = agent.force;
           bike.group = [agent.id];
@@ -45,6 +45,7 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
           steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
           steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
           steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
+          console.log('bike');
         } else {
           steps.push({ name: 'walkTo', options: { destination: agent.destination } });
         }

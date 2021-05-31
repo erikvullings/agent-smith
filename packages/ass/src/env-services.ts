@@ -140,6 +140,7 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
     }
   } else {
     agent.agenda = [...await createAgenda(agent, services)];
+    if (agent.type === 'man') console.log(agent.agenda);
     updateAgent(agent, services, agents);
 
   }

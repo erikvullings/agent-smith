@@ -182,37 +182,37 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
         ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
         ...activities.goHome(),
       ] as ActivityList,
-      [
-        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-        ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
-        ...activities.goHome(),
-        ...activities.wander(),
-        ...activities.goHome(),
-      ] as ActivityList,
-      [
-        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-        ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
-        ...activities.goHome(),
-      ] as ActivityList,
-      [
-        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-        ...activities.goHome(),
-      ] as ActivityList,
-      [
-        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-        ...activities.wander(),
-        ...activities.goHome(),
-      ] as ActivityList,
-      [
-        ...activities.wander(),
-        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-        ...activities.goHome(),
-      ] as ActivityList,
-      [
-        ...activities.wander(),
-        ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
-        ...activities.goHome(),
-      ] as ActivityList,
+      // [
+      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+      //   ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
+      //   ...activities.goHome(),
+      //   ...activities.wander(),
+      //   ...activities.goHome(),
+      // ] as ActivityList,
+      // [
+      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+      //   ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
+      //   ...activities.goHome(),
+      // ] as ActivityList,
+      // [
+      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+      //   ...activities.goHome(),
+      // ] as ActivityList,
+      // [
+      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+      //   ...activities.wander(),
+      //   ...activities.goHome(),
+      // ] as ActivityList,
+      // [
+      //   ...activities.wander(),
+      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+      //   ...activities.goHome(),
+      // ] as ActivityList,
+      // [
+      //   ...activities.wander(),
+      //   ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
+      //   ...activities.goHome(),
+      // ] as ActivityList,
     ],
     learn: () => [
       [

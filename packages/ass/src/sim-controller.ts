@@ -8,6 +8,7 @@ import { IDefenseAgent } from './models/defense-agent';
 // import jsonSimConfig2 from './sim_config.json';
 import jsonSimConfig from './verstoring_openbare_orde.json';
 import reactionConfig from './plan_reactions.json';
+import { Coordinate } from 'osrm-rest-client';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -190,47 +191,25 @@ export const simController = async (
 
     // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
 
+    const nearest = (agent: IAgent, transportType: TransportType) => {
+      if (transportType === 'car') {
+        return services.drive.nearest({ coordinates: [agent.actual.coord] });
+      }
+      if (transportType === 'bicycle') {
+        return services.cycle.nearest({ coordinates: [agent.actual.coord] });
+      }
+      return services.walk.nearest({ coordinates: [agent.actual.coord] });
+    };
 
-    // agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
-    // agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
-
-    // const nearest = {
-    //   car: services.drive.nearest,
-    //   bicycle: services.cycle.nearest,
-    //   walk: services.walk.nearest,
-    //   bus: services.drive.nearest, // fake
-    //   train: services.drive.nearest, // fake
-    // };
-    // for (const agent of agents) {
-    //   const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
-    //   if (!transportType || !['car', 'bicycle', 'walk'].indexOf(transportType)) continue;
-    //   const coord = (await nearest[transportType]({ coordinates: [agent.actual.coord] })).waypoints[0]
-    //     .location;
-    //   if (!coord) continue;
-    //   agent.actual.coord = coord;
-    // }
-
-    // Drie opmerkingen:
-    // - je loopt hier 2x over dezelfde lijst.
-    // - de .map function werkt niet met async/await
-    // - de location can undefined zijn, en dat gaf een TS error
-    // Zie ook https://advancedweb.hu/how-to-use-async-functions-with-array-map-in-javascript/
-    // agents
-    //   .filter((a) => a.type == 'car')
-    //   .map(
-    //     async (a) =>
-    //       (a.actual.coord = (
-    //         await services.drive.nearest({ coordinates: [a.actual.coord] })
-    //       ).waypoints[0].location)
-    //   );
-    // agents
-    //   .filter((a) => a.type == 'bicycle')
-    //   .map(
-    //     async (a) =>
-    //       (a.actual.coord = (
-    //         await services.cycle.nearest({ coordinates: [a.actual.coord] })
-    //       ).waypoints[0].location)
-    //   );
+    for (const agent of agents) {
+      const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
+      if (transportType) {
+        const coord = (await nearest(agent, transportType)).waypoints[0].location;
+        if (coord) {
+          agent.actual.coord = coord;
+        }
+      }
+    }
 
 
     services.agents = agents.reduce((acc, cur) => {
