@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, randomItem, determineSpeed } from '../utils';
+import { generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, round, shuffle, randomInRange } from '../utils';
 
 
 /**
@@ -17,6 +17,33 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
     if (a) a.actual = agent.actual;
   }
 };
+
+/**
+ * @param agent
+ * @param services
+ * @param agents
+ * release victims from group when in panic
+ */
+const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
+  let percentageReleased = agent.panicLevel ? agent.panicLevel / 2000 : 0;
+  if (agent.vulnerability) {
+    percentageReleased += (agent.vulnerability / 2000);
+  }
+  const numberReleased = round(agent.memberCount * 0.01 * percentageReleased, 0);
+  console.log(numberReleased);
+  if (agent.group && agent.group.length >= numberReleased) {
+    const agentsToRelease = [...shuffle(agent.group)].slice(0, numberReleased);
+    releaseAgents(agent, services, { release: agentsToRelease }, agents);
+    for (const a of agentsToRelease) {
+      const released = services.agents[a];
+      released.health = randomInRange(0, 20);
+      if (released.health === 0) {
+        released.status = 'inactive';
+      }
+
+    }
+  }
+}
 
 /**
  * @param agent
@@ -67,11 +94,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   agent.route = route;
   if (agent.type === 'group' && agent.group && agent.group.length > 0) {
     if (agent.panicLevel) {
-      const a = randomItem(agent.group);
-      releaseAgents(agent, services, { release: [a] }, agents);
-      const released = services.agents[a];
-      released.health = 0;
-      released.status = 'inactive';
+      releaseVictimsGroup(agent, services, agents);
     }
   }
   return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
@@ -209,7 +232,6 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
         a = newAgent.agent;
         agents.push(a);
         services.agents[id] = a;
-        console.log(a);
       }
       const i = agent.group.indexOf(id);
       if (a) {

@@ -61,8 +61,8 @@ export interface IAgent {
     /** ID of the owned object */
     id: string;
   }[];
-  /** Equal to 1 or empty if agent is visibile, equal to 0 if agent is invisible */
-  visibility?: number;
+  /** equal to 0 for normal agents, 100 for extremely vulnerable agents */
+  vulnerability?: number;
   /** Agenda day, e.g. in order to create a new agenda each day. Internal property, do not set yourself. */
   _day?: number;
   /** Agenda with active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */

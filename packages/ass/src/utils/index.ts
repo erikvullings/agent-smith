@@ -60,15 +60,15 @@ export const randomItem = <T>(arr: T | T[]): T =>
  */
 export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: number): number => {
   let speed = 1;
-  if (nOMembers < 500) {
+  if (nOMembers < 1000) {
     let distance = 0.65;
-    if (nOMembers < 50) {
+    if (nOMembers < 100) {
       distance = 1.35;
-    } else if (nOMembers < 100) {
-      distance = 1;
     } else if (nOMembers < 250) {
-      distance = 0.85;
+      distance = 1;
     } else if (nOMembers < 500) {
+      distance = 0.85;
+    } else if (nOMembers < 1000) {
       distance = 0.65;
     } else {
       distance = 0.5;
@@ -89,7 +89,7 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
     const acc = 2 * (10 ** 3) * Math.exp(exp1) + Math.sqrt(2) * 2 * (10 ** 3) * Math.exp(exp2)
     speed = desiredspeed - (1 / 80) * acc;
   }
-  if (speed < 0) {
+  if (speed < 0.2) {
     speed = 0.2;
   }
   return speed;
@@ -510,10 +510,18 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
     const numberofmembers = agent.memberCount
     speed = groupSpeed(numberofmembers, speed, agent.panicLevel ? agent.panicLevel : undefined);
   }
+  if (agent.health && agent.health < 30 && agent.health >= 20) {
+    speed /= 1.5;
+  }
+  if (agent.health && agent.health < 20 && agent.health >= 10) {
+    speed /= 2;
+  }
+  if (agent.health && agent.health < 10) {
+    speed = 0;
+  }
 
   return speed;
 };
-
 
 export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const { destination } = agent;

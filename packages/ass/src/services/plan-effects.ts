@@ -37,7 +37,7 @@ export const planEffects = {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
-        panicLevel: 20,
+        panicLevel: 10,
         delayLevel: 0,
         severity: 3,
         messageRadius: 1000,
