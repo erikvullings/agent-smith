@@ -3,7 +3,6 @@ import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent,
 import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
 // import * as simConfig from '../sim_config.json';
-import * as simConfig from '../verstoring_openbare_orde.json';
 import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
 
@@ -366,6 +365,7 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
 const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) => {
   agent.route = [];
   agent.steps = [];
+  agent.reactedTo = mail.message;
 
   const timesim = services.getTime();
   timesim.setMinutes(timesim.getMinutes() + 6);
@@ -373,12 +373,27 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
   if (agent.agenda && reaction[mail.message][agent.force] && reaction[mail.message][agent.force]!.plans.length > 0) {
     const reactionAgenda: ActivityList = reaction[mail.message][agent.force]!.plans[0];
 
-    if (reactionAgenda[0].name === 'Go to specific location' || reactionAgenda[0].name === 'Follow person') {
+    if (reactionAgenda[0].name === 'Go to specific location') {
       agent.destination = mail.location;
 
       reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
+    }
+    else if(reactionAgenda[0].name === 'Follow person'){
+      agent.following = mail.sender.id;
+      agent.destination = mail.location;
+      reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };
+
+      reactionAgenda.map((item) => item.options!.reacting = true);
+
+    }
+    else if(reactionAgenda[0].name === 'Damage person'){
+      agent.target = mail.sender;
+      reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };
+
+      reactionAgenda.map((item) => item.options!.reacting = true);
+
     }
     else if (reactionAgenda[0].name === 'Run away') {
       reactionAgenda[0].options = { startTime: timesim, areaCentre: mail.location.coord };
@@ -393,7 +408,6 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
     agent.agenda = [...reactionAgenda, ...agent.agenda];
 
     // console.log('reaction agenda', agent.agenda);
-    agent.reactedTo = mail.message;
     updateAgent(agent, services);
     // return reactionAgenda;
   }

@@ -15,16 +15,6 @@
                 "force": "tbp",
                 "health": 100,
                 "status": "active",
-                "owns": [
-                    {
-                        "type": "bicycle",
-                        "id": "bicycle1"
-                    },
-                    {
-                        "type": "car",
-                        "id": "car3"
-                    }
-                ],
                 "home": {
                     "type": "home",
                     "coord": [
@@ -45,9 +35,7 @@
                         "id": "h_m_shop"
                     }
                 ],
-                "mailbox": [],
-                "department": "none",
-                "defenseType": "police"
+                "mailbox": []
             }
         ],
         "blue": [
@@ -88,7 +76,7 @@
                     }
                 ],
                 "mailbox": [],
-                "department": "none",
+                "baseLocation": "none",
                 "defenseType": "police"
             },
             {
@@ -118,7 +106,7 @@
                     }
                 ],
                 "mailbox": [],
-                "department": "none",
+                "baseLocation": "none",
                 "defenseType": "police"
             },
             {
@@ -153,7 +141,7 @@
                         "id": "policecar"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             },
@@ -183,7 +171,7 @@
                         "id": "police station"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             },
@@ -213,7 +201,7 @@
                         "id": "police station"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             },
@@ -243,7 +231,7 @@
                         "id": "police station"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             }
@@ -860,7 +848,13 @@
             "agentId": "tbp",
             "agendaItems": [
                 {
-                    "name": "Stay at police station",
+                    "name": "Go to work",
+                    "options": {
+                        "priority": 3
+                    }
+                },
+                {
+                    "name": "Work",
                     "options": {
                         "priority": 3
                     }

@@ -58,4 +58,28 @@ export const planEffects = {
         severity: 2,
         messageRadius: 10000,
     },
+    'Attack': {
+        damageRadius: 1000,
+        damageLevel: 100,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 2,
+        messageRadius: 10000,
+    },
+    'Go to park': {
+        damageRadius: 1000,
+        damageLevel: 100,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 5,
+        messageRadius: 1000,
+    },
+    'Damage person': {
+        damageRadius: 0,
+        damageLevel: 50,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 2,
+        messageRadius: 10,
+    },
 } as IPlanEffects

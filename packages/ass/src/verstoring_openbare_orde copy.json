@@ -13,6 +13,28 @@
         }
     ],
     "customAgents": {
+        "tbp": [{
+            "id": "tbp",
+            "type": "man",
+            "status": "active",
+            "health": 100,
+            "home": {
+                "type": "home",
+                "coord": [
+                    4.891674,
+                    52.378101
+                ]
+            },
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.892419,
+                    52.373312
+                ]
+            },
+            "force": "tbp",
+            "mailbox": []
+        }],
         "blue": [],
         "white": [
             {
@@ -280,6 +302,23 @@
                     "options": {}
                 }
             ]
+        },
+        {
+            "agentId": "tbp",
+            "agendaItems": [
+                {
+                    "name": "Go to work",
+                    "options": {
+                    }
+                },
+                {
+                    "name": "Work",
+                    "options": {
+                        "duration": 3000
+                    }
+                }
+            ]
         }
+
     ]
 }

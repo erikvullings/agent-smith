@@ -108,6 +108,7 @@ export const plans = {
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
+      messageServices.sendMessage(agent, 'Go to park', services);
 
       return true;
     },
@@ -194,8 +195,20 @@ export const plans = {
 
   'Go to the police station': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-
-    }
+      // if (options.destination != nul) {
+      //   agent.sentbox = [];
+      //   agent.destination = options.destination;
+      //   prepareRoute(agent, services, options);
+      //   // agent.speed = 2;
+      // }
+      //else{
+        agent.sentbox = [];
+        agent.destination = services.locations['police station'];
+        prepareRoute(agent, services, options);
+        // agent.speed = 2;
+      //}
+      return true;
+    },
   },
   
 
@@ -232,13 +245,16 @@ export const plans = {
         const followedAgent = services.agents[agent.following];
         agent.destination = followedAgent.actual;
         agent.running = true;
-        agent.reactedTo = "Drop object";
+        //agent.reactedTo = "Drop object";
         const timesim = services.getTime();
         timesim.setMinutes(timesim.getMinutes() + 6);
-      
         
         const distanceBetween = distanceInMeters(agent.actual.coord[1],agent.actual.coord[0],followedAgent.actual.coord[1],followedAgent.actual.coord[0]);
         console.log("distance between", distanceBetween)
+
+        // let hasReacted = 0;
+        //agent.agenda?.filter(item => item.name === 'Interrogation').map(item => hasReacted +=1)
+        console.log("reacted to",agent.reactedTo,planEffects[agent.reactedTo])
         if(distanceBetween < 40){
           if(planEffects[agent.reactedTo].damageLevel > 30 ){
             console.log("We will use weapons")
@@ -247,19 +263,20 @@ export const plans = {
             // use weapon
 
             agent.following = "";
+            agent.target = followedAgent;
             const attackAgenda : ActivityList = [
               { name: "Follow person", options : { priority: 3, destination : followedAgent.actual} },
-              { name: "Interrogation", options : { priority: 3} }
+              { name: "Damage person", options : { priority: 3},
+             }
             ];
 
             //make sure the other agents also stops walking
-            messageServices.sendDirectMessage(agent,'Interrogation',[followedAgent],services)
+            //messageServices.sendDirectMessage(agent,'Interrogation',[followedAgent],services)
 
             if(agent.agenda){
               const oldAgenda = agent.agenda.filter(item => item.name !== "Follow person");
               console.log("oldagenda", oldAgenda)
               agent.agenda = [...attackAgenda,...oldAgenda]
-              
             }
             else{
               agent.agenda = [...attackAgenda]
@@ -288,8 +305,7 @@ export const plans = {
 
           }
         }
-        
-        if(agent.following && agent.following !== ""){
+        if(agent.following && agent.following !== "" ){
           const followAgenda = [{ name: 'Follow person', options : { destination : followedAgent.actual}}];
 
           if(agent.agenda){
@@ -393,33 +409,15 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
-      steps.push({ name: 'waitFor', options:{ duration: hours(5, 8) } });
-      agent.reactedTo = 'Drop object';
+      //agent.reactedTo = 'Drop object';
 
       if(randomIntInRange(0,15) === 1){
         //take the agent to the police station
       }
 
-      if(agent.force === 'blue' && planEffects[agent.reactedTo].damageLevel > 0){
-        console.log("Test");
-        //agent.following = "";
-        const followedAgent = services.agents['whiteAgent'];
 
-        const newAgenda : ActivityList = [
-          { name: "Go to the police station", options : { priority: 3 } },
-        ];
-
-        //make sure the other agents also stops walking
-
-        if(agent.agenda){
-          agent.agenda = [...newAgenda, ...agent.agenda];
-        }
-        else{
-          agent.agenda = [...newAgenda]
-        }
-      }      
-
-    prepareRoute(agent, services, options);
+      steps.push({ name: 'waitFor', options: {duration: minutes(10)} });
+      agent.steps = steps;
     return true;
     },
   },
@@ -472,6 +470,44 @@ export const plans = {
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
 
+      //if the attacker is blue, and if the target is hurt, take the agent to the police station
+      // if(agent.targets){
+        // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
+      // }
+      return true;
+    },
+  },
+
+    // Maybe also add "spot targets" to pick targets
+    'Damage person': {
+      prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+        agent.sentbox = [];
+        agent.route = [];
+        const steps = [] as ActivityList;
+  
+        //messageServices.sendMessage(agent, 'Damage person', services);
+        
+        console.log("target", agent.target)
+        //if the attacker is blue, and if the target is hurt, take the agent to the police station
+        if(agent.target){
+          damageServices.damageAgent(agent,[agent.target],services)
+        }
+
+        steps.push({ name: 'waitFor', options: {duration: minutes(2,5)} });
+        agent.steps = steps;
+        return true;
+      },
+    },
+  
+  'Search for problem': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = [];
+      agent.route = [];
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options });
+      agent.steps = steps;
+
+      //if the attacker is blue, and if the target is hurt, take the agent to the police station
       // if(agent.targets){
         // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
       // }
@@ -593,21 +629,21 @@ export const plans = {
 
           agent.visibleForce = 'red';
           if (objectAgent.type === 'bomb') {
-            messageServices.sendMessage(objectAgent, 'drop bomb', services);
+            messageServices.sendMessage(objectAgent, 'Drop bomb', services);
           } else if (objectAgent.type === 'gas') {
-            messageServices.sendMessage(objectAgent, 'drop gas', services);
+            messageServices.sendMessage(objectAgent, 'Drop gas', services);
             const objectSteps = [] as ActivityList;
             objectSteps.push({ name: 'waitFor', options: { duration: minutes(5) } });
             objectAgent.actual = agent.actual;
             objectAgent.steps = objectSteps;
           } else {
-            messageServices.sendMessage(objectAgent, 'drop object', services);
+            messageServices.sendMessage(objectAgent, 'Drop object', services);
           }
         }
       }
       const duration = minutes(1);
       steps.push({ name: 'waitFor', options: { duration } });
-      console.log('drop');
+      console.log('Drop');
       agent.steps = steps;
       return true;
     },
@@ -621,7 +657,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       agent.visibleForce = 'red';
-      // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
+      // messageServices.sendDamage(agent,'Drop object',[services.agents["biker"]],services);
 
       // if(objectAgent){
       //   messageServices.sendMessage(objectAgent, 'Drop object', services);

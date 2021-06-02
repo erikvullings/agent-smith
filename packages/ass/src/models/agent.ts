@@ -82,7 +82,7 @@ export interface IAgent {
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
   sentbox: { receiver: IAgent, mail: IMail }[];
   reactedTo?: string;
-  targets?: IAgent[];
+  target: IAgent;
   following?: string;
   defenseType: 'kmar' | 'police'
   /** work baseLocation */

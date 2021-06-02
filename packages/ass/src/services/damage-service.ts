@@ -1,10 +1,10 @@
 import { planEffects } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IEquipment, IGroup, IMail } from '../models';
+import { IAgent, IEquipment, IMail } from '../models';
 import { randomIntInRange } from '../utils';
 
 const damageAgent = async (sender: IAgent, receivers:IAgent[], _services: IEnvServices) => {
-    const equipment = await pickEquipment(sender)
+    const equipment = await pickEquipment(sender);
 
     if(receivers.length > 0 && equipment !== null) {
         receivers.filter((a) => a.health && a.attire && a.attire === 'bulletproof vest').map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(0,10)));

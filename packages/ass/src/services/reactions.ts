@@ -2,7 +2,7 @@ import { IReactions } from '../models';
 
 
 export const reaction = {
-    'drop object': {
+    'Drop object': {
         'blue': {
             urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': {} }
                 , { 'name': 'Check object', 'options': {} },
@@ -13,7 +13,7 @@ export const reaction = {
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
-    'drop bomb': {
+    'Drop bomb': {
         'blue': {
             urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': {} }
                 , { 'name': 'Check object', 'options': {} },
@@ -24,7 +24,7 @@ export const reaction = {
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
-    'drop gas': {
+    'Drop gas': {
         'blue': {
             urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': {} }
                 , { 'name': 'Check object', 'options': {} },
@@ -59,4 +59,17 @@ export const reaction = {
             urgency: 1, plans: [[{ 'name': 'Interrogation', 'options': {} }]],
         },
     },
+    'Go to park': {
+        'blue': {
+            urgency: 1, plans: [[{ 'name': 'Damage person', 'options': {} }]],
+        },
+    },
+    'Damage person': {
+        'white': {
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
+        },
+        'red': {
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
+        },
+    }
 } as IReactions

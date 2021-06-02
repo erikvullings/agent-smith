@@ -1,7 +1,7 @@
 {
     "settings": [
         {
-            "agentCount": 0,
+            "agentCount": 40,
             "centerCoord": [
                 4.309510,
                 52.075591
@@ -173,10 +173,10 @@
             "home": { "type": "home", "coord": [4.364151, 52.091361] },
             "actual": { "type": "home", "coord": [4.364151, 52.091361] },
             "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
-            "baseLocation": "station",
             "mailbox": [],
             "defenseType": "police",
-            "following": "whiteAgent"
+            "following": "whiteAgent",
+            "equipment": [{"type": "firearm", "damageLevel":4},{"type": "firearm", "damageLevel":3}]
     },
         {
             "id": "police4",
@@ -323,15 +323,14 @@
         {
             "agentId": "whiteAgent",
             "agendaItems": [
-                { "name": "Go to work", "options" : { "priority": 3 } },
-                { "name": "Work", "options" : { "priority": 3 } },
+                { "name": "Go to park", "options" : { "priority": 5 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 
         },
         {
             "agentId": "police3",
             "agendaItems": [
-                { "name": "Follow person", "options" : { "priority": 3 } },
+                { "name": "Go to work", "options" : { "priority": 3 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 
         },
