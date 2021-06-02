@@ -1,20 +1,30 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable no-param-reassign */
+
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime, simTime } from '../utils';
+import { toTime, addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
 import { messageServices, redisServices } from '.';
 
 const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
   const { distance } = services;
   const { endTime } = options;
-  const { startTime } = options;
+  let { startTime } = options;
   if (endTime) {
     await determineStartTime(agent, services, options);
+
     steps.push({ name: 'waitUntilList', options });
   }
   else if (startTime) {
+    if (typeof startTime === 'string') {
+      startTime = toTime(startTime);
+    }
+    if (startTime && startTime.relative) {
+      const h = startTime.h ? services.getTime().getHours() + startTime.h : services.getTime().getHours();
+      const m = startTime.m ? services.getTime().getMinutes() + startTime.m : services.getTime().getMinutes();
+      const s = startTime.s ? services.getTime().getHours() + startTime.s : services.getTime().getHours();
+      const ms = startTime.ms ? services.getTime().getHours() + startTime.ms : services.getTime().getHours();
+      options.startTime = { h, m, s, ms };
+    }
     steps.push({ name: 'waitUntil', options });
   }
   if (agent.type === 'drone') {
@@ -34,9 +44,6 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
       } else {
         const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
         const bike = ownedBike && services.agents[ownedBike.id];
-        console.log(bike);
-        console.log(distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]));
-        console.log(distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]));
         if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
           bike.force = agent.force;
           bike.group = [agent.id];
@@ -70,7 +77,8 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration } = options;
   if (duration) {
-    const startTime = new Date(services.getTime().valueOf() + duration);
+    const startTimeDate = new Date(services.getTime().valueOf() + duration);
+    const startTime = { h: startTimeDate.getHours(), m: startTimeDate.getMinutes(), s: startTimeDate.getSeconds(), ms: startTimeDate.getMinutes() };
     agent.steps = [{ name: 'waitUntil', options: { startTime } }];
   }
   return true;
@@ -148,24 +156,29 @@ export const plans = {
       agent.sentbox = [];
       const danger = options.areaCentre;
       const range = options.areaRange ? options.areaRange : 500;
+      console.log(range);
 
       if (danger) {
         const slope = (agent.actual.coord[1] - danger[1]) / (agent.actual.coord[0] - danger[0]);
-        const distanceDegrees = 1500 / 111139;
+        const distanceDegrees = range / 111139;
         const dx = Math.sqrt(2 * (distanceDegrees ** 2) * (slope ** 2));
         if (agent.actual.coord[0] > danger[0]) {
           const x = agent.actual.coord[0] + dx;
           const y = agent.actual.coord[1] + dx * slope;
-          const destination = randomPlaceInArea(x, y, range, 'any');
+          const destination = randomPlaceInArea(x, y, 10, 'any');
           options.destination = destination;
           agent.destination = destination;
         } else {
           const x = agent.actual.coord[0] - dx;
           const y = agent.actual.coord[1] - dx * slope;
-          const destination = randomPlaceInArea(x, y, range, 'any');
+          const destination = randomPlaceInArea(x, y, 10, 'any');
           options.destination = destination;
           agent.destination = destination;
         }
+        console.log('')
+        console.log('distance run')
+        console.log(distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]))
+        console.log('')
       }
       agent.running = true;
       await prepareRoute(agent, services, options);
@@ -180,7 +193,6 @@ export const plans = {
         agent.sentbox = [];
         agent.destination = options.destination;
         await prepareRoute(agent, services, options);
-        // agent.speed = 2;
       }
       return true;
     },
@@ -230,7 +242,6 @@ export const plans = {
       // console.log('agent destination', agent.destination)
       agent.destination = options.destination;
       await prepareRoute(agent, services, options);
-      // agent.speed = 2;
       return true;
     },
   },
@@ -555,6 +566,24 @@ export const plans = {
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: { duration: minutes(10, 15) } });
       steps.push({ name: 'disappear', options: {} });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Unpanic': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      delete agent.panic;
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Undelay': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      delete agent.delay;
       agent.steps = steps;
       return true;
     },

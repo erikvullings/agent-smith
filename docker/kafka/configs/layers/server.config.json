@@ -382,7 +382,7 @@
             "icon-ignore-placement": true,
             "text-field": [
               "get",
-              "title"
+              "numberOfMembers"
             ],
             "text-font": [
               "Open Sans Bold",

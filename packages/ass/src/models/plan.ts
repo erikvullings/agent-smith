@@ -5,9 +5,9 @@ import { Coord } from '@turf/helpers';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */
-  startTime?: Date;
+  startTime?: ITime | string;
   /** Time the activity needs to be finished */
-  endTime?: Date;
+  endTime?: ITime | string;
   /** Number of microseconds this activity lasts */
   duration?: number;
   /** Destination when travelling */
@@ -36,7 +36,6 @@ export interface IAgentActivity {
   [key: string]: ActivityList[];
 };
 
-
 /** A typical step that can be executed. When the step returns true, it signals completion. */
 export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions, agents?: IAgent[]) => Promise<boolean>;
 
@@ -52,4 +51,12 @@ export interface IPlan {
   prepare: Activity;
   /** Cleanup when done */
   cleanup?: Activity;
+}
+
+export interface ITime {
+  h?: number;
+  m?: number;
+  s?: number;
+  ms?: number;
+  relative?: boolean;
 }

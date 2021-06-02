@@ -213,13 +213,13 @@ const day = now.getDate();
 
 /**
  * @param days
- * @param hours
- * @param minutes
- * @param seconds
+ * @param h
+ * @param m
+ * @param s
  * Create a date relative to today
  */
-export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
-  new Date(year, month, day + days, hours, minutes, seconds);
+export const simTime = (days: number, h: number, m = 0, s = 0) =>
+  new Date(year, month, day + days, h, m, s);
 
 /**
  * @param agent
@@ -255,7 +255,7 @@ export const agentToFeature = (agent: IAgent) => ({
   },
   properties: {
     id: agent.id,
-    title: agent.type === 'group' && agent.memberCount ? String(agent.memberCount) : '',
+    // title: agent.type === 'group' && agent.memberCount ? String(agent.memberCount) : '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -266,23 +266,20 @@ export const agentToFeature = (agent: IAgent) => ({
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
       numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
-      // eslint-disable-next-line no-nested-ternary
       force: agent.force && (agent.force === 'vip') ? 'purple' : agent.force ? agent.force : 'white',
+      delay: agent.delay && agent.delay.delayCause ? agent.delay.delayCause.join(', ') : '',
+      members: agent.group && agent.group.length <= 5 ? agent.group.join(', ') : '',
       visible:
-        // eslint-disable-next-line no-nested-ternary
         ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
           ? String(0)
-          // eslint-disable-next-line no-nested-ternary
           : agent.steps &&
             agent.steps[0] &&
             controlling.indexOf(agent.steps[0].name) >= 0
             ? String(0)
-            // eslint-disable-next-line no-nested-ternary
             : transport.indexOf(agent.type) < 0 &&
               agent.memberOf
               ? String(0)
               : String(1),
-      members: agent.group ? agent.group.join(', ') : '',
     },
   },
 });
@@ -457,18 +454,18 @@ export const generateExistingAgent = (lng: number, lat: number, radius: number, 
   return { agent, locations: { ...home, ...occupation } };
 };
 
-export const addGroup = (agent: IAgent, transport: IAgent, services: IEnvServices) => {
-  if (transport.group) {
-    transport.memberCount = transport.memberCount ? transport.memberCount : 0;
+export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices) => {
+  if (trnsprt.group) {
+    trnsprt.memberCount = trnsprt.memberCount ? trnsprt.memberCount : 0;
     if (agent.group) {
-      transport.group.push(...agent.group);
-      transport.memberCount += agent.group.length;
+      trnsprt.group.push(...agent.group);
+      trnsprt.memberCount += agent.group.length;
       agent.group
         .filter((a) => services.agents[a].group)
-        .map((a) => addGroup(services.agents[a], transport, services));
+        .map((a) => addGroup(services.agents[a], trnsprt, services));
     }
     if (agent.type === 'group') {
-      transport.memberCount -= 1;
+      trnsprt.memberCount -= 1;
     }
   }
 };
@@ -508,7 +505,7 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
   }
   if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
     const numberofmembers = agent.memberCount
-    speed = groupSpeed(numberofmembers, speed, agent.panicLevel ? agent.panicLevel : undefined);
+    speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic.panicLevel : undefined);
   }
   if (agent.health && agent.health < 30 && agent.health >= 20) {
     speed /= 1.5;
@@ -519,6 +516,9 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
   if (agent.health && agent.health < 10) {
     speed = 0;
   }
+  if (agent.delay) {
+    speed /= 1 + agent.delay.delayLevel / 50;
+  }
 
   return speed;
 };
@@ -526,55 +526,81 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
 export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const { destination } = agent;
   const { distance } = services;
-  const { endTime } = options;
+  let { endTime } = options;
   let profile: Profile = 'foot';
-
-  if (agent.type === 'drone' && endTime) {
-    if (destination) {
-      const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
-      const mSecs = duration ? endTime.getTime() - (duration * 1000) : endTime.getTime();
-      const startTime = new Date(0, 0, 0, 0);
-      startTime.setTime(mSecs);
-      agent.startTime = startTime;
+  if (endTime && (agent.day || agent.day === 0)) {
+    if (typeof endTime === 'string') {
+      endTime = toTime(endTime);
     }
-  }
-  else if (endTime) {
-    if ('owns' in agent) {
-      if (agent.owns && agent.owns.length > 0) {
-        const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
-        const car = ownedCar && services.agents[ownedCar.id];
-        if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500) {
-          profile = 'driving'
-        } else {
-          const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
-          const bike = ownedBike && services.agents[ownedBike.id];
-          if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
-            profile = 'bike'
+    if (endTime) {
+      let endTimeDate = simTime(agent.day, endTime.h ? endTime.h : 0, endTime.m, endTime.s);
+      if (endTime.relative) {
+        const h = endTime.h ? services.getTime().getHours() + endTime.h : services.getTime().getHours();
+        const m = endTime.m ? services.getTime().getMinutes() + endTime.m : services.getTime().getMinutes();
+        const s = endTime.s ? services.getTime().getHours() + endTime.s : services.getTime().getHours();
+        endTimeDate = simTime(agent.day, h, m, s);
+      }
+      if (agent.type === 'drone') {
+        if (destination) {
+          const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
+          const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
+          const startTime = new Date(0, 0, 0, 0);
+          startTime.setTime(mSecs);
+          agent.startTime = startTime;
+        }
+      }
+      else {
+        if ('owns' in agent) {
+          if (agent.owns && agent.owns.length > 0) {
+            const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
+            const car = ownedCar && services.agents[ownedCar.id];
+            if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500) {
+              profile = 'driving'
+            } else {
+              const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
+              const bike = ownedBike && services.agents[ownedBike.id];
+              if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
+                profile = 'bike'
+              }
+            }
+          }
+        }
+        if (destination) {
+          const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
+          const routeResult = await routeService.route({
+            coordinates: [agent.actual.coord, destination.coord],
+            continue_straight: true,
+            steps: true,
+            overview: 'full',
+            geometries: 'geojson',
+          })
+          if (routeResult !== undefined) {
+            let duration = routeResult.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
+            const distanceToDestination = routeResult.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
+            if (distanceToDestination && duration) {
+              const speedFactor = (distanceToDestination / duration) / determineSpeed(agent, services, distanceToDestination, duration)
+              duration *= speedFactor;
+            }
+            const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
+            const startTime = new Date(0, 0, 0, 0);
+            startTime.setTime(mSecs);
+            agent.startTime = startTime;
           }
         }
       }
     }
-    if (destination) {
-      const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
-      const routeResult = await routeService.route({
-        coordinates: [agent.actual.coord, destination.coord],
-        continue_straight: true,
-        steps: true,
-        overview: 'full',
-        geometries: 'geojson',
-      })
-      if (routeResult !== undefined) {
-        let duration = routeResult.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
-        const distanceToDestination = routeResult.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
-        if (distanceToDestination && duration) {
-          const speedFactor = (distanceToDestination / duration) / determineSpeed(agent, services, distanceToDestination, duration)
-          duration *= speedFactor;
-        }
-        const mSecs = duration ? endTime.getTime() - (duration * 1000) : endTime.getTime();
-        const startTime = new Date(0, 0, 0, 0);
-        startTime.setTime(mSecs);
-        agent.startTime = startTime;
-      }
-    }
   }
 }
+
+export const toTime = (str?: string) => {
+  const regex = /(\d{1,2}):(\d{2}).(\d{2})(\w?)/i;
+  if (!str) return undefined;
+  const match = regex.exec(str);
+  if (!match || match.length < 3) return undefined;
+  const h = +match[1];
+  const m = +match[2];
+  const s = +match[3];
+  const relative = match.length >= 4 && match[4] === 'r';
+  return { h, m, s, relative };
+}
+

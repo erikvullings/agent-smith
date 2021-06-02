@@ -10,6 +10,7 @@ export const reaction = {
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
@@ -21,6 +22,7 @@ export const reaction = {
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
@@ -32,6 +34,8 @@ export const reaction = {
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
+                , { 'name': 'Undelay', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
@@ -42,7 +46,8 @@ export const reaction = {
             { 'name': 'Go to work', 'options': {} }]],
         },
         'white': {
-            urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+            urgency: 3, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },

@@ -1,7 +1,8 @@
 import { IEnvServices, updateAgent } from '../env-services';
-import { ActivityList, IAgent } from '../models';
+import { ActivityList, IAgent, ITime } from '../models';
 import { minutes } from '../utils';
 import { redisServices } from './redis-service';
+
 
 /**
  * @param agent
@@ -27,7 +28,7 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
         const closeAgent: IAgent = closeAgents[0];
         console.log('random agent2', closeAgent)
 
-        startChat(randomAgent, closeAgent, services);
+        startChat(randomAgent, closeAgent, services, agents);
     }
 };
 
@@ -36,8 +37,9 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
  * @param closeAgent
  * @param services
  * Adds going to the meetup location and chatting steps in the agendas
+ * @param agents
  */
-const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
+const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices, agents: IAgent[]) => {
     if (randomAgent.agenda !== undefined && closeAgent.agenda !== undefined) {
         closeAgent.route = [];
         closeAgent.steps = [];
@@ -50,14 +52,15 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
 
         const timesim = services.getTime();
         timesim.setMinutes(timesim.getMinutes() + 5);
+        const startTime: ITime = { h: timesim.getHours(), m: timesim.getMinutes(), s: timesim.getSeconds(), ms: timesim.getMilliseconds(), relative: false }
 
         const chatDuration = minutes(2, 15);
 
-        const newAgenda1: ActivityList = [{ name: 'Go to specific location', options: { startTime: timesim, priority: 1, destination: closeAgent.actual, duration: minutes(5, 5) } },
+        const newAgenda1: ActivityList = [{ name: 'Go to specific location', options: { startTime, priority: 1, destination: closeAgent.actual, duration: minutes(5, 5) } },
         { name: 'Chat', options: { priority: 2, duration: chatDuration } }];
         randomAgent.agenda = [...newAgenda1, ...randomAgent.agenda];
 
-        const newAgenda2: ActivityList = [{ name: 'Wait', options: { startTime: timesim, priority: 1, duration: minutes(5, 5) } },
+        const newAgenda2: ActivityList = [{ name: 'Wait', options: { startTime, priority: 1, duration: minutes(5, 5) } },
         { name: 'Chat', options: { priority: 2, duration: chatDuration } }];
         closeAgent.agenda = [...newAgenda2, ...closeAgent.agenda];
 

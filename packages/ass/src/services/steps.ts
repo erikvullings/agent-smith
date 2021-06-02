@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, round, shuffle, randomInRange } from '../utils';
+import { toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime } from '../utils';
 
 
 /**
@@ -25,22 +25,26 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
  * release victims from group when in panic
  */
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
-  let percentageReleased = agent.panicLevel ? agent.panicLevel / 2000 : 0;
+  let percentageReleased = agent.panic ? agent.panic.panicLevel / 500 : 0;
   if (agent.vulnerability) {
-    percentageReleased += (agent.vulnerability / 2000);
+    percentageReleased += (agent.vulnerability / 500);
   }
-  const numberReleased = round(agent.memberCount * 0.01 * percentageReleased, 0);
-  console.log(numberReleased);
-  if (agent.group && agent.group.length >= numberReleased) {
-    const agentsToRelease = [...shuffle(agent.group)].slice(0, numberReleased);
-    releaseAgents(agent, services, { release: agentsToRelease }, agents);
-    for (const a of agentsToRelease) {
-      const released = services.agents[a];
-      released.health = randomInRange(0, 20);
-      if (released.health === 0) {
-        released.status = 'inactive';
-      }
+  const maxNumberReleased = Math.round(agent.group ? agent.group.length * 0.01 * percentageReleased : 0);
+  if (typeof maxNumberReleased === 'number') {
+    const numberReleased = randomIntInRange(0, maxNumberReleased > 1 ? maxNumberReleased : 1);
+    if (agent.group && agent.group.length >= numberReleased) {
+      const agentsToRelease = [...shuffle(agent.group)].slice(0, numberReleased);
+      releaseAgents(agent, services, { release: agentsToRelease }, agents);
+      for (const a of agentsToRelease) {
+        const released = services.agents[a];
+        released.health = randomInRange(0, 30);
+        released.agenda = [{ name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
+        released.running = true;
+        if (released.health === 0) {
+          released.status = 'inactive';
+        }
 
+      }
     }
   }
 }
@@ -73,6 +77,12 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
       // redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
+      agent.route = route;
+      if (agent.type === 'group' && agent.group && agent.group.length > 0) {
+        if (agent.panic && agent.running) {
+          releaseVictimsGroup(agent, services, agents);
+        }
+      }
     } else {
       if (i > 0) {
         (step.geometry as ILineString).coordinates.splice(0, i);
@@ -91,12 +101,6 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     }
   }
   route.splice(0, 1);
-  agent.route = route;
-  if (agent.type === 'group' && agent.group && agent.group.length > 0) {
-    if (agent.panicLevel) {
-      releaseVictimsGroup(agent, services, agents);
-    }
-  }
   return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
 };
 
@@ -156,14 +160,26 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
 };
 
 /**
- * @param _agent
+ * @param agent
  * @param services
  * @param options
  * Wait until a start time before continuing
  */
-const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-  const { startTime } = options;
-  return startTime ? startTime < services.getTime() : true;
+const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  let { startTime } = options;
+  console.log(startTime);
+  if (startTime) {
+    if (typeof startTime === 'string') {
+      startTime = toTime(startTime);
+    }
+    if (startTime && (agent.day || agent.day === 0) && !startTime.relative) {
+      const startTimeDate = simTime(agent.day, startTime.h ? startTime.h : 0, startTime.m, startTime.s);
+      startTimeDate.setMilliseconds(startTime.ms ? startTime.ms : 0)
+      console.log(startTimeDate)
+      return startTimeDate ? startTimeDate < services.getTime() : true;
+    }
+  }
+  return true;
 };
 
 /**
@@ -187,7 +203,9 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   if (duration === 0) {
     return true;
   }
-  const stepOptions = { startTime: new Date(services.getTime().valueOf() + duration) };
+  const startTimeDate = new Date(services.getTime().valueOf() + duration);
+  const startTime = { h: startTimeDate.getHours(), m: startTimeDate.getMinutes(), s: startTimeDate.getSeconds(), ms: startTimeDate.getMinutes() };
+  const stepOptions = { startTime };
   if (agent.steps) {
     // Replace active 'waitFor' step with 'waitUntil' step.
     agent.steps[0] = { name: 'waitUntil', options: stepOptions };
@@ -220,7 +238,7 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
  * @param options
  * @param agents
  */
-const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents?: IAgent[]) => {
+const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
     for (const id of release) {
@@ -237,7 +255,7 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
       if (a) {
         delete a.memberOf;
         agent.group.splice(i, 1);
-        agent.memberCount -= 1;
+        agent.memberCount -= a.group ? a.group.length : 1;
         if (a.type === 'car' || a.type === 'bicycle') {
           delete a.group;
         }
@@ -261,7 +279,7 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
     const newGroup = services.agents[group];
     if (newGroup.group && newGroup.memberCount) {
       newGroup.group.push(agent.id);
-      newGroup.memberCount.push(agent.id);
+      newGroup.memberCount += 1;
       addGroup(agent, newGroup, services);
       agent.memberOf = newGroup.id;
     }

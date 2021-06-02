@@ -21,8 +21,20 @@ export interface IAgent {
   visibleForce?: 'white' | 'red' | 'blue';
   /** Health of agent, maximum of 100 */
   health?: number;
-  /** 0 if there is no panic, 100 if there is extreme panic*/
-  panicLevel?: number;
+  /** Panic the agent feels*/
+  panic?: {
+    /** 0 if there is no panic, 100 if there is extreme panic*/
+    panicLevel: number;
+    /** cause of panic */
+    panicCause?: string[];
+  };
+  /** delay in speed of an agent due to hindrance*/
+  delay?: {
+    /** 0 if there is no delay, 100 if there is extreme delay*/
+    delayLevel: number;
+    /** name of the hindrance */
+    delayCause?: string[];
+  };
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
@@ -64,7 +76,7 @@ export interface IAgent {
   /** equal to 0 for normal agents, 100 for extremely vulnerable agents */
   vulnerability?: number;
   /** Agenda day, e.g. in order to create a new agenda each day. Internal property, do not set yourself. */
-  _day?: number;
+  day?: number;
   /** Agenda with active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
   agenda?: ActivityList;
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
@@ -99,6 +111,8 @@ export interface IMail {
   location: ILocation;
   /** Message of the sender */
   message: string;
+  /** Distance in meters agent has to run if reaction is "run away" */
+  runDistance?: number;
 }
 
 export interface IEquipment {

@@ -1,6 +1,6 @@
-import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent, IMail } from '../models';
+import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent, IMail, ITime } from '../models';
 
-import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
+import { hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
 // import * as simConfig from '../sim_config.json';
 import * as simConfig from '../verstoring_openbare_orde.json';
@@ -12,19 +12,19 @@ import { customAgendas, customTypeAgendas } from '../sim-controller';
  * @param _services
  */
 const getAgenda = (agent: IAgent, _services: IEnvServices) => {
-  if (typeof agent._day === 'undefined') {
-    agent._day = 0;
+  if (typeof agent.day === 'undefined') {
+    agent.day = 0;
   } else {
-    agent._day += 1;
+    agent.day += 1;
   }
-  const { _day: day } = agent;
+  const { day } = agent;
 
   const activities = {
     work: () => [
       [
         {
           name: 'Go to work',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
         { name: 'Have lunch', options: { priority: 2 } },
@@ -33,14 +33,14 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go to work',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
       ],
       [
         {
           name: 'Go to work',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
       ],
@@ -50,7 +50,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go shopping',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Shop', options: { duration: hours(0, 1), priority: 2 } },
         { name: 'Go to other shops', options: { priority: 3 } },
@@ -58,33 +58,33 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go shopping',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Shop', options: { duration: hours(0, 1), priority: 2 } },
       ],
     ],
     hangAroundArea: () => [
-      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3, areaCentre: [5.482012, 51.426585], areaRange: 100 } },
+      { name: 'Go to specific area', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 3, areaCentre: [5.482012, 51.426585], areaRange: 100 } },
       { name: 'Hang around specific area', options: { duration: hours(0, 1), priority: 3, areaCentre: [5.482012, 51.426585], areaRange: 100 } },
     ],
     wander: () => [{ name: 'Wander', options: { priority: 3 } }],
     doctorVisit: () => [
-      { name: 'Visit doctor', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'Visit doctor', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true } } },
       { name: 'GetExamined', options: { duration: hours(0, 5) } },
     ],
     releaseAtRandomLocation: () => [
-      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'Go to random location', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true } } },
       { name: 'Release' },
     ],
     releaseRed: () => [
-      { name: 'Release_red', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'Release_red', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true } } },
     ],
     droneHangAround: () => [
-      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
       { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
     ],
     droneDropObject: () => [
-      { name: 'Go to specific area', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 1, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
       { name: 'Drop object', options: { priority: 1 } },
       { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 20 } },
     ],
@@ -96,7 +96,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     wander: () => [
       {
         name: 'Go to the park',
-        options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 3 },
+        options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 3 },
       },
       { name: 'Wander', options: { priority: 3 } },
     ],
@@ -104,7 +104,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go to work',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Patrol', options: { priority: 2 } },
         { name: 'Patrol', options: { priority: 2 } },
@@ -114,14 +114,14 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go to work',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Guard', options: { duration: hours(3, 5), priority: 2 } },
       ],
       [
         {
           name: 'Go to work',
-          options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+          options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
         },
         { name: 'Guard', options: { duration: hours(3, 5), priority: 2 } },
         { name: 'Have lunch', options: { priority: 2 } },
@@ -129,7 +129,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       ],
     ],
     releaseAtRandomLocation: () => [
-      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'Go to random location', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true } } },
       { name: 'Release' },
     ],
   };
@@ -137,28 +137,28 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   const redActivities = {
     goHome: () => [{ name: 'Go home', options: { priority: 3 } }],
     dropAtRandomLocation: () => [
-      { name: 'Go to random location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) } },
+      { name: 'Go to random location', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true } } },
       { name: 'Drop object', options: { priority: 1 } },
       { name: 'Run away', options: { priority: 1 } },
     ],
     dropAtSpecificLocation: () => [
-      { name: 'Go to specific location', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), destination: { type: 'park', coord: [5.482012, 51.426585] } } },
+      { name: 'Go to specific location', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, destination: { type: 'park', coord: [5.482012, 51.426585] } } },
       { name: 'Drop object', options: { priority: 1 } },
       { name: 'Run away', options: { priority: 1 } },
     ],
     stealFromShop: () => [
       {
         name: 'Go shopping',
-        options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 2 },
+        options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 2 },
       },
       { name: 'Shop', options: { duration: minutes(10), priority: 1 } },
       {
         name: 'Flee the scene',
-        options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), priority: 1 },
+        options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, priority: 1 },
       },
     ],
     fight: () => [
-      { name: 'Fight', options: { startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)), duration: hours(3, 5) } },
+      { name: 'Fight', options: { startTime: { h: 0, m: randomInRange(0, 59), relative: true }, duration: hours(3, 5) } },
     ],
   };
 
@@ -308,40 +308,15 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
 }
 
 const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgIndex: number) => {
-  if (typeof agent._day === 'undefined') {
-    agent._day = 0;
+  if (typeof agent.day === 'undefined') {
+    agent.day = 0;
   } else {
-    agent._day += 1;
+    agent.day += 1;
   }
-  const { _day: day } = agent;
-
-  const agenda = customTypeAgendas[customTypeAgIndex].agendaItems;
+  const agenda = [...customTypeAgendas[customTypeAgIndex].agendaItems];
   if (agenda.length > 0) {
-    // console.log(customTypeAgendas[customTypeAgIndex].endTimeHours === 0 ? 'yes' : 'no')
-    // let hours = services.getTime().getHours();
-    // let minutes = services.getTime().getMinutes();
-    let hours = 0;
-    let minutes = 0;
-    if (customTypeAgendas[customTypeAgIndex].startTimeHours || customTypeAgendas[customTypeAgIndex].startTimeMinutes) {
-      if (customTypeAgendas[customTypeAgIndex].startTimeHours) {
-        hours += customTypeAgendas[customTypeAgIndex].startTimeHours!;
-      }
-      if (customTypeAgendas[customTypeAgIndex].startTimeMinutes) {
-        minutes += customTypeAgendas[customTypeAgIndex].startTimeMinutes!;
-      }
-      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
-      agenda[0].options = agendaOptions;
-    } else if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours || customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes) {
-      if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours) {
-        hours += customTypeAgendas[customTypeAgIndex].endTimeFirstPlanHours!;
-      }
-      if (customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes) {
-        minutes += customTypeAgendas[customTypeAgIndex].endTimeFirstPlanMinutes!;
-      }
-      const agendaOptions = { ...(agenda[0].options), endTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
-      agenda[0].options = agendaOptions;
-    } else {
-      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
+    if (!(agenda[0] && agenda[0].options && (agenda[0].options.startTime || agenda[0].options.endTime))) {
+      const agendaOptions = { ...(agenda[0].options), startTime: { h: 0, m: randomInRange(0, 59), relative: true } };
       agenda[0].options = agendaOptions;
     }
     return agenda as ActivityList;
@@ -351,44 +326,19 @@ const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgInd
 };
 
 const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: number) => {
-  if (typeof agent._day === 'undefined') {
-    agent._day = 0;
+  if (typeof agent.day === 'undefined') {
+    agent.day = 0;
   } else {
-    agent._day += 1;
+    agent.day += 1;
   }
-  const { _day: day } = agent;
-  // const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
   const agenda = customAgendas[customAgIndex].agendaItems;
   if (agenda.length > 0) {
-    // let hours = services.getTime().getHours();
-    // let minutes = services.getTime().getMinutes();
-    let hours = 0;
-    let minutes = 0;
-    if (customAgendas[customAgIndex].startTimeHours || customAgendas[customAgIndex].startTimeMinutes) {
-      if (customAgendas[customAgIndex].startTimeHours) {
-        hours += customAgendas[customAgIndex].startTimeHours!;
-      }
-      if (customAgendas[customAgIndex].startTimeMinutes) {
-        minutes += customAgendas[customAgIndex].startTimeMinutes!;
-      }
-      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
-      agenda[0].options = agendaOptions;
-    } else if (customAgendas[customAgIndex].endTimeFirstPlanHours || customAgendas[customAgIndex].endTimeFirstPlanMinutes) {
-      if (customAgendas[customAgIndex].endTimeFirstPlanHours) {
-        hours += customAgendas[customAgIndex].endTimeFirstPlanHours!;
-      }
-      if (customAgendas[customAgIndex].endTimeFirstPlanMinutes) {
-        minutes += customAgendas[customAgIndex].endTimeFirstPlanMinutes!;
-      }
-      const agendaOptions = { ...(agenda[0].options), endTime: simTime(day, hours, minutes, services.getTime().getSeconds()) };
-      agenda[0].options = agendaOptions;
-    } else {
-      const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
+    if (!(agenda[0] && agenda[0].options && (agenda[0].options.startTime || agenda[0].options.endTime))) {
+      const agendaOptions = { ...(agenda[0].options), startTime: { h: 0, m: randomInRange(0, 59), relative: true } };
       agenda[0].options = agendaOptions;
     }
     return agenda as ActivityList;
   }
-
   return getAgenda(agent, services);
 
 };
@@ -397,13 +347,15 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
  * @param agent
  * @param services
  * @param mail
+ * @param agents
  */
-const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) => {
+const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, agents: IAgent[]) => {
   agent.route = [];
   agent.steps = [];
 
   const timesim = services.getTime();
   timesim.setMinutes(timesim.getMinutes() + 6);
+  const startTime: ITime = { h: timesim.getHours(), m: timesim.getMinutes(), s: timesim.getSeconds(), ms: timesim.getMilliseconds(), relative: false }
 
   if (agent.agenda && reaction[mail.message][agent.force] && reaction[mail.message][agent.force]!.plans.length > 0) {
     const reactionAgenda: ActivityList = reaction[mail.message][agent.force]!.plans[0];
@@ -411,17 +363,17 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
     if (reactionAgenda[0].name === 'Go to specific location' || reactionAgenda[0].name === 'Follow person') {
       agent.destination = mail.location;
 
-      reactionAgenda[0].options = { startTime: timesim, destination: mail.location };
+      reactionAgenda[0].options = { startTime, destination: mail.location };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
     else if (reactionAgenda[0].name === 'Run away') {
-      reactionAgenda[0].options = { startTime: timesim, areaCentre: mail.location.coord };
+      reactionAgenda[0].options = { startTime, areaCentre: mail.location.coord, areaRange: mail.runDistance };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
     else {
-      reactionAgenda[0].options = { startTime: timesim };
+      reactionAgenda[0].options = { startTime };
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
 
@@ -429,7 +381,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
 
     // console.log('reaction agenda', agent.agenda);
     agent.reactedTo = mail.message;
-    updateAgent(agent, services);
+    updateAgent(agent, services, agents);
     // return reactionAgenda;
   }
 }

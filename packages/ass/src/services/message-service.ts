@@ -1,3 +1,4 @@
+import { deflateSync } from 'zlib';
 import { reaction, redisServices } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent, IDefenseAgent, IEquipment, IMail } from '../models';
@@ -38,7 +39,7 @@ const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, r
 
     const damage = await pickEquipment(sender, agentAction)
 
-    if (receivers.length > 0) {
+    if (receivers.length > 0 && damage) {
         receivers.filter((a) => a.health).map((a) => (a.health! -= damage));
 
         const deadAgents = receivers.filter((a) => a.health && a.health <= 0)
@@ -67,33 +68,68 @@ const send = async (sender: IAgent, message: string, receivers: IAgent[], _servi
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
         if (rec.mailbox && sentbox.length === 0) {
-            rec.mailbox.push({ sender, location: sender.actual, message });
+            if (planEffects[message] && planEffects[message].runDistance) {
+                rec.mailbox.push({ sender, location: sender.actual, message, runDistance: planEffects[message].runDistance });
+            } else {
+                rec.mailbox.push({ sender, location: sender.actual, message });
+            }
         }
         else if (!rec.mailbox && sentbox.length === 0) {
-            rec.mailbox = [{ sender, location: sender.actual, message }];
+            if (planEffects[message] && planEffects[message].runDistance) {
+                rec.mailbox = [{ sender, location: sender.actual, message, runDistance: planEffects[message].runDistance }];
+            } else {
+                rec.mailbox = [{ sender, location: sender.actual, message }];
+            }
         }
 
+        // add panic to agent, if the agent does not already have panic from the same message
         if (planEffects[message] && planEffects[message].panicLevel && rec.force === 'white') {
             const panic = planEffects[message].panicLevel;
-            if (rec.panicLevel) {
-                rec.panicLevel += panic;
+            if (rec.panic) {
+                if (rec.panic.panicCause && rec.panic.panicCause.indexOf(message) < 0) {
+                    rec.panic.panicLevel += panic;
+                    rec.panic.panicCause.push(message);
+                }
+                else if (!rec.panic.panicCause) {
+                    rec.panic.panicLevel += panic;
+                    rec.panic.panicCause = [message]
+                }
             } else {
-                rec.panicLevel = panic;
+                rec.panic = { panicLevel: panic, panicCause: [message] };
+            }
+        }
+
+        // add delay to agent, if the agent does not already have panic from the same message
+        if (planEffects[message] && planEffects[message].delayLevel) {
+            const delay = planEffects[message].delayLevel;
+            if (rec.delay) {
+                if (planEffects[message].delayCause) {
+                    if (rec.delay.delayCause && rec.delay.delayCause.indexOf(planEffects[message].delayCause!) < 0) {
+                        rec.delay.delayLevel += delay
+                        rec.delay.delayCause.push(planEffects[message].delayCause!)
+                    }
+                    else if (!rec.delay.delayCause) {
+                        rec.delay.delayLevel += delay
+                        rec.delay.delayCause = [planEffects[message].delayCause!]
+                    }
+                }
+            } else {
+                rec.delay = { delayLevel: delay, delayCause: planEffects[message].delayCause ? [planEffects[message].delayCause!] : undefined };
             }
         }
     });
     return true;
 }
 
-const readMailbox = async (agent: IAgent, services: IEnvServices) => {
+const readMailbox = async (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
     const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 3));
     if (urgentMessages.length > 0) {
-        return reactToMessage(agent, services, urgentMessages);;
+        return reactToMessage(agent, services, urgentMessages, agents);;
     }
     return false;
 };
 
-const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[]) => {
+const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], agents: IAgent[]) => {
     // const actionToReact = null as unknown as IMail;
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
@@ -116,9 +152,9 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
         }
         if (options.priority !== undefined && options.priority === itemUrgency) {
             // if urgency an agenda prio is equal, pick one of them
-            const randomInt = randomIntInRange(0, urgentMessages.length);
+            const rndInt = randomIntInRange(0, urgentMessages.length);
 
-            if (randomInt === urgentMessages.length) {
+            if (rndInt === urgentMessages.length) {
                 // stay in agenda
                 return true;
             }
@@ -130,13 +166,13 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
             // actionToReact = urgentMessages[randomInt];
             // actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
             // return await agendas.addReaction(agent,services, actionToReact);
-            return react(agent, services, urgentMessages, randomInt)
+            return react(agent, services, urgentMessages, rndInt, agents)
 
         }
 
         // if prio is greater than urgency, pick one from the reactions
         const randomInt = randomIntInRange(0, urgentMessages.length - 1);
-        return react(agent, services, urgentMessages, randomInt)
+        return react(agent, services, urgentMessages, randomInt, agents)
 
 
     }
@@ -146,7 +182,7 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
         // prio of agenda is greater
         // pick new reaction
         const randomInt = randomIntInRange(0, urgentMessages.length - 1);
-        return react(agent, services, urgentMessages, randomInt)
+        return react(agent, services, urgentMessages, randomInt, agents)
     }
 
     return true;
@@ -154,13 +190,13 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
 
 };
 
-const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], itemIndex: number) => {
+const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], itemIndex: number, agents: IAgent[]) => {
     let actionToReact = null as unknown as IMail;
     // const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({ receiver: agent, mail: actionToReact })
-    return agendas.addReaction(agent, services, actionToReact);
+    return agendas.addReaction(agent, services, actionToReact, agents);
 }
 
 

@@ -27,8 +27,8 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.891674,
-                        52.378101
+                        4.884857,
+                        52.386282
                     ]
                 },
                 "actual": {
@@ -50,8 +50,8 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.891674,
-                        52.378101
+                        4.916941,
+                        52.383231
                     ]
                 },
                 "actual": {
@@ -73,8 +73,8 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.891674,
-                        52.378101
+                        4.900633,
+                        52.360587
                     ]
                 },
                 "actual": {
@@ -96,8 +96,8 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.891674,
-                        52.378101
+                        4.856298,
+                        52.367791
                     ]
                 },
                 "actual": {
@@ -127,11 +127,7 @@
                     }
                 },
                 {
-                    "name": "Go to random location",
-                    "options": {}
-                },
-                {
-                    "name": "Release",
+                    "name": "Go home",
                     "options": {}
                 }
             ]
@@ -139,8 +135,6 @@
         {
             "agentType": "drone",
             "agentForce": "red",
-            "endTimeFirstPlanHours": 20,
-            "endTimeFirstPlanMinutes": 0,
             "agendaItems": [
                 {
                     "name": "Go to specific area",
@@ -149,7 +143,8 @@
                             4.892401,
                             52.373104
                         ],
-                        "areaRange": 20
+                        "areaRange": 20,
+                        "endTime": "20:00.00"
                     }
                 },
                 {

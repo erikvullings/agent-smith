@@ -58,6 +58,7 @@ export const simController = async (
     const reactionImport: IReactions = reactionConfig;
 
     if (reactionImport) {
+      // eslint-disable-next-line guard-for-in
       for (const key in reactionImport) {
         reaction[key] = reactionImport[key];
       }
@@ -233,8 +234,8 @@ export const simController = async (
       }
       if (g.group && g.memberCount) {
         const extraMembers = g.memberCount - g.group.length;
-        for (let i = 0; i < extraMembers; i++) {
-          const id = String(i) + g.id;
+        for (let j = 0; j < extraMembers; j++) {
+          const id = String(j) + g.id;
           g.group.push(id);
         }
       }
@@ -280,7 +281,7 @@ export const simController = async (
               (!a.health || a.health > 0) &&
               a.status !== 'inactive'
           )
-          .map((a) => messageServices.readMailbox(a, services))
+          .map((a) => messageServices.readMailbox(a, services, agents))
       );
       await Promise.all(
         agents
