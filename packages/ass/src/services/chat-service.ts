@@ -1,6 +1,6 @@
 import { IEnvServices, updateAgent } from '../env-services';
-import { ActivityList, IAgent, ITime } from '../models';
-import { minutes } from '../utils';
+import { ActivityList, IAgent } from '../models';
+import { minutes, toTime } from '../utils';
 import { redisServices } from './redis-service';
 
 
@@ -52,7 +52,7 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
 
         const timesim = services.getTime();
         timesim.setMinutes(timesim.getMinutes() + 5);
-        const startTime: ITime = { h: timesim.getHours(), m: timesim.getMinutes(), s: timesim.getSeconds(), ms: timesim.getMilliseconds(), relative: false }
+        const startTime = toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds(), timesim.getMilliseconds());
 
         const chatDuration = minutes(2, 15);
 

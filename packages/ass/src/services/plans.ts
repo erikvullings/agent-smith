@@ -8,23 +8,12 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
   const steps = [] as ActivityList;
   const { distance } = services;
   const { endTime } = options;
-  let { startTime } = options;
+  const { startTime } = options;
   if (endTime) {
-    await determineStartTime(agent, services, options);
-
-    steps.push({ name: 'waitUntilList', options });
+    options.startTime = await determineStartTime(agent, services, options);
+    steps.push({ name: 'waitUntil', options });
   }
   else if (startTime) {
-    if (typeof startTime === 'string') {
-      startTime = toTime(startTime);
-    }
-    if (startTime && startTime.relative) {
-      const h = startTime.h ? services.getTime().getHours() + startTime.h : services.getTime().getHours();
-      const m = startTime.m ? services.getTime().getMinutes() + startTime.m : services.getTime().getMinutes();
-      const s = startTime.s ? services.getTime().getHours() + startTime.s : services.getTime().getHours();
-      const ms = startTime.ms ? services.getTime().getHours() + startTime.ms : services.getTime().getHours();
-      options.startTime = { h, m, s, ms };
-    }
     steps.push({ name: 'waitUntil', options });
   }
   if (agent.type === 'drone') {
@@ -78,7 +67,7 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   const { duration } = options;
   if (duration) {
     const startTimeDate = new Date(services.getTime().valueOf() + duration);
-    const startTime = { h: startTimeDate.getHours(), m: startTimeDate.getMinutes(), s: startTimeDate.getSeconds(), ms: startTimeDate.getMinutes() };
+    const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds(), startTimeDate.getMinutes());
     agent.steps = [{ name: 'waitUntil', options: { startTime } }];
   }
   return true;

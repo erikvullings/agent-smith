@@ -84,7 +84,7 @@ export const envServices = ({
   } as unknown) as IEnvServices;
 };
 
-const createAgenda = async (agent: IAgent, services: IEnvServices) => {
+const createAgenda = (agent: IAgent, services: IEnvServices) => {
   const customAgIndex = customAgendas.findIndex((agenda) => agenda.agentId === agent.id);
   if (customAgIndex > -1) {
     return agendas.customAgenda(agent, services, customAgIndex)
@@ -140,7 +140,7 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
       await plan.prepare(agent, services, options);
     }
   } else {
-    agent.agenda = [...await createAgenda(agent, services)];
+    agent.agenda = createAgenda(agent, services);
     updateAgent(agent, services, agents);
 
   }

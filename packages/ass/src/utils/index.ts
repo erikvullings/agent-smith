@@ -431,7 +431,18 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
   return { agents, locations: { ...homes, ...occupations } };
 };
 
-export const generateExistingAgent = (lng: number, lat: number, radius: number, agentId?: string, group?: IAgent, type?: string) => {
+/**
+ * @param lng
+ * @param lat
+ * @param radius
+ * @param agentId
+ * @param group
+ * @param type
+ * @returns
+ * Generate agent with given id
+ */
+
+export const generateExistingAgent = (lng: number, lat: number, radius: number, agentId: string, group?: IAgent, type?: string) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') => {
     const coord = [lng + offset(), lat + offset()] as [number, number];
@@ -469,6 +480,15 @@ export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices)
     }
   }
 };
+
+/**
+ * @param agent
+ * @param services
+ * @param totDistance
+ * @param totDuration
+ * @returns
+ * Determine the speed of the agent
+ */
 
 export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number => {
   const defaultWalkingSpeed = 5000 / 3600;
@@ -523,30 +543,35 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
   return speed;
 };
 
+/**
+ * Determine the starttime with given endtime
+ *
+ * @param agent
+ * @param services
+ * @param options
+ * @param agent
+ * @param services
+ * @param options
+ * @param agent
+ * @param services
+ * @param options
+ */
 export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const { destination } = agent;
   const { distance } = services;
-  let { endTime } = options;
+  const { endTime } = options;
   let profile: Profile = 'foot';
-  if (endTime && (agent.day || agent.day === 0)) {
-    if (typeof endTime === 'string') {
-      endTime = toTime(endTime);
-    }
-    if (endTime) {
-      let endTimeDate = simTime(agent.day, endTime.h ? endTime.h : 0, endTime.m, endTime.s);
-      if (endTime.relative) {
-        const h = endTime.h ? services.getTime().getHours() + endTime.h : services.getTime().getHours();
-        const m = endTime.m ? services.getTime().getMinutes() + endTime.m : services.getTime().getMinutes();
-        const s = endTime.s ? services.getTime().getHours() + endTime.s : services.getTime().getHours();
-        endTimeDate = simTime(agent.day, h, m, s);
-      }
+  if (endTime) {
+    const endTimeDate = toDate(agent, services, endTime)
+    if (endTimeDate) {
       if (agent.type === 'drone') {
         if (destination) {
           const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
           const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
           const startTime = new Date(0, 0, 0, 0);
           startTime.setTime(mSecs);
-          agent.startTime = startTime;
+          const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds(), startTime.getMilliseconds());
+          return newStartTime;
         }
       }
       else {
@@ -584,23 +609,79 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
             const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
             const startTime = new Date(0, 0, 0, 0);
             startTime.setTime(mSecs);
-            agent.startTime = startTime;
+            const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds(), startTime.getMilliseconds());
+            return newStartTime;
           }
         }
       }
     }
   }
+  return undefined
 }
 
-export const toTime = (str?: string) => {
-  const regex = /(\d{1,2}):(\d{2}).(\d{2})(\w?)/i;
+/**
+ * @param agent
+ * @param services
+ * @param str
+ * @returns
+ * Transform time string to date
+ */
+export const toDate = (agent: IAgent, services: IEnvServices, str?: string) => {
+  const regex1 = /(\d{1,2}):(\d{1,2}).(\d{1,2})(\w?)/i;
+  const regex2 = /(\d{1,2}):(\d{1,2}).(\d{1,2}).(\d{1,3})(\w?)/i;
   if (!str) return undefined;
-  const match = regex.exec(str);
-  if (!match || match.length < 3) return undefined;
-  const h = +match[1];
-  const m = +match[2];
-  const s = +match[3];
-  const relative = match.length >= 4 && match[4] === 'r';
-  return { h, m, s, relative };
+  const match1 = regex1.exec(str);
+  const match2 = regex2.exec(str);
+  if (!match1 || match1.length < 3) return undefined;
+  if (match1) {
+    if (match1.length < 3) return undefined;
+    let h = +match1[1];
+    let m = +match1[2];
+    let s = +match1[3];
+    const relative = match1.length >= 4 && match1[4] === 'r';
+    if (relative) {
+      h += services.getTime().getHours();
+      m += services.getTime().getMinutes();
+      s += services.getTime().getSeconds();
+    }
+    return simTime(agent.day ? agent.day : 0, h, m, s);
+  }
+  if (match2) {
+    if (match2.length < 4) return undefined;
+    let h = +match2[1];
+    let m = +match2[2];
+    let s = +match2[3];
+    let ms = +match2[4];
+    const relative = match2.length >= 5 && match2[5] === 'r';
+    if (relative) {
+      h += services.getTime().getHours();
+      m += services.getTime().getMinutes();
+      s += services.getTime().getSeconds();
+      ms += services.getTime().getMilliseconds();
+    }
+    const time = simTime(agent.day ? agent.day : 0, h, m, s);
+    time.setMilliseconds(ms);
+    return time
+  }
+  return undefined;
+}
+
+/**
+ * @param h
+ * @param m
+ * @param s
+ * @param ms
+ * @param relative
+ * @returns
+ * Makes timestring from number of hours, minutes, etc.
+ */
+
+export const toTime = (h?: number, m?: number, s?: number, ms?: number, relative?: boolean) => {
+  const hrs = h ? String(h) : '00';
+  const min = m ? String(m) : '00';
+  const sec = s ? String(s) : '00';
+  const msec = ms ? (`.${String(ms)}`) : '';
+  const r = relative ? 'r' : '';
+  return `${hrs}:${min}.${sec}${msec}${r}`;
 }
 

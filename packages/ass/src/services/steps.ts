@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime } from '../utils';
 
 
 /**
@@ -166,31 +166,18 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
  * Wait until a start time before continuing
  */
 const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+
   let { startTime } = options;
-  console.log(startTime);
   if (startTime) {
-    if (typeof startTime === 'string') {
-      startTime = toTime(startTime);
+    const startTimeDate = toDate(agent, services, startTime);
+    if (startTime[startTime.length - 1] === 'r') {
+      startTime = startTime.slice(0, startTime.length - 1)
     }
-    if (startTime && (agent.day || agent.day === 0) && !startTime.relative) {
-      const startTimeDate = simTime(agent.day, startTime.h ? startTime.h : 0, startTime.m, startTime.s);
-      startTimeDate.setMilliseconds(startTime.ms ? startTime.ms : 0)
-      console.log(startTimeDate)
-      return startTimeDate ? startTimeDate < services.getTime() : true;
-    }
+    return startTimeDate ? startTimeDate < services.getTime() : true;
   }
   return true;
 };
 
-/**
- * @param agent
- * @param services
- * Wait until a start time before continuing
- */
-const waitUntilList = async (agent: IAgent, services: IEnvServices) => {
-  const { startTime } = agent;
-  return startTime ? startTime < services.getTime() : true;
-};
 
 /**
  * @param agent
@@ -204,7 +191,7 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
     return true;
   }
   const startTimeDate = new Date(services.getTime().valueOf() + duration);
-  const startTime = { h: startTimeDate.getHours(), m: startTimeDate.getMinutes(), s: startTimeDate.getSeconds(), ms: startTimeDate.getMinutes() };
+  const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds(), startTimeDate.getMilliseconds());
   const stepOptions = { startTime };
   if (agent.steps) {
     // Replace active 'waitFor' step with 'waitUntil' step.
@@ -249,6 +236,7 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
         const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
         a = newAgent.agent;
         agents.push(a);
+        redisServices.geoAdd('agents', a);
         services.agents[id] = a;
       }
       const i = agent.group.indexOf(id);
@@ -300,7 +288,6 @@ export const steps = {
   driveTo: moveAgent('driving'),
   flyTo,
   waitUntil,
-  waitUntilList,
   waitFor,
   controlAgents,
   releaseAgents,

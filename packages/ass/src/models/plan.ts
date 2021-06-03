@@ -5,9 +5,9 @@ import { Coord } from '@turf/helpers';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */
-  startTime?: ITime | string;
+  startTime?: string;
   /** Time the activity needs to be finished */
-  endTime?: ITime | string;
+  endTime?: string;
   /** Number of microseconds this activity lasts */
   duration?: number;
   /** Destination when travelling */
@@ -53,10 +53,3 @@ export interface IPlan {
   cleanup?: Activity;
 }
 
-export interface ITime {
-  h?: number;
-  m?: number;
-  s?: number;
-  ms?: number;
-  relative?: boolean;
-}
