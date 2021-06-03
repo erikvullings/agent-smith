@@ -328,7 +328,7 @@
             "agentId": "whiteAgent",
             "agendaItems": [
                 { "name": "Go to work", "options" : { "priority": 5 } },
-                { "name": "Go to park", "options" : { "priority": 5 } },
+                { "name": "Call the police", "options" : { "priority": 5 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 
         },
