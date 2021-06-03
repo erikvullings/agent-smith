@@ -264,8 +264,8 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     policeDuty: () => agendaVariations.police()[randomIntInRange(0, agendaVariations.police().length - 1)],
     kmarDuty: () => agendaVariations.kmar()[randomIntInRange(0, agendaVariations.kmar().length - 1)],
     redActivity: () =>
-       (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)],
-      //agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
+       (agendaVariations.work())[randomIntInRange(0,agendaVariations.work().length-1)],
+      // agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
     null: () => agendaVariations.null()[randomIntInRange(0, agendaVariations.null().length - 1)],
 
     tourist: () => (agendaVariations.tourist())[randomIntInRange(0, agendaVariations.tourist().length - 1)],
@@ -283,7 +283,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   } if (agent.type === 'drone') {
     return agentAgendas.drone();
   }
-  else if(agent.following){
+  if(agent.following){
 
   }
   switch (agent.force) {
@@ -300,8 +300,8 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       if(agent.defenseType && agent.defenseType === 'kmar'){
         return agentAgendas.kmarDuty();
       }
-      else{
-        return agentAgendas.policeDuty();}
+
+        return agentAgendas.policeDuty();
       }
   default: {
       if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
@@ -381,6 +381,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
     else if(reactionAgenda[0].name === 'Follow person'){
+      console.log('following', mail.sender.id, 'location',mail.location)
       agent.following = mail.sender.id;
       agent.destination = mail.location;
       reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };
@@ -389,6 +390,8 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
 
     }
     else if(reactionAgenda[0].name === 'Damage person'){
+      // agent.following = mail.sender.id;
+      // agent.destination = mail.location;
       agent.target = mail.sender;
       reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };
 

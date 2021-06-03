@@ -11,7 +11,7 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     if (planEffects[message]) {
         radius = planEffects[message].messageRadius;
     }
-    console.log("radius", radius)
+    console.log('radius', radius)
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
     const receiversAgents = (receivers.filter((a) => a.key !== sender.id).map((a) => a = services.agents[a.key])).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
 

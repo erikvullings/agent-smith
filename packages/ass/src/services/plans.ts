@@ -52,7 +52,7 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
   }
   if(agent.running){
     steps.push({ name: 'stopRunning'});
-  } 
+  }
   agent.steps = steps;
 };
 
@@ -202,16 +202,16 @@ export const plans = {
       //   prepareRoute(agent, services, options);
       //   // agent.speed = 2;
       // }
-      //else{
+      // else{
         agent.sentbox = [];
         agent.destination = services.locations['police station'];
         prepareRoute(agent, services, options);
         // agent.speed = 2;
-      //}
+      // }
       return true;
     },
   },
-  
+
 
   'Hang around specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
@@ -240,9 +240,9 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
-      
-      console.log("back again", agent.following, agent.reactedTo)
-      if(agent.following && agent.following !== "" && agent.reactedTo){
+
+      console.log('back again', agent.following, agent.reactedTo)
+      if(agent.following && agent.following !== '' && agent.reactedTo){
         const agentArr : IAgent[] = [agent,services.agents[agent.following]];
         const followedAgent = services.agents[agent.following];
 
@@ -250,43 +250,36 @@ export const plans = {
         agent.running = true;
         const timesim = services.getTime();
         timesim.setMinutes(timesim.getMinutes() + 6);
-        
-        const distanceBetween = distanceInMeters(agent.actual.coord[1],agent.actual.coord[0],followedAgent.actual.coord[1],followedAgent.actual.coord[0]);
-        console.log("distance between", distanceBetween)
 
-        // let hasReacted = 0;
-        //agent.agenda?.filter(item => item.name === 'Interrogation').map(item => hasReacted +=1)
-        console.log("reacted to",agent.reactedTo,planEffects[agent.reactedTo])
+        const distanceBetween = distanceInMeters(agent.actual.coord[1],agent.actual.coord[0],followedAgent.actual.coord[1],followedAgent.actual.coord[0]);
+        console.log('distance between', distanceBetween)
+
         if(distanceBetween < 60){
           if(planEffects[agent.reactedTo].damageLevel >= 70){
             agent.target = followedAgent;
-            console.log("health", followedAgent.health)
             if(followedAgent.health > 0){
-  
               damageServices.damageAgent(agent,[followedAgent],services);
-
               const attackAgenda : ActivityList = [
                 { name: 'Follow person', options : { destination : followedAgent.actual}}];
 
               if(agent.agenda){
-                const oldAgenda = agent.agenda.filter(item => item.name !== "Follow person");
+                const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person');
                 agent.agenda = [...attackAgenda,...oldAgenda]
               }
               else{
                 agent.agenda = [...attackAgenda]
               }
-
             }
             else{
-              agent.following = "";
+              agent.following = '';
 
               const attackAgenda : ActivityList = [
-                { name: "Wait", options : { priority: 3, duration:minutes(5)} },
+                { name: 'Wait', options : { priority: 3, duration:minutes(5)} },
               ];
-  
+
               if(agent.agenda){
-                const oldAgenda = agent.agenda.filter(item => item.name !== "Follow person");
-                console.log("oldagenda", oldAgenda)
+                const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person');
+                console.log('oldagenda', oldAgenda)
                 agent.agenda = [...attackAgenda,...oldAgenda]
               }
               else{
@@ -296,45 +289,36 @@ export const plans = {
 
           }
           else if(planEffects[agent.reactedTo].damageLevel > 30 ){
-            console.log("We will use weapons")
-            // if distance is smaller than 4 meters send direct message to the agent 
-            // to talk to the agent, if agent is dangerous
-            // use weapon
+            console.log('We will use weapons')
 
-            // { name: "Follow person", options : { priority: 3, destination : followedAgent.actual} },
-            // { name: "Damage person", options : { priority: 3},
-
-            agent.following = "";
+            agent.following = '';
             agent.target = followedAgent;
             const attackAgenda : ActivityList = [
-              { name: "Wait", options : { priority: 3, duration : minutes(5)} },
+              { name: 'Wait', options : { priority: 3, duration : minutes(5)} },
             ];
 
             damageServices.damageAgent(agent,[followedAgent],services);
 
-            //make sure the other agents also stops walking
-            messageServices.sendDirectMessage(agent,'Interrogation',[followedAgent],services)
-
             if(agent.agenda){
-              const oldAgenda = agent.agenda.filter(item => item.name !== "Follow person");
+              const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person');
               agent.agenda = [...attackAgenda,...oldAgenda]
             }
             else{
               agent.agenda = [...attackAgenda]
             }
-  
+
           }
           else{
-            agent.following = "";
+            agent.following = '';
             const interrogationAgenda : ActivityList = [
-              { name: "Follow person", options : { priority: 3, destination : followedAgent.actual} },
-              { name: "Interrogation", options : { priority: 3} }
+              { name: 'Follow person', options : { priority: 3, destination : followedAgent.actual} },
+              { name: 'Interrogation', options : { priority: 3} },
             ];
 
             messageServices.sendDirectMessage(agent,'Interrogation',[followedAgent],services)
 
             if(agent.agenda){
-              const oldAgenda = agent.agenda.filter(item => item.name !== "Follow person")
+              const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person')
               agent.agenda = [...interrogationAgenda, ...oldAgenda]
 
             }
@@ -348,7 +332,7 @@ export const plans = {
         let followCount = 0;
         agent.agenda?.filter(item => item.name === 'Follow person').map(item => followCount += 1);
 
-        if(agent.following && agent.following !== "" && followCount<2){
+        if(agent.following && agent.following !== '' && followCount<2){
           const followAgenda = [{ name: 'Follow person', options : { destination : followedAgent.actual}}];
 
           if(agent.agenda){
@@ -358,7 +342,7 @@ export const plans = {
             agent.agenda = [...followAgenda]
           }
         }
-        }
+      }
 
       prepareRoute(agent, services, options);
       agent.speed = 2;
@@ -370,13 +354,13 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       agent.sentbox = [];
 
-      if(agent.following && agent.following !== ""){
+      if(agent.following && agent.following !== ''){
         const followedAgent = services.agents[agent.following];
         agent.destination = followedAgent.actual;
         const timesim = services.getTime();
         timesim.setMinutes(timesim.getMinutes() + 6);
-      
-        if(agent.following && agent.following !== ""){
+
+        if(agent.following && agent.following !== ''){
           const followAgenda = [{ name: 'Protect person', options : { destination : followedAgent.actual}}];
 
           if(agent.agenda){
@@ -452,10 +436,10 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
-      //agent.reactedTo = 'Drop object';
+      // agent.reactedTo = 'Drop object';
 
       if(randomIntInRange(0,15) === 1){
-        //take the agent to the police station
+        // take the agent to the police station
       }
 
 
@@ -513,7 +497,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
 
-      //if the attacker is blue, and if the target is hurt, take the agent to the police station
+      // if the attacker is blue, and if the target is hurt, take the agent to the police station
       // if(agent.targets){
         // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
       // }
@@ -527,11 +511,11 @@ export const plans = {
         agent.sentbox = [];
         agent.route = [];
         const steps = [] as ActivityList;
-  
-        //messageServices.sendMessage(agent, 'Damage person', services);
-        
-        console.log("target", agent.target)
-        //if the attacker is blue, and if the target is hurt, take the agent to the police station
+
+        // messageServices.sendMessage(agent, 'Damage person', services);
+
+        console.log('target', agent.target)
+        // if the attacker is blue, and if the target is hurt, take the agent to the police station
         if(agent.target){
           damageServices.damageAgent(agent,[agent.target],services)
         }
@@ -541,7 +525,7 @@ export const plans = {
         return true;
       },
     },
-  
+
   'Search for problem': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
@@ -550,7 +534,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
 
-      //if the attacker is blue, and if the target is hurt, take the agent to the police station
+      // if the attacker is blue, and if the target is hurt, take the agent to the police station
       // if(agent.targets){
         // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
       // }
