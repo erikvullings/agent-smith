@@ -6,6 +6,7 @@ import { dispatchServices, damageServices, messageServices, redisServices } from
 import { planEffects } from './plan-effects';
 import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
 import { agendas } from './agendas';
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -243,6 +244,7 @@ export const plans = {
       if(agent.following && agent.following !== ""){
         const agentArr : IAgent[] = [agent,services.agents[agent.following]];
         const followedAgent = services.agents[agent.following];
+
         agent.destination = followedAgent.actual;
         agent.running = true;
         //agent.reactedTo = "Drop object";
@@ -255,20 +257,23 @@ export const plans = {
         // let hasReacted = 0;
         //agent.agenda?.filter(item => item.name === 'Interrogation').map(item => hasReacted +=1)
         console.log("reacted to",agent.reactedTo,planEffects[agent.reactedTo])
-        if(distanceBetween < 40){
+        if(distanceBetween < 60){
           if(planEffects[agent.reactedTo].damageLevel > 30 ){
             console.log("We will use weapons")
             // if distance is smaller than 4 meters send direct message to the agent 
             // to talk to the agent, if agent is dangerous
             // use weapon
 
+            // { name: "Follow person", options : { priority: 3, destination : followedAgent.actual} },
+            // { name: "Damage person", options : { priority: 3},
+
             agent.following = "";
             agent.target = followedAgent;
             const attackAgenda : ActivityList = [
-              { name: "Follow person", options : { priority: 3, destination : followedAgent.actual} },
-              { name: "Damage person", options : { priority: 3},
-             }
+              { name: "Wait", options : { priority: 3, duration : minutes(5)} },
             ];
+
+            damageServices.damageAgent(agent,[followedAgent],services);
 
             //make sure the other agents also stops walking
             //messageServices.sendDirectMessage(agent,'Interrogation',[followedAgent],services)
@@ -305,7 +310,11 @@ export const plans = {
 
           }
         }
-        if(agent.following && agent.following !== "" ){
+
+        let followCount = 0;
+        agent.agenda?.filter(item => item.name === 'Follow person').map(item => followCount += 1);
+
+        if(agent.following && agent.following !== "" && followCount<2){
           const followAgenda = [{ name: 'Follow person', options : { destination : followedAgent.actual}}];
 
           if(agent.agenda){

@@ -70,7 +70,11 @@
         "langepoort": {
             "type": "work",
             "coord": [4.314559, 52.078794]
-          }
+          },
+        "test": {
+        "type": "work",
+        "coord": [4.349894, 52.084668]
+        }
       },
     "customAgents": {
         "tbp": [{
@@ -278,7 +282,7 @@
             "status": "active",
             "home": { "type": "home", "coord": [4.361865, 52.090591] },
             "actual": { "type": "home", "coord": [4.361865, 52.090591] },
-            "occupations": [{ "type": "work", "id": "bijenkorf"}],
+            "occupations": [{ "type": "work", "id": "test"}],
             "mailbox": []
     }
         ],
@@ -323,6 +327,7 @@
         {
             "agentId": "whiteAgent",
             "agendaItems": [
+                { "name": "Go to work", "options" : { "priority": 5 } },
                 { "name": "Go to park", "options" : { "priority": 5 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 

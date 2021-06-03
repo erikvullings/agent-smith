@@ -11,7 +11,7 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     if (planEffects[message]) {
         radius = planEffects[message].messageRadius;
     }
-
+    console.log("radius", radius)
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
     const receiversAgents = (receivers.filter((a) => a.key !== sender.id).map((a) => a = services.agents[a.key])).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
 
@@ -32,7 +32,7 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
 
 const send = async(sender:IAgent, message: string, receivers:IAgent[], _services: IEnvServices) => {
     if(!sender.sentbox){sender.sentbox = []}
-
+    console.log(sender.id, sender.sentbox)
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
@@ -122,6 +122,8 @@ const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMai
 
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({ receiver: agent, mail: actionToReact })
+    const cleanedMailbox = agent.mailbox.filter(mail => mail.message !== actionToReact.message && mail.sender !== actionToReact.sender)
+    agent.mailbox = [...cleanedMailbox];
     return agendas.addReaction(agent, services, actionToReact);
 };
 
