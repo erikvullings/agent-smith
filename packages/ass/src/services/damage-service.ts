@@ -1,18 +1,19 @@
 import { planEffects } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent, IEquipment, IMail } from '../models';
-import { randomIntInRange } from '../utils';
+import { agentToEntityItem, randomIntInRange } from '../utils';
 
 const damageAgent = async (sender: IAgent, receivers:IAgent[], _services: IEnvServices) => {
     const equipment = await pickEquipment(sender);
 
     if(receivers.length > 0 && equipment !== null) {
-        receivers.filter((a) => a.health && a.attire && a.attire === 'bulletproof vest').map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(0,10)));
-        receivers.filter((a) => a.health && !a.attire).map((a) => (a.health! -= equipment.damageLevel*20));
+        receivers.filter((a) => a.health && a.health>0 && a.attire && a.attire === 'bulletproof vest').map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(0,10)));
+        receivers.filter((a) => a.health && a.health>0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(10,20)))
 
+        receivers.filter(a => a.health<0).map(a => a.health = 0);
     }
     else if(equipment === null){
-        receivers.filter((a) => a.health).map((a) => (a.health! -= randomIntInRange(0,10)));
+        receivers.filter((a) => a.health && a.health>0).map((a) => (a.health! -= randomIntInRange(0,10)));
     }
 
     const deadAgents = receivers.filter((a) => a.health && a.health<=0)
