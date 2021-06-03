@@ -246,6 +246,19 @@ export const simController = async (
           .filter(
             (a) =>
               passiveTypes.indexOf(a.type) < 0 &&
+              a.type === 'group' &&
+              a.mailbox &&
+              a.mailbox.length > 0 &&
+              (!a.health || a.health > 0) &&
+              a.status !== 'inactive'
+          )
+          .map((a) => messageServices.readMailbox(a, services))
+      );
+      await Promise.all(
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
               !a.memberOf &&
               a.health &&
               a.health > 0 &&

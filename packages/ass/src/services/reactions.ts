@@ -64,6 +64,11 @@ export const reaction = {
             urgency: 1, plans: [[{ 'name': 'Follow person', 'options': {} }]],
         },
     },
+    'Go to work': {
+        'tbp': {
+            urgency: 1, plans: [[{ 'name': 'Go to base', 'options': {} }]],
+        },
+    },
     'Damage person': {
         'white': {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],

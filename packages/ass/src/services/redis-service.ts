@@ -59,11 +59,7 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
             longitude: resArr[2][0],
             latitude: resArr[2][1],
           };
-          if (agent !== undefined && String(res.key) === agent.id) {
-            // console.log("First res isssss",res)
-            // resArray.push(res);
-          }
-          else {
+          if (agent !== undefined && String(res.key) !== agent.id) {
             resArray.push(res);
           }
         });

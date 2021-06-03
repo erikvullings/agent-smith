@@ -74,6 +74,14 @@ export const planEffects = {
         severity: 5,
         messageRadius: 1000,
     },
+    'Go to work': {
+        damageRadius: 1000,
+        damageLevel: 100,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 5,
+        messageRadius: 1000,
+    },
     'Damage person': {
         damageRadius: 0,
         damageLevel: 50,

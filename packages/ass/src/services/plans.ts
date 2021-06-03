@@ -181,6 +181,27 @@ export const plans = {
     },
   },
 
+  'Go to base': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      console.log("go to base");
+      if (options.destination) {
+        agent.sentbox = [];
+        agent.destination = options.destination;
+      }
+      else if(agent.baseLocation){
+        agent.destination = services.locations[agent.baseLocation]; 
+      }
+
+      if(agent.agenda){
+        agent.agenda = [agent.agenda[0],{ name: 'Wait', options: { duration: minutes(300) } }]
+      }
+      
+      agent.speed = 2;
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
   'Go to specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
       if (options.areaCentre && options.areaRange) {
@@ -717,13 +738,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
 
-      // const receivers = await redisServices.geoSearch(agent.actual, 100000, agent) as Array<any>;
-      // const receiversAgents = (receivers.map((a) => a = services.agents[a.key])).filter(a => ("baseLocation" in a) && a.baseLocation === 'station' && a.agenda && (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
-      // console.log("receivers", receiversAgents)
-      // messageServices.sendDirectMessage(agent, "Call the police", [receiversAgents[0]], services);
-      agent.reactedTo = 'Drop object'
       dispatchServices.sendDefence(agent,services);
-
       return true;
     },
   },
