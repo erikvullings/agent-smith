@@ -61,7 +61,7 @@ export const reaction = {
     },
     'Go to park': {
         'blue': {
-            urgency: 1, plans: [[{ 'name': 'Damage person', 'options': {} }]],
+            urgency: 1, plans: [[{ 'name': 'Follow person', 'options': {} }]],
         },
     },
     'Damage person': {
