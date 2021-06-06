@@ -70,8 +70,9 @@ export const simController = async (
     const blueAgents: (IAgent & IDefenseAgent)[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
+    const tbpAgents: IAgent[] = simConfig.customAgents.tbp;
 
-    const agents = [...blueAgents, ...redAgents, ...whiteAgents] as (IAgent | IDefenseAgent)[];
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents, ...tbpAgents] as (IAgent | IDefenseAgent)[];
 
     const currentSpeed = simSpeed;
     let currentTime = startTime;

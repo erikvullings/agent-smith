@@ -266,7 +266,7 @@ export const agentToFeature = (agent: IAgent) => ({
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
       numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
-      force: agent.force && (agent.force === 'vip') ? 'purple' : agent.force ? agent.force : 'white',
+      force: agent.force && (agent.force === 'tbp') ? 'purple' : agent.force ? agent.force : 'white',
       delay: agent.delay && agent.delay.delayCause ? agent.delay.delayCause.join(', ') : '',
       members: agent.group && agent.group.length <= 5 ? agent.group.join(', ') : '',
       visible:
@@ -570,7 +570,7 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
           const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
           const startTime = new Date(0, 0, 0, 0);
           startTime.setTime(mSecs);
-          const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds(), startTime.getMilliseconds());
+          const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
           return newStartTime;
         }
       }
@@ -609,7 +609,7 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
             const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
             const startTime = new Date(0, 0, 0, 0);
             startTime.setTime(mSecs);
-            const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds(), startTime.getMilliseconds());
+            const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
             return newStartTime;
           }
         }
@@ -627,61 +627,36 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
  * Transform time string to date
  */
 export const toDate = (agent: IAgent, services: IEnvServices, str?: string) => {
-  const regex1 = /(\d{1,2}):(\d{1,2}).(\d{1,2})(\w?)/i;
-  const regex2 = /(\d{1,2}):(\d{1,2}).(\d{1,2}).(\d{1,3})(\w?)/i;
+  const regex1 = /(\d{1,2}):(\d{1,2}):(\d{1,2})(\w?)/i;
   if (!str) return undefined;
   const match1 = regex1.exec(str);
-  const match2 = regex2.exec(str);
   if (!match1 || match1.length < 3) return undefined;
-  if (match1) {
-    if (match1.length < 3) return undefined;
-    let h = +match1[1];
-    let m = +match1[2];
-    let s = +match1[3];
-    const relative = match1.length >= 4 && match1[4] === 'r';
-    if (relative) {
-      h += services.getTime().getHours();
-      m += services.getTime().getMinutes();
-      s += services.getTime().getSeconds();
-    }
-    return simTime(agent.day ? agent.day : 0, h, m, s);
+  let h = +match1[1];
+  let m = +match1[2];
+  let s = +match1[3];
+  const relative = match1.length >= 4 && match1[4] === 'r';
+  if (relative) {
+    h += services.getTime().getHours();
+    m += services.getTime().getMinutes();
+    s += services.getTime().getSeconds();
   }
-  if (match2) {
-    if (match2.length < 4) return undefined;
-    let h = +match2[1];
-    let m = +match2[2];
-    let s = +match2[3];
-    let ms = +match2[4];
-    const relative = match2.length >= 5 && match2[5] === 'r';
-    if (relative) {
-      h += services.getTime().getHours();
-      m += services.getTime().getMinutes();
-      s += services.getTime().getSeconds();
-      ms += services.getTime().getMilliseconds();
-    }
-    const time = simTime(agent.day ? agent.day : 0, h, m, s);
-    time.setMilliseconds(ms);
-    return time
-  }
-  return undefined;
+  return simTime(agent.day ? agent.day : 0, h, m, s);
 }
 
 /**
  * @param h
  * @param m
  * @param s
- * @param ms
  * @param relative
  * @returns
  * Makes timestring from number of hours, minutes, etc.
  */
 
-export const toTime = (h?: number, m?: number, s?: number, ms?: number, relative?: boolean) => {
+export const toTime = (h?: number, m?: number, s?: number, relative?: boolean) => {
   const hrs = h ? String(h) : '00';
   const min = m ? String(m) : '00';
   const sec = s ? String(s) : '00';
-  const msec = ms ? (`.${String(ms)}`) : '';
   const r = relative ? 'r' : '';
-  return `${hrs}:${min}.${sec}${msec}${r}`;
+  return `${hrs}:${min}:${sec}${r}`;
 }
 

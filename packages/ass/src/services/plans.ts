@@ -67,7 +67,7 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   const { duration } = options;
   if (duration) {
     const startTimeDate = new Date(services.getTime().valueOf() + duration);
-    const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds(), startTimeDate.getMinutes());
+    const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds());
     agent.steps = [{ name: 'waitUntil', options: { startTime } }];
   }
   return true;
