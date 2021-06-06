@@ -1,6 +1,6 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas, reaction } from './services';
-import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IDefenseAgent } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas, customTypeAgendas } from './sim-controller';
 
@@ -15,7 +15,7 @@ export interface IEnvServices {
   cycle: IOsrm;
   walk: IOsrm;
   /** Agent lookup */
-  agents: { [id: string]: IAgent | IDefenseAgent };
+  agents: { [id: string]: IAgent };
   /** Available plans */
   plans: { [plan: string]: IPlan };
   /** Available steps i.e. basic components that make up a plan, e.g. go to location */

@@ -8,6 +8,36 @@
         "radius": 10000
     },
     "customAgents": {
+        "tbp":[
+            {
+                "id": "tbp",
+                "type": "man",
+                "force": "tbp",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        5.521275,
+                        51.448302
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        5.499309,
+                        51.437832
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "h_m_shop"
+                    }
+                ],
+                "mailbox": []
+            }
+        ],
         "blue": [
             {
                 "id": "biker",
@@ -46,7 +76,7 @@
                     }
                 ],
                 "mailbox": [],
-                "department": "none",
+                "baseLocation": "none",
                 "defenseType": "police"
             },
             {
@@ -76,7 +106,7 @@
                     }
                 ],
                 "mailbox": [],
-                "department": "none",
+                "baseLocation": "none",
                 "defenseType": "police"
             },
             {
@@ -111,7 +141,7 @@
                         "id": "policecar"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             },
@@ -141,7 +171,7 @@
                         "id": "police station"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             },
@@ -171,7 +201,7 @@
                         "id": "police station"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             },
@@ -201,7 +231,7 @@
                         "id": "police station"
                     }
                 ],
-                "department": "station",
+                "baseLocation": "station",
                 "mailbox": [],
                 "defenseType": "police"
             }
@@ -793,32 +823,38 @@
             ]
         },
         {
-            "agentId": "police2",
-            "agendaItems": [
-                {
-                    "name": "Stay at police station",
-                    "options": {
-                        "priority": 3
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "police3",
-            "agendaItems": [
-                {
-                    "name": "Stay at police station",
-                    "options": {
-                        "priority": 3
-                    }
-                }
-            ]
-        },
-        {
             "agentId": "police4",
             "agendaItems": [
                 {
                     "name": "Stay at police station",
+                    "options": {
+                        "priority": 3
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "biker",
+            "agendaItems": [
+                {
+                    "name": "Stay at police station",
+                    "options": {
+                        "priority": 3
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "tbp",
+            "agendaItems": [
+                {
+                    "name": "Go to work",
+                    "options": {
+                        "priority": 3
+                    }
+                },
+                {
+                    "name": "Work",
                     "options": {
                         "priority": 3
                     }

@@ -3,7 +3,6 @@ import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent,
 import { hours, randomInRange, randomIntInRange, minutes, toTime } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
 // import * as simConfig from '../sim_config.json';
-import * as simConfig from '../verstoring_openbare_orde.json';
 import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
 
@@ -226,11 +225,13 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     ],
     police: () => [
       [
-        ...blueActivities.guard()[randomIntInRange(0, blueActivities.guard().length - 1)],
+        ...blueActivities.patrol()[randomIntInRange(0, blueActivities.patrol().length - 1)],
         ...activities.goHome(),
       ] as ActivityList,
+    ],
+    kmar: () => [
       [
-        ...blueActivities.patrol()[randomIntInRange(0, blueActivities.patrol().length - 1)],
+        ...blueActivities.guard()[randomIntInRange(0, blueActivities.guard().length - 1)],
         ...activities.goHome(),
       ] as ActivityList,
     ],
@@ -261,9 +262,10 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     learn: () => agendaVariations.learn()[randomIntInRange(0, agendaVariations.learn().length - 1)],
     releaseAtLocation: () => agendaVariations.releaseAtLocation()[0],
     policeDuty: () => agendaVariations.police()[randomIntInRange(0, agendaVariations.police().length - 1)],
+    kmarDuty: () => agendaVariations.kmar()[randomIntInRange(0, agendaVariations.kmar().length - 1)],
     redActivity: () =>
-      // (agendaVariations['work']())[randomIntInRange(0,agendaVariations['work']().length-1)],
-      agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
+      (agendaVariations.work())[randomIntInRange(0, agendaVariations.work().length - 1)],
+    // agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
     null: () => agendaVariations.null()[randomIntInRange(0, agendaVariations.null().length - 1)],
 
     tourist: () => (agendaVariations.tourist())[randomIntInRange(0, agendaVariations.tourist().length - 1)],
@@ -281,7 +283,9 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   } if (agent.type === 'drone') {
     return agentAgendas.drone();
   }
-
+  // if(agent.following){
+  //   // komt nog
+  // }
   switch (agent.force) {
     case 'white': {
       if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
@@ -293,7 +297,10 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       return agentAgendas.redActivity();
     }
     case 'blue': {
-      // console.log('blue agenda',agentAgendas['policeDuty']()  )
+      if (agent.defenseType && agent.defenseType === 'kmar') {
+        return agentAgendas.kmarDuty();
+      }
+
       return agentAgendas.policeDuty();
     }
     default: {
@@ -353,6 +360,7 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
 const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, agents: IAgent[]) => {
   agent.route = [];
   agent.steps = [];
+  agent.reactedTo = mail.message;
 
   const timesim = services.getTime();
   timesim.setMinutes(timesim.getMinutes() + 6);
@@ -361,12 +369,30 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
   if (agent.agenda && reaction[mail.message][agent.force] && reaction[mail.message][agent.force]!.plans.length > 0) {
     const reactionAgenda: ActivityList = reaction[mail.message][agent.force]!.plans[0];
 
-    if (reactionAgenda[0].name === 'Go to specific location' || reactionAgenda[0].name === 'Follow person') {
+    if (reactionAgenda[0].name === 'Go to specific location') {
       agent.destination = mail.location;
 
-      reactionAgenda[0].options = { startTime, destination: mail.location };
+      reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
+    }
+    else if (reactionAgenda[0].name === 'Follow person') {
+      console.log('following', mail.sender.id, 'location', mail.location)
+      agent.following = mail.sender.id;
+      agent.destination = mail.location;
+      reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
+
+      reactionAgenda.map((item) => item.options!.reacting = true);
+
+    }
+    else if (reactionAgenda[0].name === 'Damage person') {
+      // agent.following = mail.sender.id;
+      // agent.destination = mail.location;
+      agent.target = mail.sender;
+      reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
+
+      reactionAgenda.map((item) => item.options!.reacting = true);
+
     }
     else if (reactionAgenda[0].name === 'Run away') {
       reactionAgenda[0].options = { startTime, areaCentre: mail.location.coord, areaRange: mail.runDistance };
@@ -374,7 +400,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
     else {
-      reactionAgenda[0].options = { startTime };
+      reactionAgenda[0].options = { startTime, priority: 1 };
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
 

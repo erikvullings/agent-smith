@@ -39,6 +39,8 @@ export interface IAgent {
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
   destination?: ILocation;
+  /** Location that agents wants to reach, as [lon, lat] */
+  attire?: 'bulletproof vest';
   /** ID of work address */
   occupations?: {
     /** Type of occupation, e.g. work, shop, learn */
@@ -92,14 +94,16 @@ export interface IAgent {
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
   sentbox: { receiver: IAgent, mail: IMail }[];
   reactedTo?: string;
-  targets?: IAgent[];
+  target: IAgent;
+  following?: string;
   defenseType: 'kmar' | 'police'
-  /** work department */
-  department: 'station' | string;
+  /** work baseLocation */
+  baseLocation: 'station' | string;
   /** Equpment that the agent carries */
   equipment?: IEquipment[],
   /** Equpment that is in use */
   currentEquipment?: IEquipment
+
 }
 
 export interface IMail {
@@ -107,10 +111,12 @@ export interface IMail {
   sender: IAgent;
   /** Location of the sender */
   location: ILocation;
+  /** Distance reciever has to run away in meters */
+  runDistance?: number;
   /** Message of the sender */
   message: string;
-  /** Distance in meters agent has to run if reaction is "run away" */
-  runDistance?: number;
+  /** Eqipment of the sender */
+  equipment?: string;
 }
 
 export interface IEquipment {

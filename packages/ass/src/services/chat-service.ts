@@ -16,7 +16,7 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
 
     const availableAgents: IAgent[] = (redisAgents.map((a) => a = services.agents[a.key]))
         .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting !== true)
-            && (!('department' in a) || a.department !== 'station') && a.status !== 'inactive' &&
+            && (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive' &&
             (!a.visibleForce || a.visibleForce !== 'red'));
     // && a.steps[0].name != 'driveTo' || 'cycleTo'
 

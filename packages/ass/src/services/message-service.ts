@@ -1,7 +1,7 @@
 import { deflateSync } from 'zlib';
 import { reaction, redisServices } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IDefenseAgent, IEquipment, IMail } from '../models';
+import { IAgent, IEquipment, IMail } from '../models';
 import { randomIntInRange } from '../utils';
 import { agendas } from './agendas';
 import { planEffects } from './plan-effects';
@@ -11,13 +11,10 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     let radius = 10000;
     if (planEffects[message]) {
         radius = planEffects[message].messageRadius;
-        console.log(message, radius)
     }
-
+    console.log('radius', radius)
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
-    console.log('receivers before', receivers.length)
-    const receiversAgents = (receivers.filter((a) => a.key !== sender.id).map((a) => a = services.agents[a.key])).filter(a => (!('department' in a) || a.department !== 'station') && a.status !== 'inactive');
-    console.log('receivers after', receiversAgents.length)
+    const receiversAgents = (receivers.filter((a) => a.key !== sender.id).map((a) => a = services.agents[a.key])).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
 
     if (receiversAgents.length > 0) {
         await send(sender, message, receiversAgents, services);
@@ -34,36 +31,9 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
     return true;
 }
 
-const sendDamage = async (sender: IAgent | IDefenseAgent, agentAction: string, receivers: IAgent[], _services: IEnvServices) => {
-    // _services.agents["biker"].health = 100;
-
-    const damage = await pickEquipment(sender, agentAction)
-
-    if (receivers.length > 0 && damage) {
-        receivers.filter((a) => a.health).map((a) => (a.health! -= damage));
-
-        const deadAgents = receivers.filter((a) => a.health && a.health <= 0)
-        if (deadAgents.length > 0) {
-            deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
-        }
-    }
-    return true;
-}
-
-const pickEquipment = async (agent: IAgent | IDefenseAgent, agentAction: string) => {
-    if (agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment) {
-        const { severity } = planEffects[agent.reactedTo];
-        // switch(severity){
-        //     case 1:
-        // }
-    }
-    else if (agent.force === 'red') {
-        return planEffects[agentAction].damageLevel
-    }
-}
-
 const send = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (!sender.sentbox) { sender.sentbox = [] }
+    console.log(sender.id, sender.sentbox)
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
@@ -133,7 +103,7 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
     // const actionToReact = null as unknown as IMail;
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
-    console.log('in here')
+
     if (itemUrgency === undefined || itemReaction === undefined) {
         return true;
     }
@@ -196,13 +166,14 @@ const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMai
 
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({ receiver: agent, mail: actionToReact })
+    const cleanedMailbox = agent.mailbox.filter(mail => mail.message !== actionToReact.message && mail.sender !== actionToReact.sender)
+    agent.mailbox = [...cleanedMailbox];
     return agendas.addReaction(agent, services, actionToReact, agents);
-}
+};
 
 
 export const messageServices = {
     sendMessage,
     readMailbox,
     sendDirectMessage,
-    sendDamage,
 };

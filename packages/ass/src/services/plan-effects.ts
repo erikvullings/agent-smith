@@ -6,17 +6,17 @@ import { IPlanEffects } from '../models';
  * Damage count: the percentage of agents -in the damage radius- that will get damaged
  */
 export const planEffects = {
-    'drop object': {
+    'Drop object': {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
         runDistance: 50,
         panicLevel: 30,
         delayLevel: 0,
-        severity: 3,
+        severity: 5,
         messageRadius: 1000,
     },
-    'drop bomb': {
+    'Drop bomb': {
         damageRadius: 100,
         damageLevel: 100,
         damageCount: 0.7,
@@ -26,7 +26,7 @@ export const planEffects = {
         severity: 5,
         messageRadius: 10000,
     },
-    'drop gas': {
+    'Drop gas': {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
@@ -37,7 +37,7 @@ export const planEffects = {
         severity: 4,
         messageRadius: 10000,
     },
-    'play message': {
+    'Play message': {
         damageRadius: 0,
         damageLevel: 0,
         damageCount: 0,
@@ -47,7 +47,7 @@ export const planEffects = {
         severity: 1,
         messageRadius: 1000,
     },
-    'fleeTheScene': {
+    'Flee the Scene': {
         damageRadius: 0,
         damageLevel: 0,
         panicLevel: 30,
@@ -55,12 +55,36 @@ export const planEffects = {
         severity: 3,
         messageRadius: 20,
     },
-    'callThePolice': {
+    'Call the Police': {
         damageRadius: 0,
         damageLevel: 0,
         panicLevel: 0,
         delayLevel: 0,
         severity: 2,
         messageRadius: 10000,
+    },
+    'Attack': {
+        damageRadius: 1000,
+        damageLevel: 100,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 2,
+        messageRadius: 10000,
+    },
+    'Go to park': {
+        damageRadius: 1000,
+        damageLevel: 100,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 5,
+        messageRadius: 1000,
+    },
+    'Damage person': {
+        damageRadius: 0,
+        damageLevel: 50,
+        panicLevel: 0,
+        delayLevel: 0,
+        severity: 2,
+        messageRadius: 10,
     },
 } as IPlanEffects

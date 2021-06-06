@@ -1,19 +1,21 @@
 import { IActivityOptions, IStep } from '.';
 import { IAgent } from './agent';
+import { ILocation } from './location';
 
 export interface ISimConfig {
   settings: Settings;
   generateSettings: GenerateSettings[];
+  locations: { [id: string]: ILocation };
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
 }
 
 interface CustomAgents {
-  blue: (IAgent)[];
+  tbp: IAgent[];
+  blue: IAgent[];
   white: IAgent[];
-  red: (IAgent)[];
-  tbp: (IAgent)[];
+  red: IAgent[];
 }
 
 export interface CustomAgenda {

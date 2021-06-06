@@ -19,15 +19,15 @@
     "customAgents": {
         "tbp": [
             {
-                "id": "tbp1",
+                "id": "tbp",
                 "type": "man",
                 "status": "active",
                 "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.884857,
-                        52.386282
+                        4.891674,
+                        52.378101
                     ]
                 },
                 "actual": {
@@ -38,62 +38,10 @@
                     ]
                 },
                 "force": "tbp",
-                "group": [
-                    "bodyguard1",
-                    "bodyguard2"
-                ],
-                "memberCount": 2,
                 "mailbox": []
             }
         ],
-        "blue": [
-            {
-                "id": "bodyguard1",
-                "type": "man",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.884857,
-                        52.386282
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892419,
-                        52.373312
-                    ]
-                },
-                "force": "blue",
-                "memberOf": "tbp1",
-                "mailbox": []
-            },
-            {
-                "id": "bodyguard2",
-                "type": "man",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.884857,
-                        52.386282
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892419,
-                        52.373312
-                    ]
-                },
-                "force": "blue",
-                "memberOf": "tbp1",
-                "mailbox": []
-            }
-        ],
+        "blue": [],
         "white": [
             {
                 "id": "group1",
@@ -246,6 +194,21 @@
                 {
                     "name": "Go home",
                     "options": {}
+                }
+            ]
+        },
+        {
+            "agentId": "tbp",
+            "agendaItems": [
+                {
+                    "name": "Go to work",
+                    "options": {}
+                },
+                {
+                    "name": "Work",
+                    "options": {
+                        "duration": 3000
+                    }
                 }
             ]
         }
