@@ -87,5 +87,5 @@ export const reaction = {
         'red': {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
-    }
+    },
 } as IReactions

@@ -14,6 +14,7 @@ const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customAgendas } = simConfig;
 export const { customTypeAgendas } = simConfig;
+export const { generateSettings } = simConfig;
 
 /**
  * @param callback
@@ -97,31 +98,33 @@ export const simController = async (
     services.locations = simConfig.locations;
     console.log('locations', services.locations)
 
-    for (const s of simConfig.generateSettings) {
-      const { agents: generatedAgents, locations } = generateAgents(
-        s.centerCoord[0],
-        s.centerCoord[1],
-        s.agentCount,
-        s.radius,
-        s.type,
-        s.force
-      );
+    if (simConfig.generateSettings) {
+      for (const s of simConfig.generateSettings) {
+        const { agents: generatedAgents, locations } = generateAgents(
+          s.centerCoord[0],
+          s.centerCoord[1],
+          s.agentCount,
+          s.radius,
+          s.type,
+          s.force
+        );
 
-      services.locations = { ...services.locations, ...locations };
-      agents.push(...generatedAgents);
+        services.locations = { ...services.locations, ...locations };
+        agents.push(...generatedAgents);
 
-      if (s.object) {
-        for (const a of generatedAgents) {
-          const { agents: generatedObject } = generateAgents(
-            s.centerCoord[0],
-            s.centerCoord[1],
-            1,
-            s.radius,
-            s.object,
-            s.force,
-            a
-          );
-          agents.push(...generatedObject);
+        if (s.object) {
+          for (const a of generatedAgents) {
+            const { agents: generatedObject } = generateAgents(
+              s.centerCoord[0],
+              s.centerCoord[1],
+              1,
+              s.radius,
+              s.object,
+              s.force,
+              a
+            );
+            agents.push(...generatedObject);
+          }
         }
       }
     }
