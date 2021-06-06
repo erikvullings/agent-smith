@@ -22,16 +22,21 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
  * @param agent
  * @param services
  * @param agents
- * release victims from group when in panic
+ * Release victims from group when in panic
  */
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
-  let percentageReleased = agent.panic ? agent.panic.panicLevel / 500 : 0;
+  let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 200 : 0;
   if (agent.vulnerability) {
-    percentageReleased += (agent.vulnerability / 500);
+    releaseProbabilityPercentage += (agent.vulnerability / 200);
   }
-  const maxNumberReleased = Math.round(agent.group ? agent.group.length * 0.01 * percentageReleased : 0);
-  if (typeof maxNumberReleased === 'number') {
-    const numberReleased = randomIntInRange(0, maxNumberReleased > 1 ? maxNumberReleased : 1);
+  const releaseProbability = agent.group ? agent.group.length * 0.01 * releaseProbabilityPercentage : 0;
+  const rnd = randomInRange(0, 100);
+  console.log('')
+  console.log('prob')
+  console.log(releaseProbability);
+  console.log(rnd)
+  if (rnd < releaseProbability) {
+    const numberReleased = randomIntInRange(1, 3);
     if (agent.group && agent.group.length >= numberReleased) {
       const agentsToRelease = [...shuffle(agent.group)].slice(0, numberReleased);
       releaseAgents(agent, services, { release: agentsToRelease }, agents);
@@ -191,7 +196,7 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
     return true;
   }
   const startTimeDate = new Date(services.getTime().valueOf() + duration);
-  const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds(), startTimeDate.getMilliseconds());
+  const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds());
   const stepOptions = { startTime };
   if (agent.steps) {
     // Replace active 'waitFor' step with 'waitUntil' step.
@@ -232,6 +237,12 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
       let a: IAgent;
       if (id in services.agents) {
         a = services.agents[id];
+        if (a.group) {
+          releaseAgents(agent, services, { release: a.group }, agents);
+          for (const member of a.group) {
+            joinGroup(services.agents[member], services, { group: a.id })
+          }
+        }
       } else {
         const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
         a = newAgent.agent;
@@ -240,7 +251,7 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
         services.agents[id] = a;
       }
       const i = agent.group.indexOf(id);
-      if (a) {
+      if (a && i > -1) {
         delete a.memberOf;
         agent.group.splice(i, 1);
         agent.memberCount -= a.group ? a.group.length : 1;
@@ -261,14 +272,31 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
   return true;
 };
 
+/**
+ * @param agent
+ * @param services
+ * @param options
+ * @returns
+ * If the group is within 10 meters, the agent joins the given group
+ */
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
+  const inRange = await redisServices.geoSearch(agent.actual, 10, agent);
+  const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
   if (group) {
     const newGroup = services.agents[group];
-    if (newGroup.group && newGroup.memberCount) {
-      newGroup.group.push(agent.id);
-      newGroup.memberCount += 1;
-      addGroup(agent, newGroup, services);
+    if (agentsInRange.indexOf(newGroup) > -1) {
+      if (newGroup.group && newGroup.memberCount) {
+        if (newGroup.group.indexOf(agent.id) < 0) {
+          newGroup.group.push(agent.id);
+          newGroup.memberCount += 1;
+          addGroup(agent, newGroup, services);
+        }
+      } else {
+        newGroup.group = [agent.id];
+        newGroup.memberCount = 1;
+        addGroup(agent, newGroup, services);
+      }
       agent.memberOf = newGroup.id;
     }
   }

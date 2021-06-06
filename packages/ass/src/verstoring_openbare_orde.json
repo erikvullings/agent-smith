@@ -17,7 +17,83 @@
         }
     ],
     "customAgents": {
-        "blue": [],
+        "tbp": [
+            {
+                "id": "tbp1",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.884857,
+                        52.386282
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892419,
+                        52.373312
+                    ]
+                },
+                "force": "tbp",
+                "group": [
+                    "bodyguard1",
+                    "bodyguard2"
+                ],
+                "memberCount": 2,
+                "mailbox": []
+            }
+        ],
+        "blue": [
+            {
+                "id": "bodyguard1",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.884857,
+                        52.386282
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892419,
+                        52.373312
+                    ]
+                },
+                "force": "blue",
+                "memberOf": "tbp1",
+                "mailbox": []
+            },
+            {
+                "id": "bodyguard2",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.884857,
+                        52.386282
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892419,
+                        52.373312
+                    ]
+                },
+                "force": "blue",
+                "memberOf": "tbp1",
+                "mailbox": []
+            }
+        ],
         "white": [
             {
                 "id": "group1",
@@ -144,7 +220,7 @@
                             52.373104
                         ],
                         "areaRange": 20,
-                        "endTime": "20:00.00"
+                        "endTime": "20:00:00"
                     }
                 },
                 {
