@@ -1,7 +1,8 @@
 
 import { IAgent, IActivityOptions, ActivityList } from '../models';
 import { IEnvServices } from '../env-services';
-import { dispatchServices, damageServices, messageServices, redisServices } from '.';
+import { damageServices } from './damage-service';
+import { dispatchServices, messageServices, redisServices } from '.';
 import { planEffects } from './plan-effects';
 import { toTime, addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
 import { agendas } from './agendas';
@@ -44,7 +45,6 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
           steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
           steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
           steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
-          console.log('bike');
         } else {
           steps.push({ name: 'walkTo', options: { destination: agent.destination } });
         }
@@ -148,13 +148,14 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const danger = options.areaCentre;
+      console.log('joejoe')
+      console.log(options.areaRange)
       const range = options.areaRange ? options.areaRange : 500;
-      console.log(range);
 
       if (danger) {
         const slope = (agent.actual.coord[1] - danger[1]) / (agent.actual.coord[0] - danger[0]);
         const distanceDegrees = range / 111139;
-        const dx = Math.sqrt(2 * (distanceDegrees ** 2) * (slope ** 2));
+        const dx = Math.sqrt((distanceDegrees ** 2) / (1 + (slope ** 2)));
         if (agent.actual.coord[0] > danger[0]) {
           const x = agent.actual.coord[0] + dx;
           const y = agent.actual.coord[1] + dx * slope;
@@ -171,6 +172,7 @@ export const plans = {
         console.log('')
         console.log('distance run')
         console.log(distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]))
+        console.log(range);
         console.log('')
       }
       agent.running = true;
@@ -265,7 +267,7 @@ export const plans = {
         console.log('distance between', distanceBetween)
 
         if (distanceBetween < 60) {
-          if (planEffects[agent.reactedTo].damageLevel >= 70) {
+          if (planEffects[agent.reactedTo].damageLevel && planEffects[agent.reactedTo].damageLevel >= 70) {
             agent.target = followedAgent;
             if (followedAgent.health && followedAgent.health > 0) {
               damageServices.damageAgent(agent, [followedAgent], services);
@@ -665,11 +667,11 @@ export const plans = {
           agent.group = agent.group.filter((a) => a !== objectAgent.id);
           agent.visibleForce = 'red';
           if (objectAgent.type === 'bomb') {
-            messageServices.sendMessage(objectAgent, 'drop bomb', services);
+            messageServices.sendMessage(objectAgent, 'Drop bomb', services);
             objectAgent.actual = agent.actual;
             objectAgent.agenda = [{ name: 'Bomb', options: { priority: 1 } }];
           } else if (objectAgent.type === 'gas') {
-            messageServices.sendMessage(objectAgent, 'drop gas', services);
+            messageServices.sendMessage(objectAgent, 'Drop gas', services);
             objectAgent.actual = agent.actual;
             objectAgent.agenda = [{ name: 'Gas', options: { priority: 1 } }];
           } else {
@@ -687,11 +689,12 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
-      agent.steps = steps;
       agent.visibleForce = 'red';
       // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
-      messageServices.sendMessage(agent, 'play message', services);
+      messageServices.sendMessage(agent, 'Play message', services);
       console.log('play message')
+      console.log(agent.agenda)
+      agent.steps = steps;
       return true;
     },
   },

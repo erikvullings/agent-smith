@@ -39,7 +39,7 @@ export const reaction = {
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
-    'play message': {
+    'Play message': {
         'blue': {
             urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': {} }
                 , { 'name': 'Check object', 'options': {} },

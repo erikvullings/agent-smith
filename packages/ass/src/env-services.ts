@@ -110,7 +110,6 @@ export const executeSteps = async (
 };
 
 export const updateAgent = async (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
-  // if (agent.id === 'group1') console.log(agent.agenda);
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
       agent as (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
