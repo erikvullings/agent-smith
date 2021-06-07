@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes } from '../utils';
 
 
 /**
@@ -39,7 +39,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       for (const a of agentsToRelease) {
         const released = services.agents[a];
         released.health = randomInRange(0, 30);
-        released.agenda = [{ name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
+        released.agenda = [{ name: 'Wait', options: { duration: minutes(1) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
         released.running = true;
         if (released.health === 0) {
           released.status = 'inactive';

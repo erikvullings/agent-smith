@@ -134,8 +134,20 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "white"
             ],
             "circle-radius": [
               "match",

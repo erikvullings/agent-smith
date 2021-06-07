@@ -127,6 +127,10 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
         if (plan && plan.cleanup) {
           await plan.cleanup(agent, services, options);
         }
+        if (agent.id === 'drone') {
+          console.log('drone1')
+          console.log(agent.agenda);
+        }
       }
     }
   } else if (agent.agenda && agent.agenda.length > 0) {
@@ -137,6 +141,10 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
     }
     if (plan && plan.prepare) {
       await plan.prepare(agent, services, options);
+    }
+    if (agent.id === 'drone') {
+      console.log('drone2')
+      console.log(agent.agenda);
     }
   } else {
     agent.agenda = createAgenda(agent, services);

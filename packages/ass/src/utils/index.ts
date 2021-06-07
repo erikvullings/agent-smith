@@ -266,7 +266,7 @@ export const agentToFeature = (agent: IAgent) => ({
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
       numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
-      force: agent.force && (agent.force === 'tbp') ? 'purple' : agent.force ? agent.force : 'white',
+      force: agent.force ? agent.force : 'white',
       delay: agent.delay && agent.delay.delayCause ? agent.delay.delayCause.join(', ') : '',
       members: agent.group && agent.group.length <= 5 ? agent.group.join(', ') : '',
       visible:

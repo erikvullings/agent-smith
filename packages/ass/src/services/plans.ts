@@ -267,7 +267,7 @@ export const plans = {
         console.log('distance between', distanceBetween)
 
         if (distanceBetween < 60) {
-          if (planEffects[agent.reactedTo].damageLevel && planEffects[agent.reactedTo].damageLevel >= 70) {
+          if (planEffects[agent.reactedTo] && planEffects[agent.reactedTo].damageLevel && planEffects[agent.reactedTo].damageLevel >= 70) {
             agent.target = followedAgent;
             if (followedAgent.health && followedAgent.health > 0) {
               damageServices.damageAgent(agent, [followedAgent], services);
@@ -300,7 +300,7 @@ export const plans = {
             }
 
           }
-          else if (planEffects[agent.reactedTo].damageLevel > 30) {
+          else if (planEffects[agent.reactedTo] && planEffects[agent.reactedTo].damageLevel && planEffects[agent.reactedTo].damageLevel > 30) {
             console.log('We will use weapons')
 
             agent.following = '';
@@ -680,12 +680,13 @@ export const plans = {
         }
       }
       console.log('drop');
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
       return true;
     },
   },
 
-  'Play Message': {
+  'Play message': {
     prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
       agent.sentbox = [];
       const steps = [] as ActivityList;
@@ -694,6 +695,7 @@ export const plans = {
       messageServices.sendMessage(agent, 'Play message', services);
       console.log('play message')
       console.log(agent.agenda)
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
       return true;
     },
