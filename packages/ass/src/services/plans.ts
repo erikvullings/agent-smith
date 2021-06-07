@@ -460,6 +460,55 @@ export const plans = {
     },
   },
 
+  'Hide': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      await prepareAgent(agent);
+      const steps = [] as ActivityList;
+      const randomInt = randomIntInRange(0,10);
+
+      const destination = randomPlaceNearby(agent, 10, 'any');
+      agent.destination = destination;
+
+      const agentsNear: any[] = await redisServices.geoSearch(agent.actual,100,agent);
+      const redAgentsNear : IAgent[] = agentsNear.map(a => a = services.agents[a.key]).filter(a => a.force === 'red');
+
+
+      if(randomInt >=4){
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: {duration: minutes(15,60)} });
+      }
+      else{
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: {duration: minutes(2,10)} });
+        // steps.push({ name: 'Run away', options: {} });
+        const runAwayAgenda : ActivityList = [
+          { name: 'Run away', options : { }}];
+
+        if(agent.agenda){
+          const oldAgenda = agent.agenda;
+          agent.agenda = [...runAwayAgenda,...oldAgenda]
+        }
+        else{
+          agent.agenda = [...runAwayAgenda]
+        }
+
+      }
+
+      const randomIntVisibility = randomIntInRange(0,10);
+      if(randomIntVisibility <= 3){
+        agent.visibility = 1;
+      }
+      else{
+        agent.visibility = 0;
+      }
+
+      agent.speed = 2;
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+
   'Interrogation': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);

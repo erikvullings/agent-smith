@@ -8,13 +8,13 @@ const damageAgent = async (sender: IAgent, receivers:IAgent[], _services: IEnvSe
 
     console.log('health before', receivers[0].health)
     if(receivers.length > 0 && equipment !== null) {
-        receivers.filter((a) => a.health && a.health>0 && a.attire && a.attire === 'bulletproof vest').map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(0,10)));
-        receivers.filter((a) => a.health && a.health>0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(10,20)))
+        receivers.filter((a) => a.health && a.health>0 && a.attire && a.attire === 'bulletproof vest' && a.visibility !== 0).map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(0,10)));
+        receivers.filter((a) => a.health && a.health>0 && !a.attire && a.visibility !== 0).map((a) => (a.health! -= equipment.damageLevel*randomIntInRange(10,20)))
 
         receivers.filter(a => a.health<0).map(a => a.health = 0);
     }
     else if(equipment === null){
-        receivers.filter((a) => a.health && a.health>0).map((a) => (a.health! -= randomIntInRange(0,10)));
+        receivers.filter((a) => a.health && a.health>0 && a.visibility !== 0).map((a) => (a.health! -= randomIntInRange(0,10)));
     }
 
     const deadAgents = receivers.filter((a) => a.health && a.health<=0)
