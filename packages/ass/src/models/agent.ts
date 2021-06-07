@@ -87,8 +87,8 @@ export interface IAgent {
   target: IAgent;
   /** The agent id of the agent that is being followed */
   following?: string;
-
-  defenseType: 'kmar' | 'police' //to be deleted
+  // to be deleted
+  defenseType: 'kmar' | 'police';
   /** work baseLocation */
   baseLocation: 'station' | string;
   /** Equpment that the agent carries */

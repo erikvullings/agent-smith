@@ -62,6 +62,9 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
           if (agent !== undefined && String(res.key) !== agent.id) {
             resArray.push(res);
           }
+          else if(agent === undefined){
+            resArray.push(res);
+          }
         });
       };
     })

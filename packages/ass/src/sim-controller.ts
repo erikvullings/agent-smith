@@ -46,7 +46,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 2, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     // const agentstoshow = [] as IAgent[];
 
@@ -57,9 +57,6 @@ export const simController = async (
         reaction[key] = reactionImport[key];
       }
     }
-
-    console.log('call the police', reaction['Call the police'])
-    console.log('test', reaction['Run away'])
 
     const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
@@ -92,7 +89,6 @@ export const simController = async (
     };
 
     services.locations = simConfig.locations;
-    console.log("locations", services.locations)
 
     for (const s of simConfig.settings) {
       const { agents: generatedAgents, locations } = generateAgents(
@@ -220,11 +216,11 @@ export const simController = async (
     }, 10000);
 
     // const chatInterval = setInterval(async () => {
-    //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
+    //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name === 'Chat');
 
     //   if (chattingAgents.length <= agents.length * 0.01)
     //     chatServices.agentChat(agents, services);
-    // }, 60000);
+    // }, 10000);
 
     let i = 0;
     while (i < 10000000) {

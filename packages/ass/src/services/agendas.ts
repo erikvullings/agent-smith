@@ -1,4 +1,4 @@
-import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent, IMail } from '../models';
+import { ActivityList, IAgent, IMail } from '../models';
 
 import { simTime, hours, randomInRange, randomIntInRange, minutes } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
@@ -283,9 +283,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   } if (agent.type === 'drone') {
     return agentAgendas.drone();
   }
-  if(agent.following){
-
-  }
+  /* if(agent.following){} */
   switch (agent.force) {
     case 'white': {
       if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
@@ -323,7 +321,7 @@ const customTypeAgenda = (agent: IAgent, _services: IEnvServices, customTypeAgIn
   const { _day: day } = agent;
 
   const agenda = customTypeAgendas[customTypeAgIndex].agendaItems;
-  if (agent.id == 'group3') {
+  if (agent.id === 'group3') {
     // console.log("customTypeAgendas group: ", customTypeAgendas[customTypeAgIndex]);
     // console.log("customTypeAgendas group: ", simConfig.customTypeAgendas[customTypeAgIndex]);
     // console.log(customTypeAgIndex);

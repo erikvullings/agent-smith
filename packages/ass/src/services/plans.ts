@@ -5,8 +5,6 @@ import { IEnvServices } from '../env-services';
 import { dispatchServices, damageServices, messageServices, redisServices } from '.';
 import { planEffects } from './plan-effects';
 import { addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters } from '../utils';
-import { agendas } from './agendas';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
 const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -70,12 +68,23 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   return true;
 };
 
+/**
+ * @param agent
+ * @param services
+ * @param options
+/** Wait for options.duration msec */
+const prepareAgent = async (agent: IAgent) => {
+  agent.sentbox = [];
+  agent.visibility = 1;
+  return true;
+}
+
 /** All plans that are available to each agent */
 export const plans = {
   /** In the options, you can set the work location to go to */
   'Go to work': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = []
+      await prepareAgent(agent);
       if (!agent.occupations) {
         return true;
       }
@@ -94,7 +103,7 @@ export const plans = {
   /** In the options, you can set the shop location to go to */
   'Go shopping': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 1000, 'shop') } = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
@@ -105,7 +114,7 @@ export const plans = {
 
   'Go to park': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
@@ -117,7 +126,7 @@ export const plans = {
 
   'Go to random location': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 1000, 'any') } = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
@@ -128,7 +137,7 @@ export const plans = {
 
   'Flee the scene': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 1000, 'any') } = options;
       agent.destination = destination;
       agent.running = true;
@@ -140,7 +149,7 @@ export const plans = {
 
   'Run away': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const danger = options.areaCentre;
       const range = options.areaRange ? options.areaRange : 500;
 
@@ -172,7 +181,7 @@ export const plans = {
   'Go to specific location': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       if (options.destination) {
-        agent.sentbox = [];
+        await prepareAgent(agent);
         agent.destination = options.destination;
         prepareRoute(agent, services, options);
         // agent.speed = 2;
@@ -183,19 +192,19 @@ export const plans = {
 
   'Go to base': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      console.log("go to base");
+      console.log('go to base');
       if (options.destination) {
-        agent.sentbox = [];
+        await prepareAgent(agent);
         agent.destination = options.destination;
       }
       else if(agent.baseLocation){
-        agent.destination = services.locations[agent.baseLocation]; 
+        agent.destination = services.locations[agent.baseLocation];
       }
 
       if(agent.agenda){
         agent.agenda = [agent.agenda[0],{ name: 'Wait', options: { duration: minutes(300) } }]
       }
-      
+
       agent.speed = 2;
       prepareRoute(agent, services, options);
       return true;
@@ -205,7 +214,7 @@ export const plans = {
   'Go to specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
       if (options.areaCentre && options.areaRange) {
-        agent.sentbox = [];
+        await prepareAgent(agent);
         const centre = options.areaCentre;
         const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
         agent.destination = destination;
@@ -218,13 +227,13 @@ export const plans = {
   'Go to the police station': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       // if (options.destination != nul) {
-      //   agent.sentbox = [];
+      //   await prepareAgent(agent);
       //   agent.destination = options.destination;
       //   prepareRoute(agent, services, options);
       //   // agent.speed = 2;
       // }
       // else{
-        agent.sentbox = [];
+        await prepareAgent(agent);
         agent.destination = services.locations['police station'];
         prepareRoute(agent, services, options);
         // agent.speed = 2;
@@ -259,7 +268,7 @@ export const plans = {
 
   'Follow person': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
 
       console.log('back again', agent.following, agent.reactedTo)
@@ -373,7 +382,7 @@ export const plans = {
 
   'Protect person': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
 
       if(agent.following && agent.following !== ''){
         const followedAgent = services.agents[agent.following];
@@ -401,7 +410,7 @@ export const plans = {
 
   'Visit doctor': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       if (!agent.occupations) {
         return true;
       }
@@ -420,7 +429,7 @@ export const plans = {
   /** Go to your home address */
   'Go home': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       if (agent.home) {
         agent.destination = agent.home;
         prepareRoute(agent, services, options);
@@ -437,15 +446,13 @@ export const plans = {
 
   GetExamined: { prepare: waitFor },
 
-  Chat: { prepare: waitFor },
-
   Fight: { prepare: waitFor },
 
   // Wait: { prepare: waitFor },
 
   'Wait': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
@@ -455,7 +462,7 @@ export const plans = {
 
   'Interrogation': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       // agent.reactedTo = 'Drop object';
 
@@ -473,7 +480,7 @@ export const plans = {
 
   'Stay at police station': {
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: { duration: hours(5, 8) } });
       agent.steps = steps;
@@ -483,7 +490,7 @@ export const plans = {
 
   'Patrol': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 1000, 'road') } = options;
       const steps = [] as ActivityList;
       agent.destination = destination;
@@ -496,7 +503,7 @@ export const plans = {
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 1000, 'food'), duration = minutes(20, 50) } = options;
       const steps = [] as ActivityList;
       const { actual } = agent;
@@ -512,7 +519,7 @@ export const plans = {
   // Maybe also add "spot targets" to pick targets
   'Attack targets': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       agent.route = [];
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options });
@@ -529,7 +536,7 @@ export const plans = {
     // Maybe also add "spot targets" to pick targets
     'Damage person': {
       prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-        agent.sentbox = [];
+        await prepareAgent(agent);
         agent.route = [];
         const steps = [] as ActivityList;
 
@@ -549,7 +556,7 @@ export const plans = {
 
   'Search for problem': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       agent.route = [];
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options });
@@ -566,7 +573,7 @@ export const plans = {
 
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       if (agent.type === 'drone') {
         const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
@@ -604,7 +611,7 @@ export const plans = {
 
   'Release': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       if (agent.group) {
         const release = agent.group.filter((a) => a in services.agents)
@@ -663,7 +670,7 @@ export const plans = {
 
   'Drop object': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const objectTypes = ['bomb', 'gas', 'object']
       const steps = [] as ActivityList;
       let objects: string[];
@@ -699,7 +706,7 @@ export const plans = {
 
   'Play Message': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       const duration = minutes(1);
       steps.push({ name: 'waitFor', options: { duration } });
@@ -717,7 +724,7 @@ export const plans = {
 
   'Check object': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       // if(agent.group){
       //   agent.group.filter((a) => services.agents[a].type === 'object').map((a) => delete services.agents[a].memberOf);
@@ -732,7 +739,7 @@ export const plans = {
 
   'Call the police': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       const { duration = minutes(1, 10) } = options;
       steps.push({ name: 'waitFor', options: { duration } });
@@ -745,7 +752,7 @@ export const plans = {
 
   'Go to other shops': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
-      agent.sentbox = [];
+      await prepareAgent(agent);
       const steps = [] as ActivityList;
       const { actual } = agent;
       const noshops = randomIntInRange(2, 5)
