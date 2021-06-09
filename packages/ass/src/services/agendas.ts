@@ -378,7 +378,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
-    else if(reactionAgenda[0].name === 'Follow person'){
+    else if(reactionAgenda[0].name === 'Follow person' || reactionAgenda[0].name === 'Walk to person'){
       console.log('following', mail.sender.id, 'location',mail.location)
       agent.following = mail.sender.id;
       agent.destination = mail.location;

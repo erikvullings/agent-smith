@@ -190,6 +190,39 @@ export const plans = {
     },
   },
 
+  'Walk to person': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      agent.route = [];
+      agent.steps = [];
+      if (agent.following) {
+        const followedAgent: IAgent = services.agents[agent.following];
+        // if(agent.agenda && followedAgent.agenda && followedAgent.agenda[0].options && followedAgent.agenda[0].options.reacting === true){
+        //   agent.agenda = agent.agenda?.filter(item => item.name !== 'Walk to person' && item.name !== 'Chat');
+        //   return true;
+        // }
+        await prepareAgent(agent);
+        agent.destination = followedAgent.actual;
+
+        const chatAgenda : ActivityList = [
+          { name: 'Chat', options : { priority: 3} },
+        ];
+
+        if(agent.agenda){
+          const oldAgenda = agent.agenda;
+          agent.agenda = [...chatAgenda,...oldAgenda]
+        }
+        else{
+          agent.agenda = [...chatAgenda]
+        }
+
+        // messageServices.sendDirectMessage(agent, 'Walk to person', [followedAgent], services)
+      }
+      prepareRoute(agent, services, options);
+      // agent.speed = 2;
+      return true;
+    },
+  },
+
   'Go to base': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       console.log('go to base');
@@ -459,6 +492,26 @@ export const plans = {
       return true;
     },
   },
+
+
+  'Chat': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      await prepareAgent(agent);
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: {duration: minutes(5)} });
+
+      if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true){
+        agent.steps = steps;
+        return true;
+      }
+
+      // messageServices.sendDirectMessage(agent,'Chat',agent.following,_services);
+      agent.steps = steps;
+      return true;
+
+    },
+  },
+
 
   'Hide': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {

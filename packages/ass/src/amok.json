@@ -1,7 +1,7 @@
 {
     "settings": [
         {
-            "agentCount": 40,
+            "agentCount": 2,
             "centerCoord": [
                 4.309510,
                 52.075591
@@ -338,14 +338,14 @@
             "agentId": "whiteAgent",
             "agendaItems": [
                 { "name": "Go to work", "options" : { "priority": 5 } },
-                { "name": "Call the police", "options" : { "priority": 5 } },
+                { "name": "Work", "options" : { "priority": 5 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 
         },
         {
             "agentId": "police3",
             "agendaItems": [
-                { "name": "Go to work", "options" : { "priority": 3 } },
+                { "name": "Wait", "options" : { "priority": 3 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 
         },
