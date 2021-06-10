@@ -5,7 +5,10 @@ export const reaction = {
 
     'Walk to person': {
         'white': {
-            urgency: 1, plans: [[{ 'name': 'Walk to person', 'options': {reacting: true} }]],
+            urgency: 1, plans: [[{ 'name': 'Wait for person', 'options': {reacting: true} }]],
+        },
+        'blue': {
+            urgency: 1, plans: [[{ 'name': 'Wait for person', 'options': {reacting: true} }]],
         },
     },
     'Wait for person': {

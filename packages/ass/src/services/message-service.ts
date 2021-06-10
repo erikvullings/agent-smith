@@ -13,7 +13,8 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     }
     console.log('radius', radius)
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
-    const receiversAgents = (receivers.filter((a) => a.key !== sender.id).map((a) => a = services.agents[a.key])).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
+    const receiversRedis = receivers.filter((a) => a.key !== sender.id);
+    const receiversAgents = receiversRedis.map((a) => a = services.agents[a.key]).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
 
     if (receiversAgents.length > 0) {
         await send(sender, message, receiversAgents, services);
@@ -33,16 +34,20 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
 const send = async(sender:IAgent, message: string, receivers:IAgent[], _services: IEnvServices) => {
     if(!sender.sentbox){sender.sentbox = []}
     console.log(sender.id, sender.sentbox)
-    receivers.forEach(rec => {
-        const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
+    console.log('receivers', receivers)
+    if(receivers.length>0){
+        receivers.forEach(rec => {
+            const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
-        if (rec.mailbox && sentbox.length === 0) {
-            rec.mailbox.push({ sender, location: sender.actual, message });
-        }
-        else if (!rec.mailbox && sentbox.length === 0) {
-            rec.mailbox = [{ sender, location: sender.actual, message }];
-        }
-    });
+            if (rec.mailbox && sentbox.length === 0) {
+                rec.mailbox.push({ sender, location: sender.actual, message });
+            }
+            else if (!rec.mailbox && sentbox.length === 0) {
+                rec.mailbox = [{ sender, location: sender.actual, message }];
+            }
+        });
+    }
+
     return true;
 }
 
@@ -99,8 +104,6 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
         // if prio is greater than urgency, pick one from the reactions
         const randomInt = randomIntInRange(0, urgentMessages.length - 1);
         return react(agent, services, urgentMessages, randomInt)
-
-
     }
 
     // check if urgency is greater than current reaction, if so pick the new reaction

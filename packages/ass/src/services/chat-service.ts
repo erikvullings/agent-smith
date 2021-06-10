@@ -1,7 +1,6 @@
-import { IEnvServices, updateAgent } from '../env-services';
+import { IEnvServices } from '../env-services';
 import { ActivityList, IAgent } from '../models';
-import { agentToEntityItem, minutes, random, randomIntInRange } from '../utils';
-import { messageServices } from './message-service';
+import { randomIntInRange } from '../utils';
 import { redisServices } from './redis-service';
 
 /**
@@ -18,27 +17,20 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
     const availableAgents: IAgent[] = (redisAgents.map((a) => a = services.agents[a.key]))
         .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting !== true)
             && (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive' &&
-            (!a.visibleForce || a.visibleForce !== 'red') &&
+            a.force !== 'red' &&
             a.force !== 'tbp' &&
-            (a.type === 'woman' || 'man' || 'girl' || 'boy'));
-    // && a.steps[0].name != 'driveTo' || 'cycleTo'
+            (a.type === 'woman' || 'man' || 'girl' || 'boy') &&
+            (!a.steps || (a.steps[0].name !== 'driveTo' || 'cycleTo')));
 
-    // const randomAgent: IAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
-    // eslint-disable-next-line dot-notation
-    const randomAgent = services.agents['whiteAgent'];
-    console.log('random agent1', randomAgent)
-    const closeRedis = (await redisServices.geoSearch(randomAgent.actual, 10000) as any[]).filter(a => a.key !== randomAgent.id);;
-
+    const randomAgent: IAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
+    const closeRedis = (await redisServices.geoSearch(randomAgent.actual, 10) as any[]).filter(a => a.key !== randomAgent.id);;
     const closeAgents = closeRedis.map(a => a = services.agents[a.key]);
-
 
     if (closeAgents.length > 0) {
         const closeAgent: IAgent = closeAgents[0];
-        console.log('random agent2', closeAgent)
         randomAgent.following = closeAgent.id;
-        // await startChat(randomAgent, closeAgent, services);
-        // eslint-disable-next-line dot-notation
-        messageServices.sendDirectMessage(services.agents['police3'],'Walk to person',[randomAgent],services)
+
+        startChat(randomAgent, closeAgent, services);
     }
     return true;
 };
@@ -50,8 +42,12 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
  * Adds going to the meetup location and chatting steps in the agendas
  */
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
+    randomAgent.route = [];
+    randomAgent.steps = [];
+    randomAgent.following = closeAgent.id;
+
     const timesim = services.getTime();
-    timesim.setMinutes(timesim.getMinutes() + 5);
+    timesim.setMinutes(timesim.getMinutes() + 6);
     randomAgent.following = closeAgent.id;
 
     const newAgenda1: ActivityList = [{ name: 'Walk to person', options: { startTime: timesim, priority: 1, destination: closeAgent.actual } },

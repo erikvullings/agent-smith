@@ -209,7 +209,8 @@ export const simController = async (
               a.agenda[0] &&
               a.agenda[0].name &&
               reaction[a.agenda[0].name] &&
-              a.agenda[0].name !== 'Call the police'
+              a.agenda[0].name !== 'Call the police' &&
+              a.agenda[0].name !== 'Walk to person'
           )
           .map((a) => messageServices.sendMessage(a, a.agenda![0].name, services))
       );

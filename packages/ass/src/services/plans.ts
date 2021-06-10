@@ -203,19 +203,19 @@ export const plans = {
         await prepareAgent(agent);
         agent.destination = followedAgent.actual;
 
-        const chatAgenda : ActivityList = [
-          { name: 'Chat', options : { priority: 3} },
-        ];
+        // const chatAgenda : ActivityList = [
+        //   { name: 'Chat', options : { priority: 3} },
+        // ];
 
-        if(agent.agenda){
-          const oldAgenda = agent.agenda;
-          agent.agenda = [...chatAgenda,...oldAgenda]
-        }
-        else{
-          agent.agenda = [...chatAgenda]
-        }
+        // if(agent.agenda){
+        //   const oldAgenda = agent.agenda;
+        //   agent.agenda = [...chatAgenda,...oldAgenda]
+        // }
+        // else{
+        //   agent.agenda = [...chatAgenda]
+        // }
 
-        // messageServices.sendDirectMessage(agent, 'Walk to person', [followedAgent], services)
+         messageServices.sendDirectMessage(agent, 'Walk to person', [followedAgent], services)
       }
       prepareRoute(agent, services, options);
       // agent.speed = 2;
@@ -493,19 +493,38 @@ export const plans = {
     },
   },
 
-
-  'Chat': {
+  'Wait for person': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
       const steps = [] as ActivityList;
-      steps.push({ name: 'waitFor', options: {duration: minutes(5)} });
+      steps.push({ name: 'waitFor', options: {duration: minutes(20)} });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+
+  'Chat': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      await prepareAgent(agent);
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: {duration: minutes(10)} });
 
       if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true){
         agent.steps = steps;
         return true;
       }
 
-      // messageServices.sendDirectMessage(agent,'Chat',agent.following,_services);
+      console.log('following',agent.following)
+      if(agent.following && agent.following !== ''){
+        messageServices.sendDirectMessage(agent,'Chat',[services.agents[agent.following]],services);
+      }
+      else{
+        agent.steps = [];
+
+        const oldAgenda = agent.agenda?.splice(0,1);
+        agent.agenda = oldAgenda;
+      }
       agent.steps = steps;
       return true;
 
