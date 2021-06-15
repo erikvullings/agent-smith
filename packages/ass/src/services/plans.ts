@@ -790,10 +790,26 @@ export const plans = {
 
       else if (agent.attire && (agent.attire === 'bomb vest' || agent.attire === 'bulletproof bomb vest')) {
         console.log('Bomb vest');
+        const nearby = await redisServices.geoSearch(agent.actual, 15, agent);
+        const nearbyAgents = nearby.map((a: any) => a = services.agents[a.key]);
+        const nearbyGroups = nearbyAgents.filter((a: IAgent) => a.group && a.group.length > 0);
+        if (nearbyGroups && nearbyGroups.length > 0) {
+          const victim = randomItem(nearbyGroups);
+          if (victim) {
+            agent.running = true;
+            steps.push({ name: 'walkTo', options: { destination: victim.actual } });
+          }
+        } else {
+          const victim = randomItem(nearbyAgents);
+          if (victim) {
+            agent.running = true;
+            steps.push({ name: 'walkTo', options: { destination: victim.actual } });
+          }
+          steps.push({ name: 'explode', options })
+        }
       }
       agent.steps = steps;
       return true;
-
     },
   },
 

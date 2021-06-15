@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby } from '../utils';
 
 
 /**
@@ -326,6 +326,27 @@ const disappear = async (agent: IAgent, services: IEnvServices, options: IActivi
   return true;
 };
 
+const explode = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const deathRange = await redisServices.geoSearch(agent.actual, 5, agent);
+  const agentsInDeathRange = deathRange.map((a: any) => a = services.agents[a.key]);
+  agentsInDeathRange.map((a: IAgent) => a.health = 0)
+  const damageRange = await redisServices.geoSearch(agent.actual, 15, agent);
+  const receivers = damageRange.map((a: any) => a = services.agents[a.key]);
+  if (receivers) {
+    if (receivers.length > 0) {
+      receivers.filter((a: IAgent) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a: IAgent) => (a.health! -= 5 * randomIntInRange(0, 10)));
+      receivers.filter((a: IAgent) => a.health && a.health > 0 && !a.attire).map((a: IAgent) => (a.health! -= 5 * randomIntInRange(10, 20)))
+      receivers.filter((a: IAgent) => !a.health || a.health < 0).map((a: IAgent) => a.health = 0);
+    }
+    const deadAgents = receivers.filter((a: IAgent) => a.health && a.health <= 0)
+    agent.health = 0;
+    deadAgents.push(agent);
+    if (deadAgents.length > 0) {
+      deadAgents.map((a: IAgent) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
+    }
+  }
+  return true;
+};
 
 export const steps = {
   walkTo: moveAgent('foot'),
@@ -339,4 +360,5 @@ export const steps = {
   stopRunning,
   joinGroup,
   disappear,
+  explode,
 };

@@ -240,7 +240,7 @@ export const simController = async (
       updateTime();
       await sleep(100);
       i % 5 === 0 && notifyOthers();
-      i % 25 === 0 && console.log(services.getTime());
+      // i % 25 === 0 && console.log(services.getTime());
       i++;
     }
   });

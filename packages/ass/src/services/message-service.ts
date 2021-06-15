@@ -33,7 +33,7 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
 
 const send = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (!sender.sentbox) { sender.sentbox = [] }
-    console.log(sender.id, sender.sentbox)
+    // console.log(sender.id, sender.sentbox)
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 

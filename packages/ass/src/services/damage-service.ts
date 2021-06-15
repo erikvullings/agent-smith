@@ -52,9 +52,7 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
         const damageRange = await redisServices.geoSearch(center, 15);
         receivers = damageRange.map((a: any) => a = _services.agents[a.key]);
     }
-    console.log('receivers', receivers)
-    if (receivers && receivers.length > 0 && equipment && equipment.limit > 0) {
-        console.log('health random before', receivers[0] ? receivers[0].health : 'no recievers')
+    if (receivers && equipment && equipment.limit > 0) {
         if (receivers.length > 0 && equipment !== null) {
             receivers.filter((a) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
             receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(10, 20)))
@@ -69,9 +67,6 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
         if (deadAgents.length > 0) {
             deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
         }
-
-        console.log('health random after', receivers[0] ? receivers[0].health : 'no recievers')
-
         console.log('random equipment limit before ', equipment.limit)
         equipment.limit -= 1;
         console.log('random equipment limit after ', equipment.limit)
