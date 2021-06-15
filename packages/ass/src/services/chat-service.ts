@@ -51,7 +51,7 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
         closeAgent.destination = undefined;
 
         const timesim = services.getTime();
-        timesim.setMinutes(timesim.getMinutes() + 5);
+        timesim.setSeconds(timesim.getSeconds() + 1);
         const startTime = toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds());
 
         const chatDuration = minutes(2, 15);

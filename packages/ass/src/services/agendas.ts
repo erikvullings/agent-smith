@@ -63,8 +63,8 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       ],
     ],
     hangAroundArea: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCentre: [5.482012, 51.426585], areaRange: 100 } },
-      { name: 'Hang around specific area', options: { duration: hours(0, 1), priority: 3, areaCentre: [5.482012, 51.426585], areaRange: 100 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCenter: [5.482012, 51.426585], areaRange: 100 } },
+      { name: 'Hang around specific area', options: { duration: hours(0, 1), priority: 3, areaCenter: [5.482012, 51.426585], areaRange: 100 } },
     ],
     wander: () => [{ name: 'Wander', options: { priority: 3 } }],
     doctorVisit: () => [
@@ -76,16 +76,16 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       { name: 'Release' },
     ],
     releaseRed: () => [
-      { name: 'Release_red', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
+      { name: 'Release red', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
     ],
     droneHangAround: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
-      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
     ],
     droneDropObject: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCentre: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
       { name: 'Drop object', options: { priority: 1 } },
-      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCentre: [4.892401, 52.373104], areaRange: 20 } },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCenter: [4.892401, 52.373104], areaRange: 20 } },
     ],
 
   };
@@ -324,7 +324,8 @@ const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgInd
   if (agenda.length > 0) {
     agenda[0].options = { ...agenda[0].options }
     if (!(agenda[0] && agenda[0].options && (agenda[0].options.startTime || agenda[0].options.endTime))) {
-      const agendaOptions = { ...(agenda[0].options), startTime: (toTime(0, randomInRange(0, 15), 0, true)) };
+      // const agendaOptions = { ...(agenda[0].options), startTime: (toTime(0, randomInRange(0, 15), 0, true)) };
+      const agendaOptions = { ...(agenda[0].options), startTime: '00:00:00r' };
       agenda[0].options = agendaOptions;
     }
     return agenda as ActivityList;
@@ -339,10 +340,11 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
   } else {
     agent.day += 1;
   }
-  const agenda = customAgendas[customAgIndex].agendaItems;
+  const agenda = [...customAgendas[customAgIndex].agendaItems];
   if (agenda.length > 0) {
     if (!(agenda[0] && agenda[0].options && (agenda[0].options.startTime || agenda[0].options.endTime))) {
-      const agendaOptions = { ...(agenda[0].options), startTime: (toTime(0, randomInRange(0, 15), 0, true)) };
+      // const agendaOptions = { ...(agenda[0].options), startTime: (toTime(0, randomInRange(0, 15), 0, true)) };
+      const agendaOptions = { ...(agenda[0].options), startTime: '00:00:00r' };
       agenda[0].options = agendaOptions;
     }
     return agenda as ActivityList;
@@ -363,7 +365,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
   agent.reactedTo = mail.message;
 
   const timesim = services.getTime();
-  timesim.setMinutes(timesim.getMinutes() + 6);
+  timesim.setSeconds(timesim.getSeconds() + 1);
   const startTime = toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds());
 
   if (agent.agenda && reaction[mail.message][agent.force] && reaction[mail.message][agent.force]!.plans.length > 0) {
@@ -395,7 +397,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
     }
     else if (reactionAgenda[0].name === 'Run away') {
-      reactionAgenda[0].options = { startTime, areaCentre: mail.location.coord, areaRange: mail.runDistance };
+      reactionAgenda[0].options = { startTime, areaCenter: mail.location.coord, areaRange: mail.runDistance };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }

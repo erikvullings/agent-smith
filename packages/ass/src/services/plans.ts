@@ -6,7 +6,6 @@ import { dispatchServices, messageServices, redisServices } from '.';
 import { planEffects } from './plan-effects';
 import { toTime, addGroup, randomItem, hours, minutes, seconds, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
 import { agendas } from './agendas';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
 const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -78,6 +77,18 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
 
 /** All plans that are available to each agent */
 export const plans = {
+
+  'Wait until': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = []
+      const { endTime } = options;
+      if (endTime) {
+        options.startTime = await determineStartTime(agent, services, options);
+        agent.steps = [{ name: 'waitUntil', options }];
+      }
+      return true;
+    },
+  },
   /** In the options, you can set the work location to go to */
   'Go to work': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
@@ -147,9 +158,7 @@ export const plans = {
   'Run away': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = [];
-      const danger = options.areaCentre;
-      console.log('joejoe')
-      console.log(options.areaRange)
+      const danger = options.areaCenter;
       const range = options.areaRange ? options.areaRange : 500;
 
       if (danger) {
@@ -169,11 +178,6 @@ export const plans = {
           options.destination = destination;
           agent.destination = destination;
         }
-        console.log('')
-        console.log('distance run')
-        console.log(distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]))
-        console.log(range);
-        console.log('')
       }
       agent.running = true;
       await prepareRoute(agent, services, options);
@@ -195,10 +199,10 @@ export const plans = {
 
   'Go to specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
-      if (options.areaCentre && options.areaRange) {
+      if (options.areaCenter && options.areaRange) {
         agent.sentbox = [];
-        const centre = options.areaCentre;
-        const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
+        const center = options.areaCenter;
+        const { destination = randomPlaceInArea(center[0], center[1], options.areaRange, 'any') } = options;
         agent.destination = destination;
         await prepareRoute(agent, _services, options);
       }
@@ -228,11 +232,11 @@ export const plans = {
   'Hang around specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
       const steps = [] as ActivityList;
-      if (options.areaCentre && options.areaRange) {
+      if (options.areaCenter && options.areaRange) {
         const nOPlaces = randomIntInRange(10, 20);
         for (let i = 0; i < nOPlaces; i += 1) {
-          const centre = options.areaCentre;
-          const { destination = randomPlaceInArea(centre[0], centre[1], options.areaRange, 'any') } = options;
+          const center = options.areaCenter;
+          const { destination = randomPlaceInArea(center[0], center[1], options.areaRange, 'any') } = options;
           agent.destination = destination;
           if (agent.type === 'drone') {
             steps.push({ name: 'flyTo', options: { destination } });
@@ -261,7 +265,7 @@ export const plans = {
         agent.destination = followedAgent.actual;
         agent.running = true;
         const timesim = services.getTime();
-        timesim.setMinutes(timesim.getMinutes() + 6);
+        timesim.setSeconds(timesim.getSeconds() + 1);
 
         const distanceBetween = distanceInMeters(agent.actual.coord[1], agent.actual.coord[0], followedAgent.actual.coord[1], followedAgent.actual.coord[0]);
         console.log('distance between', distanceBetween)
@@ -370,7 +374,7 @@ export const plans = {
         const followedAgent = services.agents[agent.following];
         agent.destination = followedAgent.actual;
         const timesim = services.getTime();
-        timesim.setMinutes(timesim.getMinutes() + 6);
+        timesim.setSeconds(timesim.getSeconds() + 1);
 
         if (agent.following && agent.following !== '') {
           const followAgenda = [{ name: 'Protect person', options: { destination: followedAgent.actual } }];
@@ -579,7 +583,7 @@ export const plans = {
     },
   },
 
-  'Wander_drone': {
+  'Wander drone': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
       const steps = [] as ActivityList;
@@ -610,7 +614,7 @@ export const plans = {
     },
   },
 
-  'Release_red': {
+  'Release red': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       if (agent.group && agent.force === 'white') {
@@ -753,10 +757,50 @@ export const plans = {
     },
   },
 
+  'Chaos': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      agent.sentbox = [];
+      const steps = [] as ActivityList;
+      if (agent.health && agent.health > 30 && agent.equipment && agent.equipment.length > 0) {
+        agent.running = true;
+        if (options.areaCenter && options.areaRange) {
+          const center = options.areaCenter;
+          const { destination = randomPlaceInArea(center[0], center[1], options.areaRange, 'any') } = options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+        } else {
+          const { destination = randomPlaceNearby(agent, 10, 'any') } = options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+        }
+        messageServices.sendMessage(agent, 'Attack', services);
+        damageServices.damageRandomAgent(agent, services);
+        const timesim = services.getTime();
+        timesim.setSeconds(timesim.getSeconds() + 6);
+        const attackAgenda: ActivityList = [
+          { name: 'Chaos', options }];
+        if (agent.agenda) {
+          const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person');
+          agent.agenda = [...attackAgenda, ...oldAgenda]
+        }
+        else {
+          agent.agenda = [...attackAgenda]
+        }
+      }
+
+      else if (agent.attire && (agent.attire === 'bomb vest' || agent.attire === 'bulletproof bomb vest')) {
+        console.log('Bomb vest');
+      }
+      agent.steps = steps;
+      return true;
+
+    },
+  },
+
   'Gas': {
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
-      steps.push({ name: 'waitFor', options: { duration: minutes(5, 10) } });
+      steps.push({ name: 'waitFor', options: { duration: minutes(15, 30) } });
       steps.push({ name: 'disappear', options: {} });
       agent.steps = steps;
       return true;

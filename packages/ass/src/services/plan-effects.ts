@@ -64,11 +64,12 @@ export const planEffects = {
         messageRadius: 10000,
     },
     'Attack': {
-        damageRadius: 1000,
-        damageLevel: 100,
-        panicLevel: 0,
+        damageRadius: 500,
+        damageLevel: 50,
+        panicLevel: 100,
         delayLevel: 0,
         severity: 2,
+        runDistance: 1500,
         messageRadius: 10000,
     },
     'Go to park': {

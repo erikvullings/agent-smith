@@ -106,7 +106,9 @@ export const simController = async (
           s.agentCount,
           s.radius,
           s.type,
-          s.force
+          s.force,
+          undefined,
+          s.memberCount
         );
 
         services.locations = { ...services.locations, ...locations };
@@ -128,8 +130,6 @@ export const simController = async (
         }
       }
     }
-
-
 
 
     // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
@@ -211,7 +211,7 @@ export const simController = async (
     // }, 60000);
 
     let i = 0;
-    while (i < 10000000) {
+    while (i < 1000000000) {
       await Promise.all(
         agents
           .filter(
@@ -240,6 +240,7 @@ export const simController = async (
       updateTime();
       await sleep(100);
       i % 5 === 0 && notifyOthers();
+      i % 25 === 0 && console.log(services.getTime());
       i++;
     }
   });

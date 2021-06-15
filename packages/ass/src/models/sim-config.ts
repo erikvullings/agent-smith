@@ -1,5 +1,5 @@
 import { IActivityOptions, IStep } from '.';
-import { IAgent } from './agent';
+import { IAgent, IEquipment } from './agent';
 import { ILocation } from './location';
 
 export interface ISimConfig {
@@ -9,6 +9,7 @@ export interface ISimConfig {
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
+  equipment: Equipment[];
 }
 
 interface CustomAgents {
@@ -17,6 +18,12 @@ interface CustomAgents {
   white: IAgent[];
   red: IAgent[];
 }
+
+export interface Equipment {
+  equipmentId: string;
+  equipmentProperties: IEquipment;
+}
+
 
 export interface CustomAgenda {
   agentId: string;
@@ -39,8 +46,9 @@ export interface GenerateSettings {
   centerCoord: number[];
   radius: number;
   type?: string;
-  object?: string;
   force?: string;
+  object?: string;
+  memberCount?: number;
 }
 
 export interface Settings {

@@ -20,8 +20,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -77,8 +97,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -147,6 +187,14 @@
               "blue",
               "white",
               "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
               "white"
             ],
             "circle-radius": [
@@ -176,7 +224,33 @@
               "1",
               1,
               1
-            ]
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
           }
         },
         "types": []
@@ -203,8 +277,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -233,7 +327,33 @@
               "1",
               1,
               1
-            ]
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
           }
         },
         "types": []
@@ -260,8 +380,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -290,7 +430,33 @@
               "1",
               0.7,
               0.7
-            ]
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
           }
         },
         "types": []
@@ -317,8 +483,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -347,7 +533,33 @@
               "1",
               0.7,
               0.7
-            ]
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
           }
         },
         "types": []
@@ -373,8 +585,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -440,8 +672,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -452,8 +704,8 @@
               "0",
               0,
               "1",
-              15,
-              15
+              20,
+              20
             ]
           },
           "symbolLayout": {
@@ -470,7 +722,33 @@
               "1",
               0.3,
               0.3
-            ]
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
           }
         },
         "types": []
@@ -497,8 +775,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -554,8 +852,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",
@@ -611,8 +929,28 @@
         "mapbox": {
           "circlePaint": {
             "circle-color": [
-              "get",
-              "force"
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
             ],
             "circle-radius": [
               "match",

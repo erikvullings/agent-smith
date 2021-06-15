@@ -5,13 +5,47 @@
     },
     "generateSettings": [
         {
-            "agentCount": 40,
+            "agentCount": 50,
             "centerCoord": [
                 4.309510,
                 52.075591
             ],
             "radius": 1000,
             "force": "white"
+        }
+    ],
+    "equipment": [
+        {
+            "equipmentID": "firearm5",
+            "equipmentProperties": {
+                "type": "firearm",
+                "damageLevel": 5,
+                "limit": 10
+            }
+        },
+        {
+            "equipmentID": "firearm4",
+            "equipmentProperties": {
+                "type": "firearm",
+                "damageLevel": 4,
+                "limit": 15
+            }
+        },
+        {
+            "equipmentID": "firearm3",
+            "equipmentProperties": {
+                "type": "firearm",
+                "damageLevel": 3,
+                "limit": 20
+            }
+        },
+        {
+            "equipmentID": "handgrenade",
+            "equipmentProperties": {
+                "type": "handgrenade",
+                "damageLevel": 5,
+                "limit": 5
+            }
         }
     ],
     "locations": {
@@ -202,7 +236,8 @@
                 "equipment": [
                     {
                         "type": "firearm",
-                        "damageLevel": 5
+                        "damageLevel": 5,
+                        "limit": 10
                     }
                 ]
             },
@@ -364,11 +399,13 @@
                 "equipment": [
                     {
                         "type": "firearm",
-                        "damageLevel": 4
+                        "damageLevel": 4,
+                        "limit": 15
                     },
                     {
                         "type": "firearm",
-                        "damageLevel": 3
+                        "damageLevel": 3,
+                        "limit": 20
                     }
                 ]
             },
@@ -574,8 +611,20 @@
         ],
         "red": [
             {
-                "id": "agent2",
-                "type": "man",
+                "id": "carter",
+                "type": "car",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                }
+            },
+            {
+                "id": "groupter",
+                "type": "group",
                 "force": "red",
                 "visibleForce": "white",
                 "health": 100,
@@ -583,24 +632,217 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.314501,
-                        52.084031
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "owns": [
+                    {
+                        "type": "car",
+                        "id": "carter"
+                    }
+                ],
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "memberCount": 5,
+                "group": [
+                    "ter1",
+                    "ter2",
+                    "ter3",
+                    "ter4",
+                    "ter5"
+                ],
+                "mailbox": []
+            },
+            {
+                "id": "ter1",
+                "type": "man",
+                "force": "red",
+                "visibleForce": "red",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
                     ]
                 },
                 "actual": {
                     "type": "home",
                     "coord": [
-                        4.314501,
-                        52.084031
+                        4.358927,
+                        52.132907
                     ]
                 },
-                "occupations": [
+                "memberOf": "groupter",
+                "mailbox": [],
+                "equipment": [
                     {
-                        "type": "work",
-                        "id": "albert heijn"
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 10
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 2
                     }
                 ],
-                "mailbox": []
+                "attire": "bulletproof bomb vest"
+            },
+            {
+                "id": "ter2",
+                "type": "man",
+                "force": "red",
+                "visibleForce": "red",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "memberOf": "groupter",
+                "mailbox": [],
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 10
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 2
+                    }
+                ],
+                "attire": "bulletproof bomb vest"
+            },
+            {
+                "id": "ter3",
+                "type": "man",
+                "force": "red",
+                "visibleForce": "red",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "memberOf": "groupter",
+                "mailbox": [],
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 10
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 2
+                    }
+                ],
+                "attire": "bulletproof bomb vest"
+            },
+            {
+                "id": "ter4",
+                "type": "man",
+                "force": "red",
+                "visibleForce": "red",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "memberOf": "groupter",
+                "mailbox": [],
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 10
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 2
+                    }
+                ],
+                "attire": "bulletproof bomb vest"
+            },
+            {
+                "id": "ter5",
+                "type": "man",
+                "force": "red",
+                "visibleForce": "red",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "memberOf": "groupter",
+                "mailbox": [],
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 10
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 2
+                    }
+                ],
+                "attire": "bulletproof bomb vest"
             }
         ]
     },
@@ -747,6 +989,186 @@
                     "name": "Go home",
                     "options": {
                         "priority": 2
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "groupter",
+            "agendaItems": [
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:20:00",
+                        "destination": {
+                            "type": "work",
+                            "coord": [
+                                4.309510,
+                                52.075591
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Release",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "ter1",
+            "agendaItems": [
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.319648,
+                                52.079891
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:50:00"
+                    }
+                },
+                {
+                    "name": "Chaos",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "ter2",
+            "agendaItems": [
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.319648,
+                                52.078379
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:50:00"
+                    }
+                },
+                {
+                    "name": "Chaos",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "ter3",
+            "agendaItems": [
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.307032,
+                                52.080558
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:50:00"
+                    }
+                },
+                {
+                    "name": "Chaos",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "ter4",
+            "agendaItems": [
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.307593,
+                                52.077408
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:50:00"
+                    }
+                },
+                {
+                    "name": "Chaos",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "ter5",
+            "agendaItems": [
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.313920,
+                                52.082573
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:50:00"
+                    }
+                },
+                {
+                    "name": "Chaos",
+                    "options": {
+                        "priority": 1
                     }
                 }
             ]

@@ -13,9 +13,20 @@
             "radius": 10000,
             "type": "drone",
             "object": "gas",
-            "force": "red"
+            "force": "red",
+            "memberCount": 10
         }
     ],
+    "equipment": [],
+    "locations": {
+        "dam": {
+            "type": "any",
+            "coord": [
+                4.892401,
+                52.373104
+            ]
+        }
+    },
     "customAgents": {
         "tbp": [
             {
@@ -26,15 +37,15 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.891674,
-                        52.378101
+                        4.891997,
+                        52.373123
                     ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.892419,
-                        52.373312
+                        4.891997,
+                        52.373123
                     ]
                 },
                 "force": "tbp",
@@ -163,7 +174,7 @@
                 {
                     "name": "Go to specific area",
                     "options": {
-                        "areaCentre": [
+                        "areaCenter": [
                             4.892401,
                             52.373104
                         ],
@@ -188,7 +199,7 @@
                 {
                     "name": "Wait",
                     "options": {
-                        "duration": 300000
+                        "duration": 6000000
                     }
                 },
                 {

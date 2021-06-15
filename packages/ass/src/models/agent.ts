@@ -40,7 +40,7 @@ export interface IAgent {
   /** Location that agents wants to reach, as [lon, lat] */
   destination?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
-  attire?: 'bulletproof vest';
+  attire?: 'bulletproof vest' | 'bulletproof bomb vest' | 'bomb vest';
   /** ID of work address */
   occupations?: {
     /** Type of occupation, e.g. work, shop, learn */
@@ -121,7 +121,9 @@ export interface IMail {
 
 export interface IEquipment {
   /** Type of equipment */
-  type: 'firearm' | 'water cannon' | 'baton' | string;
+  type: 'firearm' | 'water cannon' | 'baton' | 'handgrenade' | string;
   /** Damage effect that weapon causes */
   damageLevel: 1 | 2 | 3 | 4 | 5 | number;
+  /** The limit of how many times the weapon can be used, e.g. number of bullets */
+  limit: number
 }

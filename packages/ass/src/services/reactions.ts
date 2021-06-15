@@ -38,6 +38,12 @@ export const reaction = {
                 , { 'name': 'Undelay', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
+        'tbp': {
+            urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
+                , { 'name': 'Undelay', 'options': {} }
+                , { 'name': 'Go home', 'options': {} }]],
+        },
     },
     'Play message': {
         'blue': {
@@ -85,6 +91,14 @@ export const reaction = {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
         'red': {
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
+        },
+    },
+    'Attack': {
+        'white': {
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
+        },
+        'blue': {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
     },

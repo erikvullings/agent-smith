@@ -168,11 +168,11 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
  */
 const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
 
-  let { startTime } = options;
+  const { startTime } = options;
   if (startTime) {
     const startTimeDate = toDate(agent, services, startTime);
     if (startTime[startTime.length - 1] === 'r') {
-      startTime = startTime.slice(0, startTime.length - 1)
+      options.startTime = toTime(startTimeDate?.getHours(), startTimeDate?.getMinutes(), startTimeDate?.getSeconds())
     }
     return startTimeDate ? startTimeDate < services.getTime() : true;
   }
@@ -212,6 +212,11 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
       if (a) {
         a.memberOf = agent.id;
         agent.group.push(id);
+        if (agent.memberCount) {
+          agent.memberCount += 1;
+        } else {
+          agent.memberCount = 1;
+        }
       }
     }
   }
@@ -230,13 +235,25 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
     for (const id of release) {
+      const i = agent.group.indexOf(id);
       let a: IAgent;
       if (id in services.agents) {
         a = services.agents[id];
-        if (a.group) {
-          releaseAgents(agent, services, { release: a.group }, agents);
-          for (const member of a.group) {
-            joinGroup(services.agents[member], services, { group: a.id })
+
+        if (a && i > -1) {
+          delete a.memberOf;
+          agent.group.splice(i, 1);
+          agent.memberCount -= 1;
+
+          if (a.type === 'car' || a.type === 'bicycle') {
+            delete a.group;
+          }
+
+          if (a.group) {
+            releaseAgents(agent, services, { release: a.group }, agents);
+            for (const member of a.group) {
+              joinGroup(services.agents[member], services, { group: a.id })
+            }
           }
         }
       } else {
@@ -245,18 +262,22 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
         agents.push(a);
         redisServices.geoAdd('agents', a);
         services.agents[id] = a;
-      }
-      const i = agent.group.indexOf(id);
-      if (a && i > -1) {
-        delete a.memberOf;
-        agent.group.splice(i, 1);
-        agent.memberCount -= a.group ? a.group.length : 1;
-        if (a.type === 'car' || a.type === 'bicycle') {
-          delete a.group;
+
+        if (a && i > -1) {
+          delete a.memberOf;
+          agent.group.splice(i, 1);
+          agent.memberCount -= 1;
+          if (a.type === 'car' || a.type === 'bicycle') {
+            delete a.group;
+          }
         }
       }
     }
   }
+  if (agent.type === 'group' && (!agent.group || agent.group.length < 1)) {
+    agent.status = 'inactive';
+  }
+
   return true;
 };
 

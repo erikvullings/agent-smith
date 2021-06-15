@@ -1,14 +1,14 @@
-import { planEffects } from '.';
+import { planEffects, redisServices } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent, IEquipment, IMail } from '../models';
-import { agentToEntityItem, randomIntInRange } from '../utils';
+import { agentToEntityItem, randomIntInRange, randomItem, randomPlaceNearby } from '../utils';
 
 const damageAgent = async (sender: IAgent, receivers: IAgent[], _services: IEnvServices) => {
     const equipment = await pickEquipment(sender);
 
     console.log('health before', receivers[0].health)
     if (receivers.length > 0 && equipment !== null) {
-        receivers.filter((a) => a.health && a.health > 0 && a.attire && a.attire === 'bulletproof vest').map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
+        receivers.filter((a) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
         receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(10, 20)))
 
         receivers.filter(a => !a.health || a.health < 0).map(a => a.health = 0);
@@ -23,6 +23,68 @@ const damageAgent = async (sender: IAgent, receivers: IAgent[], _services: IEnvS
     }
 
     console.log('health after', receivers[0].health)
+    if (equipment) {
+        equipment.limit -= 1;
+        if (equipment.limit < 1 && sender.equipment) {
+            const index = sender.equipment.indexOf(equipment, 0);
+            if (index > -1) {
+                sender.equipment.splice(index, 1);
+            }
+        }
+    }
+
+    return true;
+}
+
+const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
+    const equipment = randomItem(sender.equipment);
+    let receivers: IAgent[] = [];
+    if (equipment && equipment.type === 'firearm') {
+        const inRange = await redisServices.geoSearch(sender.actual, 1000, sender);
+        const agentsInRange = inRange.map((a: any) => a = _services.agents[a.key]).filter((a: IAgent) => !(a.force === 'red'));
+        receivers = [randomItem(agentsInRange)];
+    }
+    else if (equipment && equipment.type === 'handgrenade') {
+        const center = randomPlaceNearby(sender, 40, 'any', 20);
+        const deathRange = await redisServices.geoSearch(center, 5);
+        const agentsInDeathRange = deathRange.map((a: any) => a = _services.agents[a.key]);
+        agentsInDeathRange.map((a: IAgent) => a.health = 0)
+        const damageRange = await redisServices.geoSearch(center, 15);
+        receivers = damageRange.map((a: any) => a = _services.agents[a.key]);
+    }
+    console.log('receivers', receivers)
+    if (receivers && receivers.length > 0 && equipment && equipment.limit > 0) {
+        console.log('health random before', receivers[0] ? receivers[0].health : 'no recievers')
+        if (receivers.length > 0 && equipment !== null) {
+            receivers.filter((a) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
+            receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(10, 20)))
+
+            receivers.filter(a => !a.health || a.health < 0).map(a => a.health = 0);
+        }
+        else if (equipment === null) {
+            receivers.filter((a) => a.health && a.health > 0).map((a) => (a.health! -= randomIntInRange(0, 10)));
+        }
+
+        const deadAgents = receivers.filter((a) => a.health && a.health <= 0)
+        if (deadAgents.length > 0) {
+            deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
+        }
+
+        console.log('health random after', receivers[0] ? receivers[0].health : 'no recievers')
+
+        console.log('random equipment limit before ', equipment.limit)
+        equipment.limit -= 1;
+        console.log('random equipment limit after ', equipment.limit)
+        if (equipment.limit < 1 && sender.equipment) {
+            console.log('random equipment before ', sender.equipment)
+            const index = sender.equipment.indexOf(equipment, 0);
+            if (index > -1) {
+                sender.equipment.splice(index, 1);
+            }
+            console.log('random equipment after ', sender.equipment)
+        }
+
+    }
 
     return true;
 }
@@ -48,6 +110,7 @@ const pickEquipment = async (agent: IAgent) => {
 
 export const damageServices = {
     damageAgent,
+    damageRandomAgent,
     pickEquipment,
 };
 

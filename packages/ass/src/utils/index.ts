@@ -265,12 +265,20 @@ export const agentToFeature = (agent: IAgent) => ({
     tags: {
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
-      numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
-      force: agent.force ? agent.force : 'white',
+      numberOfMembers: agent.memberCount && agent.memberCount > 0 ? String(agent.memberCount) : '',
+      visibleForce: agent.visibleForce ? String(agent.visibleForce) : '',
+      force: (agent.health === 0) && agent.force
+        ? agent.force.concat('0')
+        : agent.force
+          ? agent.force
+          : (agent.health === 0)
+            ? 'white0'
+            : 'white',
+      health: String(agent.health),
       delay: agent.delay && agent.delay.delayCause ? agent.delay.delayCause.join(', ') : '',
       members: agent.group && agent.group.length <= 5 ? agent.group.join(', ') : '',
       visible:
-        ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
+        ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && (!agent.group || agent.group.length < 1))
           ? String(0)
           : agent.steps &&
             agent.steps[0] &&
@@ -289,14 +297,25 @@ export const agentToFeature = (agent: IAgent) => ({
  * @param rangeInMeter
  * @param type
  * Based on the actual lat/lon, create a place nearby
+ * @param minDistance
  */
-export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string): ILocation => {
+export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string, minDistance?: number): ILocation => {
   const {
     actual: {
       coord: [lon, lat],
     },
   } = a;
   const r = rangeInMeter / 111139;
+  if (minDistance) {
+    const rMin = minDistance / 111139;
+    const lonVal = randomItem([-1, 1]);
+    const latVal = randomItem([-1, 1]);
+    return {
+      type,
+      // 1 degree is approximately 111111 meters
+      coord: [randomInRange(lon + lonVal * rMin, lon + lonVal * r), randomInRange(lat + latVal * rMin, lat + latVal * r)],
+    };
+  }
   return {
     type,
     // 1 degree is approximately 111111 meters
@@ -390,7 +409,7 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent, memberCount?: number) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
@@ -418,6 +437,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
       actual: group ? group.actual : home,
       occupations: [{ id: occupationId, ...occupation }],
       memberOf: group ? group.id : undefined,
+      memberCount,
     } as unknown as IAgent;
     acc.push(agent);
     redisServices.geoAdd('agents', agent);
@@ -610,6 +630,7 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
             const startTime = new Date(0, 0, 0, 0);
             startTime.setTime(mSecs);
             const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+            if (agent.id === 'ter1') console.log(newStartTime);
             return newStartTime;
           }
         }
