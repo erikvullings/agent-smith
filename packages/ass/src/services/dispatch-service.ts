@@ -33,8 +33,6 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
             return messageServices.sendDirectMessage(agent, 'Call the police', receiverAgents.slice(0,policeAmount), services);
 
     }
-    // messageServices.sendDirectMessage(agent, 'Call the police', receiversAgents.slice(0,n), services);
-
     return true;
 };
 

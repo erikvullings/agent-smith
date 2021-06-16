@@ -54,7 +54,9 @@ export const simController = async (
 
     if (reactionImport) {
       for (const key in reactionImport) {
-        reaction[key] = reactionImport[key];
+        if (reaction[key]) {
+          reaction[key] = reactionImport[key];
+        }
       }
     }
 
@@ -119,53 +121,6 @@ export const simController = async (
       }
     }
 
-
-
-    // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
-
-
-    // agents.filter((a) => a.type == 'car').map(async (a) => a.actual.coord = (await services.drive.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
-    // agents.filter((a) => a.type == 'bicycle').map(async (a) => a.actual.coord = (await services.cycle.nearest({ coordinates: [a.actual.coord] })).waypoints[0].location);
-
-    // const nearest = {
-    //   car: services.drive.nearest,
-    //   bicycle: services.cycle.nearest,
-    //   walk: services.walk.nearest,
-    //   bus: services.drive.nearest, // fake
-    //   train: services.drive.nearest, // fake
-    // };
-    // for (const agent of agents) {
-    //   const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
-    //   if (!transportType || !['car', 'bicycle', 'walk'].indexOf(transportType)) continue;
-    //   const coord = (await nearest[transportType]({ coordinates: [agent.actual.coord] })).waypoints[0]
-    //     .location;
-    //   if (!coord) continue;
-    //   agent.actual.coord = coord;
-    // }
-
-    // Drie opmerkingen:
-    // - je loopt hier 2x over dezelfde lijst.
-    // - de .map function werkt niet met async/await
-    // - de location can undefined zijn, en dat gaf een TS error
-    // Zie ook https://advancedweb.hu/how-to-use-async-functions-with-array-map-in-javascript/
-    // agents
-    //   .filter((a) => a.type == 'car')
-    //   .map(
-    //     async (a) =>
-    //       (a.actual.coord = (
-    //         await services.drive.nearest({ coordinates: [a.actual.coord] })
-    //       ).waypoints[0].location)
-    //   );
-    // agents
-    //   .filter((a) => a.type == 'bicycle')
-    //   .map(
-    //     async (a) =>
-    //       (a.actual.coord = (
-    //         await services.cycle.nearest({ coordinates: [a.actual.coord] })
-    //       ).waypoints[0].location)
-    //   );
-
-
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
@@ -221,7 +176,7 @@ export const simController = async (
 
       if (chattingAgents.length <= agents.length * 0.01)
         chatServices.agentChat(agents, services);
-    }, 10000);
+    }, 50000);
 
     let i = 0;
     while (i < 10000000) {

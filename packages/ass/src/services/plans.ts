@@ -58,7 +58,7 @@ const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityO
  * @param agent
  * @param services
  * @param options
-/** Wait for options.duration msec */
+ * Wait for options.duration msec */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration } = options;
   if (duration) {
@@ -72,7 +72,7 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
  * @param agent
  * @param services
  * @param options
-/** Wait for options.duration msec */
+ * Wait for options.duration msec */
 const prepareAgent = async (agent: IAgent) => {
   agent.sentbox = [];
   agent.visibility = 1;
@@ -118,7 +118,6 @@ export const plans = {
       const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
       agent.destination = destination;
       prepareRoute(agent, services, options);
-      messageServices.sendMessage(agent, 'Go to park', services);
 
       return true;
     },
@@ -196,36 +195,18 @@ export const plans = {
       agent.steps = [];
       if (agent.following) {
         const followedAgent: IAgent = services.agents[agent.following];
-        // if(agent.agenda && followedAgent.agenda && followedAgent.agenda[0].options && followedAgent.agenda[0].options.reacting === true){
-        //   agent.agenda = agent.agenda?.filter(item => item.name !== 'Walk to person' && item.name !== 'Chat');
-        //   return true;
-        // }
         await prepareAgent(agent);
         agent.destination = followedAgent.actual;
 
-        // const chatAgenda : ActivityList = [
-        //   { name: 'Chat', options : { priority: 3} },
-        // ];
-
-        // if(agent.agenda){
-        //   const oldAgenda = agent.agenda;
-        //   agent.agenda = [...chatAgenda,...oldAgenda]
-        // }
-        // else{
-        //   agent.agenda = [...chatAgenda]
-        // }
-
-         messageServices.sendDirectMessage(agent, 'Walk to person', [followedAgent], services)
+        messageServices.sendDirectMessage(agent, 'Walk to person', [followedAgent], services)
       }
       prepareRoute(agent, services, options);
-      // agent.speed = 2;
       return true;
     },
   },
 
   'Go to base': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      console.log('go to base');
       if (options.destination) {
         await prepareAgent(agent);
         agent.destination = options.destination;
@@ -266,6 +247,8 @@ export const plans = {
       //   // agent.speed = 2;
       // }
       // else{
+
+      // this plan is not finished yet
         await prepareAgent(agent);
         agent.destination = services.locations['police station'];
         prepareRoute(agent, services, options);
@@ -302,11 +285,9 @@ export const plans = {
   'Follow person': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       await prepareAgent(agent);
-      const steps = [] as ActivityList;
 
       console.log('back again', agent.following, agent.reactedTo)
       if(agent.following && agent.following !== '' && agent.reactedTo){
-        const agentArr : IAgent[] = [agent,services.agents[agent.following]];
         const followedAgent = services.agents[agent.following];
 
         agent.destination = followedAgent.actual;
@@ -527,7 +508,6 @@ export const plans = {
       }
       agent.steps = steps;
       return true;
-
     },
   },
 
@@ -543,7 +523,6 @@ export const plans = {
 
       const agentsNear: any[] = await redisServices.geoSearch(agent.actual,100,agent);
       const redAgentsNear : IAgent[] = agentsNear.map(a => a = services.agents[a.key]).filter(a => a.force === 'red');
-
 
       if(randomInt >=4){
         steps.push({ name: 'walkTo', options: { destination } });
@@ -587,17 +566,16 @@ export const plans = {
       const steps = [] as ActivityList;
       // agent.reactedTo = 'Drop object';
 
-      if(randomIntInRange(0,15) === 1){
+      if(randomIntInRange(0,100) < 5){
         // take the agent to the police station
+        // to be added
       }
-
 
       steps.push({ name: 'waitFor', options: {duration: minutes(10)} });
       agent.steps = steps;
     return true;
     },
   },
-
 
   'Stay at police station': {
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
@@ -646,7 +624,6 @@ export const plans = {
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
 
-      // if the attacker is blue, and if the target is hurt, take the agent to the police station
       // if(agent.targets){
         // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
       // }
@@ -661,10 +638,6 @@ export const plans = {
         agent.route = [];
         const steps = [] as ActivityList;
 
-        // messageServices.sendMessage(agent, 'Damage person', services);
-
-        console.log('target', agent.target)
-        // if the attacker is blue, and if the target is hurt, take the agent to the police station
         if(agent.target){
           damageServices.damageAgent(agent,[agent.target],services)
         }
@@ -683,6 +656,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
 
+      // not done yet
       // if the attacker is blue, and if the target is hurt, take the agent to the police station
       // if(agent.targets){
         // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
@@ -878,7 +852,7 @@ export const plans = {
       const { actual } = agent;
       const noshops = randomIntInRange(2, 5)
       for (let i = 0; i < noshops; i += 1) {
-        const { destination = randomPlaceNearby(agent, 300, 'shop'), duration = minutes(15, 30) } = options;
+        const { destination = randomPlaceNearby(agent, 500, 'shop'), duration = minutes(15, 30) } = options;
         agent.destination = destination;
         steps.push({ name: 'walkTo', options: { destination } });
         steps.push({ name: 'waitFor', options: { duration } });

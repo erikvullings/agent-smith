@@ -343,7 +343,6 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
     agent._day += 1;
   }
   const { _day: day } = agent;
-  // const agenda2 = simConfig.customAgendas[customAgIndex].agendaItems;
   const agenda = customAgendas[customAgIndex].agendaItems;
   if (agenda.length > 0) {
     const agendaOptions = { ...(agenda[0].options), startTime: simTime(day, randomInRange(0, 4), randomInRange(0, 3)) };
@@ -352,7 +351,6 @@ const customAgenda = (agent: IAgent, _services: IEnvServices, customAgIndex: num
   }
 
   return getAgenda(agent, _services);
-
 };
 
 /**
@@ -379,7 +377,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail) =
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
     else if(reactionAgenda[0].name === 'Follow person' || reactionAgenda[0].name === 'Walk to person'){
-      console.log('following', mail.sender.id, 'location',mail.location)
+      console.log('following', mail.sender.id, 'location',mail.location);
       agent.following = mail.sender.id;
       agent.destination = mail.location;
       reactionAgenda[0].options = { startTime: timesim, destination: mail.location, priority:1 };

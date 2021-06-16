@@ -21,10 +21,11 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
     (err: any, result: any) => {
       if (err) {
         console.error(err);
-      } else {
+        return err;
+      }
         console.log(result);
         return result;
-      }
+
     });
 };
 

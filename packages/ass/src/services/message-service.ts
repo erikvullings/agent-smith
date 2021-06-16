@@ -83,9 +83,9 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
         }
         if (options.priority !== undefined && options.priority === itemUrgency) {
             // if urgency an agenda prio is equal, pick one of them
-            const randomInt = randomIntInRange(0, urgentMessages.length);
+            const random = randomIntInRange(0, urgentMessages.length);
 
-            if (randomInt === urgentMessages.length) {
+            if (random === urgentMessages.length) {
                 // stay in agenda
                 return true;
             }
@@ -97,7 +97,7 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
             // actionToReact = urgentMessages[randomInt];
             // actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
             // return await agendas.addReaction(agent,services, actionToReact);
-            return react(agent, services, urgentMessages, randomInt)
+            return react(agent, services, urgentMessages, random)
 
         }
 

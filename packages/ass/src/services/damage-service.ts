@@ -1,7 +1,7 @@
 import { planEffects } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent, IEquipment, IMail } from '../models';
-import { agentToEntityItem, randomIntInRange } from '../utils';
+import { randomIntInRange } from '../utils';
 
 const damageAgent = async (sender: IAgent, receivers:IAgent[], _services: IEnvServices) => {
     const equipment = await pickEquipment(sender);

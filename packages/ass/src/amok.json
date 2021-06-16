@@ -74,7 +74,12 @@
         "test": {
         "type": "work",
         "coord": [4.349894, 52.084668]
+        },
+        "testhome": {
+            "type": "home",
+            "coord": [4.364151, 52.091361]
         }
+    
       },
     "customAgents": {
         "tbp": [
@@ -188,20 +193,6 @@
             "defenseType": "police"
     },
         {
-            "id": "police3",
-            "type": "man",
-            "force": "blue",
-            "health": 100,
-            "status": "active",
-            "home": { "type": "home", "coord": [4.364151, 52.091361] },
-            "actual": { "type": "home", "coord": [4.364151, 52.091361] },
-            "occupations": [{ "type": "work", "id": "police station jan hendrikstraat"}],
-            "mailbox": [],
-            "defenseType": "police",
-            "following": "whiteAgent",
-            "equipment": [{"type": "firearm", "damageLevel":4},{"type": "firearm", "damageLevel":3}]
-    },
-        {
             "id": "police4",
             "type": "man",
             "force": "blue",
@@ -294,6 +285,17 @@
             "actual": { "type": "home", "coord": [4.361865, 52.090591] },
             "occupations": [{ "type": "work", "id": "test"}],
             "mailbox": []
+    },
+        {
+            "id": "whiteAgent2",
+            "type": "man",
+            "force": "white",
+            "health": 100,
+            "status": "active",
+            "home": { "type": "home", "coord": [4.349894, 52.084668] },
+            "actual": { "type": "home", "coord": [4.349894, 52.084668] },
+            "occupations": [{ "type": "work", "id": "testhome"}],
+            "mailbox": []
     }
         ],
         "red": [
@@ -343,9 +345,17 @@
             ] 
         },
         {
+            "agentId": "whiteAgent2",
+            "agendaItems": [
+                { "name": "Go to work", "options" : { "priority": 5 } },
+                { "name": "Work", "options" : { "priority": 5 } },
+                { "name": "Go home", "options" : { "priority": 2 } }
+            ] 
+        },
+        {
             "agentId": "police3",
             "agendaItems": [
-                { "name": "Wait", "options" : { "priority": 3 } },
+                { "name": "Go to work", "options" : { "priority": 3 } },
                 { "name": "Go home", "options" : { "priority": 2 } }
             ] 
         },
