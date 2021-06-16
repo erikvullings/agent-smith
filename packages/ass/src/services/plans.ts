@@ -304,7 +304,6 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       await prepareAgent(agent);
 
-      console.log('back again', agent.following, agent.reactedTo)
       if (agent.following && agent.following !== '' && agent.reactedTo) {
         const followedAgent = services.agents[agent.following];
 
@@ -314,7 +313,6 @@ export const plans = {
         timesim.setSeconds(timesim.getSeconds() + 1);
 
         const distanceBetween = distanceInMeters(agent.actual.coord[1], agent.actual.coord[0], followedAgent.actual.coord[1], followedAgent.actual.coord[0]);
-        console.log('distance between', distanceBetween)
 
         if (distanceBetween < 60) {
           if (planEffects[agent.reactedTo] && planEffects[agent.reactedTo].damageLevel && planEffects[agent.reactedTo].damageLevel >= 70) {
@@ -341,7 +339,6 @@ export const plans = {
 
               if (agent.agenda) {
                 const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person');
-                console.log('oldagenda', oldAgenda)
                 agent.agenda = [...attackAgenda, ...oldAgenda]
               }
               else {
@@ -808,7 +805,6 @@ export const plans = {
           }
         }
       }
-      console.log('drop');
       steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
       return true;
@@ -823,7 +819,6 @@ export const plans = {
       // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
       messageServices.sendMessage(agent, 'Play message', services);
       console.log('play message')
-      console.log(agent.agenda)
       steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
       return true;
@@ -908,7 +903,7 @@ export const plans = {
       }
 
       else if (agent.attire && (agent.attire === 'bomb vest' || agent.attire === 'bulletproof bomb vest')) {
-        console.log('Bomb vest');
+        console.log(agent.id, ' Bomb vest');
         const nearby = await redisServices.geoSearch(agent.actual, 15, agent);
         const nearbyAgents = nearby.map((a: any) => a = services.agents[a.key]);
         const nearbyGroups = nearbyAgents.filter((a: IAgent) => a.group && a.group.length > 0);

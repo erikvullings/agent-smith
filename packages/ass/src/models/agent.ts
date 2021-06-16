@@ -103,10 +103,12 @@ export interface IAgent {
   defenseType: 'kmar' | 'police';
   /** work baseLocation */
   baseLocation: 'station' | string;
-  /** Equpment that the agent carries */
+  /** Equipment that the agent carries */
   equipment?: IEquipment[],
-  /** Equpment that is in use */
-  currentEquipment?: IEquipment
+  /** Equipment that is in use */
+  currentEquipment?: IEquipment,
+  /** 1 if agent is visible for other agents*/
+  visibility?: 0 | 1 | number;
 
 }
 

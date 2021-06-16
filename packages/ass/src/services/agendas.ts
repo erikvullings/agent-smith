@@ -406,10 +406,8 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
     agent.agenda = [...reactionAgenda, ...agent.agenda];
 
-    // console.log('reaction agenda', agent.agenda);
     agent.reactedTo = mail.message;
     updateAgent(agent, services, agents);
-    // return reactionAgenda;
   }
 }
 

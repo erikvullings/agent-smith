@@ -630,7 +630,6 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
             const startTime = new Date(0, 0, 0, 0);
             startTime.setTime(mSecs);
             const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
-            if (agent.id === 'ter1') console.log(newStartTime);
             return newStartTime;
           }
         }
