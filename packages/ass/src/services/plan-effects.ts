@@ -63,7 +63,7 @@ export const planEffects = {
         severity: 2,
         messageRadius: 10000,
     },
-    'Attack': {
+    'Chaos': {
         damageRadius: 500,
         damageLevel: 50,
         panicLevel: 100,

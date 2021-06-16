@@ -482,6 +482,7 @@ export const plans = {
   'Wait': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
+      console.log('wait');
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
@@ -811,14 +812,12 @@ export const plans = {
     },
   },
 
-  'Play Message': {
+  'Play message': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
       const steps = [] as ActivityList;
       agent.visibleForce = 'red';
-      // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
       messageServices.sendMessage(agent, 'Play message', services);
-      console.log('play message')
       steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
       return true;
@@ -887,7 +886,7 @@ export const plans = {
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         }
-        messageServices.sendMessage(agent, 'Attack', services);
+        messageServices.sendMessage(agent, 'Chaos', services);
         damageServices.damageRandomAgent(agent, services);
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 6);

@@ -99,7 +99,7 @@ export const reaction = {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
     },
-    'Attack': {
+    'Chaos': {
         'white': {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
