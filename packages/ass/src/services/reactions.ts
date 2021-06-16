@@ -10,6 +10,7 @@ export const reaction = {
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
@@ -21,6 +22,7 @@ export const reaction = {
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
@@ -32,6 +34,26 @@ export const reaction = {
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
+                , { 'name': 'Undelay', 'options': {} }
+                , { 'name': 'Go home', 'options': {} }]],
+        },
+        'tbp': {
+            urgency: 2, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
+                , { 'name': 'Undelay', 'options': {} }
+                , { 'name': 'Go home', 'options': {} }]],
+        },
+    },
+    'Play message': {
+        'blue': {
+            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': {} }
+                , { 'name': 'Check object', 'options': {} },
+            { 'name': 'Go to work', 'options': {} }]],
+        },
+        'white': {
+            urgency: 3, plans: [[{ 'name': 'Run away', 'options': {} }
+                , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
     },
@@ -77,22 +99,30 @@ export const reaction = {
             urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
     },
-    'Walk to person': {
+    'Attack': {
         'white': {
-            urgency: 1, plans: [[{ 'name': 'Wait for person', 'options': {reacting: true} }]],
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
         },
         'blue': {
-            urgency: 1, plans: [[{ 'name': 'Wait for person', 'options': {reacting: true} }]],
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': {} }]],
+        },
+    },
+    'Walk to person': {
+        'white': {
+            urgency: 1, plans: [[{ 'name': 'Wait for person', 'options': { reacting: true } }]],
+        },
+        'blue': {
+            urgency: 1, plans: [[{ 'name': 'Wait for person', 'options': { reacting: true } }]],
         },
     },
     'Wait for person': {
         'white': {
-            urgency: 2, plans: [[{ 'name': 'Wait', 'options': {reacting: true} }]],
+            urgency: 2, plans: [[{ 'name': 'Wait', 'options': { reacting: true } }]],
         },
     },
     'Chat': {
         'white': {
-            urgency: 2, plans: [[{ 'name': 'Chat', 'options': {reacting: true} }]],
+            urgency: 2, plans: [[{ 'name': 'Chat', 'options': { reacting: true } }]],
         },
     },
 } as IReactions

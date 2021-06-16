@@ -1,7 +1,11 @@
 import { IItem } from 'test-bed-schemas';
-import { IAgent, ILocation } from '../models';
+import { IAgent, ILocation, IActivityOptions } from '../models';
 import { redisServices } from '../services';
 import { IEnvServices } from '../env-services';
+import { IOsrmRouteResult, Profile } from 'osrm-rest-client';
+import { start } from 'repl';
+import { timeStamp } from 'console';
+
 
 /**
  * Create a GUID
@@ -56,15 +60,15 @@ export const randomItem = <T>(arr: T | T[]): T =>
  */
 export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: number): number => {
   let speed = 1;
-  if (nOMembers < 500) {
+  if (nOMembers < 1000) {
     let distance = 0.65;
-    if (nOMembers < 50) {
+    if (nOMembers < 100) {
       distance = 1.35;
-    } else if (nOMembers < 100) {
-      distance = 1;
     } else if (nOMembers < 250) {
-      distance = 0.85;
+      distance = 1;
     } else if (nOMembers < 500) {
+      distance = 0.85;
+    } else if (nOMembers < 1000) {
       distance = 0.65;
     } else {
       distance = 0.5;
@@ -85,12 +89,12 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
     const acc = 2 * (10 ** 3) * Math.exp(exp1) + Math.sqrt(2) * 2 * (10 ** 3) * Math.exp(exp2)
     speed = desiredspeed - (1 / 80) * acc;
   }
-  if (speed < 0) {
+  if (speed < 0.2) {
     speed = 0.2;
   }
   return speed;
-
 }
+
 
 
 /**
@@ -209,13 +213,13 @@ const day = now.getDate();
 
 /**
  * @param days
- * @param hours
- * @param minutes
- * @param seconds
+ * @param h
+ * @param m
+ * @param s
  * Create a date relative to today
  */
-export const simTime = (days: number, hours: number, minutes = 0, seconds = 0) =>
-  new Date(year, month, day + days, hours, minutes, seconds);
+export const simTime = (days: number, h: number, m = 0, s = 0) =>
+  new Date(year, month, day + days, h, m, s);
 
 /**
  * @param agent
@@ -251,7 +255,7 @@ export const agentToFeature = (agent: IAgent) => ({
   },
   properties: {
     id: agent.id,
-    title: agent.type === 'group' && agent.memberCount ? String(agent.memberCount) : '',
+    // title: agent.type === 'group' && agent.memberCount ? String(agent.memberCount) : '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -261,13 +265,21 @@ export const agentToFeature = (agent: IAgent) => ({
     tags: {
       id: agent.id,
       agenda: agent.agenda ? agent.agenda.map((i: any) => i.name).join(', ') : '',
-      numberOfMembers: agent.memberCount ? String(agent.memberCount) : '',
-      force: agent.force  && (agent.force  === 'tbp' ) ? 'purple' : agent.force ? agent.force : 'white',
+      numberOfMembers: agent.memberCount && agent.memberCount > 0 ? String(agent.memberCount) : '',
+      visibleForce: agent.visibleForce ? String(agent.visibleForce) : '',
+      force: (agent.health === 0) && agent.force
+        ? agent.force.concat('0')
+        : agent.force
+          ? agent.force
+          : (agent.health === 0)
+            ? 'white0'
+            : 'white',
+      health: String(agent.health),
+      delay: agent.delay && agent.delay.delayCause ? agent.delay.delayCause.join(', ') : '',
+      members: agent.group && agent.group.length <= 5 ? agent.group.join(', ') : '',
       visible:
-        // eslint-disable-next-line no-nested-ternary
-        ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && !agent.group)
+        ((agent.type === 'group' || transport.indexOf(agent.type) >= 0) && (!agent.group || agent.group.length < 1))
           ? String(0)
-          // eslint-disable-next-line no-nested-ternary
           : agent.steps &&
             agent.steps[0] &&
             controlling.indexOf(agent.steps[0].name) >= 0
@@ -276,7 +288,6 @@ export const agentToFeature = (agent: IAgent) => ({
               agent.memberOf
               ? String(0)
               : String(1),
-      members: agent.group ? agent.group.join(', ') : '',
     },
   },
 });
@@ -286,14 +297,25 @@ export const agentToFeature = (agent: IAgent) => ({
  * @param rangeInMeter
  * @param type
  * Based on the actual lat/lon, create a place nearby
+ * @param minDistance
  */
-export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string): ILocation => {
+export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string, minDistance?: number): ILocation => {
   const {
     actual: {
       coord: [lon, lat],
     },
   } = a;
   const r = rangeInMeter / 111139;
+  if (minDistance) {
+    const rMin = minDistance / 111139;
+    const lonVal = randomItem([-1, 1]);
+    const latVal = randomItem([-1, 1]);
+    return {
+      type,
+      // 1 degree is approximately 111111 meters
+      coord: [randomInRange(lon + lonVal * rMin, lon + lonVal * r), randomInRange(lat + latVal * rMin, lat + latVal * r)],
+    };
+  }
   return {
     type,
     // 1 degree is approximately 111111 meters
@@ -387,13 +409,13 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
-export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent) => {
+export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent, memberCount?: number) => {
   const offset = () => random(-radius, radius) / 100000;
-  const generateLocations = (type: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
+  const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
     range(1, count / 2).reduce((acc) => {
       const coord = [lng + offset(), lat + offset()] as [number, number];
       const id = uuid4();
-      acc[id] = { type, coord };
+      acc[id] = { type: locType, coord };
       return acc;
     }, {} as { [key: string]: ILocation });
   const occupations = generateLocations('work');
@@ -415,6 +437,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
       actual: group ? group.actual : home,
       occupations: [{ id: occupationId, ...occupation }],
       memberOf: group ? group.id : undefined,
+      memberCount,
     } as unknown as IAgent;
     acc.push(agent);
     redisServices.geoAdd('agents', agent);
@@ -428,18 +451,232 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
   return { agents, locations: { ...homes, ...occupations } };
 };
 
-export const addGroup = (agent: IAgent, transport: IAgent, services: IEnvServices) => {
-  if (transport.group) {
-    transport.memberCount = transport.memberCount ? transport.memberCount : 0;
+/**
+ * @param lng
+ * @param lat
+ * @param radius
+ * @param agentId
+ * @param group
+ * @param type
+ * @returns
+ * Generate agent with given id
+ */
+
+export const generateExistingAgent = (lng: number, lat: number, radius: number, agentId: string, group?: IAgent, type?: string) => {
+  const offset = () => random(-radius, radius) / 100000;
+  const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') => {
+    const coord = [lng + offset(), lat + offset()] as [number, number];
+    return { type: locType, coord } as ILocation;
+  };
+  const occupation = generateLocations('work');
+  const occupationId = Object.keys(occupation);
+  const home = generateLocations('home');
+  const agent = {
+    id: agentId,
+    type: type || 'man',
+    force: group && group.force ? group.force : 'white',
+    health: 100,
+    status: 'active',
+    home,
+    actual: group ? group.actual : home,
+    occupations: [{ id: occupationId, ...occupation }],
+  } as unknown as IAgent;
+  redisServices.geoAdd('agents', agent);
+  return { agent, locations: { ...home, ...occupation } };
+};
+
+export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices) => {
+  if (trnsprt.group) {
+    trnsprt.memberCount = trnsprt.memberCount ? trnsprt.memberCount : 0;
     if (agent.group) {
-      transport.group.push(...agent.group);
-      transport.memberCount += agent.group.length;
+      trnsprt.group.push(...agent.group);
+      trnsprt.memberCount += agent.group.length;
       agent.group
         .filter((a) => services.agents[a].group)
-        .map((a) => addGroup(services.agents[a], transport, services));
+        .map((a) => addGroup(services.agents[a], trnsprt, services));
     }
     if (agent.type === 'group') {
-      transport.memberCount -= 1;
+      trnsprt.memberCount -= 1;
     }
   }
 };
+
+/**
+ * @param agent
+ * @param services
+ * @param totDistance
+ * @param totDuration
+ * @returns
+ * Determine the speed of the agent
+ */
+
+export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number => {
+  const defaultWalkingSpeed = 5000 / 3600;
+  const defaultFlyingSpeed = 70000 / 3600;
+  if (agent.steps && agent.steps[0] && agent.steps[0].name === 'flyTo') {
+    return defaultFlyingSpeed
+  }
+
+  let { speed } = agent;
+  let child = 'no';
+  if (agent.type === 'boy' || agent.type === 'girl') {
+    child = 'yes';
+  } else if (agent.group) {
+    for (const i of agent.group) {
+      if (i in services.agents) {
+        const member = services.agents[i];
+        if (member.type === 'boy' || member.type === 'girl') {
+          child = 'yes';
+        }
+      }
+    }
+  }
+
+  speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
+  if (child === 'yes') {
+    speed *= (3 / 5);
+  }
+  if (agent.running) {
+    if (agent.steps && agent.steps[0] && (agent.steps[0].name === 'driveTo')) {
+      speed *= 1.5;
+    } else {
+      speed *= 2;
+    }
+  }
+  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
+    const numberofmembers = agent.memberCount
+    speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic.panicLevel : undefined);
+  }
+  if (agent.health && agent.health < 30 && agent.health >= 20) {
+    speed /= 1.5;
+  }
+  if (agent.health && agent.health < 20 && agent.health >= 10) {
+    speed /= 2;
+  }
+  if (agent.health && agent.health < 10) {
+    speed = 0;
+  }
+  if (agent.delay) {
+    speed /= 1 + agent.delay.delayLevel / 50;
+  }
+
+  return speed;
+};
+
+/**
+ * Determine the starttime with given endtime
+ *
+ * @param agent
+ * @param services
+ * @param options
+ * @param agent
+ * @param services
+ * @param options
+ * @param agent
+ * @param services
+ * @param options
+ */
+export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+  const { destination } = agent;
+  const { distance } = services;
+  const { endTime } = options;
+  let profile: Profile = 'foot';
+  if (endTime) {
+    const endTimeDate = toDate(agent, services, endTime)
+    if (endTimeDate) {
+      if (agent.type === 'drone') {
+        if (destination) {
+          const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
+          const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
+          const startTime = new Date(0, 0, 0, 0);
+          startTime.setTime(mSecs);
+          const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+          return newStartTime;
+        }
+      }
+      else {
+        if ('owns' in agent) {
+          if (agent.owns && agent.owns.length > 0) {
+            const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
+            const car = ownedCar && services.agents[ownedCar.id];
+            if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500) {
+              profile = 'driving'
+            } else {
+              const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
+              const bike = ownedBike && services.agents[ownedBike.id];
+              if (bike && distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 1000) {
+                profile = 'bike'
+              }
+            }
+          }
+        }
+        if (destination) {
+          const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
+          const routeResult = await routeService.route({
+            coordinates: [agent.actual.coord, destination.coord],
+            continue_straight: true,
+            steps: true,
+            overview: 'full',
+            geometries: 'geojson',
+          })
+          if (routeResult !== undefined) {
+            let duration = routeResult.routes.map(a => a.duration).reduce((a, b) => (a && b) ? a + b : a);
+            const distanceToDestination = routeResult.routes.map(a => a.distance).reduce((a, b) => (a && b) ? a + b : a);
+            if (distanceToDestination && duration) {
+              const speedFactor = (distanceToDestination / duration) / determineSpeed(agent, services, distanceToDestination, duration)
+              duration *= speedFactor;
+            }
+            const mSecs = duration ? endTimeDate.getTime() - (duration * 1000) : endTimeDate.getTime();
+            const startTime = new Date(0, 0, 0, 0);
+            startTime.setTime(mSecs);
+            const newStartTime = toTime(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+            return newStartTime;
+          }
+        }
+      }
+    }
+  }
+  return undefined
+}
+
+/**
+ * @param agent
+ * @param services
+ * @param str
+ * @returns
+ * Transform time string to date
+ */
+export const toDate = (agent: IAgent, services: IEnvServices, str?: string) => {
+  const regex1 = /(\d{1,2}):(\d{1,2}):(\d{1,2})(\w?)/i;
+  if (!str) return undefined;
+  const match1 = regex1.exec(str);
+  if (!match1 || match1.length < 3) return undefined;
+  let h = +match1[1];
+  let m = +match1[2];
+  let s = +match1[3];
+  const relative = match1.length >= 4 && match1[4] === 'r';
+  if (relative) {
+    h += services.getTime().getHours();
+    m += services.getTime().getMinutes();
+    s += services.getTime().getSeconds();
+  }
+  return simTime(agent.day ? agent.day : 0, h, m, s);
+}
+
+/**
+ * @param h
+ * @param m
+ * @param s
+ * @param relative
+ * @returns
+ * Makes timestring from number of hours, minutes, etc.
+ */
+
+export const toTime = (h?: number, m?: number, s?: number, relative?: boolean) => {
+  const hrs = h ? String(h) : '00';
+  const min = m ? String(m) : '00';
+  const sec = s ? String(s) : '00';
+  const r = relative ? 'r' : '';
+  return `${hrs}:${min}:${sec}${r}`;
+}
+

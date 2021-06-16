@@ -3,13 +3,15 @@ import { IAgent, IEquipment } from './agent';
 import { ILocation } from './location';
 
 export interface ISimConfig {
-  settings: Settings[];
+  settings: Settings;
+  generateSettings: GenerateSettings[];
   locations: { [id: string]: ILocation };
   equipment: { [id: string]: IEquipment };
   hasEquipment: { [id: string]: string[] }
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
+  equipment: Equipment[];
 }
 
 interface CustomAgents {
@@ -18,6 +20,12 @@ interface CustomAgents {
   white: IAgent[];
   red: IAgent[];
 }
+
+export interface Equipment {
+  equipmentId: string;
+  equipmentProperties: IEquipment;
+}
+
 
 export interface CustomAgenda {
   agentId: string;
@@ -35,11 +43,17 @@ export interface AgendaItem {
   options?: IActivityOptions;
 }
 
-export interface Settings {
+export interface GenerateSettings {
   agentCount: number;
   centerCoord: number[];
   radius: number;
   type?: string;
-  object?: string;
   force?: string;
+  object?: string;
+  memberCount?: number;
+}
+
+export interface Settings {
+  startTimeHours?: number;
+  startTimeMinutes?: number;
 }

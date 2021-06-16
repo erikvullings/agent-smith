@@ -4,20 +4,29 @@
     "node": true
   },
   "root": true,
-  "extends": ["airbnb-base", "prettier", "plugin:jsdoc/recommended"],
+  "extends": [
+    "airbnb-base",
+    "prettier",
+    "plugin:jsdoc/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "prefer-arrow"],
+  "plugins": [
+    "@typescript-eslint",
+    "prefer-arrow"
+  ],
   "rules": {
     "no-plusplus": "off",
     "dot-notation": "off",
     "no-restricted-syntax": "off",
     "no-console": "off",
     "no-param-reassign": "off",
+    "no-plusplus": "off",
     "no-use-before-define": "off",
+    "no-return-assign": "off",
     "no-unused-vars": "off",
     "no-nested-ternary": "off",
     "no-return-assign": "off",
@@ -71,7 +80,7 @@
     ],
     "@typescript-eslint/consistent-type-assertions": "error",
     // "@typescript-eslint/dot-notation": "error",
-    //"@typescript-eslint/naming-convention": "error",
+    // "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/no-empty-interface": "error",
     "@typescript-eslint/no-explicit-any": "off",
@@ -84,13 +93,16 @@
         "hoist": "all"
       }
     ],
-    //"@typescript-eslint/no-unused-expressions": "error",
+    // "@typescript-eslint/no-unused-expressions": "error",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/prefer-for-of": "error",
     "@typescript-eslint/prefer-function-type": "error",
     "@typescript-eslint/prefer-namespace-keyword": "error",
-    "@typescript-eslint/quotes": ["error", "single"],
+    "@typescript-eslint/quotes": [
+      "error",
+      "single"
+    ],
     "@typescript-eslint/triple-slash-reference": [
       "error",
       {
@@ -100,7 +112,10 @@
       }
     ],
     "@typescript-eslint/unified-signatures": "error",
-    "arrow-parens": ["off", "as-needed"],
+    "arrow-parens": [
+      "off",
+      "as-needed"
+    ],
     "comma-dangle": [
       "error",
       {
@@ -111,7 +126,10 @@
     ],
     "complexity": "off",
     "constructor-super": "error",
-    "eqeqeq": ["error", "smart"],
+    "eqeqeq": [
+      "error",
+      "smart"
+    ],
     "guard-for-in": "error",
     "id-blacklist": [
       "error",
@@ -130,7 +148,10 @@
     "jsdoc/check-alignment": "error",
     "jsdoc/check-indentation": "error",
     "jsdoc/newline-after-description": "error",
-    "max-classes-per-file": ["error", 1],
+    "max-classes-per-file": [
+      "error",
+      1
+    ],
     "new-parens": "error",
     "no-bitwise": "error",
     "no-caller": "error",
@@ -148,7 +169,10 @@
     "no-unused-labels": "error",
     "no-var": "error",
     "object-shorthand": "error",
-    "one-var": ["error", "never"],
+    "one-var": [
+      "error",
+      "never"
+    ],
     "prefer-arrow/prefer-arrow-functions": "error",
     "prefer-const": "error",
     "radix": "error",
@@ -156,7 +180,9 @@
       "error",
       "always",
       {
-        "markers": ["/"]
+        "markers": [
+          "/"
+        ]
       }
     ],
     "use-isnan": "error",

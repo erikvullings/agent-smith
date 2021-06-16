@@ -5,15 +5,15 @@ import { Coord } from '@turf/helpers';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */
-  startTime?: Date;
+  startTime?: string;
   /** Time the activity needs to be finished */
-  endTime?: Date;
+  endTime?: string;
   /** Number of microseconds this activity lasts */
   duration?: number;
   /** Destination when travelling */
   destination?: ILocation;
-  /** Centre of area when travelling inside specific area */
-  areaCentre?: [number, number];
+  /** Center of area when travelling inside specific area */
+  areaCenter?: [number, number];
   /** Range of area when travelling inside specific area in meters*/
   areaRange?: number;
   /** Agents IDs you want to start controlling, e.g. vehicles or children */
@@ -36,9 +36,8 @@ export interface IAgentActivity {
   [key: string]: ActivityList[];
 };
 
-
 /** A typical step that can be executed. When the step returns true, it signals completion. */
-export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions) => Promise<boolean>;
+export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions, agents?: IAgent[]) => Promise<boolean>;
 
 export type ActivityList = IStep[];
 
@@ -53,3 +52,4 @@ export interface IPlan {
   /** Cleanup when done */
   cleanup?: Activity;
 }
+

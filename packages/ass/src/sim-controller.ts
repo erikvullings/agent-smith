@@ -5,6 +5,7 @@ import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, a
 import { redisServices, messageServices, reaction, chatServices } from './services';
 import jsonSimConfig from './amok.json';
 import reactionConfig from './plan_reactions.json';
+import { Coordinate } from 'osrm-rest-client';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
@@ -13,6 +14,7 @@ const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customAgendas } = simConfig;
 export const { customTypeAgendas } = simConfig;
+export const { generateSettings } = simConfig;
 
 /**
  * @param callback
@@ -46,22 +48,21 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 5, startTime = simTime(0, 6) } = options;
+    const { simSpeed = 2, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
+    services.setTime(startTime);
     // const agentstoshow = [] as IAgent[];
 
     const reactionImport: IReactions = reactionConfig;
 
     if (reactionImport) {
+      // eslint-disable-next-line guard-for-in
       for (const key in reactionImport) {
         if (reaction[key]) {
           reaction[key] = reactionImport[key];
         }
       }
     }
-
-    services.equipment = simConfig.equipment;
-    services.locations = simConfig.locations;
 
     const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
@@ -93,48 +94,68 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-    for (const s of simConfig.settings) {
-      const { agents: generatedAgents, locations } = generateAgents(
-        s.centerCoord[0],
-        s.centerCoord[1],
-        s.agentCount,
-        s.radius,
-        s.type,
-        s.force
-      );
+    services.locations = simConfig.locations;
 
-      services.locations = { ...services.locations, ...locations };
-      agents.push(...generatedAgents);
+    if (simConfig.generateSettings) {
+      for (const s of simConfig.generateSettings) {
+        const { agents: generatedAgents, locations } = generateAgents(
+          s.centerCoord[0],
+          s.centerCoord[1],
+          s.agentCount,
+          s.radius,
+          s.type,
+          s.force,
+          undefined,
+          s.memberCount
+        );
 
-      if (s.object) {
-        for (const a of generatedAgents) {
-          const { agents: generatedObject } = generateAgents(
-            s.centerCoord[0],
-            s.centerCoord[1],
-            1,
-            s.radius,
-            s.object,
-            s.force,
-            a
-          );
-          agents.push(...generatedObject);
+        services.locations = { ...services.locations, ...locations };
+        agents.push(...generatedAgents);
+
+        if (s.object) {
+          for (const a of generatedAgents) {
+            const { agents: generatedObject } = generateAgents(
+              s.centerCoord[0],
+              s.centerCoord[1],
+              1,
+              s.radius,
+              s.object,
+              s.force,
+              a
+            );
+            agents.push(...generatedObject);
+          }
         }
       }
     }
+
+
+    const nearest = (agent: IAgent, transportType: TransportType) => {
+      if (transportType === 'car') {
+        return services.drive.nearest({ coordinates: [agent.actual.coord] });
+      }
+      if (transportType === 'bicycle') {
+        return services.cycle.nearest({ coordinates: [agent.actual.coord] });
+      }
+      return services.walk.nearest({ coordinates: [agent.actual.coord] });
+    };
+
+    for (const agent of agents) {
+      const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
+      if (transportType) {
+        const coord = (await nearest(agent, transportType)).waypoints[0].location;
+        if (coord) {
+          agent.actual.coord = coord;
+        }
+      }
+    }
+
 
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
     }, {} as { [id: string]: IAgent });
 
-    const equipmentsForAgents = simConfig.hasEquipment;
-
-    for(const key in equipmentsForAgents){
-      if (equipmentsForAgents.hasOwnProperty(key)) {
-        const agentArray = equipmentsForAgents[key];
-        agentArray.map(a => services.agents[a].equipment?.push(services.equipment[key]));
-      }
-    }
 
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
@@ -151,9 +172,8 @@ export const simController = async (
       }
       if (g.group && g.memberCount) {
         const extraMembers = g.memberCount - g.group.length;
-        console.log(extraMembers)
-        for (let i = 0; i < extraMembers; i++) {
-          const id = String(i) + g.id;
+        for (let j = 0; j < extraMembers; j++) {
+          const id = String(j) + g.id;
           g.group.push(id);
         }
       }
@@ -188,7 +208,7 @@ export const simController = async (
     }, 50000);
 
     let i = 0;
-    while (i < 10000000) {
+    while (i < 1000000000) {
       await Promise.all(
         agents
           .filter(
@@ -200,7 +220,7 @@ export const simController = async (
               (!a.health || a.health > 0) &&
               a.status !== 'inactive'
           )
-          .map((a) => messageServices.readMailbox(a, services))
+          .map((a) => messageServices.readMailbox(a, services, agents))
       );
       await Promise.all(
         agents
@@ -213,7 +233,7 @@ export const simController = async (
               (!a.health || a.health > 0) &&
               a.status !== 'inactive'
           )
-          .map((a) => messageServices.readMailbox(a, services))
+          .map((a) => messageServices.readMailbox(a, services, agents))
       );
       await Promise.all(
         agents
@@ -225,11 +245,12 @@ export const simController = async (
               a.health > 0 &&
               a.status !== 'inactive'
           )
-          .map((a) => updateAgent(a, services))
+          .map((a) => updateAgent(a, services, agents))
       );
       updateTime();
       await sleep(100);
       i % 5 === 0 && notifyOthers();
+      // i % 25 === 0 && console.log(services.getTime());
       i++;
     }
   });

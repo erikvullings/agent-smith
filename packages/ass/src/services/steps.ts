@@ -1,8 +1,8 @@
-import { ILineString, Profile } from 'osrm-rest-client';
-import { IAgent, IActivityOptions } from '../models';
+import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
+import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { addGroup, groupSpeed, durationDroneStep, inRangeCheck } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby } from '../utils';
 
 
 /**
@@ -18,62 +18,46 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
   }
 };
 
-const defaultWalkingSpeed = 5000 / 3600;
-const defaultFlyingSpeed = 70000 / 3600;
 /**
  * @param agent
  * @param services
- * @param totDistance
- * @param totDuration
- * Determine speed of agent
+ * @param agents
+ * Release victims from group when in panic
  */
-const determineSpeed = (agent: IAgent, services: IEnvServices, totDistance: number, totDuration: number): number => {
-  if (agent.steps && agent.steps[0] && agent.steps[0].name === 'flyTo') {
-    return defaultFlyingSpeed
+const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
+  let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 200 : 0;
+  if (agent.vulnerability) {
+    releaseProbabilityPercentage += (agent.vulnerability / 200);
   }
-
-  let { speed } = agent;
-  let child = 'no';
-  if (agent.type === 'boy' || agent.type === 'girl') {
-    child = 'yes';
-  } else if (agent.group) {
-    for (const i of agent.group) {
-      if (i in services.agents) {
-        const member = services.agents[i];
-        if (member.type === 'boy' || member.type === 'girl') {
-          child = 'yes';
+  const releaseProbability = agent.group ? agent.group.length * 0.01 * releaseProbabilityPercentage : 0;
+  const rnd = randomInRange(0, 100);
+  if (rnd < releaseProbability) {
+    const numberReleased = randomIntInRange(1, 3);
+    if (agent.group && agent.group.length >= numberReleased) {
+      const agentsToRelease = [...shuffle(agent.group)].slice(0, numberReleased);
+      releaseAgents(agent, services, { release: agentsToRelease }, agents);
+      for (const a of agentsToRelease) {
+        const released = services.agents[a];
+        released.health = randomInRange(0, 30);
+        released.agenda = [{ name: 'Wait', options: { duration: minutes(1) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
+        released.running = true;
+        if (released.health === 0) {
+          released.status = 'inactive';
         }
+
       }
     }
   }
-
-  speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
-  if (child === 'yes') {
-    speed *= (3 / 5);
-  }
-  if (agent.running) {
-    if (agent.steps && agent.steps[0] && (agent.steps[0].name === 'driveTo')) {
-      speed *= 1.5;
-    } else {
-      speed *= 2;
-    }
-  }
-
-  if (agent.memberCount && agent.steps && agent.steps[0] && (agent.steps[0].name === 'walkTo')) {
-    const numberofmembers = agent.memberCount
-    speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic : undefined);
-  }
-
-  return speed;
-};
+}
 
 /**
  * @param agent
  * @param services
  * @param deltaTime
+ * @param agents
  * Move agent along a route.
  */
-const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number): boolean => {
+const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
     return true; // Done
@@ -82,7 +66,6 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
   agent.speed = determineSpeed(agent, services, totDistance, totDuration);
-
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
@@ -95,6 +78,12 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
       // redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
+      agent.route = route;
+      if (agent.type === 'group' && agent.group && agent.group.length > 0) {
+        if (agent.panic && agent.running) {
+          releaseVictimsGroup(agent, services, agents);
+        }
+      }
     } else {
       if (i > 0) {
         (step.geometry as ILineString).coordinates.splice(0, i);
@@ -113,8 +102,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     }
   }
   route.splice(0, 1);
-  agent.route = route;
-  return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed);
+  return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
 };
 
 /**
@@ -124,7 +112,8 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
   services: IEnvServices,
-  options: IActivityOptions = {}
+  options: IActivityOptions = {},
+  agents: IAgent[]
 ) => {
   const { route = [], memberOf } = agent;
   if (memberOf) return false; // TODO Or can we return true?
@@ -148,10 +137,11 @@ const moveAgent = (profile: Profile) => async (
       console.error(e);
     }
   }
-  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
+  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
 };
 
-const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+
+const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { route = [], memberOf } = agent;
   const { distance } = services;
   if (memberOf) return false;
@@ -167,19 +157,28 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
       console.error(e);
     }
   }
-  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000);
+  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
 };
 
 /**
- * @param _agent
+ * @param agent
  * @param services
  * @param options
  * Wait until a start time before continuing
  */
-const waitUntil = async (_agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+
   const { startTime } = options;
-  return startTime ? startTime < services.getTime() : true;
+  if (startTime) {
+    const startTimeDate = toDate(agent, services, startTime);
+    if (startTime[startTime.length - 1] === 'r') {
+      options.startTime = toTime(startTimeDate?.getHours(), startTimeDate?.getMinutes(), startTimeDate?.getSeconds())
+    }
+    return startTimeDate ? startTimeDate < services.getTime() : true;
+  }
+  return true;
 };
+
 
 /**
  * @param agent
@@ -192,7 +191,9 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   if (duration === 0) {
     return true;
   }
-  const stepOptions = { startTime: new Date(services.getTime().valueOf() + duration) };
+  const startTimeDate = new Date(services.getTime().valueOf() + duration);
+  const startTime = toTime(startTimeDate.getHours(), startTimeDate.getMinutes(), startTimeDate.getSeconds());
+  const stepOptions = { startTime };
   if (agent.steps) {
     // Replace active 'waitFor' step with 'waitUntil' step.
     agent.steps[0] = { name: 'waitUntil', options: stepOptions };
@@ -211,28 +212,72 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
       if (a) {
         a.memberOf = agent.id;
         agent.group.push(id);
+        if (agent.memberCount) {
+          agent.memberCount += 1;
+        } else {
+          agent.memberCount = 1;
+        }
       }
     }
   }
   return true;
 };
 
-const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+/**
+ * Release agents from group
+ *
+ * @param agent
+ * @param services
+ * @param options
+ * @param agents
+ */
+const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
     for (const id of release) {
-      const a = services.agents[id];
       const i = agent.group.indexOf(id);
-      if (a) {
-        delete a.memberOf;
-        agent.group.splice(i, 1);
-        agent.memberCount -= 1;
-        if (a.type === 'car' || a.type === 'bicycle') {
-          delete a.group;
+      let a: IAgent;
+      if (id in services.agents) {
+        a = services.agents[id];
+
+        if (a && i > -1) {
+          delete a.memberOf;
+          agent.group.splice(i, 1);
+          agent.memberCount -= 1;
+
+          if (a.type === 'car' || a.type === 'bicycle') {
+            delete a.group;
+          }
+
+          if (a.group) {
+            releaseAgents(agent, services, { release: a.group }, agents);
+            for (const member of a.group) {
+              joinGroup(services.agents[member], services, { group: a.id })
+            }
+          }
+        }
+      } else {
+        const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
+        a = newAgent.agent;
+        agents.push(a);
+        redisServices.geoAdd('agents', a);
+        services.agents[id] = a;
+
+        if (a && i > -1) {
+          delete a.memberOf;
+          agent.group.splice(i, 1);
+          agent.memberCount -= 1;
+          if (a.type === 'car' || a.type === 'bicycle') {
+            delete a.group;
+          }
         }
       }
     }
   }
+  if (agent.type === 'group' && (!agent.group || agent.group.length < 1)) {
+    agent.status = 'inactive';
+  }
+
   return true;
 };
 
@@ -244,16 +289,61 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
   return true;
 };
 
+/**
+ * @param agent
+ * @param services
+ * @param options
+ * @returns
+ * If the group is within 10 meters, the agent joins the given group
+ */
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
+  const inRange = await redisServices.geoSearch(agent.actual, 10, agent);
+  const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
   if (group) {
     const newGroup = services.agents[group];
-    if (newGroup.group && newGroup.memberCount) {
-      newGroup.group.push(agent.id);
-      newGroup.memberCount += 1;
-      addGroup(agent, newGroup, services);
+    if (agentsInRange.indexOf(newGroup) > -1) {
+      if (newGroup.group && newGroup.memberCount) {
+        if (newGroup.group.indexOf(agent.id) < 0) {
+          newGroup.group.push(agent.id);
+          newGroup.memberCount += 1;
+          addGroup(agent, newGroup, services);
+        }
+      } else {
+        newGroup.group = [agent.id];
+        newGroup.memberCount = 1;
+        addGroup(agent, newGroup, services);
+      }
       agent.memberOf = newGroup.id;
     }
+  }
+  return true;
+};
+
+const disappear = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  agent.memberOf = 'invisible';
+  agent.status = 'inactive';
+  return true;
+};
+
+const explode = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+  const deathRange = await redisServices.geoSearch(agent.actual, 5, agent);
+  const agentsInDeathRange = deathRange.map((a: any) => a = services.agents[a.key]);
+  agentsInDeathRange.map((a: IAgent) => a.health = 0)
+  const damageRange = await redisServices.geoSearch(agent.actual, 15, agent);
+  const receivers = damageRange.map((a: any) => a = services.agents[a.key]);
+  if (receivers) {
+    if (receivers.length > 0) {
+      receivers.filter((a: IAgent) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a: IAgent) => (a.health! -= 5 * randomIntInRange(0, 10)));
+      receivers.filter((a: IAgent) => a.health && a.health > 0 && !a.attire).map((a: IAgent) => (a.health! -= 5 * randomIntInRange(10, 20)))
+      receivers.filter((a: IAgent) => !a.health || a.health < 0).map((a: IAgent) => a.health = 0);
+    }
+    const deadAgents = receivers.filter((a: IAgent) => a.health && a.health <= 0)
+    deadAgents.push(agent);
+    if (deadAgents.length > 0) {
+      deadAgents.map((a: IAgent) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
+    }
+    agent.health = 0;
   }
   return true;
 };
@@ -269,4 +359,6 @@ export const steps = {
   releaseAgents,
   stopRunning,
   joinGroup,
+  disappear,
+  explode,
 };

@@ -16,19 +16,31 @@ export interface IAgent {
   /** Actual location as [lon, lat] */
   actual: ILocation;
   /** Force of the agent (white, red or blue) */
-  force: 'white'|'red'|'blue'|'tbp';
+  force: 'white' | 'red' | 'blue' | 'tbp';
   /** Force of the agent that is visible to other agents */
   visibleForce?: 'white' | 'red' | 'blue';
   /** Health of agent, maximum of 100 */
-  health: number;
-  /** 0 if there is no panic, 10 if there is extreme panic*/
-  panic?: number;
+  health?: number;
+  /** Panic the agent feels*/
+  panic?: {
+    /** 0 if there is no panic, 100 if there is extreme panic*/
+    panicLevel: number;
+    /** cause of panic */
+    panicCause?: string[];
+  };
+  /** delay in speed of an agent due to hindrance*/
+  delay?: {
+    /** 0 if there is no delay, 100 if there is extreme delay*/
+    delayLevel: number;
+    /** name of the hindrance */
+    delayCause?: string[];
+  };
   /** ID of home address */
   home?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
   destination?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
-  attire?: 'bulletproof vest';
+  attire?: 'bulletproof vest' | 'bulletproof bomb vest' | 'bomb vest';
   /** ID of work address */
   occupations?: {
     /** Type of occupation, e.g. work, shop, learn */
@@ -63,10 +75,10 @@ export interface IAgent {
     /** ID of the owned object */
     id: string;
   }[];
-  /** Equal to 1 or empty if agent is visibile, equal to 0 if agent is invisible */
-  visibility?: number;
+  /** equal to 0 for normal agents, 100 for extremely vulnerable agents */
+  vulnerability?: number;
   /** Agenda day, e.g. in order to create a new agenda each day. Internal property, do not set yourself. */
-  _day?: number;
+  day?: number;
   /** Agenda with active plans, e.g. 'Go to work', 'Work for 4 hours', 'Go to school', 'Learn', 'Do shopping', etc. */
   agenda?: ActivityList;
   /** Steps that must be taken to execute the current plan, e.g. go to location, etc. */
@@ -91,28 +103,33 @@ export interface IAgent {
   defenseType: 'kmar' | 'police';
   /** work baseLocation */
   baseLocation: 'station' | string;
-  /** Equpment that the agent carries */
+  /** Equipment that the agent carries */
   equipment?: IEquipment[],
-  /** Equpment that is in use */
-  currentEquipment?: IEquipment
+  /** Equipment that is in use */
+  currentEquipment?: IEquipment,
+  /** 1 if agent is visible for other agents*/
+  visibility?: 0 | 1 | number;
 
 }
 
 export interface IMail {
-    /** Id of the sender */
-    sender: IAgent;
-    /** Location of the sender */
-    location: ILocation;
-    /** Message of the sender */
-    message: string;
-    /** Eqipment of the sender */
-    equipment?: string;
+  /** Id of the sender */
+  sender: IAgent;
+  /** Location of the sender */
+  location: ILocation;
+  /** Distance reciever has to run away in meters */
+  runDistance?: number;
+  /** Message of the sender */
+  message: string;
+  /** Eqipment of the sender */
+  equipment?: string;
 }
 
 export interface IEquipment {
   /** Type of equipment */
-  type: 'firearm' | 'water cannon' | 'baton' | string;
+  type: 'firearm' | 'water cannon' | 'baton' | 'handgrenade' | string;
   /** Damage effect that weapon causes */
   damageLevel: 1 | 2 | 3 | 4 | 5 | number;
+  /** The limit of how many times the weapon can be used, e.g. number of bullets */
   limit: number
 }

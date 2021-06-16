@@ -1,7 +1,8 @@
 import { IEnvServices } from '../env-services';
 import { ActivityList, IAgent } from '../models';
-import { randomIntInRange } from '../utils';
+import { minutes, toTime, randomIntInRange } from '../utils';
 import { redisServices } from './redis-service';
+
 
 /**
  * @param agent
@@ -12,7 +13,7 @@ import { redisServices } from './redis-service';
 
 const agentChat = async (agents: IAgent[], services: IEnvServices) => {
 
-    const redisAgents: any[] = await redisServices.geoSearch(agents[randomIntInRange(0,agents.length)].actual, 10000);
+    const redisAgents: any[] = await redisServices.geoSearch(agents[randomIntInRange(0, agents.length)].actual, 10000);
 
     const availableAgents: IAgent[] = (redisAgents.map((a) => a = services.agents[a.key]))
         .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting !== true)
@@ -40,6 +41,7 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
  * @param closeAgent
  * @param services
  * Adds going to the meetup location and chatting steps in the agendas
+ * @param agents
  */
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
     randomAgent.route = [];
@@ -47,16 +49,16 @@ const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnv
     randomAgent.following = closeAgent.id;
 
     const timesim = services.getTime();
-    timesim.setMinutes(timesim.getMinutes() + 6);
+    timesim.setSeconds(timesim.getSeconds() + 1);
     randomAgent.following = closeAgent.id;
 
-    const newAgenda1: ActivityList = [{ name: 'Walk to person', options: { startTime: timesim, priority: 1, destination: closeAgent.actual } },
+    const newAgenda1: ActivityList = [{ name: 'Walk to person', options: { startTime: toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds()), priority: 1, destination: closeAgent.actual } },
     { name: 'Chat', options: { priority: 2 } }];
 
-    if(randomAgent.agenda){
+    if (randomAgent.agenda) {
         randomAgent.agenda = [...newAgenda1, ...randomAgent.agenda];
     }
-    else{
+    else {
         randomAgent.agenda = [...newAgenda1];
     }
 };

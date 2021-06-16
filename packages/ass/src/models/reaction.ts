@@ -24,8 +24,10 @@ export interface IPlanEffectObject {
   damageRadius: number;
   damageLevel: number;
   damageCount?: number;
+  runDistance?: number;
   panicLevel: number;
   delayLevel: number;
-  severity: 1|2|3|4|5;
+  delayCause?: string;
+  severity: 1 | 2 | 3 | 4 | 5;
   messageRadius: number;
 }
