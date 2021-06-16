@@ -1,10 +1,12 @@
 import { IActivityOptions, IStep } from '.';
-import { IAgent } from './agent';
+import { IAgent, IEquipment } from './agent';
 import { ILocation } from './location';
 
 export interface ISimConfig {
   settings: Settings[];
   locations: { [id: string]: ILocation };
+  equipment: { [id: string]: IEquipment };
+  hasEquipment: { [id: string]: string[] }
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];

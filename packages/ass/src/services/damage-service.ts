@@ -29,10 +29,11 @@ const damageAgent = async (sender: IAgent, receivers:IAgent[], _services: IEnvSe
 
 const pickEquipment = async (agent: IAgent) => {
     let sortedEquipments = [];
+
     if(agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment && agent.equipment.length >0){
         const {severity} = planEffects[agent.reactedTo];
         if(severity>0){
-            sortedEquipments = agent.equipment.filter(a => a.damageLevel === severity-1 || a.damageLevel === severity).sort((a,b) => b.damageLevel - a.damageLevel);
+            sortedEquipments = agent.equipment.filter(((e: { damageLevel: number; }) => e.damageLevel && e.damageLevel === severity-1 || e.damageLevel === severity)).sort((a: { damageLevel: number; },b: { damageLevel: number; }) => b.damageLevel - a.damageLevel);
             return sortedEquipments[randomIntInRange(0,sortedEquipments.length-1)];
         }
 

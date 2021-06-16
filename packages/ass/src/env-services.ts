@@ -1,6 +1,6 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
-import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
+import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IEquipment } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas, customTypeAgendas } from './sim-controller';
 
@@ -23,6 +23,8 @@ export interface IEnvServices {
   steps: { [step: string]: Activity };
   /** Available locations */
   locations: { [id: string]: ILocation };
+  /** Available equipment */
+  equipment: { [id: string]: IEquipment };
   /** Approximate distance calculator in meters */
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
 };

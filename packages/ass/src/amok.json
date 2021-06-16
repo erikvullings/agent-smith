@@ -81,6 +81,22 @@
         }
     
       },
+    "equipment":{
+        "firearm1":{
+            "type":"firearm",
+            "damageLevel": 3,
+            "limit":15
+        },
+        "firearm2":{
+            "type":"firearm",
+            "damageLevel": 4,
+            "limit":20
+        }
+      },
+    "hasEquipment":{
+        "firearm1": ["police1","police2"],
+        "firearm2": ["biker"]
+    },
     "customAgents": {
         "tbp": [
             {
@@ -136,8 +152,7 @@
             "occupations": [{ "type": "work", "id": "mauritspoort"}],
             "mailbox": [],
             "baseLocation": "none",
-            "defenseType": "police",
-            "equipment": [{"type": "firearm", "damageLevel": 5}]
+            "defenseType": "police"
     },
         {
             "id": "kmar2",

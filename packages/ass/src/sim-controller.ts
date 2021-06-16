@@ -60,6 +60,9 @@ export const simController = async (
       }
     }
 
+    services.equipment = simConfig.equipment;
+    services.locations = simConfig.locations;
+
     const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
@@ -89,8 +92,6 @@ export const simController = async (
       };
       tb.send(payload, (error) => error && log(error));
     };
-
-    services.locations = simConfig.locations;
 
     for (const s of simConfig.settings) {
       const { agents: generatedAgents, locations } = generateAgents(
@@ -126,6 +127,14 @@ export const simController = async (
       return acc;
     }, {} as { [id: string]: IAgent });
 
+    const equipmentsForAgents = simConfig.hasEquipment;
+
+    for(const key in equipmentsForAgents){
+      if (equipmentsForAgents.hasOwnProperty(key)) {
+        const agentArray = equipmentsForAgents[key];
+        agentArray.map(a => services.agents[a].equipment?.push(services.equipment[key]));
+      }
+    }
 
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);

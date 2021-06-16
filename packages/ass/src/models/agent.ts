@@ -114,4 +114,5 @@ export interface IEquipment {
   type: 'firearm' | 'water cannon' | 'baton' | string;
   /** Damage effect that weapon causes */
   damageLevel: 1 | 2 | 3 | 4 | 5 | number;
+  limit: number
 }
