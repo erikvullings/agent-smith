@@ -12,8 +12,8 @@ const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
 // export const simConfig2 = (jsonSimConfig2 as unknown) as ISimConfig;
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
-export const { customAgendas } = simConfig;
 export const { customTypeAgendas } = simConfig;
+export const { customAgendas } = simConfig;
 export const { generateSettings } = simConfig;
 
 /**
@@ -64,6 +64,10 @@ export const simController = async (
       }
     }
 
+    services.locations = simConfig.locations;
+    services.equipments = simConfig.equipment;
+
+
     const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
     const whiteAgents: IAgent[] = simConfig.customAgents.white;
@@ -94,7 +98,6 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-    services.locations = simConfig.locations;
 
     if (simConfig.generateSettings) {
       for (const s of simConfig.generateSettings) {
@@ -129,7 +132,6 @@ export const simController = async (
       }
     }
 
-
     const nearest = (agent: IAgent, transportType: TransportType) => {
       if (transportType === 'car') {
         return services.drive.nearest({ coordinates: [agent.actual.coord] });
@@ -156,6 +158,25 @@ export const simController = async (
       return acc;
     }, {} as { [id: string]: IAgent });
 
+    const equipmentsForAgents = simConfig.hasEquipment;
+    console.log('eqqq', equipmentsForAgents)
+
+    for(const key in equipmentsForAgents){
+      if (equipmentsForAgents.hasOwnProperty(key)) {
+
+        const agentIdArray = equipmentsForAgents[key] as any[];
+        const agentArray = agentIdArray.map(a => a = services.agents[a]);
+
+        agentArray.forEach(a => {
+            if(a.equipment){
+              a.equipment.push(services.equipments[key])
+            }
+            else{
+              a.equipment = [services.equipments[key]]
+            }
+        });
+      }
+    }
 
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);

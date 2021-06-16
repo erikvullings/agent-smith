@@ -14,40 +14,31 @@
             "force": "white"
         }
     ],
-    "equipment": [
-        {
-            "equipmentID": "firearm5",
-            "equipmentProperties": {
-                "type": "firearm",
-                "damageLevel": 5,
-                "limit": 10
-            }
+    "equipment": {
+        "firearm5": {
+            "type": "firearm",
+            "damageLevel": 5,
+            "limit": 10
         },
-        {
-            "equipmentID": "firearm4",
-            "equipmentProperties": {
-                "type": "firearm",
-                "damageLevel": 4,
-                "limit": 15
-            }
+        "firearm4":{
+            "type": "firearm",
+            "damageLevel": 4,
+            "limit": 15
         },
-        {
-            "equipmentID": "firearm3",
-            "equipmentProperties": {
-                "type": "firearm",
-                "damageLevel": 3,
-                "limit": 20
-            }
+        "firearm3": {
+            "type": "firearm",
+            "damageLevel": 3,
+            "limit": 20
         },
-        {
-            "equipmentID": "handgrenade",
-            "equipmentProperties": {
-                "type": "handgrenade",
-                "damageLevel": 5,
-                "limit": 5
-            }
+        "handgrenade":{
+            "type": "handgrenade",
+            "damageLevel": 5,
+            "limit": 5
         }
-    ],
+    },
+    "hasEquipment":{
+        "firearm5": ["biker","ter1"]
+    },
     "locations": {
         "ggd": {
             "type": "medical",

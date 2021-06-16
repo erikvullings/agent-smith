@@ -23,7 +23,7 @@ export interface IEnvServices {
   /** Available locations */
   locations: { [id: string]: ILocation };
   /** Available equipment */
-  equipment: { [id: string]: IEquipment };
+  equipments: { [id: string]: IEquipment };
   /** Approximate distance calculator in meters */
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
 };
@@ -87,7 +87,7 @@ export const envServices = ({
 };
 
 const createAgenda = (agent: IAgent, services: IEnvServices) => {
-  const customAgIndex = customAgendas.findIndex((agenda) => agenda.agentId === agent.id);
+  const customAgIndex = customAgendas.findIndex((agenda: { agentId: string; }) => agenda.agentId === agent.id);
   if (customAgIndex > -1) {
     return agendas.customAgenda(agent, services, customAgIndex)
   }

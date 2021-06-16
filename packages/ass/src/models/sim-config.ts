@@ -11,7 +11,6 @@ export interface ISimConfig {
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
-  equipment: Equipment[];
 }
 
 interface CustomAgents {
