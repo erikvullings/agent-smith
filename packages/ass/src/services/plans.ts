@@ -887,7 +887,7 @@ export const plans = {
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         }
-        messageServices.sendMessage(agent, 'Attack', services);
+        messageServices.sendMessage(agent, 'Chaos', services);
         damageServices.damageRandomAgent(agent, services);
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 6);

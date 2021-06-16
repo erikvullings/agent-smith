@@ -165,8 +165,8 @@
     "customAgents": {
         "tbp": [
             {
-                "id": "tbp",
-                "type": "man",
+                "id": "tbpGroup",
+                "type": "group",
                 "status": "active",
                 "health": 100,
                 "home": {
@@ -183,16 +183,28 @@
                         52.079523
                     ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "binnenhof"
-                    }
-                ],
                 "force": "tbp",
-                "mailbox": []
-            }
-        ],
+                "group": ["tbp","tbp_bodyguard","tbp_bodyguard1","tbp_bodyguard2"],
+                "memberCount": 4,
+                "mailbox": [],
+                "baseLocation": "bijenkorf"
+            },
+            {
+            "id": "tbp",
+            "type": "man",
+            "status": "active",
+            "health": 100,
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.304155,
+                    52.079523
+                ]
+            },
+            "force": "tbp",
+            "memberOf": "tbpGroup",
+            "mailbox": []
+        }],
         "blue": [
             {
                 "id": "biker",
@@ -444,14 +456,6 @@
                 "type": "man",
                 "force": "blue",
                 "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.364151,
-                        52.091361
-                    ]
-                },
                 "actual": {
                     "type": "any",
                     "coord": [
@@ -459,30 +463,16 @@
                         52.079523
                     ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station jan hendrikstraat"
-                    }
-                ],
-                "baseLocation": "station",
+                "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "following": "tbp"
+                "memberOf": "tbpGroup"    
             },
             {
                 "id": "tbp_bodyguard1",
                 "type": "man",
                 "force": "blue",
                 "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.306952,
-                        52.075691
-                    ]
-                },
                 "actual": {
                     "type": "any",
                     "coord": [
@@ -490,30 +480,16 @@
                         52.079523
                     ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station jan hendrikstraat"
-                    }
-                ],
-                "baseLocation": "station",
+                "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "following": "tbp"
+                "memberOf": "tbpGroup"    
             },
             {
                 "id": "tbp_bodyguard2",
                 "type": "man",
                 "force": "blue",
                 "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.306952,
-                        52.075691
-                    ]
-                },
                 "actual": {
                     "type": "any",
                     "coord": [
@@ -521,17 +497,10 @@
                         52.079523
                     ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station jan hendrikstraat"
-                    }
-                ],
-                "baseLocation": "station",
+                "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "following": "tbp"
-            }
+                "memberOf": "tbpGroup"  } 
         ],
         "white": [
             {
@@ -848,27 +817,6 @@
     },
     "customAgendas": [
         {
-            "agentId": "tbp",
-            "agendaItems": [
-                {
-                    "name": "Wait",
-                    "options": {
-                        "duration": 1
-                    }
-                },
-                {
-                    "name": "Go to work",
-                    "options": {}
-                },
-                {
-                    "name": "Work",
-                    "options": {
-                        "duration": 3000
-                    }
-                }
-            ]
-        },
-        {
             "agentId": "whiteAgent",
             "agendaItems": [
                 {
@@ -920,77 +868,11 @@
             ]
         },
         {
-            "agentId": "tbp",
+            "agentId": "tbpGroup",
             "agendaItems": [
-                {
-                    "name": "Go to work",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Work",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "tbp_bodyguard",
-            "agendaItems": [
-                {
-                    "name": "Protect person",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "tbp_bodyguard1",
-            "agendaItems": [
-                {
-                    "name": "Protect person",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "tbp_bodyguard2",
-            "agendaItems": [
-                {
-                    "name": "Protect person",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
+                { "name": "Go shopping", "options" : { "priority": 2 } },
+                { "name": "Wander", "options" : { "priority": 2 } },
+                { "name": "Go home", "options" : { "priority": 2 } }
             ]
         },
         {
