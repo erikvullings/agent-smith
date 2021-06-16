@@ -93,10 +93,14 @@ export interface IAgent {
   mailbox: IMail[];
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
   sentbox: { receiver: IAgent, mail: IMail }[];
+  /** The action that the agent reacted to */
   reactedTo?: string;
+  /** The target of an agent */
   target: IAgent;
+  /** The agent id of the agent that is being followed */
   following?: string;
-  defenseType: 'kmar' | 'police'
+  // to be deleted
+  defenseType: 'kmar' | 'police';
   /** work baseLocation */
   baseLocation: 'station' | string;
   /** Equpment that the agent carries */

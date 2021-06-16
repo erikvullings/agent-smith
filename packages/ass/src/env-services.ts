@@ -1,5 +1,5 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
-import { plans, steps, agendas, reaction } from './services';
+import { plans, steps, agendas } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation } from './models';
 import { simplifiedDistanceFactory } from './utils';
 import { customAgendas, customTypeAgendas } from './sim-controller';
@@ -120,9 +120,6 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
       const curPlan = agent.agenda?.shift();
       if (curPlan) {
         const { name, options } = curPlan;
-        if (reaction[curPlan.name] !== undefined) {
-          // await messageServices.sendMessage(agent, curPlan.name, "10000", services);
-        }
         const plan = services.plans[name];
         if (plan && plan.cleanup) {
           await plan.cleanup(agent, services, options);
@@ -132,9 +129,6 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
   } else if (agent.agenda && agent.agenda.length > 0) {
     const { name, options } = agent.agenda[0];
     const plan = services.plans[name];
-    if (reaction[agent.agenda[0].name] !== undefined) {
-      // await messageServices.sendMessage(agent, agent.agenda[0].name, "10000", services);
-    }
     if (plan && plan.prepare) {
       await plan.prepare(agent, services, options);
     }

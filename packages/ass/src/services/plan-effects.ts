@@ -70,7 +70,7 @@ export const planEffects = {
         delayLevel: 0,
         severity: 2,
         runDistance: 1500,
-        messageRadius: 10000,
+        messageRadius: 200,
     },
     'Go to park': {
         damageRadius: 1000,

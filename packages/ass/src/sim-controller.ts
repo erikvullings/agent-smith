@@ -58,12 +58,11 @@ export const simController = async (
     if (reactionImport) {
       // eslint-disable-next-line guard-for-in
       for (const key in reactionImport) {
-        reaction[key] = reactionImport[key];
+        if (reaction[key]) {
+          reaction[key] = reactionImport[key];
+        }
       }
     }
-
-    console.log('call the police', reaction['Call the police'])
-    console.log('test', reaction['Run away'])
 
     const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
@@ -96,7 +95,6 @@ export const simController = async (
     };
 
     services.locations = simConfig.locations;
-    console.log('locations', services.locations)
 
     if (simConfig.generateSettings) {
       for (const s of simConfig.generateSettings) {
@@ -131,8 +129,6 @@ export const simController = async (
       }
     }
 
-
-    // const { agents: generatedPolice } = generatePolice(services.locations['police station'].coord[0], services.locations['police station'].coord[1], 5, 0);
 
     const nearest = (agent: IAgent, transportType: TransportType) => {
       if (transportType === 'car') {
@@ -197,18 +193,19 @@ export const simController = async (
               a.agenda[0] &&
               a.agenda[0].name &&
               reaction[a.agenda[0].name] &&
-              a.agenda[0].name !== 'Call the police'
+              a.agenda[0].name !== 'Call the police' &&
+              a.agenda[0].name !== 'Walk to person'
           )
           .map((a) => messageServices.sendMessage(a, a.agenda![0].name, services))
       );
     }, 10000);
 
-    // const chatInterval = setInterval(async () => {
-    //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name == 'Chat');
+    const chatInterval = setInterval(async () => {
+      const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name === 'Chat');
 
-    //   if (chattingAgents.length <= agents.length * 0.01)
-    //     chatServices.agentChat(agents, services);
-    // }, 60000);
+      if (chattingAgents.length <= agents.length * 0.01)
+        chatServices.agentChat(agents, services);
+    }, 50000);
 
     let i = 0;
     while (i < 1000000000) {
@@ -218,6 +215,19 @@ export const simController = async (
             (a) =>
               passiveTypes.indexOf(a.type) < 0 &&
               !a.memberOf &&
+              a.mailbox &&
+              a.mailbox.length > 0 &&
+              (!a.health || a.health > 0) &&
+              a.status !== 'inactive'
+          )
+          .map((a) => messageServices.readMailbox(a, services, agents))
+      );
+      await Promise.all(
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
+              a.type === 'group' &&
               a.mailbox &&
               a.mailbox.length > 0 &&
               (!a.health || a.health > 0) &&

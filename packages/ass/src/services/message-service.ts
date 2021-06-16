@@ -14,7 +14,8 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     }
     console.log('radius', radius)
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
-    const receiversAgents = (receivers.filter((a) => a.key !== sender.id).map((a) => a = services.agents[a.key])).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
+    const receiversRedis = receivers.filter((a) => a.key !== sender.id);
+    const receiversAgents = receiversRedis.map((a) => a = services.agents[a.key]).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive');
 
     if (receiversAgents.length > 0) {
         await send(sender, message, receiversAgents, services);
@@ -122,9 +123,9 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
         }
         if (options.priority !== undefined && options.priority === itemUrgency) {
             // if urgency an agenda prio is equal, pick one of them
-            const rndInt = randomIntInRange(0, urgentMessages.length);
+            const random = randomIntInRange(0, urgentMessages.length);
 
-            if (rndInt === urgentMessages.length) {
+            if (random === urgentMessages.length) {
                 // stay in agenda
                 return true;
             }
@@ -136,15 +137,13 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
             // actionToReact = urgentMessages[randomInt];
             // actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
             // return await agendas.addReaction(agent,services, actionToReact);
-            return react(agent, services, urgentMessages, rndInt, agents)
+            return react(agent, services, urgentMessages, random, agents)
 
         }
 
         // if prio is greater than urgency, pick one from the reactions
         const randomInt = randomIntInRange(0, urgentMessages.length - 1);
         return react(agent, services, urgentMessages, randomInt, agents)
-
-
     }
 
     // check if urgency is greater than current reaction, if so pick the new reaction

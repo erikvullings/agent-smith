@@ -4,11 +4,8 @@ import { IAgent } from '../models';
 import { planEffects } from './plan-effects';
 
 const sendDefence = async (agent: IAgent, services: IEnvServices) => {
-    console.log('hereee')
-    let n = 0;
-
     if(agent.reactedTo === undefined || planEffects[agent.reactedTo] === undefined) {
-        agent.reactedTo = 'drop object'; // To test function
+        return true;
     }
 
     const effect = planEffects[agent.reactedTo];
@@ -18,6 +15,7 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
             const closeAgents = closeReceivers
                 .filter(
                     a => (('baseLocation' in a) && a.baseLocation !== 'station') &&
+                    agent.force === 'blue' &&
                     a.agenda &&
                     (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
 
@@ -25,17 +23,16 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
             const farStationAgents = farReceivers
                 .filter(
                     a => (('baseLocation' in a) && a.baseLocation === 'station') &&
+                    agent.force === 'blue' &&
                     a.agenda &&
                     (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
 
             const receiverAgents  = [...closeAgents,...farStationAgents];
-            n = effect.damageLevel*10;
+            const policeAmount = effect.damageLevel;
 
-            return messageServices.sendDirectMessage(agent, 'Call the police', receiverAgents.slice(0,n), services);
+            return messageServices.sendDirectMessage(agent, 'Call the police', receiverAgents.slice(0,policeAmount), services);
 
     }
-    // messageServices.sendDirectMessage(agent, 'Call the police', receiversAgents.slice(0,n), services);
-
     return true;
 };
 

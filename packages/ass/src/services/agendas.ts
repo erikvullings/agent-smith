@@ -1,4 +1,4 @@
-import { ActivityList, CustomAgenda, CustomTypeAgenda, IActivityOptions, IAgent, IMail } from '../models';
+import { ActivityList, IAgent, IMail } from '../models';
 
 import { hours, randomInRange, randomIntInRange, minutes, toTime } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
@@ -283,9 +283,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   } if (agent.type === 'drone') {
     return agentAgendas.drone();
   }
-  // if(agent.following){
-  //   // komt nog
-  // }
+  /* if(agent.following){} */
   switch (agent.force) {
     case 'white': {
       if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
@@ -378,8 +376,8 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
-    else if (reactionAgenda[0].name === 'Follow person') {
-      console.log('following', mail.sender.id, 'location', mail.location)
+    else if (reactionAgenda[0].name === 'Follow person' || reactionAgenda[0].name === 'Walk to person') {
+      console.log('following', mail.sender.id, 'location', mail.location);
       agent.following = mail.sender.id;
       agent.destination = mail.location;
       reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };

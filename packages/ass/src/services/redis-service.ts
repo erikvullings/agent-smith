@@ -21,10 +21,11 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
     (err: any, result: any) => {
       if (err) {
         console.error(err);
-      } else {
+        return err;
+      }
         console.log(result);
         return result;
-      }
+
     });
 };
 
@@ -59,11 +60,10 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
             longitude: resArr[2][0],
             latitude: resArr[2][1],
           };
-          if (agent !== undefined && String(res.key) === agent.id) {
-            // console.log("First res isssss",res)
-            // resArray.push(res);
+          if (agent !== undefined && String(res.key) !== agent.id) {
+            resArray.push(res);
           }
-          else {
+          else if(agent === undefined){
             resArray.push(res);
           }
         });

@@ -19,6 +19,8 @@
     "prefer-arrow"
   ],
   "rules": {
+    "no-plusplus": "off",
+    "dot-notation": "off",
     "no-restricted-syntax": "off",
     "no-console": "off",
     "no-param-reassign": "off",
@@ -27,10 +29,13 @@
     "no-return-assign": "off",
     "no-unused-vars": "off",
     "no-nested-ternary": "off",
+    "no-return-assign": "off",
     "no-await-in-loop": "off",
+    "no-underscore-dangle": "off",
     "no-unused-expressions": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "no-shadow": "off",
+    "array-callback-return": "off",
     "import/prefer-default-export": "off",
     "import/extensions": [
       "error",
@@ -159,7 +164,6 @@
     "no-throw-literal": "error",
     "no-trailing-spaces": "error",
     "no-undef-init": "error",
-    "no-underscore-dangle": "error",
     "no-unsafe-finally": "error",
     "no-unused-labels": "error",
     "no-var": "error",
