@@ -339,11 +339,11 @@ const explode = async (agent: IAgent, services: IEnvServices, options: IActivity
       receivers.filter((a: IAgent) => !a.health || a.health < 0).map((a: IAgent) => a.health = 0);
     }
     const deadAgents = receivers.filter((a: IAgent) => a.health && a.health <= 0)
-    agent.health = 0;
     deadAgents.push(agent);
     if (deadAgents.length > 0) {
       deadAgents.map((a: IAgent) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
     }
+    agent.health = 0;
   }
   return true;
 };
