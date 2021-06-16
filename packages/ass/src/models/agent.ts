@@ -126,6 +126,7 @@ export interface IMail {
 }
 
 export interface IEquipment {
+  id: string;
   /** Type of equipment */
   type: 'firearm' | 'water cannon' | 'baton' | 'handgrenade' | string;
   /** Damage effect that weapon causes */

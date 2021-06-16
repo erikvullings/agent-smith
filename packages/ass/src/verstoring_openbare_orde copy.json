@@ -18,6 +18,7 @@
         }
     ],
     "equipment": [],
+    "hasEquipment": {},
     "locations": {
         "dam": {
             "type": "any",

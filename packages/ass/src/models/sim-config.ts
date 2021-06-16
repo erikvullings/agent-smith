@@ -6,10 +6,11 @@ export interface ISimConfig {
   settings: Settings;
   generateSettings: GenerateSettings[];
   locations: { [id: string]: ILocation };
+  equipment: { [id: string]: IEquipment };
+  hasEquipment: { [id: string]: string[] }
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
-  equipment: Equipment[];
 }
 
 interface CustomAgents {

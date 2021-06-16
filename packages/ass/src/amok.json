@@ -14,40 +14,31 @@
             "force": "white"
         }
     ],
-    "equipment": [
-        {
-            "equipmentID": "firearm5",
-            "equipmentProperties": {
-                "type": "firearm",
-                "damageLevel": 5,
-                "limit": 10
-            }
+    "equipment": {
+        "firearm5": {
+            "type": "firearm",
+            "damageLevel": 5,
+            "limit": 10
         },
-        {
-            "equipmentID": "firearm4",
-            "equipmentProperties": {
-                "type": "firearm",
-                "damageLevel": 4,
-                "limit": 15
-            }
+        "firearm4":{
+            "type": "firearm",
+            "damageLevel": 4,
+            "limit": 15
         },
-        {
-            "equipmentID": "firearm3",
-            "equipmentProperties": {
-                "type": "firearm",
-                "damageLevel": 3,
-                "limit": 20
-            }
+        "firearm3": {
+            "type": "firearm",
+            "damageLevel": 3,
+            "limit": 20
         },
-        {
-            "equipmentID": "handgrenade",
-            "equipmentProperties": {
-                "type": "handgrenade",
-                "damageLevel": 5,
-                "limit": 5
-            }
+        "handgrenade":{
+            "type": "handgrenade",
+            "damageLevel": 5,
+            "limit": 5
         }
-    ],
+    },
+    "hasEquipment":{
+        "firearm5": ["biker","ter1"]
+    },
     "locations": {
         "ggd": {
             "type": "medical",
@@ -160,13 +151,6 @@
                 4.349894,
                 52.084668
             ]
-        },
-        "testhome": {
-            "type": "home",
-            "coord": [
-                4.364151,
-                52.091361
-            ]
         }
     },
     "customAgents": {
@@ -191,33 +175,27 @@
                     ]
                 },
                 "force": "tbp",
-                "group": [
-                    "tbp",
-                    "tbp_bodyguard",
-                    "tbp_bodyguard1",
-                    "tbp_bodyguard2"
-                ],
+                "group": ["tbp","tbp_bodyguard","tbp_bodyguard1","tbp_bodyguard2"],
                 "memberCount": 4,
                 "mailbox": [],
                 "baseLocation": "bijenkorf"
             },
             {
-                "id": "tbp",
-                "type": "man",
-                "status": "active",
-                "health": 100,
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.304155,
-                        52.079523
-                    ]
-                },
-                "force": "tbp",
-                "memberOf": "tbpGroup",
-                "mailbox": []
-            }
-        ],
+            "id": "tbp",
+            "type": "man",
+            "status": "active",
+            "health": 100,
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.304155,
+                    52.079523
+                ]
+            },
+            "force": "tbp",
+            "memberOf": "tbpGroup",
+            "mailbox": []
+        }],
         "blue": [
             {
                 "id": "biker",
@@ -257,7 +235,14 @@
                 ],
                 "mailbox": [],
                 "baseLocation": "none",
-                "defenseType": "police"
+                "defenseType": "police",
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 5,
+                        "limit": 10
+                    }
+                ]
             },
             {
                 "id": "kmar2",
@@ -386,6 +371,48 @@
                 "defenseType": "police"
             },
             {
+                "id": "police3",
+                "type": "man",
+                "force": "blue",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.364151,
+                        52.091361
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.364151,
+                        52.091361
+                    ]
+                },
+                "occupations": [
+                    {
+                        "type": "work",
+                        "id": "police station jan hendrikstraat"
+                    }
+                ],
+                "mailbox": [],
+                "defenseType": "police",
+                "following": "whiteAgent",
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 15
+                    },
+                    {
+                        "type": "firearm",
+                        "damageLevel": 3,
+                        "limit": 20
+                    }
+                ]
+            },
+            {
                 "id": "police4",
                 "type": "man",
                 "force": "blue",
@@ -430,7 +457,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "memberOf": "tbpGroup"
+                "memberOf": "tbpGroup"    
             },
             {
                 "id": "tbp_bodyguard1",
@@ -447,7 +474,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "memberOf": "tbpGroup"
+                "memberOf": "tbpGroup"    
             },
             {
                 "id": "tbp_bodyguard2",
@@ -464,8 +491,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "memberOf": "tbpGroup"
-            }
+                "memberOf": "tbpGroup"  } 
         ],
         "white": [
             {
@@ -538,34 +564,6 @@
                     {
                         "type": "work",
                         "id": "test"
-                    }
-                ],
-                "mailbox": []
-            },
-            {
-                "id": "whiteAgent2",
-                "type": "man",
-                "force": "white",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.349894,
-                        52.084668
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.349894,
-                        52.084668
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "testhome"
                     }
                 ],
                 "mailbox": []
@@ -810,27 +808,6 @@
     },
     "customAgendas": [
         {
-            "agentId": "tbp",
-            "agendaItems": [
-                {
-                    "name": "Wait",
-                    "options": {
-                        "duration": 1
-                    }
-                },
-                {
-                    "name": "Go to work",
-                    "options": {}
-                },
-                {
-                    "name": "Work",
-                    "options": {
-                        "duration": 3000
-                    }
-                }
-            ]
-        },
-        {
             "agentId": "whiteAgent",
             "agendaItems": [
                 {
@@ -840,30 +817,7 @@
                     }
                 },
                 {
-                    "name": "Work",
-                    "options": {
-                        "priority": 5
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "whiteAgent2",
-            "agendaItems": [
-                {
-                    "name": "Go to work",
-                    "options": {
-                        "priority": 5
-                    }
-                },
-                {
-                    "name": "Work",
+                    "name": "Go to park",
                     "options": {
                         "priority": 5
                     }
@@ -907,24 +861,9 @@
         {
             "agentId": "tbpGroup",
             "agendaItems": [
-                {
-                    "name": "Go shopping",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Wander",
-                    "options": {
-                        "priority": 2
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
+                { "name": "Go shopping", "options" : { "priority": 2 } },
+                { "name": "Wander", "options" : { "priority": 2 } },
+                { "name": "Go home", "options" : { "priority": 2 } }
             ]
         },
         {
