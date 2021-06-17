@@ -227,20 +227,15 @@ export const plans = {
 
   'Go to base': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      if (options.destination) {
-        await prepareAgent(agent);
-        agent.destination = options.destination;
-      }
-      else if (agent.baseLocation) {
-        agent.destination = services.locations[agent.baseLocation];
-      }
+      await prepareAgent(agent);
+      const steps = [] as ActivityList;
+      agent.destination = services.locations[agent.baseLocation];
 
-      if (agent.agenda) {
-        agent.agenda = [agent.agenda[0], { name: 'Wait', options: { duration: minutes(300) } }]
-      }
+      steps.push({ name: 'walkTo', options: { destination: services.locations[agent.baseLocation] } });
+      steps.push({ name: 'waitFor', options: { duration: 70000 } });
 
+      agent.steps = steps;
       agent.speed = 2;
-      prepareRoute(agent, services, options);
       return true;
     },
   },

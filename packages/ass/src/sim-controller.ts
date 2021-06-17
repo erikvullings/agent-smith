@@ -3,9 +3,8 @@ import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import jsonSimConfig from './amok.json';
+import jsonSimConfig from './verstoring_openbare_orde copy.json';
 import reactionConfig from './plan_reactions.json';
-import { Coordinate } from 'osrm-rest-client';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';

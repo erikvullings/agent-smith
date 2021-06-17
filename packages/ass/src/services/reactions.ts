@@ -39,10 +39,8 @@ export const reaction = {
                 , { 'name': 'Go home', 'options': {} }]],
         },
         'tbp': {
-            urgency: 2, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
-                , { 'name': 'Unpanic', 'options': {} }
-                , { 'name': 'Undelay', 'options': {} }
-                , { 'name': 'Go home', 'options': {} }]],
+            urgency: 1, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
+                , { 'name': 'Wait', 'options': { duration: 70000} }]],
         },
     },
     'Play message': {
@@ -55,6 +53,10 @@ export const reaction = {
             urgency: 3, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
                 , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
+        },
+        'tbp': {
+            urgency: 1, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
+                , { 'name': 'Wait', 'options': { duration: 70000} }]],
         },
     },
     'Call the police': {
