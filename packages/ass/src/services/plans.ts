@@ -258,20 +258,27 @@ export const plans = {
 
   'Go to the police station': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
-      // if (options.destination != nul) {
-      //   await prepareAgent(agent);
-      //   agent.destination = options.destination;
-      //   prepareRoute(agent, services, options);
-      //   // agent.speed = 2;
-      // }
-      // else{
-
-      // this plan is not finished yet
       await prepareAgent(agent);
+      const policeStations: ILocation[] = [];
+
+      for(const loc in services.locations){
+        if (services.locations.hasOwnProperty(loc)) {
+          if(services.locations[loc].type === 'police station'){
+            policeStations.push(services.locations[loc]);
+          }
+        }
+      }
+
+      if(policeStations.length >0){
+        agent.destination = policeStations[randomIntInRange(0,policeStations.length-1)];
+      }
+      else{
+        const destination = randomPlaceNearby(agent, 5000, 'police station');
+        agent.destination = destination;
+      }
+
       agent.destination = services.locations['police station'];
       prepareRoute(agent, services, options);
-      // agent.speed = 2;
-      // }
       return true;
     },
   },
