@@ -1,5 +1,5 @@
 
-import { IAgent, IActivityOptions, ActivityList } from '../models';
+import { IAgent, IActivityOptions, ActivityList, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { damageServices } from './damage-service';
 import { dispatchServices, messageServices, redisServices } from '.';
@@ -440,17 +440,24 @@ export const plans = {
   'Visit doctor': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      if (!agent.occupations) {
-        return true;
+      const medicalLoc: ILocation[] = [];
+
+      for(const loc in services.locations){
+        if (services.locations.hasOwnProperty(loc)) {
+          if(services.locations[loc].type === 'medical'){
+            medicalLoc.push(services.locations[loc]);
+          }
+        }
       }
-      const occupations = agent.occupations.filter((o) => o.type === 'doctor_visit');
-      if (occupations.length > 0) {
-        const { destination } = options;
-        const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-        agent.destination = services.locations[occupation.id];
-        await prepareRoute(agent, services, options);
+
+      if(medicalLoc.length >0){
+        agent.destination = medicalLoc[randomIntInRange(0,medicalLoc.length-1)];
       }
+      else{
+        const destination = randomPlaceNearby(agent, 5000, 'medical');
+        agent.destination = destination;
+      }
+      await prepareRoute(agent, services, options);
       return true;
     },
   },
