@@ -221,12 +221,12 @@ export const simController = async (
       );
     }, 10000);
 
-    const chatInterval = setInterval(async () => {
-      const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name === 'Chat');
+    // const chatInterval = setInterval(async () => {
+    //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name === 'Chat');
 
-      if (chattingAgents.length <= agents.length * 0.01)
-        chatServices.agentChat(agents, services);
-    }, 50000);
+    //   if (chattingAgents.length <= agents.length * 0.01)
+    //     chatServices.agentChat(agents, services);
+    // }, 100000);
 
     let i = 0;
     while (i < 1000000000) {

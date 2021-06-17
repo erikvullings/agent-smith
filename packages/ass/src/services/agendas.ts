@@ -385,7 +385,18 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
       reactionAgenda.map((item) => item.options!.reacting = true);
 
     }
-    else if (reactionAgenda[0].name === 'Damage person') {
+    else if (reactionAgenda[0].name === 'Damage person' || reactionAgenda[0].name === 'Search and attack') {
+      if(agent.agenda[0].name === 'Release'){
+        agent.target = mail.sender;
+        reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
+        const updatedOldAgenda = agent.agenda.slice(1);
+        agent.agenda = [agent.agenda[0],...reactionAgenda,...updatedOldAgenda];
+
+        agent.reactedTo = mail.message;
+        updateAgent(agent, services, agents);
+        return true;
+      }
+
       // agent.following = mail.sender.id;
       // agent.destination = mail.location;
       agent.target = mail.sender;
@@ -408,7 +419,9 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
     agent.reactedTo = mail.message;
     updateAgent(agent, services, agents);
+    return true;
   }
+  return false;
 }
 
 export const agendas = {

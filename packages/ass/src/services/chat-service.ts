@@ -13,18 +13,17 @@ import { redisServices } from './redis-service';
 
 const agentChat = async (agents: IAgent[], services: IEnvServices) => {
 
-    const redisAgents: any[] = await redisServices.geoSearch(agents[randomIntInRange(0, agents.length)].actual, 10000);
+    const redisAgents: any[] = await redisServices.geoSearch(agents[randomIntInRange(0, agents.length)].actual, 1000);
 
     const availableAgents: IAgent[] = (redisAgents.map((a) => a = services.agents[a.key]))
         .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting !== true)
             && (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive' &&
-            a.force !== 'red' &&
-            a.force !== 'tbp' &&
+            a.force === 'white' &&
             (a.type === 'woman' || 'man' || 'girl' || 'boy') &&
             (!a.steps || (a.steps[0].name !== 'driveTo' || 'cycleTo')));
 
     const randomAgent: IAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
-    const closeRedis = (await redisServices.geoSearch(randomAgent.actual, 10) as any[]).filter(a => a.key !== randomAgent.id);;
+    const closeRedis = (await redisServices.geoSearch(randomAgent.actual, 5) as any[]).filter(a => a.key !== randomAgent.id);;
     const closeAgents = closeRedis.map(a => a = services.agents[a.key]);
 
     if (closeAgents.length > 0) {

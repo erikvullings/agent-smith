@@ -6,6 +6,7 @@ import { dispatchServices, messageServices, redisServices } from '.';
 import { planEffects } from './plan-effects';
 import { toTime, addGroup, randomItem, hours, minutes, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
 import { agendas } from './agendas';
+import { close } from 'fs';
 
 const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
@@ -94,7 +95,8 @@ export const plans = {
       agent.sentbox = []
       const { endTime } = options;
       if (endTime) {
-        options.startTime = await determineStartTime(agent, services, options);
+        // options.startTime = await determineStartTime(agent, services, options);
+        options.startTime = endTime;
         agent.steps = [{ name: 'waitUntil', options }];
       }
       return true;
@@ -242,6 +244,22 @@ export const plans = {
       return true;
     },
   },
+
+  'Evaluate situation': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      await prepareAgent(agent);
+
+      // if(agent.reactedTo === 'Chaos'){
+
+      // }
+      // agent.destination = destination;
+      agent.running = true;
+      await prepareRoute(agent, services, options);
+
+      return true;
+    },
+  },
+
 
   'Go to specific area': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
@@ -646,16 +664,16 @@ export const plans = {
 
   // Maybe also add "spot targets" to pick targets
   'Attack targets': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
       agent.route = [];
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;
 
-      // if(agent.targets){
-      // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
-      // }
+      if(agent.target){
+      damageServices.damageAgent(agent,[services.agents[agent.target.id]], services)
+      }
       return true;
     },
   },
@@ -671,25 +689,70 @@ export const plans = {
         damageServices.damageAgent(agent, [agent.target], services)
       }
 
-      steps.push({ name: 'waitFor', options: { duration: minutes(2, 5) } });
+      steps.push({ name: 'waitFor', options: { duration: minutes(0,1) } });
       agent.steps = steps;
       return true;
     },
   },
 
-  'Search for problem': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+  'Search and attack': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      agent.route = [];
-      const steps = [] as ActivityList;
-      steps.push({ name: 'waitFor', options });
-      agent.steps = steps;
+      dispatchServices.setStrategy(agent,services);
+      agent.following = dispatchServices.strategy.get(agent.id);
 
-      // not done yet
-      // if the attacker is blue, and if the target is hurt, take the agent to the police station
-      // if(agent.targets){
-      // damageServices.damageAgent(agent,'Attack targets',[services.agents["red2"]],agent.equipment,services)
-      // }
+      if (agent.following && agent.following !== '') {
+        const followedAgent = services.agents[agent.following];
+
+        agent.destination = followedAgent.actual;
+        agent.running = true;
+        const timesim = services.getTime();
+        timesim.setSeconds(timesim.getSeconds() + 1);
+
+        const distanceBetween = distanceInMeters(agent.actual.coord[1], agent.actual.coord[0], followedAgent.actual.coord[1], followedAgent.actual.coord[0]);
+
+        if (distanceBetween < 60) {
+            agent.target = followedAgent;
+            if (followedAgent.health && followedAgent.health > 0) {
+              damageServices.damageAgent(agent, [followedAgent], services);
+              const attackAgenda: ActivityList = [
+                { name: 'Search and attack', options: { destination: followedAgent.actual } }];
+
+              if (agent.agenda) {
+                const oldAgenda = agent.agenda.filter(item => item.name !== 'Search and attack');
+                agent.agenda = [...attackAgenda, ...oldAgenda]
+              }
+              else {
+                agent.agenda = [...attackAgenda]
+              }
+            }
+        }
+        else{
+          const closeRedisAgents: any[] = await redisServices.geoSearch(agent.actual,15,agent);
+          const closeRedAgents: IAgent[] = closeRedisAgents.map(a => a = services.agents[a.key]).filter(a => a.force === 'red')
+
+          if(closeRedAgents.length > 0){
+            damageServices.damageAgent(agent, [closeRedAgents[0]], services);
+          }
+        }
+
+        let followCount = 0;
+        agent.agenda?.filter(item => item.name === 'Search and attack').map(item => followCount += 1);
+
+        if (agent.following && agent.following !== '' && followCount < 2) {
+          const followAgenda = [{ name: 'Search and attack', options: { destination: followedAgent.actual } }];
+
+          if (agent.agenda) {
+            agent.agenda = [...followAgenda, ...agent.agenda];
+          }
+          else {
+            agent.agenda = [...followAgenda]
+          }
+        }
+      }
+
+      prepareRoute(agent, services, options);
+      agent.speed = 2;
       return true;
     },
   },
@@ -861,7 +924,8 @@ export const plans = {
       const { duration = minutes(1, 10) } = options;
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
-
+      console.log('call the police')
+      agent.reactedTo = 'Chaos'
       dispatchServices.sendDefence(agent, services);
       return true;
     },
@@ -897,7 +961,7 @@ export const plans = {
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         } else {
-          const { destination = randomPlaceNearby(agent, 10, 'any') } = options;
+          const { destination = randomPlaceNearby(agent, 50, 'any') } = options;
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         }
