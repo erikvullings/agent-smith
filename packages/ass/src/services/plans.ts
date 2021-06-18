@@ -696,6 +696,11 @@ export const plans = {
       dispatchServices.setStrategy(agent,services);
       agent.following = dispatchServices.strategy.get(agent.id);
 
+      if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true){
+        console.log('reacting is true');
+        damageServices.damageAgent(agent, [agent.target], services);
+      }
+
       if (agent.following && agent.following !== '') {
         const followedAgent = services.agents[agent.following];
 
