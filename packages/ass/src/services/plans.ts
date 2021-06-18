@@ -94,7 +94,7 @@ export const plans = {
       agent.sentbox = []
       const { endTime } = options;
       if (endTime) {
-        options.startTime = await determineStartTime(agent, services, options);
+        options.startTime = endTime;
         agent.steps = [{ name: 'waitUntil', options }];
       }
       return true;
