@@ -15,7 +15,6 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
     const randomAgentStart = agents[randomIntInRange(0, agents.length)];
     if (randomAgentStart) {
         const redisAgents: any[] = await redisServices.geoSearch(randomAgentStart.actual, 10000);
-
         const availableAgents: IAgent[] = (redisAgents.map((a) => a = services.agents[a.key]))
             .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting !== true)
                 && (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive' &&

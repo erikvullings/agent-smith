@@ -26,34 +26,110 @@
                 4.892401,
                 52.373104
             ]
+        },
+        "Koninklijk paleis": {
+            "type": "any",
+            "coord": [
+                4.891309,
+                52.373133
+            ]
         }
     },
     "customAgents": {
         "tbp": [
             {
-                "id": "tbp",
-                "type": "man",
+                "id": "tbpGroup",
+                "type": "group",
                 "status": "active",
                 "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.891997,
-                        52.373123
+                        4.893434,
+                        52.372891
                     ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.891997,
-                        52.373123
+                        4.893434,
+                        52.372891
                     ]
                 },
                 "force": "tbp",
-                "mailbox": []
-            }
+                "group": ["tbp","tbp_bodyguard","tbp_bodyguard1","tbp_bodyguard2"],
+                "memberCount": 4,
+                "mailbox": [],
+                "baseLocation": "Koninklijk paleis"
+            },
+            {
+            "id": "tbp",
+            "type": "man",
+            "status": "active",
+            "health": 100,
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.893434,
+                    52.372891
+            ]
+            },
+            "force": "tbp",
+            "memberOf": "tbpGroup",
+            "mailbox": [] }
         ],
-        "blue": [],
+        "blue": [            
+            {
+            "id": "tbp_bodyguard",
+            "type": "man",
+            "force": "blue",
+            "health": 100,
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.893434,
+                    52.372891
+            ]
+            },
+            "status": "active",
+            "mailbox": [],
+            "defenseType": "police",
+            "memberOf": "tbpGroup"    
+        },
+        {
+            "id": "tbp_bodyguard1",
+            "type": "man",
+            "force": "blue",
+            "health": 100,
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.893434,
+                    52.372891
+            ]
+            },
+            "status": "active",
+            "mailbox": [],
+            "defenseType": "police",
+            "memberOf": "tbpGroup"    
+        },
+        {
+            "id": "tbp_bodyguard2",
+            "type": "man",
+            "force": "blue",
+            "health": 100,
+            "actual": {
+                "type": "any",
+                "coord": [
+                    4.893434,
+                    52.372891
+            ]
+            },
+            "status": "active",
+            "mailbox": [],
+            "defenseType": "police",
+            "memberOf": "tbpGroup"  } 
+],
         "white": [
             {
                 "id": "group1",
@@ -150,7 +226,19 @@
         ],
         "red": []
     },
-    "customAgendas": [],
+    "customAgendas": [
+                {
+            "agentId": "tbpGroup",
+            "agendaItems": [
+                {
+                    "name": "Wait",
+                    "options": {
+                        "duration":720000
+                    }
+                }
+            ]
+        }
+    ],
     "customTypeAgendas": [
         {
             "agentType": "group",

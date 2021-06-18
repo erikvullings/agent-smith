@@ -18,7 +18,7 @@
         "firearm5": {
             "type": "firearm",
             "damageLevel": 5,
-            "limit": 10
+            "limit": 15
         },
         "firearm4":{
             "type": "firearm",
@@ -37,7 +37,8 @@
         }
     },
     "hasEquipment":{
-        "firearm5": ["biker","ter1"]
+        "firearm5": ["SIS1","SIS2","SIS3","SIS4","SIS5"],
+        "firearm4": ["SIS1","SIS2","SIS3","SIS4","SIS5"]
     },
     "locations": {
         "ggd": {
@@ -94,6 +95,13 @@
             "coord": [
                 4.274878,
                 52.072720
+            ]
+        },
+        "SIS base": {
+            "type": "work",
+            "coord": [
+                4.317340,
+                52.070018
             ]
         },
         "bijenkorf": {
@@ -155,343 +163,203 @@
     },
     "customAgents": {
         "tbp": [
+        ],
+        "blue": [
             {
-                "id": "tbpGroup",
+                "id": "SIScar1",
+                "type": "car",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.317340,
+                        52.070018
+                    ]
+                }
+            },
+            {
+                "id": "SIScar2",
+                "type": "car",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                }
+            },
+            {
+                "id": "SIS_team1",
                 "type": "group",
                 "status": "active",
                 "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.304155,
-                        52.079523
-                    ]
+                        4.317340,
+                        52.070018
+                                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.304155,
-                        52.079523
-                    ]
+                        4.317340,
+                        52.070018
+                            ]
                 },
-                "force": "tbp",
-                "group": ["tbp","tbp_bodyguard","tbp_bodyguard1","tbp_bodyguard2"],
-                "memberCount": 4,
-                "mailbox": [],
-                "baseLocation": "bijenkorf"
-            },
-            {
-            "id": "tbp",
-            "type": "man",
-            "status": "active",
-            "health": 100,
-            "actual": {
-                "type": "any",
-                "coord": [
-                    4.304155,
-                    52.079523
-                ]
-            },
-            "force": "tbp",
-            "memberOf": "tbpGroup",
-            "mailbox": []
-        }],
-        "blue": [
-            {
-                "id": "biker",
-                "type": "man",
-                "force": "blue",
-                "health": 100,
-                "status": "active",
-                "owns": [
-                    {
-                        "type": "bicycle",
-                        "id": "bicycle1"
-                    },
-                    {
-                        "type": "car",
-                        "id": "car3"
-                    }
-                ],
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.303899,
-                        52.074553
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.303899,
-                        52.074553
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "mauritspoort"
-                    }
-                ],
-                "mailbox": [],
-                "baseLocation": "none",
-                "defenseType": "police",
-                "equipment": [
-                    {
-                        "type": "firearm",
-                        "damageLevel": 5,
-                        "limit": 10
-                    }
-                ]
-            },
-            {
-                "id": "kmar2",
-                "type": "man",
-                "force": "blue",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.308954,
-                        52.087801
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.308954,
-                        52.087801
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "langepoort"
-                    }
-                ],
-                "mailbox": [],
-                "baseLocation": "none",
-                "defenseType": "kmar"
-            },
-            {
-                "id": "kmar3",
-                "type": "man",
-                "force": "blue",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.283629,
-                        52.078477
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.283629,
-                        52.078477
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "mauritspoort"
-                    }
-                ],
-                "mailbox": [],
-                "baseLocation": "none",
-                "defenseType": "kmar"
-            },
-            {
-                "id": "police1",
-                "type": "man",
-                "force": "blue",
-                "health": 100,
-                "status": "active",
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.306952,
-                        52.075691
-                    ]
-                },
-                "actual": {
-                    "type": "police station",
-                    "coord": [
-                        4.306952,
-                        52.075691
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station"
-                    }
-                ],
                 "owns": [
                     {
                         "type": "car",
-                        "id": "policecar"
+                        "id": "SIScar1"
                     }
                 ],
-                "baseLocation": "station",
-                "mailbox": [],
-                "defenseType": "police"
+                "baseLocation": "SIS base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "memberCount": 5,
+                "group": [
+                    "SIS1",
+                    "SIS2",
+                    "SIS3",
+                    "SIS4",
+                    "SIS5"
+                ],
+                "mailbox": []
             },
             {
-                "id": "police2",
+                "id": "SIS1",
                 "type": "man",
-                "force": "blue",
-                "health": 100,
                 "status": "active",
+                "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.306952,
-                        52.075691
-                    ]
+                        4.317340,
+                        52.070018
+                                    ]
                 },
                 "actual": {
-                    "type": "police station jan hendrikstraat",
+                    "type": "any",
                     "coord": [
-                        4.306952,
-                        52.075691
-                    ]
+                        4.317340,
+                        52.070018
+                            ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station jan hendrikstraat"
-                    }
-                ],
-                "baseLocation": "station",
-                "mailbox": [],
-                "defenseType": "police"
+                "baseLocation": "SIS base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
             },
             {
-                "id": "police3",
+                "id": "SIS2",
                 "type": "man",
-                "force": "blue",
-                "health": 100,
                 "status": "active",
+                "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.364151,
-                        52.091361
-                    ]
+                        4.317340,
+                        52.070018
+                                    ]
                 },
                 "actual": {
-                    "type": "home",
+                    "type": "any",
                     "coord": [
-                        4.364151,
-                        52.091361
-                    ]
+                        4.317340,
+                        52.070018
+                            ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station jan hendrikstraat"
-                    }
-                ],
-                "mailbox": [],
-                "defenseType": "police",
-                "following": "whiteAgent",
-                "equipment": [
-                    {
-                        "type": "firearm",
-                        "damageLevel": 4,
-                        "limit": 15
-                    },
-                    {
-                        "type": "firearm",
-                        "damageLevel": 3,
-                        "limit": 20
-                    }
-                ]
+                "baseLocation": "SIS base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
             },
             {
-                "id": "police4",
+                "id": "SIS3",
                 "type": "man",
-                "force": "blue",
-                "health": 100,
                 "status": "active",
+                "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.306952,
-                        52.075691
-                    ]
+                        4.317340,
+                        52.070018
+                                    ]
                 },
-                "actual": {
-                    "type": "police station jan hendrikstraat",
-                    "coord": [
-                        4.306952,
-                        52.075691
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "police station jan hendrikstraat"
-                    }
-                ],
-                "baseLocation": "station",
-                "mailbox": [],
-                "defenseType": "police"
-            },
-            {
-                "id": "tbp_bodyguard",
-                "type": "man",
-                "force": "blue",
-                "health": 100,
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.304155,
-                        52.079523
-                    ]
+                        4.317340,
+                        52.070018
+                            ]
                 },
-                "status": "active",
-                "mailbox": [],
-                "defenseType": "police",
-                "memberOf": "tbpGroup"    
+                "baseLocation": "SIS base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
             },
             {
-                "id": "tbp_bodyguard1",
+                "id": "SIS4",
                 "type": "man",
-                "force": "blue",
+                "status": "active",
                 "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.317340,
+                        52.070018
+                                    ]
+                },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.304155,
-                        52.079523
-                    ]
+                        4.317340,
+                        52.070018
+                            ]
                 },
-                "status": "active",
-                "mailbox": [],
-                "defenseType": "police",
-                "memberOf": "tbpGroup"    
+                "baseLocation": "SIS base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
             },
             {
-                "id": "tbp_bodyguard2",
+                "id": "SIS5",
                 "type": "man",
-                "force": "blue",
+                "status": "active",
                 "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.317340,
+                        52.070018
+                                    ]
+                },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.304155,
-                        52.079523
-                    ]
+                        4.317340,
+                        52.070018
+                            ]
                 },
+                "baseLocation": "SIS base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
+            },
+
+            {
+                "id": "polcar",
+                "type": "car",
                 "status": "active",
-                "mailbox": [],
-                "defenseType": "police",
-                "memberOf": "tbpGroup"  } 
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.317340,
+                        52.070018
+                    ]
+                }
+            }
         ],
         "white": [
             {
@@ -549,15 +417,15 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.361865,
-                        52.090591
+                        4.317340,
+                        52.070018
                     ]
                 },
                 "actual": {
                     "type": "home",
                     "coord": [
-                        4.361865,
-                        52.090591
+                        4.317340,
+                        52.070018
                     ]
                 },
                 "occupations": [
@@ -647,11 +515,6 @@
                         "type": "firearm",
                         "damageLevel": 4,
                         "limit": 15
-                    },
-                    {
-                        "type": "handgrenade",
-                        "damageLevel": 5,
-                        "limit": 4
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -684,11 +547,6 @@
                         "type": "firearm",
                         "damageLevel": 4,
                         "limit": 15
-                    },
-                    {
-                        "type": "handgrenade",
-                        "damageLevel": 5,
-                        "limit": 4
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -721,11 +579,6 @@
                         "type": "firearm",
                         "damageLevel": 4,
                         "limit": 15
-                    },
-                    {
-                        "type": "handgrenade",
-                        "damageLevel": 5,
-                        "limit": 4
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -811,21 +664,23 @@
             "agentId": "whiteAgent",
             "agendaItems": [
                 {
-                    "name": "Go to work",
+                    "name": "Wait until",
                     "options": {
-                        "priority": 5
+                        "priority": 1,
+                        "endTime": "12:40:00"
                     }
                 },
                 {
-                    "name": "Go to park",
+                    "name": "Go to specific location",
                     "options": {
-                        "priority": 5
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                            ]
+                        }
                     }
                 }
             ]
@@ -859,11 +714,219 @@
             ]
         },
         {
-            "agentId": "tbpGroup",
+            "agentId": "SIS_team1",
             "agendaItems": [
-                { "name": "Go shopping", "options" : { "priority": 2 } },
-                { "name": "Wander", "options" : { "priority": 2 } },
-                { "name": "Go home", "options" : { "priority": 2 } }
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:40:00"
+                    }
+                },
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Release",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS1",
+            "agendaItems": [
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:40:00"
+                    }
+                },
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                        ]
+                        }
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS2",
+            "agendaItems": [
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:40:00"
+                    }
+                },
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                        ]
+                        }
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS3",
+            "agendaItems": [
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:40:00"
+                    }
+                },
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                        ]
+                        }
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS4",
+            "agendaItems": [
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:40:00"
+                    }
+                },
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                        ]
+                        }
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS5",
+            "agendaItems": [
+                {
+                    "name": "Wait until",
+                    "options": {
+                        "priority": 1,
+                        "endTime": "12:40:00"
+                    }
+                },
+                {
+                    "name": "Go to specific location",
+                    "options": {
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                        ]
+                        }
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                },
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
             ]
         },
         {

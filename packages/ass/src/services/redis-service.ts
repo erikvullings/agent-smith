@@ -1,5 +1,6 @@
 import { IAgent, ILocation } from '../models';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Redis = require('ioredis');
 
 const redis = new Redis();

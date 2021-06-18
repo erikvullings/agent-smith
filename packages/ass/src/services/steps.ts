@@ -44,7 +44,6 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
         if (released.health === 0) {
           released.status = 'inactive';
         }
-
       }
     }
   }
@@ -65,7 +64,12 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const step = route[0];
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
-  agent.speed = determineSpeed(agent, services, totDistance, totDuration);
+  if(agent.type === 'group' && agent.force === 'blue'){
+    agent.speed = 3;
+  }
+  else{
+    agent.speed = determineSpeed(agent, services, totDistance, totDuration);
+  }
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
