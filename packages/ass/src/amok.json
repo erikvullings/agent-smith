@@ -18,7 +18,7 @@
         "firearm5": {
             "type": "firearm",
             "damageLevel": 5,
-            "limit": 10
+            "limit": 15
         },
         "firearm4":{
             "type": "firearm",
@@ -37,7 +37,8 @@
         }
     },
     "hasEquipment":{
-        "firearm5": ["SIS1","SIS2","SIS3","SIS4","SIS5"]
+        "firearm5": ["SIS1","SIS2","SIS3","SIS4","SIS5"],
+        "firearm4": ["SIS1","SIS2","SIS3","SIS4","SIS5"]
     },
     "locations": {
         "ggd": {
@@ -165,7 +166,31 @@
         ],
         "blue": [
             {
-                "id": "SIS",
+                "id": "SIScar1",
+                "type": "car",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.317340,
+                        52.070018
+                    ]
+                }
+            },
+            {
+                "id": "SIScar2",
+                "type": "car",
+                "status": "active",
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                }
+            },
+            {
+                "id": "SIS_team1",
                 "type": "group",
                 "status": "active",
                 "health": 100,
@@ -183,6 +208,12 @@
                         52.070018
                             ]
                 },
+                "owns": [
+                    {
+                        "type": "car",
+                        "id": "SIScar1"
+                    }
+                ],
                 "baseLocation": "SIS base",
                 "force": "blue",
                 "attire": "bulletproof vest",
@@ -386,15 +417,15 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.361865,
-                        52.090591
+                        4.317340,
+                        52.070018
                     ]
                 },
                 "actual": {
                     "type": "home",
                     "coord": [
-                        4.361865,
-                        52.090591
+                        4.317340,
+                        52.070018
                     ]
                 },
                 "occupations": [
@@ -633,21 +664,23 @@
             "agentId": "whiteAgent",
             "agendaItems": [
                 {
-                    "name": "Go home",
+                    "name": "Wait until",
                     "options": {
-                        "priority": 5
+                        "priority": 1,
+                        "endTime": "12:40:00"
                     }
                 },
                 {
-                    "name": "Call the police",
+                    "name": "Go to specific location",
                     "options": {
-                        "priority": 5
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
+                        "priority": 1,
+                        "destination": {
+                            "type": "any",
+                            "coord": [
+                                4.311584,
+                                52.076392                        
+                            ]
+                        }
                     }
                 }
             ]
@@ -681,15 +714,7 @@
             ]
         },
         {
-            "agentId": "tbpGroup",
-            "agendaItems": [
-                { "name": "Go shopping", "options" : { "priority": 2 } },
-                { "name": "Wander", "options" : { "priority": 2 } },
-                { "name": "Go home", "options" : { "priority": 2 } }
-            ]
-        },
-        {
-            "agentId": "SIS",
+            "agentId": "SIS_team1",
             "agendaItems": [
                 {
                     "name": "Wait until",
