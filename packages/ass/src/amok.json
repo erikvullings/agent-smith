@@ -246,6 +246,7 @@
                         52.070018
                             ]
                 },
+                "memberOf": "SIS_team1",
                 "baseLocation": "SIS base",
                 "force": "blue",
                 "attire": "bulletproof vest",
@@ -270,6 +271,7 @@
                         52.070018
                             ]
                 },
+                "memberOf": "SIS_team1",
                 "baseLocation": "SIS base",
                 "force": "blue",
                 "attire": "bulletproof vest",
@@ -294,6 +296,7 @@
                         52.070018
                             ]
                 },
+                "memberOf": "SIS_team1",
                 "baseLocation": "SIS base",
                 "force": "blue",
                 "attire": "bulletproof vest",
@@ -318,6 +321,7 @@
                         52.070018
                             ]
                 },
+                "memberOf": "SIS_team1",
                 "baseLocation": "SIS base",
                 "force": "blue",
                 "attire": "bulletproof vest",
@@ -342,6 +346,7 @@
                         52.070018
                             ]
                 },
+                "memberOf": "SIS_team1",
                 "baseLocation": "SIS base",
                 "force": "blue",
                 "attire": "bulletproof vest",
@@ -748,26 +753,6 @@
             "agentId": "SIS1",
             "agendaItems": [
                 {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
                     "name": "Search and attack",
                     "options": {
                         "priority": 1
@@ -784,26 +769,6 @@
         {
             "agentId": "SIS2",
             "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
                 {
                     "name": "Search and attack",
                     "options": {
@@ -822,26 +787,6 @@
             "agentId": "SIS3",
             "agendaItems": [
                 {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
                     "name": "Search and attack",
                     "options": {
                         "priority": 1
@@ -859,26 +804,6 @@
             "agentId": "SIS4",
             "agendaItems": [
                 {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
                     "name": "Search and attack",
                     "options": {
                         "priority": 1
@@ -895,26 +820,6 @@
         {
             "agentId": "SIS5",
             "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
                 {
                     "name": "Search and attack",
                     "options": {

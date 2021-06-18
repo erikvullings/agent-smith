@@ -56,11 +56,10 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
 const strategy = new Map();
 
 const setStrategy = async (agent: IAgent, services: IEnvServices) => {
+  const redAgents: IAgent[] = [];
+  const blueAgents: IAgent[] = [];
 
     if(!strategySet){
-        const redAgents: IAgent[] = [];
-        const blueAgents: IAgent[] = [];
-
         for(const a in services.agents){
           if (services.agents.hasOwnProperty(a)) {
             if(services.agents[a].force === 'red'){
@@ -89,8 +88,16 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
     strategySet = true;
 };
 
+const pickNewTarget = async (agent: IAgent, services: IEnvServices) => {
+  const redAgents = (await redisServices.geoSearch(agent.actual, 100000, agent) as any[]).map((a) => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health >0 && a.type !== 'group');
+
+  return redAgents[0];
+};
+
+
 
 export const dispatchServices = {
+    pickNewTarget,
     strategy,
     setStrategy,
     sendDefence,

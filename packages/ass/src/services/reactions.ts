@@ -89,7 +89,7 @@ export const reaction = {
                                 [{ 'name': 'Hide', 'options': { reacting: true } }]],
         },
         'blue': {
-            urgency: 1, plans: [[{ 'name': 'Search and attack', 'options': { reacting: true } }]],
+            urgency: 2, plans: [[{ 'name': 'Search and attack', 'options': { reacting: true } }]],
         },
     },
     'Walk to person': {
@@ -110,4 +110,10 @@ export const reaction = {
             urgency: 2, plans: [[{ 'name': 'Chat', 'options': { reacting: true } }]],
         },
     },
+    'Red eliminated': {
+        'blue': {
+            urgency: 1, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }]],
+        },
+    },
+
 } as IReactions

@@ -26,7 +26,6 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
     if (agent.owns && agent.owns.length > 0) {
       const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
       const car = ownedCar && services.agents[ownedCar.id];
-      console.log('agent', agent, agent.force,agent.type)
       if (car && ((distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500) || (agent.force === 'blue' && agent.type === 'group'))) {
         car.force = agent.force;
         car.group = [agent.id];
@@ -228,6 +227,19 @@ export const plans = {
 
   'Go to base': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      const blueAgents =[];
+      for(const a in services.agents){
+        if (services.agents.hasOwnProperty(a)) {
+          if(services.agents[a].force === 'blue'){
+            blueAgents.push(services.agents[a]);
+          }
+        }
+      }
+
+      blueAgents.forEach(a => {
+        console.log('situation',a.health)
+      });
+
       await prepareAgent(agent);
       const steps = [] as ActivityList;
       agent.destination = services.locations[agent.baseLocation];
@@ -696,9 +708,9 @@ export const plans = {
       await prepareAgent(agent);
       dispatchServices.setStrategy(agent,services);
       agent.following = dispatchServices.strategy.get(agent.id);
+      agent.running = true;
 
-      if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true){
-        console.log('reacting is true');
+      if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true && agent.target !== undefined && agent.target.health>0){
         damageServices.damageAgent(agent, [agent.target], services);
       }
 
@@ -706,13 +718,12 @@ export const plans = {
         const followedAgent = services.agents[agent.following];
 
         agent.destination = followedAgent.actual;
-        agent.running = true;
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 1);
 
         const distanceBetween = distanceInMeters(agent.actual.coord[1], agent.actual.coord[0], followedAgent.actual.coord[1], followedAgent.actual.coord[0]);
 
-        if (distanceBetween < 60) {
+        if (distanceBetween < 100) {
             agent.target = followedAgent;
             if (followedAgent.health && followedAgent.health > 0) {
               damageServices.damageAgent(agent, [followedAgent], services);
@@ -727,11 +738,31 @@ export const plans = {
                 agent.agenda = [...attackAgenda]
               }
             }
+            else{
+              console.log('the target is dead');
+              agent.following = '';
+              agent.target = await dispatchServices.pickNewTarget(agent,services);
+              console.log('new target', agent.target)
+
+              if(agent.target === undefined || agent.target.health === 0){
+                // const baseAgenda = [{ name: 'Go to base', options: { destination: services.locations[agent.baseLocation] } }];
+
+                // agent.agenda = baseAgenda;
+                console.log('red eliminated message sent')
+                messageServices.sendDirectMessage(agent,'Red eliminated',[agent],services);
+
+                // await agendas.changeAgenda(agent,services,baseAgenda);
+                // console.log('new agenda', agent.agenda)
+                // prepareRoute(agent, services, options);
+                return true;
+              }
+            }
         }
         else{
           const closeRedisAgents: any[] = await redisServices.geoSearch(agent.actual,15,agent);
-          const closeRedAgents: IAgent[] = closeRedisAgents.map(a => a = services.agents[a.key]).filter(a => a.force === 'red')
+          const closeRedAgents: IAgent[] = closeRedisAgents.map(a => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health>0 && a.type !== 'group')
 
+          console.log('closeredagents',closeRedAgents)
           if(closeRedAgents.length > 0){
             damageServices.damageAgent(agent, [closeRedAgents[0]], services);
           }

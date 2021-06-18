@@ -34,7 +34,6 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
 
 const send = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (!sender.sentbox) { sender.sentbox = [] }
-    // console.log(sender.id, sender.sentbox)
     receivers.forEach(rec => {
         const sentbox = sender.sentbox.filter((item) => item.mail.message === message && item.receiver === rec);
 
@@ -162,7 +161,6 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
 const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], itemIndex: number, agents: IAgent[]) => {
     let actionToReact = null as unknown as IMail;
     // const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
-
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({ receiver: agent, mail: actionToReact })
     const cleanedMailbox = agent.mailbox.filter(mail => mail.message !== actionToReact.message && mail.sender !== actionToReact.sender)
