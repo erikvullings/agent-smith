@@ -23,7 +23,8 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
       if (err) {
         return err;
       }
-        return result;
+        const intResult = Math.floor(result);
+        return intResult;
     });
 };
 
