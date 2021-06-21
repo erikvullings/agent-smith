@@ -77,10 +77,10 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
           }
 
         for(let i=0; i<blueAgents.length;i++){
-            blueAgents[i].following = redAgents[i].id;
-            blueAgents[i].target = redAgents[i];
-            console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i].id)
-            strategy.set(blueAgents[i].id,redAgents[i].id);
+            blueAgents[i].following = redAgents[i%redAgents.length].id;
+            blueAgents[i].target = redAgents[i%redAgents.length];
+            console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i%redAgents.length].id)
+            strategy.set(blueAgents[i].id,redAgents[i%redAgents.length].id);
         }
     }
     console.log('strategy is set');
