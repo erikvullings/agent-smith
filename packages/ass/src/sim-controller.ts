@@ -1,9 +1,9 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
-import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem, calculatePointsBetween, generateInLine } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import jsonSimConfig from './amok.json';
+import jsonSimConfig from './verstoring_openbare_orde copy.json';
 import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -77,6 +77,8 @@ export const simController = async (
     const currentSpeed = simSpeed;
     let currentTime = startTime;
 
+    // console.log('points in between',await calculatePointsBetween([4.892958,52.372893],[4.891862,52.373021],8))
+
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
       services.setTime(currentTime);
@@ -97,39 +99,53 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-
-    if (simConfig.generateSettings) {
-      for (const s of simConfig.generateSettings) {
-        const { agents: generatedAgents, locations } = generateAgents(
-          s.centerCoord[0],
-          s.centerCoord[1],
-          s.agentCount,
-          s.radius,
-          s.type,
-          s.force,
-          undefined,
-          s.memberCount
-        );
-
+    if(simConfig.generateSettings){
+      const inLine = simConfig.generateSettings[1];
+      const { agents: generatedAgents, locations } = generateInLine(
+        inLine.startCoord,
+        inLine.endCoord,
+        inLine.radius,
+        inLine.agentCount,
+        inLine.type,
+        inLine.force
+      );
         services.locations = { ...services.locations, ...locations };
         agents.push(...generatedAgents);
-
-        if (s.object) {
-          for (const a of generatedAgents) {
-            const { agents: generatedObject } = generateAgents(
-              s.centerCoord[0],
-              s.centerCoord[1],
-              1,
-              s.radius,
-              s.object,
-              s.force,
-              a
-            );
-            agents.push(...generatedObject);
-          }
-        }
-      }
+        console.log('agents pushed', agents)
     }
+
+    // if (simConfig.generateSettings) {
+    //   for (const s of simConfig.generateSettings) {
+    //     const { agents: generatedAgents, locations } = generateAgents(
+    //       s.centerCoord[0],
+    //       s.centerCoord[1],
+    //       s.agentCount,
+    //       s.radius,
+    //       s.type,
+    //       s.force,
+    //       undefined,
+    //       s.memberCount
+    //     );
+
+    //     services.locations = { ...services.locations, ...locations };
+    //     agents.push(...generatedAgents);
+
+    //     if (s.object) {
+    //       for (const a of generatedAgents) {
+    //         const { agents: generatedObject } = generateAgents(
+    //           s.centerCoord[0],
+    //           s.centerCoord[1],
+    //           1,
+    //           s.radius,
+    //           s.object,
+    //           s.force,
+    //           a
+    //         );
+    //         agents.push(...generatedObject);
+    //       }
+    //     }
+    //   }
+    // }
 
     const nearest = (agent: IAgent, transportType: TransportType) => {
       if (transportType === 'car') {

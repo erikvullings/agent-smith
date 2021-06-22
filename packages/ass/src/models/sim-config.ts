@@ -45,7 +45,10 @@ export interface AgendaItem {
 export interface GenerateSettings {
   agentCount: number;
   centerCoord: number[];
+  startCoord?: number[];
+  endCoord?: number[];
   radius: number;
+  line?: boolean;
   type?: string;
   force?: string;
   object?: string;

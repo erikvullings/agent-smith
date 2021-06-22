@@ -15,7 +15,22 @@
             "object": "gas",
             "force": "red",
             "memberCount": 10
+        },
+        {
+            "agentCount": 10,
+            "startCoord": [
+                4.892958,
+                52.372893
+            ],
+            "endCoord": [
+                4.891862,
+                52.373021
+            ],
+            "type": "man",
+            "radius": 10000,
+            "force": "blue"
         }
+
     ],
     "equipment": [],
     "hasEquipment": {},
