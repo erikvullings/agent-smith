@@ -28,9 +28,9 @@ export const reaction = {
     },
     'Drop gas': {
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } }
-                , { 'name': 'Check object', 'options': {} },
-            { 'name': 'Go to work', 'options': {} }]],
+            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
+                , { 'name': 'Guard', 'options': {duration: 70000} },
+            ]],
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
@@ -45,9 +45,9 @@ export const reaction = {
     },
     'Play message': {
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } }
-                , { 'name': 'Check object', 'options': {} },
-            { 'name': 'Go to work', 'options': {} }]],
+            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
+                , { 'name': 'Guard', 'options': {duration: 70000} },
+            ]],
         },
         'white': {
             urgency: 3, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }

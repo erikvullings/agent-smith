@@ -99,53 +99,53 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-    if(simConfig.generateSettings){
-      const inLine = simConfig.generateSettings[1];
-      const { agents: generatedAgents, locations } = generateInLine(
-        inLine.startCoord,
-        inLine.endCoord,
-        inLine.radius,
-        inLine.agentCount,
-        inLine.type,
-        inLine.force
-      );
-        services.locations = { ...services.locations, ...locations };
-        agents.push(...generatedAgents);
-        console.log('agents pushed', agents)
-    }
-
-    // if (simConfig.generateSettings) {
-    //   for (const s of simConfig.generateSettings) {
-    //     const { agents: generatedAgents, locations } = generateAgents(
-    //       s.centerCoord[0],
-    //       s.centerCoord[1],
-    //       s.agentCount,
-    //       s.radius,
-    //       s.type,
-    //       s.force,
-    //       undefined,
-    //       s.memberCount
-    //     );
-
+    // if(simConfig.generateSettings){
+    //   const inLine = simConfig.generateSettings[1];
+    //   const { agents: generatedAgents, locations } = generateInLine(
+    //     inLine.startCoord,
+    //     inLine.endCoord,
+    //     inLine.radius,
+    //     inLine.agentCount,
+    //     inLine.type,
+    //     inLine.force
+    //   );
     //     services.locations = { ...services.locations, ...locations };
     //     agents.push(...generatedAgents);
-
-    //     if (s.object) {
-    //       for (const a of generatedAgents) {
-    //         const { agents: generatedObject } = generateAgents(
-    //           s.centerCoord[0],
-    //           s.centerCoord[1],
-    //           1,
-    //           s.radius,
-    //           s.object,
-    //           s.force,
-    //           a
-    //         );
-    //         agents.push(...generatedObject);
-    //       }
-    //     }
-    //   }
+    //     console.log('agents pushed', agents)
     // }
+
+    if (simConfig.generateSettings) {
+      for (const s of simConfig.generateSettings) {
+        const { agents: generatedAgents, locations } = generateAgents(
+          s.centerCoord[0],
+          s.centerCoord[1],
+          s.agentCount,
+          s.radius,
+          s.type,
+          s.force,
+          undefined,
+          s.memberCount
+        );
+
+        services.locations = { ...services.locations, ...locations };
+        agents.push(...generatedAgents);
+
+        if (s.object) {
+          for (const a of generatedAgents) {
+            const { agents: generatedObject } = generateAgents(
+              s.centerCoord[0],
+              s.centerCoord[1],
+              1,
+              s.radius,
+              s.object,
+              s.force,
+              a
+            );
+            agents.push(...generatedObject);
+          }
+        }
+      }
+    }
 
     const nearest = (agent: IAgent, transportType: TransportType) => {
       if (transportType === 'car') {
