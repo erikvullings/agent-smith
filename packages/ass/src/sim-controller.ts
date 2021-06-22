@@ -1,7 +1,7 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
-import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem } from './utils';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem, distanceInMeters } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
 import jsonSimConfig from './amok.json';
 import reactionConfig from './plan_reactions.json';
@@ -76,6 +76,7 @@ export const simController = async (
 
     const currentSpeed = simSpeed;
     let currentTime = startTime;
+
 
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
@@ -160,19 +161,19 @@ export const simController = async (
     const equipmentsForAgents = simConfig.hasEquipment;
     console.log('eqqq', equipmentsForAgents)
 
-    for(const key in equipmentsForAgents){
+    for (const key in equipmentsForAgents) {
       if (equipmentsForAgents.hasOwnProperty(key)) {
 
         const agentIdArray = equipmentsForAgents[key] as any[];
         const agentArray = agentIdArray.map(a => a = services.agents[a]);
 
         agentArray.forEach(a => {
-            if(a.equipment){
-              a.equipment.push(services.equipments[key])
-            }
-            else{
-              a.equipment = [services.equipments[key]]
-            }
+          if (a.equipment) {
+            a.equipment.push(services.equipments[key])
+          }
+          else {
+            a.equipment = [services.equipments[key]]
+          }
         });
       }
     }
@@ -198,6 +199,14 @@ export const simController = async (
         }
       }
     }
+
+    const start = [
+      4.892958,
+      52.372893];
+    const end = [
+      4.891862,
+      52.373021];
+    console.log('dist', distanceInMeters(end[0], end[1], start[0], start[1]) / 111139)
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle', 'object'];

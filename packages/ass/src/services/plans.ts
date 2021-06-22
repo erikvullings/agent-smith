@@ -30,6 +30,7 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
       if (car && ((distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500 && agent.destination && distanceInMeters(agent.actual.coord[0], agent.actual.coord[1], agent.destination.coord[0], agent.destination.coord[1]) > 7500) || (agent.force === 'blue' && agent.type === 'group'))) {
         car.force = agent.force;
         car.group = [agent.id];
+        car.memberCount = 1;
         addGroup(agent, car, services);
         steps.push({ name: 'walkTo', options: { destination: car.actual } });
         steps.push({ name: 'controlAgents', options: { control: [car.id] } });
@@ -953,7 +954,6 @@ export const plans = {
       await prepareAgent(agent);
       const steps = [] as ActivityList;
       if (agent.health && agent.health > 30 && agent.equipment && agent.equipment.length > 0) {
-        agent.running = true;
         if (options.areaCenter && options.areaRange) {
           const center = options.areaCenter;
           const { destination = randomPlaceInArea(center[0], center[1], options.areaRange, 'any') } = options;
@@ -971,7 +971,7 @@ export const plans = {
         const attackAgenda: ActivityList = [
           { name: 'Chaos', options }];
         if (agent.agenda) {
-          const oldAgenda = agent.agenda.filter(item => item.name !== 'Follow person');
+          const oldAgenda = agent.agenda.filter(item => item.name !== 'Chaos');
           agent.agenda = [...attackAgenda, ...oldAgenda]
         }
         else {
@@ -996,7 +996,8 @@ export const plans = {
             agent.running = true;
             steps.push({ name: 'walkTo', options: { destination: victim.actual } });
           }
-          steps.push({ name: 'explode', options })
+          steps.push({ name: 'explode', options });
+          messageServices.sendMessage(agent, 'Drop bomb', services);
         }
       }
       agent.steps = steps;
@@ -1018,6 +1019,7 @@ export const plans = {
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: { duration: minutes(10, 15) } });
+      steps.push({ name: 'explode', options: {} });
       steps.push({ name: 'disappear', options: {} });
       agent.steps = steps;
       return true;

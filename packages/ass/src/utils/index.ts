@@ -65,22 +65,22 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
     if (nOMembers < 100) {
       distance = 1.35;
     } else if (nOMembers < 250) {
-      distance = 1;
+      distance = 1.15;
     } else if (nOMembers < 500) {
-      distance = 0.85;
+      distance = 1;
     } else if (nOMembers < 1000) {
-      distance = 0.65;
+      distance = 0.85;
     } else {
-      distance = 0.5;
+      distance = 0.65;
     }
 
-    if (panic && panic > 5) {
+    if (panic && panic > 50) {
       distance -= 0.1;
     }
-    if (panic && panic > 7) {
+    if (panic && panic > 70) {
       distance -= 0.1;
     }
-    if (panic && panic > 9) {
+    if (panic && panic > 90) {
       distance -= 0.1;
     }
 
@@ -472,7 +472,7 @@ export const generateExistingAgent = (lng: number, lat: number, radius: number, 
   const occupationId = Object.keys(occupation);
   const home = generateLocations('home');
   const agent = {
-    id: agentId ? agentId : uuid4(),
+    id: agentId || uuid4(),
     type: type || 'man',
     force: group && group.force ? group.force : 'white',
     health: 100,
