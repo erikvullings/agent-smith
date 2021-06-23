@@ -1055,6 +1055,10 @@ export const plans = {
   'Chaos': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
       await prepareAgent(agent);
+      console.log('chaos')
+      console.log(agent.health)
+      console.log(agent.equipment)
+      console.log(agent.attire)
       const steps = [] as ActivityList;
       if (agent.health && agent.health > 30 && agent.equipment && agent.equipment.length > 0) {
         if (options.areaCenter && options.areaRange) {
@@ -1085,8 +1089,8 @@ export const plans = {
         const attackAgenda: ActivityList = [
           { name: 'Chaos', options }];
         if (agent.agenda) {
-          const oldAgenda = agent.agenda.filter(item => item.name !== 'Chaos');
-          agent.agenda = [...attackAgenda, ...oldAgenda]
+          // const oldAgenda = agent.agenda.filter(item => item.name !== 'Chaos');
+          agent.agenda = [...attackAgenda, ...agent.agenda]
         }
         else {
           agent.agenda = [...attackAgenda]

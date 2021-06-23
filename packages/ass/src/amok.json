@@ -20,7 +20,7 @@
             "damageLevel": 5,
             "limit": 15
         },
-        "firearm4":{
+        "firearm4": {
             "type": "firearm",
             "damageLevel": 4,
             "limit": 15
@@ -30,15 +30,27 @@
             "damageLevel": 3,
             "limit": 20
         },
-        "handgrenade":{
+        "handgrenade": {
             "type": "handgrenade",
             "damageLevel": 5,
             "limit": 5
         }
     },
-    "hasEquipment":{
-        "firearm5": ["SIS1","SIS2","SIS3","SIS4","SIS5"],
-        "firearm4": ["SIS1","SIS2","SIS3","SIS4","SIS5"]
+    "hasEquipment": {
+        "firearm5": [
+            "SIS1",
+            "SIS2",
+            "SIS3",
+            "SIS4",
+            "SIS5"
+        ],
+        "firearm4": [
+            "SIS1",
+            "SIS2",
+            "SIS3",
+            "SIS4",
+            "SIS5"
+        ]
     },
     "locations": {
         "ggd": {
@@ -155,8 +167,7 @@
         }
     },
     "customAgents": {
-        "tbp": [
-        ],
+        "tbp": [],
         "blue": [
             {
                 "id": "SIScar1",
@@ -167,7 +178,7 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 }
             },
             {
@@ -179,7 +190,7 @@
                     "coord": [
                         4.405460,
                         52.144140
-                            ]
+                    ]
                 }
             },
             {
@@ -192,14 +203,14 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.391030,
                         52.054190
-                                    ]
+                    ]
                 },
                 "owns": [
                     {
@@ -230,14 +241,14 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.391030,
                         52.054190
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team1",
                 "baseLocation": "denhaag_base",
@@ -255,14 +266,14 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.391030,
                         52.054190
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team1",
                 "baseLocation": "denhaag_base",
@@ -280,14 +291,14 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.391030,
                         52.054190
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team1",
                 "baseLocation": "denhaag_base",
@@ -305,14 +316,14 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.391030,
                         52.054190
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team1",
                 "baseLocation": "denhaag_base",
@@ -330,14 +341,14 @@
                     "coord": [
                         4.391030,
                         52.054190
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.391030,
                         52.054190
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team1",
                 "baseLocation": "denhaag_base",
@@ -355,14 +366,14 @@
                     "coord": [
                         4.405460,
                         52.144140
-                                                    ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.405460,
                         52.144140
-                                            ]
+                    ]
                 },
                 "owns": [
                     {
@@ -393,14 +404,14 @@
                     "coord": [
                         4.405460,
                         52.144140
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.405460,
                         52.144140
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team2",
                 "baseLocation": "wassenaar_base",
@@ -418,14 +429,14 @@
                     "coord": [
                         4.405460,
                         52.144140
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.405460,
                         52.144140
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team2",
                 "baseLocation": "wassenaar_base",
@@ -443,14 +454,14 @@
                     "coord": [
                         4.405460,
                         52.144140
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.405460,
                         52.144140
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team2",
                 "baseLocation": "wassenaar_base",
@@ -468,14 +479,14 @@
                     "coord": [
                         4.405460,
                         52.144140
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.405460,
                         52.144140
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team2",
                 "baseLocation": "wassenaar_base",
@@ -493,14 +504,14 @@
                     "coord": [
                         4.405460,
                         52.144140
-                                            ]
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
                         4.405460,
                         52.144140
-                                    ]
+                    ]
                 },
                 "memberOf": "SIS_team2",
                 "baseLocation": "wassenaar_base",
@@ -509,8 +520,7 @@
                 "mailbox": []
             }
         ],
-        "white": [
-        ],
+        "white": [],
         "red": [
             {
                 "id": "carter",
@@ -589,6 +599,11 @@
                         "type": "firearm",
                         "damageLevel": 4,
                         "limit": 15
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 4
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -621,6 +636,11 @@
                         "type": "firearm",
                         "damageLevel": 4,
                         "limit": 15
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 4
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -653,6 +673,11 @@
                         "type": "firearm",
                         "damageLevel": 4,
                         "limit": 15
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 4
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -822,8 +847,8 @@
                         "destination": {
                             "type": "any",
                             "coord": [
-                                4.319648,
-                                52.078379
+                                4.310551,
+                                52.078680
                             ]
                         }
                     }
@@ -1047,6 +1072,5 @@
             ]
         }
     ],
-    "customTypeAgendas": [
-    ]
+    "customTypeAgendas": []
 }

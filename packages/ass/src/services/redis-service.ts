@@ -6,7 +6,7 @@ const Redis = require('ioredis');
 const redis = new Redis();
 
 redis.on('error', (err: any) => {
-  console.log(`Error${err}`)
+  // console.log(`Error${err}`)
 });
 
 /**
@@ -23,8 +23,8 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
       if (err) {
         return err;
       }
-        const intResult = Math.floor(result);
-        return intResult;
+      const intResult = Math.floor(result);
+      return intResult;
     });
 };
 
@@ -62,7 +62,7 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
           if (agent !== undefined && String(res.key) !== agent.id) {
             resArray.push(res);
           }
-          else if(agent === undefined){
+          else if (agent === undefined) {
             resArray.push(res);
           }
         });
