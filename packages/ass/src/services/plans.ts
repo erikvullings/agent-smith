@@ -179,14 +179,15 @@ export const plans = {
         const distanceDegrees = range / 111139;
         const dx = Math.sqrt((distanceDegrees ** 2) / (1 + (slope ** 2)));
         if (agent.actual.coord[0] > danger[0]) {
-          const x = agent.actual.coord[0] + dx;
-          const y = agent.actual.coord[1] + dx * slope;
+          const x = danger[0] + dx;
+          const y = danger[1] + dx * slope;
           const destination = randomPlaceInArea(x, y, 10, 'any');
           options.destination = destination;
           agent.destination = destination;
         } else {
           const x = agent.actual.coord[0] - dx;
-          const y = agent.actual.coord[1] - dx * slope;
+          const x = danger[0] - dx;
+          const y = danger[1] - dx * slope;
           const destination = randomPlaceInArea(x, y, 10, 'any');
           options.destination = destination;
           agent.destination = destination;
@@ -510,7 +511,6 @@ export const plans = {
   'Wait': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      console.log('wait');
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options });
       agent.steps = steps;

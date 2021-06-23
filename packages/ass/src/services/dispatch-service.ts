@@ -56,14 +56,13 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
 const strategy = new Map();
 
 const setStrategy = async (agent: IAgent, services: IEnvServices) => {
+  const redAgents: IAgent[] = [];
+  const blueAgents: IAgent[] = [];
 
     if(!strategySet){
-        const redAgents: IAgent[] = [];
-        const blueAgents: IAgent[] = [];
-
         for(const a in services.agents){
           if (services.agents.hasOwnProperty(a)) {
-            if(services.agents[a].force === 'red'){
+            if(services.agents[a].force === 'red' && services.agents[a].type !== ('group' || 'car')){
               redAgents.push(services.agents[a]);
             }
           }
@@ -71,17 +70,17 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
 
         for(const a in services.agents){
             if (services.agents.hasOwnProperty(a)) {
-              if(services.agents[a].force === 'blue'){
+              if(services.agents[a].force === 'blue' && services.agents[a].type !== ('group' || 'car')){
                 blueAgents.push(services.agents[a]);
               }
             }
           }
 
         for(let i=0; i<blueAgents.length;i++){
-            blueAgents[i].following = redAgents[i].id;
-            blueAgents[i].target = redAgents[i];
-            console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i].id)
-            strategy.set(blueAgents[i].id,redAgents[i].id);
+            blueAgents[i].following = redAgents[i%redAgents.length].id;
+            blueAgents[i].target = redAgents[i%redAgents.length];
+            console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i%redAgents.length].id)
+            strategy.set(blueAgents[i].id,redAgents[i%redAgents.length].id);
         }
     }
     console.log('strategy is set');
@@ -89,8 +88,16 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
     strategySet = true;
 };
 
+const pickNewTarget = async (agent: IAgent, services: IEnvServices) => {
+  const redAgents = (await redisServices.geoSearch(agent.actual, 100000, agent) as any[]).map((a) => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health >0 && a.type !== 'group');
+
+  return redAgents[0];
+};
+
+
 
 export const dispatchServices = {
+    pickNewTarget,
     strategy,
     setStrategy,
     sendDefence,

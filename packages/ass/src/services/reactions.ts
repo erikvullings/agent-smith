@@ -28,9 +28,9 @@ export const reaction = {
     },
     'Drop gas': {
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } }
-                , { 'name': 'Check object', 'options': {} },
-            { 'name': 'Go to work', 'options': {} }]],
+            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
+                , { 'name': 'Guard', 'options': {duration: 70000} },
+            ]],
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
@@ -45,9 +45,9 @@ export const reaction = {
     },
     'Play message': {
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } }
-                , { 'name': 'Check object', 'options': {} },
-            { 'name': 'Go to work', 'options': {} }]],
+            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
+                , { 'name': 'Guard', 'options': {duration: 70000} },
+            ]],
         },
         'white': {
             urgency: 3, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
@@ -89,7 +89,9 @@ export const reaction = {
                                 [{ 'name': 'Hide', 'options': { reacting: true } }]],
         },
         'blue': {
-            urgency: 1, plans: [[{ 'name': 'Search and attack', 'options': { reacting: true } }]],
+            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } },
+                { 'name': 'Release', 'options': {reacting: true} },
+                { 'name': 'Search and attack', 'options': {reacting: true} }]],
         },
     },
     'Walk to person': {
@@ -110,4 +112,10 @@ export const reaction = {
             urgency: 2, plans: [[{ 'name': 'Chat', 'options': { reacting: true } }]],
         },
     },
+    'Red eliminated': {
+        'blue': {
+            urgency: 1, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }]],
+        },
+    },
+
 } as IReactions

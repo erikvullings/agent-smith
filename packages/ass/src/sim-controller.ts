@@ -1,9 +1,9 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
-import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem, distanceInMeters } from './utils';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, agentToEntityItem, calculatePointsBetween, generateInLine } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import jsonSimConfig from './amok.json';
+import jsonSimConfig from './verstoring_openbare_orde copy.json';
 import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -47,7 +47,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 2, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
+    const { simSpeed = 10, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     services.setTime(startTime);
     // const agentstoshow = [] as IAgent[];
@@ -77,6 +77,7 @@ export const simController = async (
     const currentSpeed = simSpeed;
     let currentTime = startTime;
 
+    // console.log('points in between',await calculatePointsBetween([4.892958,52.372893],[4.891862,52.373021],8))
 
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
@@ -98,6 +99,20 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
+    // if(simConfig.generateSettings){
+    //   const inLine = simConfig.generateSettings[1];
+    //   const { agents: generatedAgents, locations } = generateInLine(
+    //     inLine.startCoord,
+    //     inLine.endCoord,
+    //     inLine.radius,
+    //     inLine.agentCount,
+    //     inLine.type,
+    //     inLine.force
+    //   );
+    //     services.locations = { ...services.locations, ...locations };
+    //     agents.push(...generatedAgents);
+    //     console.log('agents pushed', agents)
+    // }
 
     if (simConfig.generateSettings) {
       for (const s of simConfig.generateSettings) {
@@ -199,14 +214,6 @@ export const simController = async (
         }
       }
     }
-
-    const start = [
-      4.892958,
-      52.372893];
-    const end = [
-      4.891862,
-      52.373021];
-    console.log('dist', distanceInMeters(end[0], end[1], start[0], start[1]) / 111139)
 
     /** Agent types that never control itself */
     const passiveTypes = ['car', 'bicycle', 'object'];

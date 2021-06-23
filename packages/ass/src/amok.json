@@ -48,18 +48,18 @@
                 52.075506
             ]
         },
-        "h_m_shop": {
-            "type": "work",
+        "wassenaar_base": {
+            "type": "sis base",
             "coord": [
-                4.310522,
-                52.076824
+                4.405460,
+                52.144140
             ]
         },
-        "mc_donalds": {
-            "type": "work",
+        "denhaag_base": {
+            "type": "sis base",
             "coord": [
-                4.311358,
-                52.078769
+                4.391030,
+                52.054190
             ]
         },
         "paleistuin": {
@@ -95,13 +95,6 @@
             "coord": [
                 4.274878,
                 52.072720
-            ]
-        },
-        "SIS base": {
-            "type": "work",
-            "coord": [
-                4.317340,
-                52.070018
             ]
         },
         "bijenkorf": {
@@ -172,9 +165,9 @@
                 "actual": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 }
             },
             {
@@ -184,9 +177,9 @@
                 "actual": {
                     "type": "home",
                     "coord": [
-                        4.358927,
-                        52.132907
-                    ]
+                        4.405460,
+                        52.144140
+                            ]
                 }
             },
             {
@@ -197,16 +190,16 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.317340,
-                        52.070018
-                            ]
+                        4.391030,
+                        52.054190
+                                    ]
                 },
                 "owns": [
                     {
@@ -214,7 +207,7 @@
                         "id": "SIScar1"
                     }
                 ],
-                "baseLocation": "SIS base",
+                "baseLocation": "denhaag_base",
                 "force": "blue",
                 "attire": "bulletproof vest",
                 "memberCount": 5,
@@ -235,18 +228,19 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.317340,
-                        52.070018
-                            ]
+                        4.391030,
+                        52.054190
+                                    ]
                 },
-                "baseLocation": "SIS base",
+                "memberOf": "SIS_team1",
+                "baseLocation": "denhaag_base",
                 "force": "blue",
                 "attire": "bulletproof vest",
                 "mailbox": []
@@ -259,18 +253,19 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.317340,
-                        52.070018
-                            ]
+                        4.391030,
+                        52.054190
+                                    ]
                 },
-                "baseLocation": "SIS base",
+                "memberOf": "SIS_team1",
+                "baseLocation": "denhaag_base",
                 "force": "blue",
                 "attire": "bulletproof vest",
                 "mailbox": []
@@ -283,18 +278,19 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.317340,
-                        52.070018
-                            ]
+                        4.391030,
+                        52.054190
+                                    ]
                 },
-                "baseLocation": "SIS base",
+                "memberOf": "SIS_team1",
+                "baseLocation": "denhaag_base",
                 "force": "blue",
                 "attire": "bulletproof vest",
                 "mailbox": []
@@ -307,18 +303,19 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.317340,
-                        52.070018
-                            ]
+                        4.391030,
+                        52.054190
+                                    ]
                 },
-                "baseLocation": "SIS base",
+                "memberOf": "SIS_team1",
+                "baseLocation": "denhaag_base",
                 "force": "blue",
                 "attire": "bulletproof vest",
                 "mailbox": []
@@ -331,111 +328,188 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                                    ]
+                        4.391030,
+                        52.054190
+                                            ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.317340,
-                        52.070018
-                            ]
+                        4.391030,
+                        52.054190
+                                    ]
                 },
-                "baseLocation": "SIS base",
+                "memberOf": "SIS_team1",
+                "baseLocation": "denhaag_base",
                 "force": "blue",
                 "attire": "bulletproof vest",
                 "mailbox": []
             },
-
             {
-                "id": "polcar",
-                "type": "car",
+                "id": "SIS_team2",
+                "type": "group",
                 "status": "active",
-                "actual": {
+                "health": 100,
+                "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                    ]
-                }
-            }
-        ],
-        "white": [
-            {
-                "id": "agent1",
-                "type": "man",
-                "force": "white",
-                "health": 100,
-                "status": "active",
+                        4.405460,
+                        52.144140
+                                                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                            ]
+                },
                 "owns": [
                     {
                         "type": "car",
-                        "id": "car1"
+                        "id": "SIScar2"
                     }
                 ],
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.313122,
-                        52.082296
-                    ]
-                },
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.313122,
-                        52.082296
-                    ]
-                },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "bijenkorf"
-                    }
+                "baseLocation": "wassenaar_base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "memberCount": 5,
+                "group": [
+                    "SIS6",
+                    "SIS7",
+                    "SIS8",
+                    "SIS9",
+                    "SIS10"
                 ],
                 "mailbox": []
             },
             {
-                "id": "car1",
-                "type": "car",
-                "status": "active",
-                "actual": {
-                    "type": "home",
-                    "coord": [
-                        4.313122,
-                        52.082296
-                    ]
-                }
-            },
-            {
-                "id": "whiteAgent",
+                "id": "SIS6",
                 "type": "man",
-                "force": "white",
-                "health": 100,
                 "status": "active",
+                "health": 100,
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                    ]
+                        4.405460,
+                        52.144140
+                                            ]
                 },
                 "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                    ]
+                },
+                "memberOf": "SIS_team2",
+                "baseLocation": "wassenaar_base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
+            },
+            {
+                "id": "SIS7",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
                     "type": "home",
                     "coord": [
-                        4.317340,
-                        52.070018
-                    ]
+                        4.405460,
+                        52.144140
+                                            ]
                 },
-                "occupations": [
-                    {
-                        "type": "work",
-                        "id": "test"
-                    }
-                ],
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                    ]
+                },
+                "memberOf": "SIS_team2",
+                "baseLocation": "wassenaar_base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
+            },
+            {
+                "id": "SIS8",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                            ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                    ]
+                },
+                "memberOf": "SIS_team2",
+                "baseLocation": "wassenaar_base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
+            },
+            {
+                "id": "SIS9",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                            ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                    ]
+                },
+                "memberOf": "SIS_team2",
+                "baseLocation": "wassenaar_base",
+                "force": "blue",
+                "attire": "bulletproof vest",
+                "mailbox": []
+            },
+            {
+                "id": "SIS10",
+                "type": "man",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                            ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.405460,
+                        52.144140
+                                    ]
+                },
+                "memberOf": "SIS_team2",
+                "baseLocation": "wassenaar_base",
+                "force": "blue",
+                "attire": "bulletproof vest",
                 "mailbox": []
             }
+        ],
+        "white": [
         ],
         "red": [
             {
@@ -661,49 +735,7 @@
     },
     "customAgendas": [
         {
-            "agentId": "whiteAgent",
-            "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                            ]
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "police3",
-            "agendaItems": [
-                {
-                    "name": "Go to work",
-                    "options": {
-                        "priority": 3
-                    }
-                },
-                {
-                    "name": "Go home",
-                    "options": {
-                        "priority": 2
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "police4",
+            "agentId": "SIS_team1",
             "agendaItems": [
                 {
                     "name": "Stay at police station",
@@ -714,217 +746,12 @@
             ]
         },
         {
-            "agentId": "SIS_team1",
+            "agentId": "SIS_team2",
             "agendaItems": [
                 {
-                    "name": "Wait until",
+                    "name": "Stay at police station",
                     "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Release",
-                    "options": {
-                        "priority": 1
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "SIS1",
-            "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "SIS2",
-            "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "SIS3",
-            "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "SIS4",
-            "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                }
-            ]
-        },
-        {
-            "agentId": "SIS5",
-            "agendaItems": [
-                {
-                    "name": "Wait until",
-                    "options": {
-                        "priority": 1,
-                        "endTime": "12:40:00"
-                    }
-                },
-                {
-                    "name": "Go to specific location",
-                    "options": {
-                        "priority": 1,
-                        "destination": {
-                            "type": "any",
-                            "coord": [
-                                4.311584,
-                                52.076392                        
-                        ]
-                        }
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
-                    }
-                },
-                {
-                    "name": "Search and attack",
-                    "options": {
-                        "priority": 1
+                        "priority": 3
                     }
                 }
             ]
@@ -1108,7 +935,118 @@
                     }
                 }
             ]
+        },
+        {
+            "agentId": "SIS1",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS2",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS3",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS4",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS5",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS6",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS7",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS8",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS9",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        },
+        {
+            "agentId": "SIS10",
+            "agendaItems": [
+                {
+                    "name": "Search and attack",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
         }
     ],
-    "customTypeAgendas": []
+    "customTypeAgendas": [
+    ]
 }

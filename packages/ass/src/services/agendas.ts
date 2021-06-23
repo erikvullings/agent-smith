@@ -1,6 +1,6 @@
 import { ActivityList, IAgent, IMail } from '../models';
 
-import { hours, randomInRange, randomIntInRange, minutes, toTime } from '../utils';
+import { hours, randomInRange, randomIntInRange, minutes, toTime, findWithAttr } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
 // import * as simConfig from '../sim_config.json';
 import { reaction } from '.';
@@ -351,6 +351,22 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
 
 };
 
+const changeAgenda = async (agent: IAgent, services: IEnvServices, newAgenda: ActivityList) => {
+  agent.route = [];
+  agent.steps = [];
+
+  const timesim = services.getTime();
+  timesim.setSeconds(timesim.getSeconds() + 1);
+  const startTime = toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds());
+
+  if(newAgenda.length>0){
+    newAgenda[0].options = { startTime, ...newAgenda[0].options };
+  }
+
+  updateAgent(agent, services, [agent]);
+  return true;
+}
+
 /**
  * @param agent
  * @param services
@@ -376,6 +392,16 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }
+    else if (reactionAgenda[0].name === 'Go to base') {
+      agent.destination = services.locations[agent.baseLocation];
+
+      reactionAgenda[0].options = { startTime, destination: services.locations[agent.baseLocation], priority: 1 };
+
+      agent.agenda = [...reactionAgenda];
+
+      reactionAgenda.map((item) => item.options!.reacting = true);
+    }
+
     else if (reactionAgenda[0].name === 'Follow person' || reactionAgenda[0].name === 'Walk to person') {
       console.log('following', mail.sender.id, 'location', mail.location);
       agent.following = mail.sender.id;
@@ -386,11 +412,15 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
     }
     else if (reactionAgenda[0].name === 'Damage person' || reactionAgenda[0].name === 'Search and attack') {
+      console.log('add reactin')
+      const index = await findWithAttr(agent.agenda,'name','Release');
+      console.log('indexi',index)
       if(agent.agenda[0].name === 'Release'){
         agent.target = mail.sender;
         reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
         const updatedOldAgenda = agent.agenda.slice(1);
-        agent.agenda = [agent.agenda[0],...reactionAgenda,...updatedOldAgenda];
+        const releaseAgenda = agent.agenda.slice(0,index)
+        agent.agenda = [...releaseAgenda,...reactionAgenda,...updatedOldAgenda];
 
         agent.reactedTo = mail.message;
         updateAgent(agent, services, agents);
@@ -425,6 +455,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 }
 
 export const agendas = {
+  changeAgenda,
   getAgenda,
   customAgenda,
   customTypeAgenda,
