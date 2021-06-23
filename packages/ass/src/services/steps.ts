@@ -38,7 +38,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       releaseAgents(agent, services, { release: agentsToRelease }, agents);
       for (const a of agentsToRelease) {
         const released = services.agents[a];
-        released.health = randomInRange(0, 30);
+        released.health = randomIntInRange(0, 30);
         released.agenda = [{ name: 'Wait', options: { duration: minutes(3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
         released.running = true;
         if (released.health === 0) {
