@@ -312,13 +312,13 @@ export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string,
     return {
       type,
       // 1 degree is approximately 111111 meters
-      coord: [randomInRange(lon + lonVal * rMin, lon + lonVal * r), randomInRange(lat + latVal * rMin, lat + latVal * r)],
+      coord: [parseFloat(randomInRange(lon + lonVal * rMin, lon + lonVal * r).toFixed(6)), parseFloat(randomInRange(lat + latVal * rMin, lat + latVal * r).toFixed(6))],
     };
   }
   return {
     type,
     // 1 degree is approximately 111111 meters
-    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+    coord: [parseFloat(randomInRange(lon - r, lon + r).toFixed(6)), parseFloat(randomInRange(lat - r, lat + r).toFixed(6))],
   };
 };
 
@@ -334,7 +334,7 @@ export const randomPlaceInArea = (lon: number, lat: number, rangeInMeter: number
   return {
     type,
     // 1 degree is approximately 111111 meters
-    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+    coord: [parseFloat(randomInRange(lon - r, lon + r).toFixed(6)), parseFloat(randomInRange(lat - r, lat + r).toFixed(6))],
   };
 };
 
@@ -450,72 +450,6 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
   return { agents, locations: { ...homes, ...occupations } };
 };
 
-export const generateInLine = (startCoord: number[], endCoord: number[], radius: number, count: number, type?: string, force?: string, group?: IAgent, memberCount?: number) => {
-  const offset = () => random(-radius, radius) / 100000;
-
-  console.log('coords start', startCoord[0],startCoord[1])
-  const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
-    range(1, count / 2).reduce((acc) => {
-      const coord = [startCoord[0] + offset(), startCoord[1] + offset()] as [number, number];
-      const id = uuid4();
-      acc[id] = { type: locType, coord };
-      return acc;
-    }, {} as { [key: string]: ILocation });
-
-  const slope = (endCoord[1] - startCoord[1]) / (endCoord[0] - startCoord[0]);
-  const distanceDegrees = distanceInMeters(endCoord[0],endCoord[1],startCoord[0],startCoord[1]) / 111139;
-  const points: Coordinate[] = [];
-
-  console.log('distanceDegrees',distanceDegrees)
-  for(let i=0;i<count;i++){
-    const dx = (Math.sqrt(((distanceDegrees/(count-1)) ** 2) / (1 + (slope ** 2))));
-
-    const lat = startCoord[0] + dx * i;
-    const long = startCoord[1] + dx * i * slope;
-    points.push([lat,long]);
-  }
-
-  console.log(points)
-
-  console.log('points',points)
-  const homes = generateLocations('home');
-  console.log('homes',homes)
-  const homeIds = Object.keys(homes);
-  const agents = range(0,1).reduce((acc) => {
-    for(let i=0; i<count; i++){
-      console.log('i',i,'count',count)
-      const home = homes[randomItem(homeIds)];
-      const occupationId = 'dam';
-      const occupation = simConfig.locations[occupationId];
-      const agent = {
-        id: uuid4(),
-        type: type || 'man',
-        force: 'blue',
-        health: 100,
-        status: 'active',
-        home,
-        // owns: [{ type: 'car', id: 'car1' }],
-        actual: {
-          type: 'work',
-          coord: points[i],
-        },
-        occupations: [{ id: occupationId, ...occupation }],
-        memberOf: group ? group.id : undefined,
-        memberCount,
-      } as unknown as IAgent;
-      acc.push(agent);
-      console.log('agent', agent)
-      // redisServices.geoAdd('agents', agent);
-      if (group && group.group) {
-        group.group.push(agent.id);
-      } else if (group) {
-        group.group = [agent.id];
-      }
-    }
-    return acc;
-  }, [] as IAgent[]);
-  return { agents, locations: { ...homes } };
-};
 
 /**
  * @param lng
