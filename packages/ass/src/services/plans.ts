@@ -185,7 +185,6 @@ export const plans = {
           options.destination = destination;
           agent.destination = destination;
         } else {
-          const x = agent.actual.coord[0] - dx;
           const x = danger[0] - dx;
           const y = danger[1] - dx * slope;
           const destination = randomPlaceInArea(x, y, 10, 'any');
