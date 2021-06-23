@@ -39,7 +39,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       for (const a of agentsToRelease) {
         const released = services.agents[a];
         released.health = randomInRange(0, 30);
-        released.agenda = [{ name: 'Wait', options: { duration: minutes(1) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
+        released.agenda = [{ name: 'Wait', options: { duration: minutes(3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
         released.running = true;
         if (released.health === 0) {
           released.status = 'inactive';
@@ -64,10 +64,10 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const step = route[0];
   const totDistance = step.distance || 0;
   const totDuration = step.duration || 0;
-  if(agent.type === 'group' && agent.force === 'blue'){
+  if (agent.type === 'group' && agent.force === 'blue') {
     agent.speed = 3;
   }
-  else{
+  else {
     agent.speed = determineSpeed(agent, services, totDistance, totDuration);
   }
   let distance2go = agent.speed * deltaTime;
@@ -84,7 +84,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       distance2go -= segmentLength;
       agent.route = route;
       if (agent.type === 'group' && agent.group && agent.group.length > 0) {
-        if (agent.panic && agent.running) {
+        if (agent.panic && agent.panic.panicLevel > 0 && agent.running) {
           releaseVictimsGroup(agent, services, agents);
         }
       }

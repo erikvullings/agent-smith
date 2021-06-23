@@ -176,19 +176,19 @@ export const simController = async (
     const equipmentsForAgents = simConfig.hasEquipment;
     console.log('eqqq', equipmentsForAgents)
 
-    for(const key in equipmentsForAgents){
+    for (const key in equipmentsForAgents) {
       if (equipmentsForAgents.hasOwnProperty(key)) {
 
         const agentIdArray = equipmentsForAgents[key] as any[];
         const agentArray = agentIdArray.map(a => a = services.agents[a]);
 
         agentArray.forEach(a => {
-            if(a.equipment){
-              a.equipment.push(services.equipments[key])
-            }
-            else{
-              a.equipment = [services.equipments[key]]
-            }
+          if (a.equipment) {
+            a.equipment.push(services.equipments[key])
+          }
+          else {
+            a.equipment = [services.equipments[key]]
+          }
         });
       }
     }

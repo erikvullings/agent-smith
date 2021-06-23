@@ -64,22 +64,22 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
     if (nOMembers < 100) {
       distance = 1.35;
     } else if (nOMembers < 250) {
-      distance = 1;
+      distance = 1.15;
     } else if (nOMembers < 500) {
-      distance = 0.85;
+      distance = 1;
     } else if (nOMembers < 1000) {
-      distance = 0.65;
+      distance = 0.85;
     } else {
-      distance = 0.5;
+      distance = 0.65;
     }
 
-    if (panic && panic > 5) {
+    if (panic && panic > 50) {
       distance -= 0.1;
     }
-    if (panic && panic > 7) {
+    if (panic && panic > 70) {
       distance -= 0.1;
     }
-    if (panic && panic > 9) {
+    if (panic && panic > 90) {
       distance -= 0.1;
     }
 
@@ -462,7 +462,7 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
  * Generate agent with given id
  */
 
-export const generateExistingAgent = (lng: number, lat: number, radius: number, agentId: string, group?: IAgent, type?: string) => {
+export const generateExistingAgent = (lng: number, lat: number, radius: number, agentId?: string, group?: IAgent, type?: string) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') => {
     const coord = [lng + offset(), lat + offset()] as [number, number];
@@ -472,7 +472,7 @@ export const generateExistingAgent = (lng: number, lat: number, radius: number, 
   const occupationId = Object.keys(occupation);
   const home = generateLocations('home');
   const agent = {
-    id: agentId,
+    id: agentId || uuid4(),
     type: type || 'man',
     force: group && group.force ? group.force : 'white',
     health: 100,
@@ -486,18 +486,21 @@ export const generateExistingAgent = (lng: number, lat: number, radius: number, 
 };
 
 export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices) => {
-  if (trnsprt.group) {
-    trnsprt.memberCount = trnsprt.memberCount ? trnsprt.memberCount : 0;
-    if (agent.group) {
-      trnsprt.group.push(...agent.group);
-      trnsprt.memberCount += agent.group.length;
-      agent.group
-        .filter((a) => services.agents[a].group)
-        .map((a) => addGroup(services.agents[a], trnsprt, services));
-    }
-    if (agent.type === 'group') {
-      trnsprt.memberCount -= 1;
-    }
+  if (!trnsprt.group) {
+    trnsprt.group = [agent.id]
+  } else {
+    trnsprt.group.push(agent.id)
+  }
+  trnsprt.memberCount = trnsprt.memberCount ? trnsprt.memberCount : 0;
+  if (agent.group) {
+    trnsprt.group.push(...agent.group);
+    trnsprt.memberCount += agent.group.length;
+    agent.group
+      .filter((a) => services.agents[a].group)
+      .map((a) => addGroup(services.agents[a], trnsprt, services));
+  }
+  if (agent.type === 'group') {
+    trnsprt.memberCount -= 1;
   }
 };
 
@@ -562,7 +565,7 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
   }
 
   speed = totDuration > 0 ? totDistance / totDuration : defaultWalkingSpeed;
-  if (child === 'yes') {
+  if (child === 'yes' && agent.steps && agent.steps[0] && agent.steps[0].name === 'walkTo') {
     speed *= (3 / 5);
   }
   if (agent.running) {
@@ -576,14 +579,16 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
     const numberofmembers = agent.memberCount
     speed = groupSpeed(numberofmembers, speed, agent.panic ? agent.panic.panicLevel : undefined);
   }
-  if (agent.health && agent.health < 30 && agent.health >= 20) {
-    speed /= 1.5;
-  }
-  if (agent.health && agent.health < 20 && agent.health >= 10) {
-    speed /= 2;
-  }
-  if (agent.health && agent.health < 10) {
-    speed = 0;
+  if (agent.steps && agent.steps[0] && !(agent.steps[0].name === 'driveTo')) {
+    if (agent.health && agent.health < 30 && agent.health >= 20) {
+      speed /= 1.5;
+    }
+    if (agent.health && agent.health < 20 && agent.health >= 10) {
+      speed /= 2;
+    }
+    if (agent.health && agent.health < 10) {
+      speed = 0;
+    }
   }
   if (agent.delay) {
     speed /= 1 + agent.delay.delayLevel / 50;
