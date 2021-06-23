@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby, randomItem } from '../utils';
 
 
 /**
@@ -30,7 +30,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
     releaseProbabilityPercentage += (agent.vulnerability / 200);
   }
   const releaseProbability = agent.group ? agent.group.length * 0.01 * releaseProbabilityPercentage : 0;
-  const rnd = randomIntInRange(0, 100);
+  const rnd = randomInRange(0, 100);
   if (rnd < releaseProbability) {
     const numberReleased = randomIntInRange(1, 3);
     if (agent.group && agent.group.length >= numberReleased) {
@@ -38,8 +38,20 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       releaseAgents(agent, services, { release: agentsToRelease }, agents);
       for (const a of agentsToRelease) {
         const released = services.agents[a];
-        released.health = randomIntInRange(0, 30);
-        released.agenda = [{ name: 'Wait', options: { duration: minutes(3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Go home', options: {} }];
+        released.health = released.health ? released.health - randomIntInRange(70, 100) : randomIntInRange(0, 30);
+        released.panic = agent.panic;
+        released.delay = agent.delay;
+        if (released.agenda) {
+          if (released.delay) {
+            released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Undelay', options: {} }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Unpanic', options: {} }, ...released.agenda];
+          } else {
+            released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Undelay', options: {} }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Unpanic', options: {} }, ...released.agenda];
+          }
+        } else if (released.delay) {
+          released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Go home', options: {} }];
+        } else {
+          released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Go home', options: {} }];
+        }
         released.running = true;
         if (released.health === 0) {
           released.status = 'inactive';
@@ -48,6 +60,8 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
     }
   }
 }
+
+
 
 /**
  * @param agent
@@ -107,6 +121,100 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   }
   route.splice(0, 1);
   return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
+
+};
+
+/**
+ * @param agent
+ * @param services
+ * @param deltaTime
+ * @param agents
+ * Move agent fleeing along a route.
+ */
+const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): Promise<boolean> => {
+  const { route = [] } = agent;
+  if (route.length === 0) {
+    return true; // Done
+  }
+  const step = route[0];
+  const totDistance = step.distance || 0;
+  const totDuration = step.duration || 0;
+  if (agent.type === 'group' && agent.force === 'blue') {
+    agent.speed = 3;
+  }
+  else {
+    agent.speed = determineSpeed(agent, services, totDistance, totDuration);
+  }
+  let distance2go = agent.speed * deltaTime;
+  const waypoints = (step.geometry as ILineString).coordinates;
+  for (let i = 0; i < waypoints.length; i++) {
+    const [x0, y0] = agent.actual.coord;
+    const [x1, y1] = waypoints[i];
+    const segmentLength = services.distance(x0, y0, x1, y1);
+    // const segmentLength2 = distance([y0, x0], [y1, x1], { units: 'meters' });
+    // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
+    if (distance2go >= segmentLength) {
+      agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
+      // redisServices.geoAdd('agents', agent);
+      distance2go -= segmentLength;
+      agent.route = route;
+      try {
+        const inRange = await redisServices.geoSearch(agent.actual, 5, agent);
+        const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
+        const whiteGroups = agentsInRange.filter((a: IAgent) => a.type === 'group' && a.force === 'white');
+        const group = randomItem(whiteGroups);
+        if (group && group.group && group.group.length > 0) {
+          if (group.group && group.memberCount) {
+            if (group.group.indexOf(agent.id) < 0) {
+              group.group.push(agent.id);
+              group.memberCount += 1;
+              addGroup(agent, group, services);
+            }
+          } else {
+            group.group = [agent.id];
+            group.memberCount = 1;
+            addGroup(agent, group, services);
+          }
+          agent.actual = group.actual;
+          agent.memberOf = group.id;
+          return false
+        }
+        if (agentsInRange && agentsInRange.length > 0) {
+          const collideProb = 0.3;
+          const r = randomInRange(0, 1);
+          if (r < collideProb) {
+            agent.health = agent.health ? agent.health - randomIntInRange(0, 15) : randomIntInRange(100, 85);
+            if (agent.steps) {
+              agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }, ...agent.steps];
+            } else {
+              agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }];
+            }
+            return false
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      if (i > 0) {
+        (step.geometry as ILineString).coordinates.splice(0, i);
+      }
+      const ratio = distance2go / segmentLength;
+      const coord = [x0 + (x1 - x0) * ratio, y0 + (y1 - y0) * ratio] as [number, number];
+      agent.actual = { type: step.name || 'unnamed', coord };
+      redisServices.geoAdd('agents', agent);
+      moveGroup(agent, services);
+      // console.log(
+      //   `${agent.id} is travelling at ${Math.round((agent.speed * 36) / 10)}km/h to ${agent.actual.type} (${round(
+      //     agent.actual.coord
+      //   )}).`
+      // );
+      return false;
+    }
+  }
+  route.splice(0, 1);
+  return fleeAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
+
 };
 
 /**
@@ -137,6 +245,14 @@ const moveAgent = (profile: Profile) => async (
       agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
       // console.log(agent.route)
       // console.log(JSON.stringify(agent.route, null, 2));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  if (agent.panic && agent.panic.panicLevel > 0 && agent.running && (agent.type === 'man' || agent.type === 'woman' || agent.type === 'boy' || agent.type === 'girl')) {
+    try {
+      const flee = await fleeAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
+      return flee
     } catch (e) {
       console.error(e);
     }
@@ -256,7 +372,11 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
           if (a.group) {
             releaseAgents(agent, services, { release: a.group }, agents);
             for (const member of a.group) {
-              joinGroup(services.agents[member], services, { group: a.id })
+              if (agent.steps) {
+                agent.steps = [{ name: 'joinGroup', options: { group: a.id } }, ...agent.steps];
+              } else {
+                agent.steps = [{ name: 'joinGroup', options: { group: a.id } }];
+              }
             }
           }
         }
@@ -318,6 +438,7 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
         newGroup.memberCount = 1;
         addGroup(agent, newGroup, services);
       }
+      agent.actual = newGroup.actual;
       agent.memberOf = newGroup.id;
     }
   }

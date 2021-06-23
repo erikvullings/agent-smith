@@ -666,7 +666,7 @@ export const plans = {
           }
         }
       }
-      else{
+      else {
         const center = agent.actual.coord;
         const { destination = randomPlaceInArea(center[0], center[1], 2000, 'any') } = options;
         agent.destination = destination;
@@ -1138,7 +1138,9 @@ export const plans = {
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       delete agent.panic;
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
+      console.log('unpanic')
       return true;
     },
   },
@@ -1147,7 +1149,9 @@ export const plans = {
     prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       const steps = [] as ActivityList;
       delete agent.delay;
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
+      console.log('undelay')
       return true;
     },
   },
