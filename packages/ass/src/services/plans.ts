@@ -4,7 +4,7 @@ import { IEnvServices } from '../env-services';
 import { damageServices } from './damage-service';
 import { dispatchServices, messageServices, redisServices } from '.';
 import { planEffects } from './plan-effects';
-import { toTime, addGroup, randomItem, hours, minutes, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime } from '../utils';
+import { toTime, addGroup, randomItem, hours, minutes, randomPlaceNearby, randomPlaceInArea, randomIntInRange, inRangeCheck, distanceInMeters, determineStartTime, seconds } from '../utils';
 import { agendas } from './agendas';
 import { close } from 'fs';
 
@@ -235,10 +235,6 @@ export const plans = {
           }
         }
       }
-
-      blueAgents.forEach(a => {
-        console.log('situation',a.health)
-      });
 
       await prepareAgent(agent);
       const steps = [] as ActivityList;
@@ -643,12 +639,30 @@ export const plans = {
   },
 
   'Patrol': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      const { destination = randomPlaceNearby(agent, 1000, 'road') } = options;
       const steps = [] as ActivityList;
-      agent.destination = destination;
-      steps.push({ name: 'walkTo', options: { destination } });
+
+      if (options.areaCenter && options.areaRange) {
+        const numberOfStops = randomIntInRange(10, 20);
+        for (let i = 0; i < numberOfStops; i += 1) {
+          const center = options.areaCenter;
+          const { destination = randomPlaceInArea(center[0], center[1], options.areaRange, 'any') } = options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+        }
+      }
+      else if (agent.occupations){
+        const occupations = agent.occupations.filter((o) => o.type === 'work');
+        if (occupations.length > 0) {
+          const { destination } = options;
+          const occupation =
+            (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+          agent.destination = services.locations[occupation.id];
+          await prepareRoute(agent, services, options);
+        }
+      }
       agent.steps = steps;
       return true;
     },
@@ -710,69 +724,111 @@ export const plans = {
       agent.following = dispatchServices.strategy.get(agent.id);
       agent.running = true;
 
-      if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true && agent.target !== undefined && agent.target.health>0){
+      if(agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true && agent.target !== undefined && agent.target.health && agent.target.health>0){
         damageServices.damageAgent(agent, [agent.target], services);
       }
 
       if (agent.following && agent.following !== '') {
         const followedAgent = services.agents[agent.following];
 
-        agent.destination = followedAgent.actual;
-        const timesim = services.getTime();
-        timesim.setSeconds(timesim.getSeconds() + 1);
+        if(followedAgent){
+          agent.destination = followedAgent.actual;
+          const timesim = services.getTime();
+          timesim.setSeconds(timesim.getSeconds() + 1);
+          const distanceBetween = distanceInMeters(agent.actual.coord[1], agent.actual.coord[0], followedAgent.actual.coord[1], followedAgent.actual.coord[0]);
 
-        const distanceBetween = distanceInMeters(agent.actual.coord[1], agent.actual.coord[0], followedAgent.actual.coord[1], followedAgent.actual.coord[0]);
+          if (distanceBetween < 100) {
+              agent.target = followedAgent;
+              if (followedAgent.health && followedAgent.health > 0) {
+                damageServices.damageAgent(agent, [followedAgent], services);
+                const attackAgenda: ActivityList = [
+                  { name: 'Search and attack', options: { destination: followedAgent.actual } }];
 
-        if (distanceBetween < 100) {
-            agent.target = followedAgent;
-            if (followedAgent.health && followedAgent.health > 0) {
-              damageServices.damageAgent(agent, [followedAgent], services);
-              const attackAgenda: ActivityList = [
-                { name: 'Search and attack', options: { destination: followedAgent.actual } }];
-
-              if (agent.agenda) {
-                const oldAgenda = agent.agenda.filter(item => item.name !== 'Search and attack');
-                agent.agenda = [...attackAgenda, ...oldAgenda]
+                if (agent.agenda) {
+                  const oldAgenda = agent.agenda.filter(item => item.name !== 'Search and attack');
+                  agent.agenda = [...attackAgenda, ...oldAgenda]
+                }
+                else {
+                  agent.agenda = [...attackAgenda]
+                }
               }
-              else {
-                agent.agenda = [...attackAgenda]
+              else{
+                // console.log('the target is dead');
+                agent.following = '';
+                agent.target = await dispatchServices.pickNewTarget(agent,services);
+                // console.log('new target', agent.target)
+
+                console.log('agent target', agent.target)
+                if(agent.target === undefined || agent.target.health === 0){
+                  // const baseAgenda = [{ name: 'Go to base', options: { destination: services.locations[agent.baseLocation] } }];
+
+                  // agent.agenda = baseAgenda;
+                  // console.log('red eliminated message sent')
+                  // messageServices.sendDirectMessage(agent,'Red eliminated',[agent],services);
+                  // agent.route = [];
+                  // agent.steps = []
+                  // const steps = [] as ActivityList;
+                  // steps.push({ name: 'walkTo', options: { destination: services.locations[agent.baseLocation] } });
+                  // await agendas.changeAgenda(agent,services,baseAgenda);
+                  // console.log('new agenda', agent.agenda)
+                  // prepareRoute(agent, services, options);
+                  // prepareRoute(agent, services, options);
+                  // agent.steps = steps
+                  // return true;
+
+                  agent.route = [];
+                  agent.steps = []
+
+                  const newAgenda = [{ name: 'Patrol', options: { areaCenter: agent.actual.coord , areaRange: 1000} },
+                                    { name: 'Patrol', options: { areaCenter: agent.actual.coord, areaRange: 1000 } },
+                                    { name: 'Go to base', options: {} }];
+
+                  agent.agenda = [...newAgenda];
+
+                  prepareRoute(agent, services, options);
+                  return true;
+
+                }
+
+                agent.following = agent.target.id;
               }
-            }
-            else{
-              console.log('the target is dead');
-              agent.following = '';
-              agent.target = await dispatchServices.pickNewTarget(agent,services);
-              console.log('new target', agent.target)
-
-              if(agent.target === undefined || agent.target.health === 0){
-                // const baseAgenda = [{ name: 'Go to base', options: { destination: services.locations[agent.baseLocation] } }];
-
-                // agent.agenda = baseAgenda;
-                console.log('red eliminated message sent')
-                messageServices.sendDirectMessage(agent,'Red eliminated',[agent],services);
-
-                // await agendas.changeAgenda(agent,services,baseAgenda);
-                // console.log('new agenda', agent.agenda)
-                // prepareRoute(agent, services, options);
-                return true;
-              }
-            }
-        }
-        else{
-          const closeRedisAgents: any[] = await redisServices.geoSearch(agent.actual,15,agent);
-          const closeRedAgents: IAgent[] = closeRedisAgents.map(a => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health>0 && a.type !== 'group')
-
-          console.log('closeredagents',closeRedAgents)
-          if(closeRedAgents.length > 0){
-            damageServices.damageAgent(agent, [closeRedAgents[0]], services);
           }
         }
+        else{
+          // console.log('the target is dead');
+          agent.following = '';
+          agent.target = await dispatchServices.pickNewTarget(agent,services);
+
+          console.log('new target', agent.target)
+
+          if(agent.target === undefined || agent.target.health === 0){
+            agent.route = [];
+            agent.steps = []
+
+            const newAgenda = [{ name: 'Patrol', options: { } },
+                              { name: 'Patrol', options: { } }, { name: 'Go to base', options: {} }];
+
+            agent.agenda = [...newAgenda];
+
+            prepareRoute(agent, services, options);
+            return true;
+          }
+        }
+        // else{
+        //   const closeRedisAgents: any[] = await redisServices.geoSearch(agent.actual,15,agent);
+        //   const closeRedAgents: IAgent[] = closeRedisAgents.map(a => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health>0 && a.type !== 'group')
+
+        //   console.log('closeredagents',closeRedAgents)
+        //   if(closeRedAgents.length > 0){
+        //     damageServices.damageAgent(agent, [closeRedAgents[0]], services);
+        //   }
+        // }
 
         let followCount = 0;
         agent.agenda?.filter(item => item.name === 'Search and attack').map(item => followCount += 1);
 
         if (agent.following && agent.following !== '' && followCount < 2) {
-          const followAgenda = [{ name: 'Search and attack', options: { destination: followedAgent.actual } }];
+          const followAgenda = [{ name: 'Search and attack', options: { destination: services.agents[agent.following].actual } }];
 
           if (agent.agenda) {
             agent.agenda = [...followAgenda, ...agent.agenda];
@@ -788,7 +844,6 @@ export const plans = {
       return true;
     },
   },
-
 
   'Wander': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
@@ -925,10 +980,8 @@ export const plans = {
       await prepareAgent(agent);
       const steps = [] as ActivityList;
       agent.visibleForce = 'red';
-      // messageServices.sendDamage(agent,'drop object',[services.agents["biker"]],services);
       messageServices.sendMessage(agent, 'Play message', services);
-      console.log('play message')
-      steps.push({ name: 'waitFor', options: { duration: 0 } });
+      steps.push({ name: 'waitFor', options: { duration: seconds(5,10) } });
       agent.steps = steps;
       return true;
     },
@@ -957,7 +1010,7 @@ export const plans = {
       steps.push({ name: 'waitFor', options: { duration } });
       agent.steps = steps;
       console.log('call the police')
-      agent.reactedTo = 'Chaos'
+      // agent.reactedTo = 'Chaos'
       dispatchServices.sendDefence(agent, services);
       return true;
     },
@@ -997,7 +1050,18 @@ export const plans = {
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         }
+
+        const sisAgents: IAgent[] = [];
+        for(const a in services.agents){
+          if (services.agents.hasOwnProperty(a)) {
+            if(services.agents[a].force === 'blue' && services.agents[a].type === 'group'){
+              sisAgents.push(services.agents[a]);
+            }
+          }
+        }
+
         messageServices.sendMessage(agent, 'Chaos', services);
+        messageServices.sendDirectMessage(agent, 'Chaos', [...sisAgents], services);
         damageServices.damageRandomAgent(agent, services);
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 6);

@@ -62,7 +62,7 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
     if(!strategySet){
         for(const a in services.agents){
           if (services.agents.hasOwnProperty(a)) {
-            if(services.agents[a].force === 'red'){
+            if(services.agents[a].force === 'red' && services.agents[a].type !== ('group' || 'car')){
               redAgents.push(services.agents[a]);
             }
           }
@@ -70,7 +70,7 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
 
         for(const a in services.agents){
             if (services.agents.hasOwnProperty(a)) {
-              if(services.agents[a].force === 'blue'){
+              if(services.agents[a].force === 'blue' && services.agents[a].type !== ('group' || 'car')){
                 blueAgents.push(services.agents[a]);
               }
             }
