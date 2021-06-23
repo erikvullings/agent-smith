@@ -37,29 +37,64 @@
         "exit1": {
             "type": "any",
             "coord": [
-                4.892183,
-                52.373550
+                4.893320,
+                52.373276
             ]
         },
         "exit2": {
             "type": "any",
             "coord": [
-                4.893215,
-                52.37335
+                4.893027,
+                52.372659           
             ]
         },
         "exit3": {
             "type": "any",
             "coord": [
-                4.891819,
-                52.372770
+                4.891811,
+                52.372745            
             ]
         },
         "exit4": {
             "type": "any",
             "coord": [
-                4.893014,
-                52.372688
+                4.892314,
+                52.373542           
+            ]
+        },
+        "exit5":{
+            "type": "any",
+            "coord": [
+                4.891923,
+                52.373586          
+            ]
+        },
+        "exit6":{
+            "type": "any",
+            "coord": [
+                4.890819,
+                52.373634
+            ]
+        },
+        "exit7":{
+            "type": "any",
+            "coord": [
+                4.890785,
+                52.372724
+            ]
+        },
+        "exit8":{
+            "type": "any",
+            "coord": [
+                4.894424,
+                52.372888
+            ]
+        },
+        "exit9":{
+            "type": "any",
+            "coord": [
+                4.893936,
+                52.372513
             ]
         }
     },
@@ -86,7 +121,7 @@
                 },
                 "force": "tbp",
                 "group": ["tbp","tbp_bodyguard","tbp_bodyguard1","tbp_bodyguard2"],
-                "memberCount": 4,
+                "memberCount": 16,
                 "mailbox": [],
                 "baseLocation": "Koninklijk paleis"
             },
@@ -116,7 +151,8 @@
                     "type": "home",
                     "coord": [
                         4.893170,
-                        52.372818]
+                        52.372818
+                    ]
                 },
                 "actual": {
                     "type": "any",
@@ -129,7 +165,7 @@
                 "group": ["inline1","inline2","inline3","inline4","inline5"],
                 "memberCount": 5,
                 "mailbox": [],
-                "baseLocation": "exit4"
+                "baseLocation": "exit8"
             },   
             {
                 "id": "policeGroup2",
@@ -154,7 +190,7 @@
                 "group": ["inline6","inline7","inline8","inline9","inline10"],
                 "memberCount": 5,
                 "mailbox": [],
-                "baseLocation": "exit2"
+                "baseLocation": "exit9"
             },   {
                 "id": "policeGroup3",
                 "type": "group",
@@ -163,22 +199,24 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.893170,
-                        52.372818]
+                        4.891918,
+                        52.373319
+                    ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.892608,
-                        52.373208
+                        4.891918,
+                        52.373319
                     ]
                 },
                 "force": "blue",
                 "group": ["inline11","inline12","inline13","inline14","inline15"],
                 "memberCount": 5,
                 "mailbox": [],
-                "baseLocation": "exit1"
-            },   {
+                "baseLocation": "exit7"
+            },   
+            {
                 "id": "policeGroup4",
                 "type": "group",
                 "status": "active",
@@ -186,22 +224,190 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.892527,
-                        52.372971
+                        4.892037,
+                        52.373635
                     ]
                 },
                 "actual": {
                     "type": "any",
                     "coord": [
-                        4.892527,
-                        52.372971
+                        4.892037,
+                        52.373635
                     ]
                 },
                 "force": "blue",
                 "group": ["inline16","inline17","inline18","inline19","inline20"],
                 "memberCount": 5,
                 "mailbox": [],
+                "baseLocation": "exit6"
+            },   
+            {
+                "id": "policeGroup5",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.894427,
+                        52.372895
+                            ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.894427,
+                        52.372895
+                            ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
+                "baseLocation": "exit6"
+            },   
+            {
+                "id": "policeGroup6",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.893938,
+                        52.372541
+                            ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.893938,
+                        52.372541
+                            ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
+                "baseLocation": "exit7"
+            },   
+            {
+                "id": "policeGroup7",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891938,
+                        52.372939
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.891938,
+                        52.372939
+                    ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
+                "baseLocation": "exit5"
+            },   
+            {
+                "id": "policeGroup8",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.891804,
+                        52.372727         
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.891804,
+                        52.372727         
+                    ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
+                "baseLocation": "exit4"
+            },   
+            {
+                "id": "policeGroup9",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.892845,
+                        52.373206
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892845,
+                        52.373206
+                    ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
                 "baseLocation": "exit3"
+            },   
+            {
+                "id": "policeGroup10",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.892437,
+                        52.3732944
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892437,
+                        52.3732944
+                    ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
+                "baseLocation": "exit2"
+            },   
+            {
+                "id": "policeGroup11",
+                "type": "group",
+                "status": "active",
+                "health": 100,
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.892719,
+                        52.372819
+                    ]
+                },
+                "actual": {
+                    "type": "any",
+                    "coord": [
+                        4.892719,
+                        52.372819
+                    ]
+                },
+                "force": "blue",
+                "memberCount": 5,
+                "mailbox": [],
+                "baseLocation": "exit1"
             },   
             {
                 "id": "inline1",
@@ -212,12 +418,13 @@
                     "type": "any",
                     "coord": [
                         4.893170,
-                        52.372818]
+                        52.372818
+                    ]
                 },
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit4",
+                "baseLocation": "exit8",
                 "memberOf": "policeGroup1"
             },
     
@@ -235,7 +442,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit4",
+                "baseLocation": "exit8",
                 "memberOf": "policeGroup1"
             },
                 {
@@ -252,7 +459,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit4",
+                "baseLocation": "exit8",
                 "memberOf": "policeGroup1"
             },
                 {
@@ -269,7 +476,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit4",
+                "baseLocation": "exit8",
                 "memberOf": "policeGroup1"
             },
                 {
@@ -286,7 +493,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit4",
+                "baseLocation": "exit8",
                 "memberOf": "policeGroup1"
             },
                 {
@@ -304,7 +511,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit3",
+                "baseLocation": "exit7",
                 "memberOf": "policeGroup2"
             },
                 {
@@ -322,7 +529,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit3",
+                "baseLocation": "exit7",
                 "memberOf": "policeGroup2"
             },
                 {
@@ -340,7 +547,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit3",
+                "baseLocation": "exit7",
                 "memberOf": "policeGroup2"
             },
                 {
@@ -358,7 +565,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit3",
+                "baseLocation": "exit7",
                 "memberOf": "policeGroup2"
             },
                 {
@@ -376,7 +583,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit3",
+                "baseLocation": "exit7",
                 "memberOf": "policeGroup2"
             },
                 {
@@ -394,7 +601,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit6",
                 "memberOf": "policeGroup3"
             },
                 {
@@ -412,7 +619,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit6",
                 "memberOf": "policeGroup3"
             },
                 {
@@ -430,7 +637,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit6",
                 "memberOf": "policeGroup3"
             },
                 {
@@ -448,7 +655,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit6",
                 "memberOf": "policeGroup3"
             },
                 {
@@ -466,7 +673,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit6",
                 "memberOf": "policeGroup3"
             },
                 {
@@ -484,7 +691,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit5",
                 "memberOf": "policeGroup4"
             },
                 {
@@ -502,7 +709,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit5",
                 "memberOf": "policeGroup4"
             },
                 {
@@ -520,7 +727,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit5",
                 "memberOf": "policeGroup4"
             },
                 {
@@ -538,7 +745,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit5",
                 "memberOf": "policeGroup4"
             },
                 {
@@ -556,7 +763,7 @@
                 "status": "active",
                 "mailbox": [],
                 "defenseType": "police",
-                "baseLocation": "exit2",
+                "baseLocation": "exit5",
                 "memberOf": "policeGroup4"
             },
             {
@@ -707,7 +914,7 @@
         "red": []
     },
     "customAgendas": [
-                {
+        {
             "agentId": "tbpGroup",
             "agendaItems": [
                 {
@@ -729,10 +936,6 @@
                     "options": {
                         "duration": 7200000
                     }
-                },
-                {
-                    "name": "Go home",
-                    "options": {}
                 }
             ]
         },
@@ -745,10 +948,6 @@
                     "options": {
                         "duration": 7200000
                     }
-                },
-                {
-                    "name": "Go home",
-                    "options": {}
                 }
             ]
         },

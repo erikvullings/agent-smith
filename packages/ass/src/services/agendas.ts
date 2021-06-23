@@ -5,6 +5,7 @@ import { IEnvServices, updateAgent } from '../env-services';
 // import * as simConfig from '../sim_config.json';
 import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
+import { messageServices } from './message-service';
 
 /**
  * @param agent
@@ -384,7 +385,6 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
   if (agent.agenda && reaction[mail.message][agent.force] && reaction[mail.message][agent.force]!.plans.length > 0) {
     const reactionAgenda: ActivityList = reaction[mail.message][agent.force]!.plans[0];
-
     if (reactionAgenda[0].name === 'Go to specific location') {
       agent.destination = mail.location;
 
@@ -394,12 +394,30 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
     }
     else if (reactionAgenda[0].name === 'Go to base') {
       agent.destination = services.locations[agent.baseLocation];
-
       reactionAgenda[0].options = { startTime, destination: services.locations[agent.baseLocation], priority: 1 };
 
-      agent.agenda = [...reactionAgenda];
+      if(agent.type === 'group' && agent.group && agent.group.length >0 && agent.group[0].includes(agent.id)){
 
+          const filteredAgenda = reactionAgenda.filter(item => item.name !== 'Patrol' && item.name !== 'Release');
+          const guardAgenda : ActivityList = [{ name: 'Guard', options: { duration: hours(3, 5), priority: 2 }}];
+          const groupReacAgenda = [...filteredAgenda, ...guardAgenda];
+
+          agent.agenda = [...groupReacAgenda];
+          agent.reactedTo = mail.message;
+          updateAgent(agent, services, agents);
+          return true;
+        }
+
+      if(agent.type === 'man'){
+        const filteredAgenda = reactionAgenda.filter(item => item.name !== 'Go to base' && item.name !== 'Release');
+        agent.agenda = [...filteredAgenda];
+        agent.reactedTo = mail.message;
+        updateAgent(agent, services, agents);
+        return true;
+      }
       reactionAgenda.map((item) => item.options!.reacting = true);
+
+      agent.agenda = [...reactionAgenda];
     }
 
     else if (reactionAgenda[0].name === 'Follow person' || reactionAgenda[0].name === 'Walk to person') {

@@ -200,9 +200,13 @@ export const plans = {
 
   'Go to specific location': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      await prepareAgent(agent);
       if (options.destination) {
-        await prepareAgent(agent);
         agent.destination = options.destination;
+        await prepareRoute(agent, services, options);
+      }
+      else {
+        agent.destination = agent.home;
         await prepareRoute(agent, services, options);
       }
       return true;
@@ -667,8 +671,8 @@ export const plans = {
         }
       }
       else {
-        const center = agent.actual.coord;
-        const { destination = randomPlaceInArea(center[0], center[1], 2000, 'any') } = options;
+        const center = services.locations[agent.baseLocation].coord;
+        const { destination = randomPlaceInArea(center[0], center[1], 600, 'any') } = options;
         agent.destination = destination;
         steps.push({ name: 'walkTo', options: { destination } });
         steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
@@ -898,8 +902,10 @@ export const plans = {
       await prepareAgent(agent);
       const steps = [] as ActivityList;
       if (agent.group) {
-        const release = agent.group.filter((a) => a in services.agents)
-        steps.push({ name: 'releaseAgents', options: { duration: minutes(1), release } });
+        const release = agent.group.filter((a) => a in services.agents);
+        if (release.length > 0) {
+          steps.push({ name: 'releaseAgents', options: { duration: minutes(1), release } });
+        }
       }
       else {
         const { duration = minutes(1) } = options;
