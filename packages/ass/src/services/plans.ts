@@ -671,8 +671,8 @@ export const plans = {
         }
       }
       else{
-        const center = agent.actual.coord;
-        const { destination = randomPlaceInArea(center[0], center[1], 2000, 'any') } = options;
+        const center = services.locations[agent.baseLocation].coord;
+        const { destination = randomPlaceInArea(center[0], center[1], 600, 'any') } = options;
         agent.destination = destination;
         steps.push({ name: 'walkTo', options: { destination } });
         steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
@@ -1155,6 +1155,7 @@ export const plans = {
       const steps = [] as ActivityList;
       delete agent.delay;
       steps.push({ name: 'waitFor', options: { duration: minutes(0, 1) } });
+
       agent.steps = steps;
       return true;
     },

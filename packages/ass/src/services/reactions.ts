@@ -28,9 +28,13 @@ export const reaction = {
     },
     'Drop gas': {
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } }
-                , { 'name': 'Guard', 'options': {duration: 70000} },
-            ]],
+            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } },
+            { 'name': 'Release', 'options': {reacting: true} },
+            { 'name': 'Patrol', 'options': {} },
+            { 'name': 'Patrol', 'options': {} },
+            { 'name': 'Patrol', 'options': {} },
+            { 'name': 'Patrol', 'options': {} },
+        ]],
         },
         'white': {
             urgency: 2, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
@@ -46,8 +50,8 @@ export const reaction = {
     'Play message': {
         'blue': {
             urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } },
-                { 'name': 'Release', 'options': {reacting: true} }
-                , { 'name': 'Patrol', 'options': {} },
+                { 'name': 'Release', 'options': {reacting: true} },
+                { 'name': 'Patrol', 'options': {} },
                 { 'name': 'Patrol', 'options': {} },
                 { 'name': 'Patrol', 'options': {} },
                 { 'name': 'Patrol', 'options': {} },
