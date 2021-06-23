@@ -1,7 +1,6 @@
 import { messageServices, redisServices } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent } from '../models';
-import { generateSISPolice } from '../utils';
 import { planEffects } from './plan-effects';
 
 let defenceSent: boolean = false;
