@@ -964,6 +964,7 @@ export const plans = {
             messageServices.sendMessage(objectAgent, 'Drop gas', services);
             objectAgent.actual = agent.actual;
             objectAgent.agenda = [{ name: 'Gas', options: { priority: 1 } }];
+            console.log('drop gas', services.getTime())
           } else {
             messageServices.sendMessage(objectAgent, 'Drop object', services);
           }
@@ -982,6 +983,7 @@ export const plans = {
       agent.visibleForce = 'red';
       messageServices.sendMessage(agent, 'Play message', services);
       steps.push({ name: 'waitFor', options: { duration: seconds(5, 10) } });
+      console.log('play message', services.getTime())
       agent.steps = steps;
       return true;
     },
