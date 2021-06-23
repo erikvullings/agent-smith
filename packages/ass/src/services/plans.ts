@@ -642,26 +642,36 @@ export const plans = {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
       const steps = [] as ActivityList;
+      const numberOfStops = randomIntInRange(10, 20);
 
       if (options.areaCenter && options.areaRange) {
-        const numberOfStops = randomIntInRange(10, 20);
         for (let i = 0; i < numberOfStops; i += 1) {
           const center = options.areaCenter;
           const { destination = randomPlaceInArea(center[0], center[1], options.areaRange, 'any') } = options;
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
-          steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
         }
       }
       else if (agent.occupations) {
         const occupations = agent.occupations.filter((o) => o.type === 'work');
         if (occupations.length > 0) {
-          const { destination } = options;
-          const occupation =
-            (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
-          agent.destination = services.locations[occupation.id];
-          await prepareRoute(agent, services, options);
+          for (let i = 0; i < numberOfStops; i += 1) {
+            const occupation = (occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+            const occCoords = services.locations[occupation.id].coord
+            const { destination = randomPlaceInArea(occCoords[0], occCoords[0], 1000, 'any') } = options;
+            agent.destination = destination;
+            steps.push({ name: 'walkTo', options: { destination } });
+            steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
+          }
         }
+      }
+      else{
+        const center = agent.actual.coord;
+        const { destination = randomPlaceInArea(center[0], center[1], 2000, 'any') } = options;
+        agent.destination = destination;
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
       }
       agent.steps = steps;
       return true;

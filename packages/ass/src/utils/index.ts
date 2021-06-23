@@ -312,13 +312,13 @@ export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string,
     return {
       type,
       // 1 degree is approximately 111111 meters
-      coord: [randomInRange(lon + lonVal * rMin, lon + lonVal * r), randomInRange(lat + latVal * rMin, lat + latVal * r)],
+      coord: [parseFloat(randomInRange(lon + lonVal * rMin, lon + lonVal * r).toFixed(6)), parseFloat(randomInRange(lat + latVal * rMin, lat + latVal * r).toFixed(6))],
     };
   }
   return {
     type,
     // 1 degree is approximately 111111 meters
-    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+    coord: [parseFloat(randomInRange(lon - r, lon + r).toFixed(6)), parseFloat(randomInRange(lat - r, lat + r).toFixed(6))],
   };
 };
 
@@ -334,7 +334,7 @@ export const randomPlaceInArea = (lon: number, lat: number, rangeInMeter: number
   return {
     type,
     // 1 degree is approximately 111111 meters
-    coord: [randomInRange(lon - r, lon + r), randomInRange(lat - r, lat + r)],
+    coord: [parseFloat(randomInRange(lon - r, lon + r).toFixed(6)), parseFloat(randomInRange(lat - r, lat + r).toFixed(6))],
   };
 };
 
