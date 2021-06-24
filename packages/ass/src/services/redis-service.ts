@@ -6,7 +6,7 @@ const Redis = require('ioredis');
 const redis = new Redis();
 
 redis.on('error', (err: any) => {
-  console.log(`Error${err}`)
+  // console.log(`Error${err}`)
 });
 
 /**
