@@ -15,7 +15,7 @@ export const planEffects = {
     'Chaos': {
         damageRadius: 0,
         damageLevel: 0,
-        runDistance: 50,
+        runDistance: 1000,
         panicLevel: 100,
         delayLevel: 0,
         severity: 5,
@@ -24,7 +24,7 @@ export const planEffects = {
     'Drop object': {
         damageRadius: 0,
         damageLevel: 0,
-        runDistance: 50,
+        runDistance: 1000,
         panicLevel: 30,
         delayLevel: 0,
         severity: 5,
@@ -33,7 +33,7 @@ export const planEffects = {
     'Drop bomb': {
         damageRadius: 100,
         damageLevel: 100,
-        runDistance: 500,
+        runDistance: 1000,
         panicLevel: 100,
         delayLevel: 0,
         severity: 5,
@@ -42,7 +42,7 @@ export const planEffects = {
     'Drop gas': {
         damageRadius: 0,
         damageLevel: 0,
-        runDistance: 500,
+        runDistance: 1000,
         panicLevel: 50,
         delayLevel: 30,
         delayCause: 'gas',

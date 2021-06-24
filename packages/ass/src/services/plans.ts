@@ -724,7 +724,7 @@ export const plans = {
   'Search and attack': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      dispatchServices.setStrategy(services);
+      dispatchServices.setStrategy(agent, services);
       agent.following = dispatchServices.strategy.get(agent.id);
       agent.running = true;
 
@@ -1024,7 +1024,7 @@ export const plans = {
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         } else {
-          const { destination = randomPlaceNearby(agent, 50, 'any') } = options;
+          const { destination = randomPlaceNearby(agent, 10, 'any') } = options;
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         }

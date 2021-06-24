@@ -47,11 +47,13 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
     const equipment = randomItem(sender.equipment);
     let receivers: IAgent[] = [];
     if (equipment && equipment.type === 'firearm') {
+        console.log('pieuw')
         const inRange = await redisServices.geoSearch(sender.actual, 1000, sender);
         const agentsInRange = inRange.map((a: any) => a = _services.agents[a.key]).filter((a: IAgent) => !(a.force === 'red'));
         receivers = [randomItem(agentsInRange)];
     }
     else if (equipment && equipment.type === 'handgrenade') {
+        console.log('biem')
         const center = randomPlaceNearby(sender, 40, 'any', 20);
         const deathRange = await redisServices.geoSearch(center, 5);
         const agentsInDeathRange = deathRange.map((a: any) => a = _services.agents[a.key]);
@@ -62,8 +64,7 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
     if (receivers && equipment && equipment.limit > 0) {
         if (receivers.length > 0 && equipment !== null) {
             receivers.filter((a) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
-            receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(10, 20)))
-
+            receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * 20))
             receivers.filter(a => !a.health || a.health < 0).map(a => a.health = 0);
         }
         else if (equipment === null) {
@@ -95,11 +96,11 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
 const pickEquipment = async (agent: IAgent) => {
     let sortedEquipments = [];
 
-    if(agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment && agent.equipment.length >0){
-        const {severity} = planEffects[agent.reactedTo];
-        if(severity>2){
-            sortedEquipments = agent.equipment.filter(((e: { damageLevel: number; }) => e.damageLevel && e.damageLevel === severity-1 || e.damageLevel === severity)).sort((a: { damageLevel: number; },b: { damageLevel: number; }) => b.damageLevel - a.damageLevel);
-            return sortedEquipments[randomIntInRange(0,sortedEquipments.length-1)];
+    if (agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment && agent.equipment.length > 0) {
+        const { severity } = planEffects[agent.reactedTo];
+        if (severity > 2) {
+            sortedEquipments = agent.equipment.filter(((e: { damageLevel: number; }) => e.damageLevel && e.damageLevel === severity - 1 || e.damageLevel === severity)).sort((a: { damageLevel: number; }, b: { damageLevel: number; }) => b.damageLevel - a.damageLevel);
+            return sortedEquipments[randomIntInRange(0, sortedEquipments.length - 1)];
         }
         return null;
     }
