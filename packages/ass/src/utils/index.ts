@@ -488,8 +488,6 @@ export const generateExistingAgent = (lng: number, lat: number, radius: number, 
 export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices) => {
   if (!trnsprt.group) {
     trnsprt.group = [agent.id]
-  } else {
-    trnsprt.group.push(agent.id)
   }
   trnsprt.memberCount = trnsprt.memberCount ? trnsprt.memberCount : 0;
   if (agent.group) {
@@ -505,10 +503,10 @@ export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices)
 };
 
 export const findWithAttr = async (array: any[], attr: string, value: string) => {
-  for(let i = 0; i < array.length; i += 1) {
-      if(array[i][attr] === value) {
-          return i;
-      }
+  for (let i = 0; i < array.length; i += 1) {
+    if (array[i][attr] === value) {
+      return i;
+    }
   }
   return -1;
 }
@@ -520,12 +518,12 @@ export const toDegrees = async (radians: number) => (radians * (180 / Math.PI)).
 export const calculatePointsBetween = async (startCoord: number[], endCoord: number[], count: number) => {
   count += 1;
 
-  const d : number = Math.sqrt((startCoord[0] - endCoord[0]) * (startCoord[0] - endCoord[0]) + (startCoord[1] - endCoord[1]) * (startCoord[1] - endCoord[1])) / count;
+  const d: number = Math.sqrt((startCoord[0] - endCoord[0]) * (startCoord[0] - endCoord[0]) + (startCoord[1] - endCoord[1]) * (startCoord[1] - endCoord[1])) / count;
   const fi: number = Math.atan2(endCoord[1] - startCoord[1], endCoord[0] - startCoord[0]);
 
   const points: Coordinate[] = [];
 
-  for(let i = 0; i <= count; ++i){
+  for (let i = 0; i <= count; ++i) {
     points.push([startCoord[0] + i * d * Math.cos(fi), startCoord[1] + i * d * Math.sin(fi)]);
   }
 

@@ -39,6 +39,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       for (const a of agentsToRelease) {
         const released = services.agents[a];
         released.health = released.health ? released.health - randomIntInRange(70, 100) : randomIntInRange(0, 30);
+        released.health = released.health && released.health > 0 ? released.health : 0;
         released.panic = agent.panic;
         released.delay = agent.delay;
         if (released.agenda) {
@@ -165,11 +166,9 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
         const group = randomItem(whiteGroups);
         if (group && group.group && group.group.length > 0) {
           if (group.group && group.memberCount) {
-            if (group.group.indexOf(agent.id) < 0) {
-              group.group.push(agent.id);
-              group.memberCount += 1;
-              addGroup(agent, group, services);
-            }
+            group.group.push(agent.id);
+            group.memberCount += 1;
+            addGroup(agent, group, services);
           } else {
             group.group = [agent.id];
             group.memberCount = 1;
@@ -401,7 +400,6 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
   if (agent.type === 'group' && (!agent.group || agent.group.length < 1)) {
     agent.status = 'inactive';
   }
-
   return true;
 };
 

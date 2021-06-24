@@ -1,0 +1,211 @@
+{
+    "settings": {
+        "startTimeHours": 12,
+        "startTimeMinutes": 0
+    },
+    "generateSettings": [
+        {
+            "agentCount": 100,
+            "centerCoord": [
+                4.309510,
+                52.075591
+            ],
+            "radius": 500,
+            "force": "white"
+        }
+    ],
+    "equipment": {
+        "firearm5": {
+            "type": "firearm",
+            "damageLevel": 5,
+            "limit": 15
+        },
+        "firearm4": {
+            "type": "firearm",
+            "damageLevel": 4,
+            "limit": 15
+        },
+        "firearm3": {
+            "type": "firearm",
+            "damageLevel": 3,
+            "limit": 20
+        },
+        "handgrenade": {
+            "type": "handgrenade",
+            "damageLevel": 5,
+            "limit": 5
+        }
+    },
+    "hasEquipment": {},
+    "locations": {
+        "ggd": {
+            "type": "medical",
+            "coord": [
+                4.301924,
+                52.075506
+            ]
+        },
+        "wassenaar_base": {
+            "type": "sis base",
+            "coord": [
+                4.405460,
+                52.144140
+            ]
+        },
+        "denhaag_base": {
+            "type": "sis base",
+            "coord": [
+                4.391030,
+                52.054190
+            ]
+        },
+        "paleistuin": {
+            "type": "park",
+            "coord": [
+                4.304218,
+                52.080983
+            ]
+        },
+        "wijkpark": {
+            "type": "park",
+            "coord": [
+                4.299143,
+                52.075926
+            ]
+        },
+        "station": {
+            "type": "station",
+            "coord": [
+                4.325191,
+                52.080319
+            ]
+        },
+        "police station jan hendrikstraat": {
+            "type": "police station",
+            "coord": [
+                4.306952,
+                52.075691
+            ]
+        },
+        "police station": {
+            "type": "police station",
+            "coord": [
+                4.274878,
+                52.072720
+            ]
+        },
+        "bijenkorf": {
+            "type": "work",
+            "coord": [
+                4.312438,
+                52.076493
+            ]
+        },
+        "albert heijn": {
+            "type": "work",
+            "coord": [
+                4.312826,
+                52.078269
+            ]
+        },
+        "openbare bibliotheek": {
+            "type": "library",
+            "coord": [
+                4.315991,
+                52.077432
+            ]
+        },
+        "binnenhof poort": {
+            "type": "work",
+            "coord": [
+                4.311914,
+                52.079339
+            ]
+        },
+        "binnenhof": {
+            "type": "work",
+            "coord": [
+                4.313334,
+                52.079613
+            ]
+        },
+        "mauritspoort": {
+            "type": "work",
+            "coord": [
+                4.314135,
+                52.080013
+            ]
+        },
+        "langepoort": {
+            "type": "work",
+            "coord": [
+                4.314559,
+                52.078794
+            ]
+        },
+        "test": {
+            "type": "work",
+            "coord": [
+                4.349894,
+                52.084668
+            ]
+        }
+    },
+    "customAgents": {
+        "tbp": [],
+        "blue": [],
+        "white": [],
+        "red": [
+            {
+                "id": "ter1",
+                "type": "man",
+                "force": "red",
+                "visibleForce": "red",
+                "health": 100,
+                "status": "active",
+                "home": {
+                    "type": "home",
+                    "coord": [
+                        4.358927,
+                        52.132907
+                    ]
+                },
+                "actual": {
+                    "type": "home",
+                    "coord": [
+                        4.309510,
+                        52.075591
+                    ]
+                },
+                "mailbox": [],
+                "equipment": [
+                    {
+                        "type": "firearm",
+                        "damageLevel": 4,
+                        "limit": 15
+                    },
+                    {
+                        "type": "handgrenade",
+                        "damageLevel": 5,
+                        "limit": 4
+                    }
+                ],
+                "attire": "bulletproof bomb vest"
+            }
+        ]
+    },
+    "customAgendas": [
+        {
+            "agentId": "ter1",
+            "agendaItems": [
+                {
+                    "name": "Chaos",
+                    "options": {
+                        "priority": 1
+                    }
+                }
+            ]
+        }
+    ],
+    "customTypeAgendas": []
+}

@@ -3,7 +3,7 @@ import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import jsonSimConfig from './amok.json';
+import jsonSimConfig from './verslag.json';
 import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -47,7 +47,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
+    const { simSpeed = 2, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     services.setTime(startTime);
     // const agentstoshow = [] as IAgent[];
@@ -73,7 +73,6 @@ export const simController = async (
     const tbpAgents: IAgent[] = simConfig.customAgents.tbp;
 
     const agents = [...blueAgents, ...redAgents, ...whiteAgents, ...tbpAgents] as IAgent[];
-
     const currentSpeed = simSpeed;
     let currentTime = startTime;
 
@@ -147,20 +146,20 @@ export const simController = async (
       }
     }
 
-    const nearest = (agent: IAgent, transportType: TransportType) => {
-      if (transportType === 'car') {
+    const nearest = (agent: IAgent) => {
+      if (agent.type === 'car') {
         return services.drive.nearest({ coordinates: [agent.actual.coord] });
       }
-      if (transportType === 'bicycle') {
+      if (agent.type === 'bicycle') {
         return services.cycle.nearest({ coordinates: [agent.actual.coord] });
       }
       return services.walk.nearest({ coordinates: [agent.actual.coord] });
     };
 
     for (const agent of agents) {
-      const transportType = typeof agent.type === 'string' && (agent.type as TransportType);
-      if (transportType) {
-        const coord = (await nearest(agent, transportType)).waypoints[0].location;
+      const transport = agent.type === 'car' || agent.type === 'bicycle';
+      if (transport) {
+        const coord = (await nearest(agent)).waypoints[0].location;
         if (coord) {
           agent.actual.coord = coord;
         }
@@ -196,6 +195,7 @@ export const simController = async (
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
     groups.map((g) => g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : '');
+
 
     /** add members that or not generated to groups */
     const groupType = agents.filter((g) => g.type === 'group');

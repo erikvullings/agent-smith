@@ -125,7 +125,7 @@ export const plans = {
   'Go shopping': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      const { destination = randomPlaceNearby(agent, 1000, 'shop') } = options;
+      const { destination = randomPlaceNearby(agent, 100, 'shop') } = options;
       agent.destination = destination;
       await prepareRoute(agent, services, options);
 
@@ -922,6 +922,7 @@ export const plans = {
       if (agent.group && agent.force === 'white') {
         const existing = agent.group.filter((a) => a in services.agents)
         const red = existing.filter((a) => services.agents[a].force === 'red');
+        console.log(red)
         for (const i of red) {
           steps.push({ name: 'releaseAgents', options: { release: [i] } });
           steps.push({ name: 'waitFor', options: { duration: minutes(2) } });
@@ -973,6 +974,7 @@ export const plans = {
           agent.group = agent.group.filter((a) => a !== objectAgent.id);
           agent.visibleForce = 'red';
           if (objectAgent.type === 'bomb') {
+            console.log('biem')
             messageServices.sendMessage(objectAgent, 'Drop bomb', services);
             objectAgent.actual = agent.actual;
             objectAgent.agenda = [{ name: 'Bomb', options: { priority: 1 } }];
@@ -1041,7 +1043,7 @@ export const plans = {
       const { actual } = agent;
       const noshops = randomIntInRange(2, 5)
       for (let i = 0; i < noshops; i += 1) {
-        const { destination = randomPlaceNearby(agent, 500, 'shop'), duration = minutes(15, 30) } = options;
+        const { destination = randomPlaceNearby(agent, 100, 'shop'), duration = minutes(15, 30) } = options;
         agent.destination = destination;
         steps.push({ name: 'walkTo', options: { destination } });
         steps.push({ name: 'waitFor', options: { duration } });

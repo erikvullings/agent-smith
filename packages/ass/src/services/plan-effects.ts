@@ -30,7 +30,7 @@ export const planEffects = {
         damageRadius: 100,
         damageLevel: 100,
         damageCount: 0.7,
-        runDistance: 500,
+        runDistance: 1000,
         panicLevel: 100,
         delayLevel: 0,
         severity: 5,
