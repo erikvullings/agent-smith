@@ -10,6 +10,7 @@ import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inR
  * @param services
  * Move a group of agents, so compute the new position of one agent, and set the others based on that.
  */
+
 const moveGroup = (agent: IAgent, services: IEnvServices) => {
   if (!agent.group || agent.group.length === 0) return;
   for (const id of agent.group) {
@@ -24,6 +25,7 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
  * @param agents
  * Release victims from group when in panic
  */
+
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
   let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 200 : 0;
   if (agent.vulnerability) {
@@ -71,6 +73,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
  * @param agents
  * Move agent along a route.
  */
+
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
@@ -91,8 +94,6 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     const [x0, y0] = agent.actual.coord;
     const [x1, y1] = waypoints[i];
     const segmentLength = services.distance(x0, y0, x1, y1);
-    // const segmentLength2 = distance([y0, x0], [y1, x1], { units: 'meters' });
-    // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
       // redisServices.geoAdd('agents', agent);
@@ -220,6 +221,7 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
  * @param profile
  * Move the agent along its trajectory
  */
+
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
   services: IEnvServices,
@@ -242,8 +244,6 @@ const moveAgent = (profile: Profile) => async (
       });
       const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
       agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
-      // console.log(agent.route)
-      // console.log(JSON.stringify(agent.route, null, 2));
     } catch (e) {
       console.error(e);
     }
@@ -285,6 +285,7 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
  * @param options
  * Wait until a start time before continuing
  */
+
 const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
 
   const { startTime } = options;
@@ -305,6 +306,7 @@ const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivi
  * @param options
  * Wait for a certain duration before continuing
  */
+
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration = 0 } = options;
   if (duration === 0) {
@@ -350,6 +352,7 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
  * @param options
  * @param agents
  */
+
 const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
@@ -418,6 +421,7 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
  * @returns
  * If the group is within 10 meters, the agent joins the given group
  */
+
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
   const inRange = await redisServices.geoSearch(agent.actual, 10, agent);

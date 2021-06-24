@@ -1,7 +1,16 @@
 import { planEffects, redisServices } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IEquipment, IMail } from '../models';
-import { agentToEntityItem, randomIntInRange, randomItem, randomPlaceNearby } from '../utils';
+import { IAgent } from '../models';
+import { randomIntInRange, randomItem, randomPlaceNearby } from '../utils';
+
+/**
+ * Picks the equipment and
+ * Gives the receivers damage, based on the damageLevel of the equipment and the attire of the receiver
+ *
+ * @param sender : The sender of the message
+ * @param receivers : The receivers of the message
+ * Picks one random agent and the closest agent
+ */
 
 const damageAgent = async (sender: IAgent, receivers: IAgent[], _services: IEnvServices) => {
     const equipment = await pickEquipment(sender);
@@ -78,23 +87,22 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
     return true;
 }
 
+/**
+ * Picks the equipment for the blue agents based on the severity of the action
+ *
+ */
+
 const pickEquipment = async (agent: IAgent) => {
     let sortedEquipments = [];
 
     if(agent.force === 'blue' && agent.reactedTo && planEffects[agent.reactedTo] && agent.equipment && agent.equipment.length >0){
         const {severity} = planEffects[agent.reactedTo];
-        if(severity>0){
+        if(severity>2){
             sortedEquipments = agent.equipment.filter(((e: { damageLevel: number; }) => e.damageLevel && e.damageLevel === severity-1 || e.damageLevel === severity)).sort((a: { damageLevel: number; },b: { damageLevel: number; }) => b.damageLevel - a.damageLevel);
             return sortedEquipments[randomIntInRange(0,sortedEquipments.length-1)];
         }
-
         return null;
-
     }
-    // else if(agent.force === 'red'){
-    //     //add red later
-    //     return false;
-    // }
     return null;
 }
 

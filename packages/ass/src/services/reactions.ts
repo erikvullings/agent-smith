@@ -1,6 +1,8 @@
 import { IReactions } from '../models';
 
-
+/**
+ * Add reactions to specific messages. Every force reacts differently.
+ * */
 export const reaction = {
     'Drop object': {
         'blue': {
@@ -97,7 +99,7 @@ export const reaction = {
                                 [{ 'name': 'Hide', 'options': { reacting: true } }]],
         },
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } },
+            urgency: 1, plans: [[{ 'name': 'Go to specific location', 'options': { reacting: true } },
                 { 'name': 'Release', 'options': {reacting: true} },
                 { 'name': 'Search and attack', 'options': {reacting: true} }]],
         },

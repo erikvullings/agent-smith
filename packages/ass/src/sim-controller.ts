@@ -9,7 +9,6 @@ import reactionConfig from './plan_reactions.json';
 // const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
-// export const simConfig2 = (jsonSimConfig2 as unknown) as ISimConfig;
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customTypeAgendas } = simConfig;
 export const { customAgendas } = simConfig;
@@ -76,8 +75,6 @@ export const simController = async (
     const currentSpeed = simSpeed;
     let currentTime = startTime;
 
-    // console.log('points in between',await calculatePointsBetween([4.892958,52.372893],[4.891862,52.373021],8))
-
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
       services.setTime(currentTime);
@@ -97,21 +94,6 @@ export const simController = async (
       };
       tb.send(payload, (error) => error && log(error));
     };
-
-    // if(simConfig.generateSettings){
-    //   const inLine = simConfig.generateSettings[1];
-    //   const { agents: generatedAgents, locations } = generateInLine(
-    //     inLine.startCoord,
-    //     inLine.endCoord,
-    //     inLine.radius,
-    //     inLine.agentCount,
-    //     inLine.type,
-    //     inLine.force
-    //   );
-    //     services.locations = { ...services.locations, ...locations };
-    //     agents.push(...generatedAgents);
-    //     console.log('agents pushed', agents)
-    // }
 
     if (simConfig.generateSettings) {
       for (const s of simConfig.generateSettings) {

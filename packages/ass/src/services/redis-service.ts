@@ -12,8 +12,9 @@ redis.on('error', (err: any) => {
 /**
  * @param agent1
  * @param agent2
- * Calculate distance between two points
+ * Calculate distance between two agents
  */
+
 const geoDist = async (agent1: IAgent, agent2: IAgent) => {
   redis.geodist(
     'agents',
@@ -28,9 +29,14 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
     });
 };
 
-/** Search for agents in area */
-
-/** The input for redis.geosearch:
+/**
+ * Search for agents in area
+ *
+ * @param location : Centre location
+ * @param radius : Radius of the search in meters
+ * @param agent : Optional parameter, if defined removes the agent of the result array
+ *
+ * The input for redis.geosearch:
  * (key,longitude,latitude,radius value, radius unit(m,km),include coordinates in result,
  * include the distance from supplied latitude & longitude, sort(closest first))
  */
@@ -76,6 +82,7 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
  * @param agent
  * Add new value to key
  */
+
 const geoAdd = async (key: string, agent: IAgent) => {
   redis.geoadd(
     key,
@@ -89,6 +96,7 @@ const geoAdd = async (key: string, agent: IAgent) => {
  * @param agents
  * Add multiple values to key
  */
+
 const geoAddBatch = async (key: string, agents: IAgent[]) => {
   const arr: string[][] = [];
   agents.forEach(agent => {
@@ -100,7 +108,10 @@ const geoAddBatch = async (key: string, agents: IAgent[]) => {
     });
 }
 
-/** Remove all keys from database */
+/**
+ * Remove all keys from database
+ * */
+
 const flushDb = () => {
   redis.flushdb();
 }

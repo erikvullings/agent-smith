@@ -2,9 +2,7 @@ import { IItem } from 'test-bed-schemas';
 import { IAgent, ILocation, IActivityOptions } from '../models';
 import { redisServices } from '../services';
 import { IEnvServices } from '../env-services';
-import { Coordinate, IOsrmRouteResult, Profile } from 'osrm-rest-client';
-import { simConfig } from '../sim-controller';
-import { LineString, point } from '@turf/helpers';
+import { Coordinate, Profile } from 'osrm-rest-client';
 
 /**
  * Create a GUID
@@ -33,6 +31,7 @@ export const { log } = console;
  * @param {Function} filter numbers that do not satisfy the condition
  * @param f
  */
+
 export const random = (
   min: number,
   max: number,
@@ -47,6 +46,7 @@ export const random = (
  *
  * @param arr
  */
+
 export const randomItem = <T>(arr: T | T[]): T =>
   arr instanceof Array ? arr[random(0, arr.length - 1)] : arr;
 
@@ -57,6 +57,7 @@ export const randomItem = <T>(arr: T | T[]): T =>
  * @param desiredspeed
  * @param panic
  */
+
 export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: number): number => {
   let speed = 1;
   if (nOMembers < 1000) {
@@ -104,6 +105,7 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
  * @returns a shuffled list of items
  * see also http://stackoverflow.com/a/2450976/319711
  */
+
 export const shuffle = <T>(array: T[]) => {
   let currentIndex = array.length;
   let temporaryValue: T;
@@ -131,6 +133,7 @@ export const shuffle = <T>(array: T[]) => {
  * @param {number} [step=1]
  * @returns
  */
+
 export const range = (from: number, to: number, step: number = 1) => {
   const arr = [] as number[];
   if (step > 0) {
@@ -151,6 +154,7 @@ export const range = (from: number, to: number, step: number = 1) => {
  * @param min
  * @param max
  */
+
 export const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
 /**
@@ -163,6 +167,7 @@ export const randomInRange = (min: number, max: number) => Math.random() * (max 
  * @param min
  * @param max
  */
+
 export const randomIntInRange = (min: number, max: number) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -176,6 +181,7 @@ export const randomIntInRange = (min: number, max: number) => {
  * @param lon2
  * Calculate duration of drone over certain distance
  */
+
 export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const dist = distanceInMeters(lat1, lon1, lat2, lon2);
   const secPerMeter = 3600 / 70000;
@@ -190,12 +196,14 @@ export const inRangeCheck = (min: number, max: number, value: number) => (value 
  * @param max
  * Convert a number of minutes to the number of msec
  */
+
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
 /**
  * @param min
  * @param max
  * Convert a number of seconds to the number of msec
  */
+
 export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
 
 /**
@@ -203,6 +211,7 @@ export const seconds = (min: number, max?: number) => (max ? randomInRange(min, 
  * @param max
  * Convert a number of hours to the number of msec
  */
+
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
 
 const now = new Date();
@@ -217,6 +226,7 @@ const day = now.getDate();
  * @param s
  * Create a date relative to today
  */
+
 export const simTime = (days: number, h: number, m = 0, s = 0) =>
   new Date(year, month, day + days, h, m, s);
 
@@ -224,6 +234,7 @@ export const simTime = (days: number, h: number, m = 0, s = 0) =>
  * @param agent
  * Convert agent to entity item
  */
+
 export const agentToEntityItem = (agent: IAgent): IItem => ({
   id: agent.id,
   type: agent.type,
@@ -298,6 +309,7 @@ export const agentToFeature = (agent: IAgent) => ({
  * Based on the actual lat/lon, create a place nearby
  * @param minDistance
  */
+
 export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string, minDistance?: number): ILocation => {
   const {
     actual: {
@@ -329,6 +341,7 @@ export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string,
  * @param type
  * Based on the coordinates of centre of area, create a place nearby
  */
+
 export const randomPlaceInArea = (lon: number, lat: number, rangeInMeter: number, type: string): ILocation => {
   const r = rangeInMeter / 111139;
   return {
@@ -350,6 +363,7 @@ const Deg2Rad = Math.PI / 180;
  * @param lon2
  * @source https://stackoverflow.com/a/11172685/319711
  */
+
 export const distanceInMeters = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   // generally used geo measurement function
   const dLat = lat2 * Deg2Rad - lat1 * Deg2Rad;
@@ -369,8 +383,8 @@ export const distanceInMeters = (lat1: number, lon1: number, lat2: number, lon2:
  * @param lat Average latitude of the simulation, used to approximate the length of a longitude circle
  * @see https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
  */
+
 export const simplifiedDistanceFactory = () => {
-  // const coslat = Math.cos((latitudeAvg * Math.PI) / 180);
   const f = Math.PI / 360;
   /**
    * @param lat0
@@ -379,6 +393,7 @@ export const simplifiedDistanceFactory = () => {
    * @param lng1
    * Distance between WGS84 coordinates in meters
    */
+
   return (lat0: number, lng0: number, lat1: number, lng1: number) => {
     const x = lat0 - lat1;
     // const y = (lng0 - lng1) * coslat;
@@ -392,6 +407,7 @@ export const simplifiedDistanceFactory = () => {
  * @param ms
  * Delay function
  */
+
 export const sleep = (ms: number) =>
   new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -402,6 +418,7 @@ export const sleep = (ms: number) =>
  * @param decimals
  * Round a number or array of numbers to a fixed number of decimals
  */
+
 export const round = (n: number | number[], decimals = 6) => {
   const factor = 10 ** decimals;
   const r = (x: number) => Math.round(x * factor) / factor;
@@ -501,6 +518,14 @@ export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices)
     trnsprt.memberCount -= 1;
   }
 };
+
+/**
+ * @param array
+ * @param attr
+ * @param value
+ *
+ * Find index of array with a specific attribute value
+ */
 
 export const findWithAttr = async (array: any[], attr: string, value: string) => {
   for (let i = 0; i < array.length; i += 1) {
@@ -608,6 +633,7 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
  * @param services
  * @param options
  */
+
 export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const { destination } = agent;
   const { distance } = services;
@@ -678,6 +704,7 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
  * @returns
  * Transform time string to date
  */
+
 export const toDate = (agent: IAgent, services: IEnvServices, str?: string) => {
   const regex1 = /(\d{1,2}):(\d{1,2}):(\d{1,2})(\w?)/i;
   if (!str) return undefined;
