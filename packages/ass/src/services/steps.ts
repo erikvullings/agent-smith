@@ -27,9 +27,9 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
  */
 
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
-  let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 200 : 0;
+  let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 100 : 0;
   if (agent.vulnerability) {
-    releaseProbabilityPercentage += (agent.vulnerability / 200);
+    releaseProbabilityPercentage += (agent.vulnerability / 100);
   }
   const releaseProbability = agent.group ? agent.group.length * 0.01 * releaseProbabilityPercentage : 0;
   const rnd = randomInRange(0, 100);
@@ -165,7 +165,7 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
         const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
         const whiteGroups = agentsInRange.filter((a: IAgent) => a.type === 'group' && a.force === 'white');
         const group = randomItem(whiteGroups);
-        if (group && group.group && group.group.length > 0) {
+        if (group && group.group && group.group.length > 0 && agent.speed && agent.speed > 0) {
           if (group.group && group.memberCount) {
             group.group.push(agent.id);
             group.memberCount += 1;

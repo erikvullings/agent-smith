@@ -644,7 +644,7 @@
               16,
               16
             ],
-            "text-allow-overlap": true,
+            "text-allow-overlap": false,
             "text-ignore-placement": true
           }
         },
