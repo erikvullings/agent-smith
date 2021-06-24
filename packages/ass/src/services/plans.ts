@@ -724,7 +724,7 @@ export const plans = {
   'Search and attack': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       await prepareAgent(agent);
-      dispatchServices.setStrategy(agent, services);
+      dispatchServices.setStrategy(services);
       agent.following = dispatchServices.strategy.get(agent.id);
       agent.running = true;
 

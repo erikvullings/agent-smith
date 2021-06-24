@@ -2,15 +2,14 @@ import { ActivityList, IAgent, IMail } from '../models';
 
 import { hours, randomInRange, randomIntInRange, minutes, toTime, findWithAttr } from '../utils';
 import { IEnvServices, updateAgent } from '../env-services';
-// import * as simConfig from '../sim_config.json';
 import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
-import { messageServices } from './message-service';
 
 /**
  * @param agent
  * @param _services
  */
+
 const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   if (typeof agent.day === 'undefined') {
     agent.day = 0;
@@ -366,6 +365,7 @@ const changeAgenda = async (agent: IAgent, services: IEnvServices, newAgenda: Ac
  * @param mail
  * @param agents
  */
+
 const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, agents: IAgent[]) => {
   agent.route = [];
   agent.steps = [];

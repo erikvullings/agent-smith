@@ -21,7 +21,7 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
 
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
     const receiversRedis = receivers.filter((a) => a.key !== sender.id);
-    const receiversAgents = receiversRedis.map((a) => a = services.agents[a.key]).filter(a => (!('baseLocation' in a) || services.locations[a.baseLocation].type !== ('police station' || 'sis base')) && a.status !== 'inactive' && a.reactedTo !== message);
+    const receiversAgents = receiversRedis.map((a) => a = services.agents[a.key]).filter(a => (!('baseLocation' in a) || services.locations[a.baseLocation].type !== ('police station' || 'sis base')) && a.status !== 'inactive');
 
     if (receiversAgents.length > 0) {
         await send(sender, message, receiversAgents, services);

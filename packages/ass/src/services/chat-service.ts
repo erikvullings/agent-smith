@@ -42,7 +42,6 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
  * @param closeAgent
  * @param services
  * Adds going to the meetup location and chatting steps in the agendas
- * @param agents
  */
 
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {

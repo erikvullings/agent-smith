@@ -90,9 +90,6 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
 /**
  * Picks the equipment for the blue agents based on the severity of the action
  *
- * @param sender : The sender of the message
- * @param receivers : The receivers of the message
- * Picks one random agent and the closest agent
  */
 
 const pickEquipment = async (agent: IAgent) => {
