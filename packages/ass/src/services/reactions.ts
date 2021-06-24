@@ -51,7 +51,7 @@ export const reaction = {
     },
     'Play message': {
         'blue': {
-            urgency: 2, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } },
+            urgency: 1, plans: [[{ 'name': 'Go to base', 'options': { reacting: true } },
                 { 'name': 'Release', 'options': {reacting: true} },
                 { 'name': 'Patrol', 'options': {} },
                 { 'name': 'Patrol', 'options': {} },
@@ -60,7 +60,7 @@ export const reaction = {
             ]],
         },
         'white': {
-            urgency: 3, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
+            urgency: 1, plans: [[{ 'name': 'Run away', 'options': { reacting: true } }
                 , { 'name': 'Unpanic', 'options': {} }
                 , { 'name': 'Go home', 'options': {} }]],
         },
