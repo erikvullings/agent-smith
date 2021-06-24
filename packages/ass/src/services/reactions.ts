@@ -1,6 +1,8 @@
 import { IReactions } from '../models';
 
-
+/**
+ * Add reactions to specific messages. Every force reacts differently.
+ * */
 export const reaction = {
     'Drop object': {
         'blue': {

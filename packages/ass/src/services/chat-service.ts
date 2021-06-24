@@ -1,6 +1,6 @@
 import { IEnvServices } from '../env-services';
 import { ActivityList, IAgent } from '../models';
-import { minutes, toTime, randomIntInRange } from '../utils';
+import { toTime, randomIntInRange } from '../utils';
 import { redisServices } from './redis-service';
 
 
@@ -17,7 +17,7 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
         const redisAgents: any[] = await redisServices.geoSearch(randomAgentStart.actual, 10000);
         const availableAgents: IAgent[] = (redisAgents.map((a) => a = services.agents[a.key]))
             .filter(a => a.agenda && a.agenda[0] && (!a.agenda[0].options?.reacting || a.agenda[0].options?.reacting !== true)
-                && (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive' &&
+                && (!('baseLocation' in a) || services.locations[a.baseLocation].type !== ('police station' || 'sis base')) && a.status !== 'inactive' &&
                 a.force !== 'red' &&
                 a.force !== 'tbp' &&
                 (a.type === 'woman' || 'man' || 'girl' || 'boy') &&
@@ -44,6 +44,7 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
  * Adds going to the meetup location and chatting steps in the agendas
  * @param agents
  */
+
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
     randomAgent.route = [];
     randomAgent.steps = [];

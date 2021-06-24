@@ -1,21 +1,27 @@
-import { deflateSync } from 'zlib';
 import { reaction, redisServices } from '.';
 import { IEnvServices } from '../env-services';
-import { IAgent, IEquipment, IMail } from '../models';
+import { IAgent, IMail } from '../models';
 import { randomIntInRange } from '../utils';
 import { agendas } from './agendas';
 import { planEffects } from './plan-effects';
 
+/**
+ * Send a message to the agents in the radius.
+ * The radius for the message (messageRadius) is specified in the planEffects.
+ *
+ * @param sender : The sender agent
+ * @param message : The action of the agent that produces the message
+ */
 
 const sendMessage = async (sender: IAgent, message: string, services: IEnvServices) => {
-    let radius = 10000;
+    let radius = 5;
     if (planEffects[message]) {
         radius = planEffects[message].messageRadius;
     }
 
     const receivers = await redisServices.geoSearch(sender.actual, radius, sender) as any[];
     const receiversRedis = receivers.filter((a) => a.key !== sender.id);
-    const receiversAgents = receiversRedis.map((a) => a = services.agents[a.key]).filter(a => (!('baseLocation' in a) || a.baseLocation !== 'station') && a.status !== 'inactive' && a.reactedTo !== message);
+    const receiversAgents = receiversRedis.map((a) => a = services.agents[a.key]).filter(a => (!('baseLocation' in a) || services.locations[a.baseLocation].type !== ('police station' || 'sis base')) && a.status !== 'inactive' && a.reactedTo !== message);
 
     if (receiversAgents.length > 0) {
         await send(sender, message, receiversAgents, services);
@@ -24,6 +30,15 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
     return true;
 }
 
+/**
+ * Send a direct message to specific agents.
+ * This is generally used to communicate with one specific agent or to communicate with the police
+ *
+ * @param sender : The sender agent
+ * @param message : The message that is being sent
+ * @param receivers : The receiver agents for the message
+ */
+
 const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (receivers.length > 0) {
         await send(sender, message, receivers, _services);
@@ -31,6 +46,15 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
 
     return true;
 }
+
+/**
+ * Prepares the message and pushes it to the mailbox of the receivers
+ * Adds the message to the sentbox of the sender
+ *
+ * @param sender : The sender agent
+ * @param message : The message that is being sent
+ * @param receivers : The receiver agents for the message
+ */
 
 const send = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (!sender.sentbox) { sender.sentbox = [] }
@@ -91,16 +115,28 @@ const send = async (sender: IAgent, message: string, receivers: IAgent[], _servi
     return true;
 }
 
+/**
+ * Reads the message,
+ * If there are urgent messages (if a reaction to the message exists and has a minimal urgency of 2)
+ * calls reactToMessage
+ *
+ */
+
 const readMailbox = async (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
-    const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 3));
+    const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 2));
     if (urgentMessages.length > 0) {
         return reactToMessage(agent, services, urgentMessages, agents);;
     }
     return false;
 };
 
+/**
+ * Based on the current agenda item priority and the fact that if the agent is already reacting
+ * Calls the function react
+ *
+ */
+
 const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], agents: IAgent[]) => {
-    // const actionToReact = null as unknown as IMail;
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
 
@@ -114,9 +150,8 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
     const { options } = agent.agenda[0];
 
     if (options.reacting === undefined || options.reacting !== true) {
-        // not reacting agents where reaction to plan is not undefined
+        // check if urgency is less than item urgency, if so the agenda is more important
         if (options.priority !== undefined && options.priority < itemUrgency) {
-            // prio of agenda is less, so it is more important
             // stay in agenda
             return true;
         }
@@ -129,15 +164,7 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
                 return true;
             }
 
-            // if(itemReaction[0].name === "Call the police"){
-
-            // }
-            // pick one of the reactions
-            // actionToReact = urgentMessages[randomInt];
-            // actionToReact.sender.sentbox.push({receiver: agent,mail: actionToReact})
-            // return await agendas.addReaction(agent,services, actionToReact);
             return react(agent, services, urgentMessages, random, agents)
-
         }
 
         // if prio is greater than urgency, pick one from the reactions
@@ -147,8 +174,6 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
 
     // check if urgency is greater than current reaction, if so pick the new reaction
     if (options.priority !== undefined && options.priority > itemUrgency) {
-        // prio of agenda is greater
-        // pick new reaction
         const randomInt = randomIntInRange(0, urgentMessages.length - 1);
         return react(agent, services, urgentMessages, randomInt, agents)
     }
@@ -158,9 +183,13 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
 
 };
 
+/**
+ * Cleanes mailbox and calls the function to add the reaction to the agent agenda
+ *
+ */
+
 const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], itemIndex: number, agents: IAgent[]) => {
     let actionToReact = null as unknown as IMail;
-    // const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
     actionToReact = urgentMessages[itemIndex];
     actionToReact.sender.sentbox.push({ receiver: agent, mail: actionToReact })
     const cleanedMailbox = agent.mailbox.filter(mail => mail.message !== actionToReact.message && mail.sender !== actionToReact.sender)

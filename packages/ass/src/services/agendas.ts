@@ -24,25 +24,25 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go to work',
-          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 2 },
+          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3 },
         },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
         { name: 'Have lunch', options: { priority: 2 } },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
       ],
       [
         {
           name: 'Go to work',
-          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 2 },
+          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3 },
         },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
       ],
       [
         {
           name: 'Go to work',
-          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 2 },
+          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3 },
         },
-        { name: 'Work', options: { duration: hours(3, 5), priority: 1 } },
+        { name: 'Work', options: { duration: hours(3, 5), priority: 3 } },
       ],
     ],
     goHome: () => [{ name: 'Go home', options: { priority: 3 } }],
@@ -50,17 +50,17 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       [
         {
           name: 'Go shopping',
-          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 2 },
+          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3 },
         },
-        { name: 'Shop', options: { duration: hours(0, 1), priority: 2 } },
+        { name: 'Shop', options: { duration: hours(0, 1), priority: 3 } },
         { name: 'Go to other shops', options: { priority: 3 } },
       ],
       [
         {
           name: 'Go shopping',
-          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 2 },
+          options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3 },
         },
-        { name: 'Shop', options: { duration: hours(0, 1), priority: 2 } },
+        { name: 'Shop', options: { duration: hours(0, 1), priority: 3 } },
       ],
     ],
     hangAroundArea: () => [
@@ -69,24 +69,24 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     ],
     wander: () => [{ name: 'Wander', options: { priority: 3 } }],
     doctorVisit: () => [
-      { name: 'Visit doctor', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
+      { name: 'Visit doctor', options: { priority: 3, startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
       { name: 'GetExamined', options: { duration: hours(0, 5) } },
     ],
     releaseAtRandomLocation: () => [
-      { name: 'Go to random location', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
+      { name: 'Go to random location', options: { priority: 1, startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
       { name: 'Release' },
     ],
     releaseRed: () => [
-      { name: 'Release red', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
+      { name: 'Release red', options: { priority: 1, startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
     ],
     droneHangAround: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
-      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
     ],
     droneDropObject: () => [
       { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
       { name: 'Drop object', options: { priority: 1 } },
-      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 3, areaCenter: [4.892401, 52.373104], areaRange: 20 } },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 20 } },
     ],
 
   };
@@ -129,20 +129,20 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       ],
     ],
     releaseAtRandomLocation: () => [
-      { name: 'Go to random location', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
+      { name: 'Go to random location', options: { priority: 2, startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
       { name: 'Release' },
     ],
   };
 
   const redActivities = {
-    goHome: () => [{ name: 'Go home', options: { priority: 3 } }],
+    goHome: () => [{ name: 'Go home', options: { priority: 1 } }],
     dropAtRandomLocation: () => [
-      { name: 'Go to random location', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
+      { name: 'Go to random location', options: { priority: 1, startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
       { name: 'Drop object', options: { priority: 1 } },
       { name: 'Run away', options: { priority: 1 } },
     ],
     dropAtSpecificLocation: () => [
-      { name: 'Go to specific location', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), destination: { type: 'park', coord: [5.482012, 51.426585] } } },
+      { name: 'Go to specific location', options: { priority: 1, startTime: (toTime(0, randomInRange(0, 15), 0, true)), destination: { type: 'park', coord: [5.482012, 51.426585] } } },
       { name: 'Drop object', options: { priority: 1 } },
       { name: 'Run away', options: { priority: 1 } },
     ],
@@ -158,7 +158,7 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       },
     ],
     fight: () => [
-      { name: 'Fight', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), duration: hours(3, 5) } },
+      { name: 'Fight', options: { priority: 1, startTime: (toTime(0, randomInRange(0, 15), 0, true)), duration: hours(3, 5) } },
     ],
   };
 
@@ -182,37 +182,37 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
         ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
         ...activities.goHome(),
       ] as ActivityList,
-      // [
-      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-      //   ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
-      //   ...activities.goHome(),
-      //   ...activities.wander(),
-      //   ...activities.goHome(),
-      // ] as ActivityList,
-      // [
-      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-      //   ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
-      //   ...activities.goHome(),
-      // ] as ActivityList,
-      // [
-      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-      //   ...activities.goHome(),
-      // ] as ActivityList,
-      // [
-      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-      //   ...activities.wander(),
-      //   ...activities.goHome(),
-      // ] as ActivityList,
-      // [
-      //   ...activities.wander(),
-      //   ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
-      //   ...activities.goHome(),
-      // ] as ActivityList,
-      // [
-      //   ...activities.wander(),
-      //   ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
-      //   ...activities.goHome(),
-      // ] as ActivityList,
+      [
+        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+        ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
+        ...activities.goHome(),
+        ...activities.wander(),
+        ...activities.goHome(),
+      ] as ActivityList,
+      [
+        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+        ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
+        ...activities.goHome(),
+      ] as ActivityList,
+      [
+        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+        ...activities.goHome(),
+      ] as ActivityList,
+      [
+        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+        ...activities.wander(),
+        ...activities.goHome(),
+      ] as ActivityList,
+      [
+        ...activities.wander(),
+        ...activities.shop()[randomIntInRange(0, activities.shop().length - 1)],
+        ...activities.goHome(),
+      ] as ActivityList,
+      [
+        ...activities.wander(),
+        ...activities.work()[randomIntInRange(0, activities.work().length - 1)],
+        ...activities.goHome(),
+      ] as ActivityList,
     ],
     learn: () => [
       [
@@ -243,7 +243,6 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     ],
     group: () => [
       [...activities.releaseAtRandomLocation(), ...activities.goHome()] as ActivityList,
-      // [...activities.release_red(),...activities.goHome()] as ActivityList,
     ],
     redGroup: () => [
       [...redActivities.fight(), ...activities.goHome()] as ActivityList,
@@ -264,11 +263,8 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     releaseAtLocation: () => agendaVariations.releaseAtLocation()[0],
     policeDuty: () => agendaVariations.police()[randomIntInRange(0, agendaVariations.police().length - 1)],
     kmarDuty: () => agendaVariations.kmar()[randomIntInRange(0, agendaVariations.kmar().length - 1)],
-    redActivity: () =>
-      (agendaVariations.work())[randomIntInRange(0, agendaVariations.work().length - 1)],
-    // agendaVariations.red()[randomIntInRange(0, agendaVariations.red().length - 1)],
+    redActivity: () => agendaVariations.work()[randomIntInRange(0, agendaVariations.work().length - 1)],
     null: () => agendaVariations.null()[randomIntInRange(0, agendaVariations.null().length - 1)],
-
     tourist: () => (agendaVariations.tourist())[randomIntInRange(0, agendaVariations.tourist().length - 1)],
     group: () => (agendaVariations.group())[randomIntInRange(0, agendaVariations.group().length - 1)],
     redGroup: () => (agendaVariations.redGroup())[randomIntInRange(0, agendaVariations.redGroup().length - 1)],
@@ -284,7 +280,6 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   } if (agent.type === 'drone') {
     return agentAgendas.drone();
   }
-  /* if(agent.following){} */
   switch (agent.force) {
     case 'white': {
       if (agent.occupations !== undefined && agent.occupations!.length !== 0) {
@@ -307,10 +302,8 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
         return agentAgendas[agent.occupations![0].type as keyof typeof agentAgendas]();
       }
       return agentAgendas.work();
-
     }
   }
-
 }
 
 const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgIndex: number) => {
@@ -342,7 +335,6 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
   const agenda = [...customAgendas[customAgIndex].agendaItems];
   if (agenda.length > 0) {
     if (!(agenda[0] && agenda[0].options && (agenda[0].options.startTime || agenda[0].options.endTime))) {
-      // const agendaOptions = { ...(agenda[0].options), startTime: (toTime(0, randomInRange(0, 15), 0, true)) };
       const agendaOptions = { ...(agenda[0].options), startTime: '00:00:00r' };
       agenda[0].options = agendaOptions;
     }
@@ -445,8 +437,6 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
         return true;
       }
 
-      // agent.following = mail.sender.id;
-      // agent.destination = mail.location;
       agent.target = mail.sender;
       reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
 

@@ -5,6 +5,12 @@ import { planEffects } from './plan-effects';
 
 let defenceSent: boolean = false;
 let strategySet: boolean = false;
+const strategy = new Map();
+
+/**
+ * Sends police agent that are close to the location
+ * and if necessary police agents that are at the police station
+ */
 
 const sendDefence = async (agent: IAgent, services: IEnvServices) => {
     if(agent.reactedTo === undefined || planEffects[agent.reactedTo] === undefined) {
@@ -13,23 +19,11 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
 
     const effect = planEffects[agent.reactedTo];
 
-    if(effect && !defenceSent && agent.reactedTo === 'Chaos') {
-        console.log('sen defence chaos');
-        // const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
-        // a = newAgent.agent;
-        // agents.push(a);
-        // redisServices.geoAdd('agents', a);
-        // services.agents[id] = a;
-
-
-        console.log('done')
-        return true;
-    }
     if(effect && !defenceSent){
         const closeReceivers = (await redisServices.geoSearch(agent.actual, 1000, agent) as any[]).map((a) => a = services.agents[a.key]);
         const closeAgents = closeReceivers
             .filter(
-                a => (('baseLocation' in a) && a.baseLocation !== 'station') &&
+                a => (('baseLocation' in a) && services.locations[a.baseLocation].type !== ('police station' || 'sis base')) &&
                 agent.force === 'blue' &&
                 a.agenda &&
                 (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
@@ -37,7 +31,7 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
         const farReceivers = (await redisServices.geoSearch(agent.actual, 15000, agent) as any[]).map((a) => a = services.agents[a.key]);
         const farStationAgents = farReceivers
             .filter(
-                a => (('baseLocation' in a) && a.baseLocation === 'station') &&
+                a => (('baseLocation' in a) && services.locations[a.baseLocation].type === 'police station') &&
                 agent.force === 'blue' &&
                 a.agenda &&
                 (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
@@ -52,9 +46,12 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
     return true;
 };
 
-const strategy = new Map();
 
-const setStrategy = async (agent: IAgent, services: IEnvServices) => {
+/**
+ * Sets a strategy for the SIS(Special Intervention Service)
+ */
+
+const setStrategy = async (services: IEnvServices) => {
   const redAgents: IAgent[] = [];
   const blueAgents: IAgent[] = [];
 
@@ -86,6 +83,10 @@ const setStrategy = async (agent: IAgent, services: IEnvServices) => {
 
     strategySet = true;
 };
+
+/**
+ * Police agent picks a new red target
+ */
 
 const pickNewTarget = async (agent: IAgent, services: IEnvServices) => {
   const redAgents = (await redisServices.geoSearch(agent.actual, 100000, agent) as any[]).map((a) => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health >0 && a.type !== 'group');
