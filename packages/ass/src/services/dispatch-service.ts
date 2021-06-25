@@ -12,7 +12,21 @@ const strategy = new Map();
  * and if necessary police agents that are at the police station
  */
 
-const sendDefence = async (agent: IAgent, services: IEnvServices) => {
+const sendDefence = async (agent: IAgent, services: IEnvServices, eventType?: string) => {
+    if(eventType && eventType === 'terrorism'){
+      const sisAgents: IAgent[] = [];
+      for (const a in services.agents) {
+        if (services.agents.hasOwnProperty(a)) {
+          if (services.agents[a].force === 'blue' && services.agents[a].type === 'group') {
+            sisAgents.push(services.agents[a]);
+          }
+        }
+      }
+
+      messageServices.sendDirectMessage(agent, 'Chaos', [...sisAgents], services);
+      return true;
+    }
+
     if(agent.reactedTo === undefined || planEffects[agent.reactedTo] === undefined) {
         return true;
     }
@@ -75,11 +89,10 @@ const setStrategy = async (services: IEnvServices) => {
         for(let i=0; i<blueAgents.length;i++){
             blueAgents[i].following = redAgents[i%redAgents.length].id;
             blueAgents[i].target = redAgents[i%redAgents.length];
-            console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i%redAgents.length].id)
+            // console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i%redAgents.length].id)
             strategy.set(blueAgents[i].id,redAgents[i%redAgents.length].id);
         }
     }
-    console.log('strategy is set');
 
     strategySet = true;
 };

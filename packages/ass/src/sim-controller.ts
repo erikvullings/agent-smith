@@ -3,7 +3,7 @@ import { envServices, updateAgent } from './env-services';
 import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
 import { redisServices, messageServices, reaction, chatServices } from './services';
-import jsonSimConfig from './verstoring_openbare_orde.json';
+import jsonSimConfig from './amok.json';
 import reactionConfig from './plan_reactions.json';
 
 // const SimEntityItemTopic = 'simulation_entity_item';
@@ -46,7 +46,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 2, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
+    const { simSpeed = 10, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     services.setTime(startTime);
     // const agentstoshow = [] as IAgent[];

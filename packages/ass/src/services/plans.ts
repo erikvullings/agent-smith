@@ -1029,17 +1029,8 @@ export const plans = {
           steps.push({ name: 'walkTo', options: { destination } });
         }
 
-        const sisAgents: IAgent[] = [];
-        for (const a in services.agents) {
-          if (services.agents.hasOwnProperty(a)) {
-            if (services.agents[a].force === 'blue' && services.agents[a].type === 'group') {
-              sisAgents.push(services.agents[a]);
-            }
-          }
-        }
-
         messageServices.sendMessage(agent, 'Chaos', services);
-        messageServices.sendDirectMessage(agent, 'Chaos', [...sisAgents], services);
+        dispatchServices.sendDefence(agent, services, 'terrorism');
         damageServices.damageRandomAgent(agent, services);
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 6);
