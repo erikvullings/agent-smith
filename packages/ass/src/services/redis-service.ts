@@ -10,11 +10,10 @@ redis.on('error', (err: any) => {
 });
 
 /**
- * @param agent1
- * @param agent2
+ * @param {IAgent} agent1
+ * @param {IAgent} agent2
  * Calculate distance between two agents
  */
-
 const geoDist = async (agent1: IAgent, agent2: IAgent) => {
   redis.geodist(
     'agents',
@@ -32,15 +31,14 @@ const geoDist = async (agent1: IAgent, agent2: IAgent) => {
 /**
  * Search for agents in area
  *
- * @param location : Centre location
- * @param radius : Radius of the search in meters
- * @param agent : Optional parameter, if defined removes the agent of the result array
+ * @param {ILocation} location : Centre location
+ * @param {number} radius : Radius of the search in meters
+ * @param {IAgent} agent : Optional parameter, if defined removes the agent of the result array
  *
  * The input for redis.geosearch:
  * (key,longitude,latitude,radius value, radius unit(m,km),include coordinates in result,
  * include the distance from supplied latitude & longitude, sort(closest first))
  */
-
 const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): Promise<any> => {
   const resArray: { key: any[]; distance: any[]; longitude: any; latitude: any; }[] = [];
   await redis.geosearch(
@@ -78,11 +76,10 @@ const geoSearch = async (location: ILocation, radius: number, agent?: IAgent): P
 };
 
 /**
- * @param key
- * @param agent
+ * @param {string} key
+ * @param {IAgent} agent
  * Add new value to key
  */
-
 const geoAdd = async (key: string, agent: IAgent) => {
   redis.geoadd(
     key,
@@ -92,11 +89,10 @@ const geoAdd = async (key: string, agent: IAgent) => {
   );
 }
 /**
- * @param key
- * @param agents
+ * @param {string} key
+ * @param {IAgent[]} agents
  * Add multiple values to key
  */
-
 const geoAddBatch = async (key: string, agents: IAgent[]) => {
   const arr: string[][] = [];
   agents.forEach(agent => {
@@ -111,7 +107,6 @@ const geoAddBatch = async (key: string, agents: IAgent[]) => {
 /**
  * Remove all keys from database
  * */
-
 const flushDb = () => {
   redis.flushdb();
 }

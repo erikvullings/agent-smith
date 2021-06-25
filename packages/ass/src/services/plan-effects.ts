@@ -1,15 +1,15 @@
 import { IPlanEffects } from '../models';
 
 /**
- * @param damageRadius Radius to give damage in m
- * @param damageLevel Health in percentage: 0-100 (an undamaged agent has 100% health)
- * @param runDistance
- * @param panicLevel
- * @param panicCause
- * @param delayLevel
- * @param delayCause
- * @param severity How severe the consequences of the plan are: 1-5
- * @param messageRadius Radius to send message in m
+ * @property {number} damageRadius - Radius to give damage in m
+ * @property {number} damageLevel - Health in percentage: 0-100 (an undamaged agent has 100% health)
+ * @property {number} runDistance -
+ * @property {number} panicLevel -
+ * @property {number} panicCause -
+ * @property {number} delayLevel - Radius to give damage in m
+ * @property {number} delayCause - Radius to give damage in m
+ * @property {number} severity - How severe the consequences of the plan are: 1-5
+ * @property {number} messageRadius - Radius to send message in m
  */
 export const planEffects = {
     'Chaos': {

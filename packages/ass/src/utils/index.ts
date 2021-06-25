@@ -31,7 +31,6 @@ export const { log } = console;
  * @param {Function} filter numbers that do not satisfy the condition
  * @param f
  */
-
 export const random = (
   min: number,
   max: number,
@@ -46,7 +45,6 @@ export const random = (
  *
  * @param arr
  */
-
 export const randomItem = <T>(arr: T | T[]): T =>
   arr instanceof Array ? arr[random(0, arr.length - 1)] : arr;
 
@@ -57,7 +55,6 @@ export const randomItem = <T>(arr: T | T[]): T =>
  * @param desiredspeed
  * @param panic
  */
-
 export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: number): number => {
   let speed = 1;
   if (nOMembers < 1000) {
@@ -105,7 +102,6 @@ export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: numb
  * @returns a shuffled list of items
  * see also http://stackoverflow.com/a/2450976/319711
  */
-
 export const shuffle = <T>(array: T[]) => {
   let currentIndex = array.length;
   let temporaryValue: T;
@@ -133,7 +129,6 @@ export const shuffle = <T>(array: T[]) => {
  * @param {number} [step=1]
  * @returns
  */
-
 export const range = (from: number, to: number, step: number = 1) => {
   const arr = [] as number[];
   if (step > 0) {
@@ -154,7 +149,6 @@ export const range = (from: number, to: number, step: number = 1) => {
  * @param min
  * @param max
  */
-
 export const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
 /**
@@ -167,7 +161,6 @@ export const randomInRange = (min: number, max: number) => Math.random() * (max 
  * @param min
  * @param max
  */
-
 export const randomIntInRange = (min: number, max: number) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -181,7 +174,6 @@ export const randomIntInRange = (min: number, max: number) => {
  * @param lon2
  * Calculate duration of drone over certain distance
  */
-
 export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const dist = distanceInMeters(lat1, lon1, lat2, lon2);
   const secPerMeter = 3600 / 70000;
@@ -196,14 +188,13 @@ export const inRangeCheck = (min: number, max: number, value: number) => (value 
  * @param max
  * Convert a number of minutes to the number of msec
  */
-
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
+
 /**
  * @param min
  * @param max
  * Convert a number of seconds to the number of msec
  */
-
 export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
 
 /**
@@ -211,7 +202,6 @@ export const seconds = (min: number, max?: number) => (max ? randomInRange(min, 
  * @param max
  * Convert a number of hours to the number of msec
  */
-
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
 
 const now = new Date();
@@ -226,7 +216,6 @@ const day = now.getDate();
  * @param s
  * Create a date relative to today
  */
-
 export const simTime = (days: number, h: number, m = 0, s = 0) =>
   new Date(year, month, day + days, h, m, s);
 
@@ -234,7 +223,6 @@ export const simTime = (days: number, h: number, m = 0, s = 0) =>
  * @param agent
  * Convert agent to entity item
  */
-
 export const agentToEntityItem = (agent: IAgent): IItem => ({
   id: agent.id,
   type: agent.type,
@@ -309,7 +297,6 @@ export const agentToFeature = (agent: IAgent) => ({
  * Based on the actual lat/lon, create a place nearby
  * @param minDistance
  */
-
 export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string, minDistance?: number): ILocation => {
   const {
     actual: {

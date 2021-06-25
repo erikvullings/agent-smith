@@ -10,8 +10,11 @@ const strategy = new Map();
 /**
  * Sends police agent that are close to the location
  * and if necessary police agents that are at the police station
+ *
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {string} eventType
  */
-
 const sendDefence = async (agent: IAgent, services: IEnvServices, eventType?: string) => {
     if(eventType && eventType === 'terrorism'){
       const sisAgents: IAgent[] = [];
@@ -63,8 +66,9 @@ const sendDefence = async (agent: IAgent, services: IEnvServices, eventType?: st
 
 /**
  * Sets a strategy for the SIS(Special Intervention Service)
+ *
+ * @param {IEnvServices} services
  */
-
 const setStrategy = async (services: IEnvServices) => {
   const redAgents: IAgent[] = [];
   const blueAgents: IAgent[] = [];
@@ -99,8 +103,10 @@ const setStrategy = async (services: IEnvServices) => {
 
 /**
  * Police agent picks a new red target
+ *
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
  */
-
 const pickNewTarget = async (agent: IAgent, services: IEnvServices) => {
   const redAgents = (await redisServices.geoSearch(agent.actual, 100000, agent) as any[]).map((a) => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health >0 && a.type !== 'group');
 

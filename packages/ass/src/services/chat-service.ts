@@ -5,12 +5,11 @@ import { redisServices } from './redis-service';
 
 
 /**
- * @param agent
- * @param agents
- * @param services
+ * @param {IAgent} agent
+ * @param {IAgent[]} agents
+ * @param {IEnvServices} services
  * Picks one random agent and the closest agent
  */
-
 const agentChat = async (agents: IAgent[], services: IEnvServices) => {
     const randomAgentStart = agents[randomIntInRange(0, agents.length)];
     if (randomAgentStart) {
@@ -38,12 +37,11 @@ const agentChat = async (agents: IAgent[], services: IEnvServices) => {
 };
 
 /**
- * @param randomAgent
- * @param closeAgent
- * @param services
+ * @param {IAgent} randomAgent
+ * @param {IAgent} closeAgent
+ * @param {IEnvServices} services
  * Adds going to the meetup location and chatting steps in the agendas
  */
-
 const startChat = async (randomAgent: IAgent, closeAgent: IAgent, services: IEnvServices) => {
     randomAgent.route = [];
     randomAgent.steps = [];

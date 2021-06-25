@@ -61,9 +61,9 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
 };
 
 /**
- * @param agent
- * @param services
- * @param options
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
  * Wait for options.duration msec */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration } = options;
@@ -76,10 +76,8 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
 };
 
 /**
- * @param agent
- * @param services
- * @param options
- * Wait for options.duration msec */
+ * @param {IAgent} agent - agent to be prepared
+ */
 const prepareAgent = async (agent: IAgent) => {
   agent.sentbox = [];
   agent.visibility = 1;

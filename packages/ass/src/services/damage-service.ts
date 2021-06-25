@@ -7,11 +7,10 @@ import { randomIntInRange, randomItem, randomPlaceNearby } from '../utils';
  * Picks the equipment and
  * Gives the receivers damage, based on the damageLevel of the equipment and the attire of the receiver
  *
- * @param sender : The sender of the message
- * @param receivers : The receivers of the message
- * Picks one random agent and the closest agent
+ * @param {IAgent} sender : The sender of the message
+ * @param {IAgent[]} receivers : The receivers of the message
+ * @param {IEnvServices} _services
  */
-
 const damageAgent = async (sender: IAgent, receivers: IAgent[], _services: IEnvServices) => {
     const equipment = await pickEquipment(sender);
 
@@ -89,10 +88,10 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
 }
 
 /**
- * Picks the equipment for the blue agents based on the severity of the action
+ * Picks the equipment of the blue agent based on the severity of the action
  *
+ * @param {IAgent} agent
  */
-
 const pickEquipment = async (agent: IAgent) => {
     let sortedEquipments = [];
 

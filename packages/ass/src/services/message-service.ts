@@ -9,10 +9,10 @@ import { planEffects } from './plan-effects';
  * Send a message to the agents in the radius.
  * The radius for the message (messageRadius) is specified in the planEffects.
  *
- * @param sender : The sender agent
- * @param message : The action of the agent that produces the message
+ * @param {IAgent} sender : The sender agent
+ * @param {string} message : The action of the agent that produces the message
+ * @param {IEnvServices} services
  */
-
 const sendMessage = async (sender: IAgent, message: string, services: IEnvServices) => {
     let radius = 5;
     if (planEffects[message]) {
@@ -34,11 +34,11 @@ const sendMessage = async (sender: IAgent, message: string, services: IEnvServic
  * Send a direct message to specific agents.
  * This is generally used to communicate with one specific agent or to communicate with the police
  *
- * @param sender : The sender agent
- * @param message : The message that is being sent
- * @param receivers : The receiver agents for the message
+ * @param {IAgent} sender : The sender agent
+ * @param {IMail} message : The message that is being sent
+ * @param {IAgent[]} receivers : The receiver agents for the message
+ * @param {IEnvServices} _services
  */
-
 const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (receivers.length > 0) {
         await send(sender, message, receivers, _services);
@@ -51,11 +51,11 @@ const sendDirectMessage = async (sender: IAgent, message: string, receivers: IAg
  * Prepares the message and pushes it to the mailbox of the receivers
  * Adds the message to the sentbox of the sender
  *
- * @param sender : The sender agent
- * @param message : The message that is being sent
- * @param receivers : The receiver agents for the message
+ * @param {IAgent} sender : The sender agent
+ * @param {IMail} message : The message that is being sent
+ * @param {IAgent[]} receivers : The receiver agents for the message
+ * @param {IEnvServices} _services
  */
-
 const send = async (sender: IAgent, message: string, receivers: IAgent[], _services: IEnvServices) => {
     if (!sender.sentbox) { sender.sentbox = [] }
     receivers.forEach(rec => {
@@ -120,8 +120,10 @@ const send = async (sender: IAgent, message: string, receivers: IAgent[], _servi
  * If there are urgent messages (if a reaction to the message exists and has a minimal urgency of 2)
  * calls reactToMessage
  *
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IAgent[]} agents
  */
-
 const readMailbox = async (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
     const urgentMessages = agent.mailbox.filter(item => (reaction[item.message][agent.force] && reaction[item.message][agent.force]!.urgency && reaction[item.message][agent.force]!.urgency < 2));
     if (urgentMessages.length > 0) {
@@ -134,8 +136,11 @@ const readMailbox = async (agent: IAgent, services: IEnvServices, agents: IAgent
  * Based on the current agenda item priority and the fact that if the agent is already reacting
  * Calls the function react
  *
+ * @param {IAgent} agent - the agent that is going to react
+ * @param {IEnvServices} services
+ * @param {IMail[]} urgentMessages
+ * @param {IAgent[]} agents
  */
-
 const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], agents: IAgent[]) => {
     const itemReaction = reaction[urgentMessages[0].message][agent.force]?.plans[0];
     const itemUrgency = reaction[urgentMessages[0].message][agent.force]?.urgency;
@@ -186,8 +191,12 @@ const reactToMessage = async (agent: IAgent, services: IEnvServices, urgentMessa
 /**
  * Cleanes mailbox and calls the function to add the reaction to the agent agenda
  *
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IMail[]} urgentMessages
+ * @param {number} itemIndex
+ * @param {IAgent[]} agents
  */
-
 const react = async (agent: IAgent, services: IEnvServices, urgentMessages: IMail[], itemIndex: number, agents: IAgent[]) => {
     let actionToReact = null as unknown as IMail;
     actionToReact = urgentMessages[itemIndex];
