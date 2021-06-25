@@ -14,8 +14,8 @@ export interface IActivityOptions {
   destination?: ILocation;
   /** Center of area when travelling inside specific area */
   areaCenter?: [number, number];
-  /** Range of area when travelling inside specific area in meters*/
-  areaRange?: number;
+  /** Radius of area when travelling inside specific area in meters*/
+  areaRadius?: number;
   /** Agents IDs you want to start controlling, e.g. vehicles or children */
   control?: string[];
   /** Agents IDs you are controlling and want to release, e.g. vehicles or children */

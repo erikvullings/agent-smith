@@ -51,9 +51,9 @@ export const randomItem = <T>(arr: T | T[]): T =>
 /**
  * calculates the speed of a group based on the distance between members
  *
- * @param nOMembers
- * @param desiredspeed
- * @param panic
+ * @param {number} nOMembers
+ * @param {number} desiredspeed
+ * @param {number} panic
  */
 export const groupSpeed = (nOMembers: number, desiredspeed: number, panic?: number): number => {
   let speed = 1;
@@ -127,7 +127,6 @@ export const shuffle = <T>(array: T[]) => {
  * @param {number} from
  * @param {number} to : inclusive
  * @param {number} [step=1]
- * @returns
  */
 export const range = (from: number, to: number, step: number = 1) => {
   const arr = [] as number[];
@@ -146,8 +145,8 @@ export const range = (from: number, to: number, step: number = 1) => {
 /**
  * Returns a random number between min (inclusive) and max (exclusive)
  *
- * @param min
- * @param max
+ * @param {number} min
+ * @param {number} max
  */
 export const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -158,8 +157,8 @@ export const randomInRange = (min: number, max: number) => Math.random() * (max 
  * lower than max if max isn't an integer).
  * Using Math.round() will give you a non-uniform distribution!
  *
- * @param min
- * @param max
+ * @param {number} min
+ * @param {number} max
  */
 export const randomIntInRange = (min: number, max: number) => {
   min = Math.ceil(min);
@@ -168,10 +167,10 @@ export const randomIntInRange = (min: number, max: number) => {
 };
 
 /**
- * @param lat1
- * @param lon1
- * @param lat2
- * @param lon2
+ * @param {number} lat1
+ * @param {number} lon1
+ * @param {number} lat2
+ * @param {number} lon2
  * Calculate duration of drone over certain distance
  */
 export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -184,22 +183,22 @@ export const durationDroneStep = (lat1: number, lon1: number, lat2: number, lon2
 export const inRangeCheck = (min: number, max: number, value: number) => (value - min) * (value - max) <= 0;
 
 /**
- * @param min
- * @param max
+ * @param {number} min
+ * @param {number} max
  * Convert a number of minutes to the number of msec
  */
 export const minutes = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 60000;
 
 /**
- * @param min
- * @param max
+ * @param {number} min
+ * @param {number} max
  * Convert a number of seconds to the number of msec
  */
 export const seconds = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 1000;
 
 /**
- * @param min
- * @param max
+ * @param {number} min
+ * @param {number} max
  * Convert a number of hours to the number of msec
  */
 export const hours = (min: number, max?: number) => (max ? randomInRange(min, max) : min) * 3600000;
@@ -210,17 +209,17 @@ const month = now.getMonth();
 const day = now.getDate();
 
 /**
- * @param days
- * @param h
- * @param m
- * @param s
+ * @param {number} days
+ * @param {number} h
+ * @param {number} m
+ * @param {number} s
  * Create a date relative to today
  */
 export const simTime = (days: number, h: number, m = 0, s = 0) =>
   new Date(year, month, day + days, h, m, s);
 
 /**
- * @param agent
+ * @param {Agent} agent
  * Convert agent to entity item
  */
 export const agentToEntityItem = (agent: IAgent): IItem => ({
@@ -242,6 +241,10 @@ export const agentToEntityItem = (agent: IAgent): IItem => ({
 const transport = ['car', 'bicycle', 'bus', 'train'];
 const controlling = ['driveTo', 'cycleTo'];
 
+/**
+ * @param {IAgent} agent
+ * Convert agent to feature. The properties that are visible in the simulation are determined here.
+ */
 
 export const agentToFeature = (agent: IAgent) => ({
   type: 'Feature',
@@ -253,7 +256,6 @@ export const agentToFeature = (agent: IAgent) => ({
   },
   properties: {
     id: agent.id,
-    // title: agent.type === 'group' && agent.memberCount ? String(agent.memberCount) : '',
     type: agent.type,
     children: agent.group,
     location: {
@@ -291,11 +293,11 @@ export const agentToFeature = (agent: IAgent) => ({
 });
 
 /**
- * @param a
- * @param rangeInMeter
- * @param type
+ * @param {IAgent} a
+ * @param {number} rangeInMeter
+ * @param {string} type
+ * @param {number} minDistance
  * Based on the actual lat/lon, create a place nearby
- * @param minDistance
  */
 export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string, minDistance?: number): ILocation => {
   const {
@@ -322,10 +324,10 @@ export const randomPlaceNearby = (a: IAgent, rangeInMeter: number, type: string,
 };
 
 /**
- * @param lon
- * @param lat
- * @param rangeInMeter
- * @param type
+ * @param {number} lon
+ * @param {number} lat
+ * @param {number} rangeInMeter
+ * @param {string} type
  * Based on the coordinates of centre of area, create a place nearby
  */
 
@@ -344,10 +346,10 @@ const Deg2Rad = Math.PI / 180;
 /**
  * Calculate the distance in meters between two WGS84 coordinates
  *
- * @param lat1
- * @param lon1
- * @param lat2
- * @param lon2
+ * @param {number} lat1
+ * @param {number} lon1
+ * @param {number} lat2
+ * @param {number} lon2
  * @source https://stackoverflow.com/a/11172685/319711
  */
 
@@ -391,7 +393,7 @@ export const simplifiedDistanceFactory = () => {
 };
 
 /**
- * @param ms
+ * @param {number} ms
  * Delay function
  */
 
@@ -401,8 +403,8 @@ export const sleep = (ms: number) =>
   });
 
 /**
- * @param n
- * @param decimals
+ * @param {number | number[]} n
+ * @param {number} decimals
  * Round a number or array of numbers to a fixed number of decimals
  */
 
@@ -412,6 +414,18 @@ export const round = (n: number | number[], decimals = 6) => {
   return typeof n === 'number' ? r(n) : n.map(r);
 };
 
+/**
+ * @param {number} lng
+ * @param {number} lat
+ * Coordinates of the center of the area
+ * @param {number} count number of agents to generate
+ * @param {number} radius radius of the area
+ * @param {string} type type of the generated agents, default is man
+ * @param {string} force force of the generated agents, default is white
+ * @param {IAgent} group group the generated agents are a member of
+ * @param {number} memberCount number of members each generated agent has in their group
+ * Generates agents in given area
+ */
 export const generateAgents = (lng: number, lat: number, count: number, radius: number, type?: string, force?: string, group?: IAgent, memberCount?: number) => {
   const offset = () => random(-radius, radius) / 100000;
   const generateLocations = (locType: 'home' | 'work' | 'shop' | 'medical' | 'park') =>
@@ -456,13 +470,13 @@ export const generateAgents = (lng: number, lat: number, count: number, radius: 
 
 
 /**
- * @param lng
- * @param lat
- * @param radius
- * @param agentId
- * @param group
- * @param type
- * @returns
+ * @param {number} lng
+ * @param {number} lat
+ * Coordinates of the center of the area
+ * @param {number} radius radius of the area
+ * @param {string} agentId id of the generated agent, default is man
+ * @param {string} type force of the generated agent, default is white
+ * @param {IAgent} group group the generated agent is a member of
  * Generate agent with given id
  */
 
@@ -507,9 +521,9 @@ export const addGroup = (agent: IAgent, trnsprt: IAgent, services: IEnvServices)
 };
 
 /**
- * @param array
- * @param attr
- * @param value
+ * @param {any[]} array
+ * @param {string} attr
+ * @param {string} value
  *
  * Find index of array with a specific attribute value
  */
@@ -523,8 +537,16 @@ export const findWithAttr = async (array: any[], attr: string, value: string) =>
   return -1;
 }
 
+/**
+ * @param {number} degrees
+ * converts degrees to radians
+ */
 export const toRadians = async (degrees: number) => degrees * (Math.PI / 180);
 
+/**
+ * @param {number} radians
+ * converts radians to degrees
+ */
 export const toDegrees = async (radians: number) => (radians * (180 / Math.PI)).toFixed(4);
 
 export const calculatePointsBetween = async (startCoord: number[], endCoord: number[], count: number) => {
@@ -544,11 +566,10 @@ export const calculatePointsBetween = async (startCoord: number[], endCoord: num
 
 
 /**
- * @param agent
- * @param services
- * @param totDistance
- * @param totDuration
- * @returns
+ * @param {Iagent} agent
+ * @param {IEnvServices} services
+ * @param {number} totDistance
+ * @param {number} totDuration
  * Determine the speed of the agent
  */
 
@@ -608,17 +629,10 @@ export const determineSpeed = (agent: IAgent, services: IEnvServices, totDistanc
 };
 
 /**
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
  * Determine the starttime with given endtime
- *
- * @param agent
- * @param services
- * @param options
- * @param agent
- * @param services
- * @param options
- * @param agent
- * @param services
- * @param options
  */
 
 export const determineStartTime = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
@@ -685,10 +699,9 @@ export const determineStartTime = async (agent: IAgent, services: IEnvServices, 
 }
 
 /**
- * @param agent
- * @param services
- * @param str
- * @returns
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {string} str
  * Transform time string to date
  */
 
@@ -710,11 +723,10 @@ export const toDate = (agent: IAgent, services: IEnvServices, str?: string) => {
 }
 
 /**
- * @param h
- * @param m
- * @param s
- * @param relative
- * @returns
+ * @param {number} h
+ * @param {number} m
+ * @param {number} s
+ * @param {boolean} relative
  * Makes timestring from number of hours, minutes, etc.
  */
 

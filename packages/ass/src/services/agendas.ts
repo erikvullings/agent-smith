@@ -62,8 +62,8 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       ],
     ],
     hangAroundArea: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCenter: [5.482012, 51.426585], areaRange: 100 } },
-      { name: 'Hang around specific area', options: { duration: hours(0, 1), priority: 3, areaCenter: [5.482012, 51.426585], areaRange: 100 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 3, areaCenter: [5.482012, 51.426585], areaRadius: 100 } },
+      { name: 'Hang around specific area', options: { duration: hours(0, 1), priority: 3, areaCenter: [5.482012, 51.426585], areaRadius: 100 } },
     ],
     wander: () => [{ name: 'Wander', options: { priority: 3 } }],
     doctorVisit: () => [
@@ -78,13 +78,13 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
       { name: 'Release red', options: { priority: 1, startTime: (toTime(0, randomInRange(0, 15), 0, true)) } },
     ],
     droneHangAround: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
-      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRadius: 50 } },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 1, areaCenter: [4.892401, 52.373104], areaRadius: 50 } },
     ],
     droneDropObject: () => [
-      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 50 } },
+      { name: 'Go to specific area', options: { startTime: (toTime(0, randomInRange(0, 15), 0, true)), priority: 1, areaCenter: [4.892401, 52.373104], areaRadius: 50 } },
       { name: 'Drop object', options: { priority: 1 } },
-      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 1, areaCenter: [4.892401, 52.373104], areaRange: 20 } },
+      { name: 'Hang around specific area drone', options: { duration: hours(0, 1), priority: 1, areaCenter: [4.892401, 52.373104], areaRadius: 20 } },
     ],
 
   };
@@ -304,6 +304,12 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   }
 }
 
+/**
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {number} customTypeAgIndex index of the desired agenda in the list of custom type agendas
+ * Gives the agent the custom agenda that belongs to the agent type and force
+ */
 const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgIndex: number) => {
   if (typeof agent.day === 'undefined') {
     agent.day = 0;
@@ -324,6 +330,12 @@ const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgInd
 
 };
 
+/**
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {number} customAgIndex index of the desired agenda in the list of custom agendas
+ * Gives the agent the custom agenda that belongs to the agent ID.
+ */
 const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: number) => {
   if (typeof agent.day === 'undefined') {
     agent.day = 0;
@@ -350,7 +362,7 @@ const changeAgenda = async (agent: IAgent, services: IEnvServices, newAgenda: Ac
   timesim.setSeconds(timesim.getSeconds() + 1);
   const startTime = toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds());
 
-  if(newAgenda.length>0){
+  if (newAgenda.length > 0) {
     newAgenda[0].options = { startTime, ...newAgenda[0].options };
   }
 
@@ -386,19 +398,19 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
       agent.destination = services.locations[agent.baseLocation];
       reactionAgenda[0].options = { startTime, destination: services.locations[agent.baseLocation], priority: 1 };
 
-      if(agent.type === 'group' && agent.group && agent.group.length >0 && agent.group[0].includes(agent.id)){
+      if (agent.type === 'group' && agent.group && agent.group.length > 0 && agent.group[0].includes(agent.id)) {
 
-          const filteredAgenda = reactionAgenda.filter(item => item.name !== 'Patrol' && item.name !== 'Release');
-          const guardAgenda : ActivityList = [{ name: 'Guard', options: { duration: hours(3, 5), priority: 2 }}];
-          const groupReacAgenda = [...filteredAgenda, ...guardAgenda];
+        const filteredAgenda = reactionAgenda.filter(item => item.name !== 'Patrol' && item.name !== 'Release');
+        const guardAgenda: ActivityList = [{ name: 'Guard', options: { duration: hours(3, 5), priority: 2 } }];
+        const groupReacAgenda = [...filteredAgenda, ...guardAgenda];
 
-          agent.agenda = [...groupReacAgenda];
-          agent.reactedTo = mail.message;
-          updateAgent(agent, services, agents);
-          return true;
-        }
+        agent.agenda = [...groupReacAgenda];
+        agent.reactedTo = mail.message;
+        updateAgent(agent, services, agents);
+        return true;
+      }
 
-      if(agent.type === 'man'){
+      if (agent.type === 'man') {
         const filteredAgenda = reactionAgenda.filter(item => item.name !== 'Go to base' && item.name !== 'Release');
         agent.agenda = [...filteredAgenda];
         agent.reactedTo = mail.message;
@@ -421,14 +433,14 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
     }
     else if (reactionAgenda[0].name === 'Damage person' || reactionAgenda[0].name === 'Search and attack') {
       console.log('add reactin')
-      const index = await findWithAttr(agent.agenda,'name','Release');
-      console.log('indexi',index)
-      if(agent.agenda[0].name === 'Release'){
+      const index = await findWithAttr(agent.agenda, 'name', 'Release');
+      console.log('indexi', index)
+      if (agent.agenda[0].name === 'Release') {
         agent.target = mail.sender;
         reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
         const updatedOldAgenda = agent.agenda.slice(1);
-        const releaseAgenda = agent.agenda.slice(0,index)
-        agent.agenda = [...releaseAgenda,...reactionAgenda,...updatedOldAgenda];
+        const releaseAgenda = agent.agenda.slice(0, index)
+        agent.agenda = [...releaseAgenda, ...reactionAgenda, ...updatedOldAgenda];
 
         agent.reactedTo = mail.message;
         updateAgent(agent, services, agents);
@@ -442,7 +454,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
     }
     else if (reactionAgenda[0].name === 'Run away') {
-      reactionAgenda[0].options = { startTime, areaCenter: mail.location.coord, areaRange: mail.runDistance };
+      reactionAgenda[0].options = { startTime, areaCenter: mail.location.coord, areaRadius: mail.runDistance };
 
       reactionAgenda.map((item) => item.options!.reacting = true);
     }

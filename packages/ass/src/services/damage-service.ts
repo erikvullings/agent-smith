@@ -42,6 +42,12 @@ const damageAgent = async (sender: IAgent, receivers: IAgent[], _services: IEnvS
     return true;
 }
 
+/**
+ * @param {IAgent} sender : The sender of the message
+ * @param {IEnvServices} _services
+ * Damages random agent or agents nearby with a random item agent.equipment
+ */
+
 const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
     const equipment = randomItem(sender.equipment);
     let receivers: IAgent[] = [];

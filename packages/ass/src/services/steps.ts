@@ -22,7 +22,7 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
  * @param {IAgent} agent
  * @param {IEnvServices} services
  * @param {IAgent[]} agents
- * Release victims from group when in panic
+ * Release random victims from group when in panic
  */
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
   let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 100 : 0;
@@ -128,7 +128,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
  * @param {IEnvServices} services
  * @param {number} deltaTime
  * @param {IAgent[]} agents
- * Move agent fleeing along a route.
+ * Move fleeing agent along a route. If the agent comes near a group of white force the agent will join the group. If the agent collides with another agent the health decreases.
  */
 const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): Promise<boolean> => {
   const { route = [] } = agent;
@@ -259,7 +259,14 @@ const moveAgent = (profile: Profile) => async (
   return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
 };
 
-
+/**
+ *
+ * @param {IAgent} agent drone agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * @param {IAgent} agents list of all active agents
+ * Move the drone agent along its trajectory
+ */
 const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { route = [], memberOf } = agent;
   const { distance } = services;
@@ -320,6 +327,12 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
   return waitUntil(agent, services, stepOptions);
 };
 
+/**
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * Gain control over agents. The agents (given in options) become a member of agent.group
+ */
 const controlAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { control } = options;
   if (control && control.length > 0) {
@@ -403,7 +416,12 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
   return true;
 };
 
-
+/**
+ * @param {IAgent} agent
+ * @param {IEnvServices} _services
+ * @param {IActivityOptions} _options
+ * Agents stops running and continues in normal speed
+ */
 const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
   if (agent.running) {
     delete agent.running;
@@ -412,11 +430,10 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
 };
 
 /**
- * @param agent
- * @param services
- * @param options
- * @returns
- * If the group is within 10 meters, the agent joins the given group
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * If the group is within 10 meters, the agent joins the group given in options
  */
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
@@ -443,12 +460,24 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
   return true;
 };
 
+/**
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * agent becomes invisible and inactive
+ */
 const disappear = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   agent.memberOf = 'invisible';
   agent.status = 'inactive';
   return true;
 };
 
+/**
+ * @param {IAgent} agent bomb or agent wearing a bomb vest
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * Agent explodes. The health of other agents nearby decreases or becomes equal to 0.
+ */
 const explode = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const deathRange = await redisServices.geoSearch(agent.actual, 5, agent);
   const agentsInDeathRange = deathRange.map((a: any) => a = services.agents[a.key]);
