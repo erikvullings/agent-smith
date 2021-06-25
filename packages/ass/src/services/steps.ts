@@ -6,11 +6,10 @@ import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inR
 
 
 /**
- * @param agent
- * @param services
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
  * Move a group of agents, so compute the new position of one agent, and set the others based on that.
  */
-
 const moveGroup = (agent: IAgent, services: IEnvServices) => {
   if (!agent.group || agent.group.length === 0) return;
   for (const id of agent.group) {
@@ -20,12 +19,11 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 };
 
 /**
- * @param agent
- * @param services
- * @param agents
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IAgent[]} agents
  * Release victims from group when in panic
  */
-
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
   let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 100 : 0;
   if (agent.vulnerability) {
@@ -67,13 +65,12 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
 
 
 /**
- * @param agent
- * @param services
- * @param deltaTime
- * @param agents
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {number} deltaTime
+ * @param {IAgent[]} agents
  * Move agent along a route.
  */
-
 const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
@@ -127,10 +124,10 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
 };
 
 /**
- * @param agent
- * @param services
- * @param deltaTime
- * @param agents
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {number} deltaTime
+ * @param {IAgent[]} agents
  * Move agent fleeing along a route.
  */
 const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): Promise<boolean> => {
@@ -222,10 +219,9 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
 };
 
 /**
- * @param profile
+ * @param {Profile} profile
  * Move the agent along its trajectory
  */
-
 const moveAgent = (profile: Profile) => async (
   agent: IAgent,
   services: IEnvServices,
@@ -284,12 +280,11 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
 };
 
 /**
- * @param agent
- * @param services
- * @param options
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
  * Wait until a start time before continuing
  */
-
 const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
 
   const { startTime } = options;
@@ -305,12 +300,11 @@ const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivi
 
 
 /**
- * @param agent
- * @param services
- * @param options
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
  * Wait for a certain duration before continuing
  */
-
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration = 0 } = options;
   if (duration === 0) {
@@ -351,12 +345,11 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
 /**
  * Release agents from group
  *
- * @param agent
- * @param services
- * @param options
- * @param agents
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * @param {IAgent[]} agents
  */
-
 const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
@@ -425,7 +418,6 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
  * @returns
  * If the group is within 10 meters, the agent joins the given group
  */
-
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
   const inRange = await redisServices.geoSearch(agent.actual, 10, agent);

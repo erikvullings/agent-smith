@@ -10,9 +10,26 @@ const strategy = new Map();
 /**
  * Sends police agent that are close to the location
  * and if necessary police agents that are at the police station
+ *
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {string} eventType
  */
+const sendDefence = async (agent: IAgent, services: IEnvServices, eventType?: string) => {
+    if(eventType && eventType === 'terrorism'){
+      const sisAgents: IAgent[] = [];
+      for (const a in services.agents) {
+        if (services.agents.hasOwnProperty(a)) {
+          if (services.agents[a].force === 'blue' && services.agents[a].type === 'group') {
+            sisAgents.push(services.agents[a]);
+          }
+        }
+      }
 
-const sendDefence = async (agent: IAgent, services: IEnvServices) => {
+      messageServices.sendDirectMessage(agent, 'Chaos', [...sisAgents], services);
+      return true;
+    }
+
     if(agent.reactedTo === undefined || planEffects[agent.reactedTo] === undefined) {
         return true;
     }
@@ -49,8 +66,9 @@ const sendDefence = async (agent: IAgent, services: IEnvServices) => {
 
 /**
  * Sets a strategy for the SIS(Special Intervention Service)
+ *
+ * @param {IEnvServices} services
  */
-
 const setStrategy = async (services: IEnvServices) => {
   const redAgents: IAgent[] = [];
   const blueAgents: IAgent[] = [];
@@ -75,19 +93,20 @@ const setStrategy = async (services: IEnvServices) => {
         for(let i=0; i<blueAgents.length;i++){
             blueAgents[i].following = redAgents[i%redAgents.length].id;
             blueAgents[i].target = redAgents[i%redAgents.length];
-            console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i%redAgents.length].id)
+            // console.log('strategy', blueAgents[i].id, 'targeting',redAgents[i%redAgents.length].id)
             strategy.set(blueAgents[i].id,redAgents[i%redAgents.length].id);
         }
     }
-    console.log('strategy is set');
 
     strategySet = true;
 };
 
 /**
  * Police agent picks a new red target
+ *
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
  */
-
 const pickNewTarget = async (agent: IAgent, services: IEnvServices) => {
   const redAgents = (await redisServices.geoSearch(agent.actual, 100000, agent) as any[]).map((a) => a = services.agents[a.key]).filter(a => a.force === 'red' && a.health && a.health >0 && a.type !== 'group');
 

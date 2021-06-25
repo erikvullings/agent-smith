@@ -61,9 +61,9 @@ const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IAct
 };
 
 /**
- * @param agent
- * @param services
- * @param options
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
  * Wait for options.duration msec */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration } = options;
@@ -76,10 +76,8 @@ const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivity
 };
 
 /**
- * @param agent
- * @param services
- * @param options
- * Wait for options.duration msec */
+ * @param {IAgent} agent - agent to be prepared
+ */
 const prepareAgent = async (agent: IAgent) => {
   agent.sentbox = [];
   agent.visibility = 1;
@@ -1029,17 +1027,8 @@ export const plans = {
           steps.push({ name: 'walkTo', options: { destination } });
         }
 
-        const sisAgents: IAgent[] = [];
-        for (const a in services.agents) {
-          if (services.agents.hasOwnProperty(a)) {
-            if (services.agents[a].force === 'blue' && services.agents[a].type === 'group') {
-              sisAgents.push(services.agents[a]);
-            }
-          }
-        }
-
         messageServices.sendMessage(agent, 'Chaos', services);
-        messageServices.sendDirectMessage(agent, 'Chaos', [...sisAgents], services);
+        dispatchServices.sendDefence(agent, services, 'terrorism');
         damageServices.damageRandomAgent(agent, services);
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 6);

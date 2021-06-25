@@ -6,10 +6,9 @@ import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
 
 /**
- * @param agent
- * @param _services
+ * @param {IAgent} agent
+ * @param {IEnvServices} _services
  */
-
 const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   if (typeof agent.day === 'undefined') {
     agent.day = 0;
@@ -360,12 +359,11 @@ const changeAgenda = async (agent: IAgent, services: IEnvServices, newAgenda: Ac
 }
 
 /**
- * @param agent
- * @param services
- * @param mail
- * @param agents
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IMail} mail
+ * @param {IAgent[]} agents
  */
-
 const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, agents: IAgent[]) => {
   agent.route = [];
   agent.steps = [];
