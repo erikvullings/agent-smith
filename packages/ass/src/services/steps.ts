@@ -165,18 +165,22 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
         const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
         const whiteGroups = agentsInRange.filter((a: IAgent) => a.type === 'group' && a.force === 'white');
         const group = randomItem(whiteGroups);
-        if (group && group.group && group.group.length > 0 && agent.speed && agent.speed > 0) {
-          if (group.group && group.memberCount) {
-            group.group.push(agent.id);
-            group.memberCount += 1;
-            addGroup(agent, group, services);
+        if (group && group.group && group.group.length > 0) {
+          if (agent.speed && agent.speed > 0) {
+            if (group.group && group.memberCount) {
+              group.group.push(agent.id);
+              group.memberCount += 1;
+              addGroup(agent, group, services);
+            } else {
+              group.group = [agent.id];
+              group.memberCount = 1;
+              addGroup(agent, group, services);
+            }
+            agent.actual = group.actual;
+            agent.memberOf = group.id;
           } else {
-            group.group = [agent.id];
-            group.memberCount = 1;
-            addGroup(agent, group, services);
+            agent.health = 0;
           }
-          agent.actual = group.actual;
-          agent.memberOf = group.id;
           return false
         }
         if (agentsInRange && agentsInRange.length > 0) {
