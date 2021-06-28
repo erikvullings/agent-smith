@@ -854,29 +854,6 @@
         ],
         "white": [
             {
-                "id": "group1",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.884857,
-                        52.386282
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892246,
-                        52.373290
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
                 "id": "group2",
                 "type": "group",
                 "status": "active",
@@ -896,30 +873,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group3",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.900633,
-                        52.360587
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892788,
-                        52.372828
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -942,7 +896,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -965,7 +919,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -988,30 +942,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group7",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.900633,
-                        52.360587
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.893167,
-                        52.373254
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -1022,8 +953,8 @@
                 "home": {
                     "type": "home",
                     "coord": [
-                        4.856298,
-                        52.367791
+                        4.876298,
+                        52.370791
                     ]
                 },
                 "actual": {
@@ -1034,7 +965,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -1057,53 +988,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group10",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.892707,
-                        52.372894
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892701,
-                        52.373363
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group11",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.892246,
-                        52.373290
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892474,
-                        52.373329
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -1126,7 +1011,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -1149,76 +1034,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group14",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.916941,
-                        52.383231
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892046,
-                        52.373532
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group15",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.900633,
-                        52.360587
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.891869,
-                        52.372834
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group16",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.856298,
-                        52.367791
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892464,
-                        52.372869
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -1241,30 +1057,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group18",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.916941,
-                        52.383231
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892278,
-                        52.372975
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             },
             {
@@ -1287,30 +1080,7 @@
                     ]
                 },
                 "force": "white",
-                "memberCount": 1000,
-                "mailbox": []
-            },
-            {
-                "id": "group20",
-                "type": "group",
-                "status": "active",
-                "health": 100,
-                "home": {
-                    "type": "home",
-                    "coord": [
-                        4.892102,
-                        52.372946
-                    ]
-                },
-                "actual": {
-                    "type": "any",
-                    "coord": [
-                        4.892102,
-                        52.372946
-                    ]
-                },
-                "force": "white",
-                "memberCount": 1000,
+                "memberCount": 2000,
                 "mailbox": []
             }
         ],

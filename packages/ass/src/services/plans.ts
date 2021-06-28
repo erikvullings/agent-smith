@@ -192,6 +192,9 @@ export const plans = {
           agent.destination = destination;
         }
       }
+      else {
+        console.log('no run', agent.id)
+      }
       agent.running = true;
       await prepareRoute(agent, services, options);
       return true;

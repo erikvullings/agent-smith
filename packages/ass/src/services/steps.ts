@@ -2,7 +2,7 @@ import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
 import { IAgent, IActivityOptions, ILocation } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby, randomItem } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby, randomItem, agentToEntityItem } from '../utils';
 
 
 /**
@@ -143,6 +143,7 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
   }
   else {
     agent.speed = determineSpeed(agent, services, totDistance, totDuration);
+    if (agent.speed === 0 && agent.health && agent.health > 10) console.log(agent.id, ' ', agent.health)
   }
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
@@ -180,10 +181,12 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
           }
           return false
         }
-        if (agentsInRange && agentsInRange.length > 0) {
+        const humansInRange = agentsInRange.filter((a: IAgent) => (a.type === 'man' || a.type === 'woman' || a.type === 'boy' || a.type === 'girl') && !a.memberOf)
+        if (humansInRange && humansInRange.length > 0) {
           const collideProb = 0.3;
           const r = randomInRange(0, 1);
           if (r < collideProb) {
+            console.log('collide ', agent.id)
             agent.health = agent.health ? agent.health - randomIntInRange(0, 15) : randomIntInRange(100, 85);
             if (agent.steps) {
               agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }, ...agent.steps];
