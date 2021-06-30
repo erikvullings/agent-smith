@@ -6,6 +6,8 @@ import { reaction } from '.';
 import { customAgendas, customTypeAgendas } from '../sim-controller';
 
 /**
+ * Returns an agenda based on the force of the agent
+ *
  * @param {IAgent} agent
  * @param {IEnvServices} _services
  */
@@ -354,23 +356,10 @@ const customAgenda = (agent: IAgent, services: IEnvServices, customAgIndex: numb
 
 };
 
-const changeAgenda = async (agent: IAgent, services: IEnvServices, newAgenda: ActivityList) => {
-  agent.route = [];
-  agent.steps = [];
-
-  const timesim = services.getTime();
-  timesim.setSeconds(timesim.getSeconds() + 1);
-  const startTime = toTime(timesim.getHours(), timesim.getMinutes(), timesim.getSeconds());
-
-  if (newAgenda.length > 0) {
-    newAgenda[0].options = { startTime, ...newAgenda[0].options };
-  }
-
-  updateAgent(agent, services, [agent]);
-  return true;
-}
-
 /**
+ * Add a reaction to the agenda of the agent
+ * Set the startTime in the options of the first agendaItem
+ *
  * @param {IAgent} agent
  * @param {IEnvServices} services
  * @param {IMail} mail
@@ -473,7 +462,6 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 }
 
 export const agendas = {
-  changeAgenda,
   getAgenda,
   customAgenda,
   customTypeAgenda,
