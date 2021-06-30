@@ -181,21 +181,21 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
           }
           return false
         }
-        const humansInRange = agentsInRange.filter((a: IAgent) => (a.type === 'man' || a.type === 'woman' || a.type === 'boy' || a.type === 'girl') && !a.memberOf)
-        if (humansInRange && humansInRange.length > 0) {
-          const collideProb = 0.3;
-          const r = randomInRange(0, 1);
-          if (r < collideProb) {
-            console.log('collide ', agent.id)
-            agent.health = agent.health ? agent.health - randomIntInRange(0, 15) : randomIntInRange(100, 85);
-            if (agent.steps) {
-              agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }, ...agent.steps];
-            } else {
-              agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }];
-            }
-            return false
-          }
-        }
+        // const humansInRange = agentsInRange.filter((a: IAgent) => (a.type === 'man' || a.type === 'woman' || a.type === 'boy' || a.type === 'girl') && !a.memberOf)
+        // if (humansInRange && humansInRange.length > 0) {
+        //   const collideProb = 0.3;
+        //   const r = randomInRange(0, 1);
+        //   if (r < collideProb) {
+        //     console.log('collide ', agent.id)
+        //     agent.health = agent.health ? agent.health - randomIntInRange(0, 15) : randomIntInRange(100, 85);
+        //     if (agent.steps) {
+        //       agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }, ...agent.steps];
+        //     } else {
+        //       agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }];
+        //     }
+        //     return false
+        //   }
+        // }
       } catch (e) {
         console.error(e);
       }
