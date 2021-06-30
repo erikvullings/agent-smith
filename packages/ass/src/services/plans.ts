@@ -686,7 +686,7 @@ export const plans = {
     },
   },
 
-  // Attack the agents that are specified in the property "target"
+  // Attack the agent that is specified in the property "target"
   'Attack targets': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       prepareAgent(agent);
@@ -726,9 +726,9 @@ export const plans = {
       agent.following = dispatchServices.strategy.get(agent.id);
       agent.running = true;
 
-      // if (agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true && agent.target !== undefined && agent.target.health && agent.target.health > 0) {
-      //   damageServices.damageAgent(agent, [agent.target], services);
-      // }
+      if (agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true && agent.target !== undefined && agent.target.health && agent.target.health > 0) {
+        damageServices.damageAgent(agent, [agent.target], services);
+      }
 
       if (agent.following && agent.following !== '') {
         const followedAgent = services.agents[agent.following];
