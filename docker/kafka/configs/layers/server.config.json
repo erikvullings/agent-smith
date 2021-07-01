@@ -644,7 +644,7 @@
               16,
               16
             ],
-            "text-allow-overlap": false,
+            "text-allow-overlap": true,
             "text-ignore-placement": true
           }
         },
@@ -925,6 +925,7 @@
       "source": "object.json",
       "style": {
         "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/30/000000/question-mark.png",
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {

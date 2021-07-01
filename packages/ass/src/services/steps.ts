@@ -29,7 +29,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
   if (agent.vulnerability) {
     releaseProbabilityPercentage += (agent.vulnerability / 100);
   }
-  const releaseProbability = agent.group ? agent.group.length * 0.01 * releaseProbabilityPercentage : 0;
+  const releaseProbability = agent.group ? agent.group.length * 0.015 * releaseProbabilityPercentage : 0;
   const rnd = randomInRange(0, 100);
   if (rnd < releaseProbability) {
     const numberReleased = randomIntInRange(1, 3);

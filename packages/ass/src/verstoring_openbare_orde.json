@@ -1142,7 +1142,7 @@
                 {
                     "name": "Wait",
                     "options": {
-                        "duration": 150000
+                        "duration": 15000
                     }
                 },
                 {
