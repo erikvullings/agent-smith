@@ -19,7 +19,7 @@ We hebben het gewone gedrag van de witte agents uitgebreid , dus bijvoorbeeld do
 
 # Interactie
 
-Voor interactie tussen DE agents zijn er bepaalde basis functionaliteiten nodig, zoals het bijhouden van de locatie van de agents en de communicatie tussen de agents. 
+Voor interactie tussen de agents zijn er bepaalde basis functionaliteiten nodig, zoals het bijhouden van de locatie van de agents en de communicatie tussen de agents. 
 Het is van belang dat de locatie van de agents ergens wordt bijgehouden zodat de agents binnen een bepaald gebied opgevraagd kunnen worden. 
 *Voorbeeld: Als er een bom ontploft, dan moeten alleen de omstanders gewond raken.*
 
@@ -81,7 +81,7 @@ Bij losse agents wordt gekeken naar of er andere agents in zijn buurt staan. Als
 
 ## Blauw
 
-Blauwe agents hebben in de simulatie twee hoofdtaken: patrouilleren en bewaken
+Blauwe agents hebben in de simulatie twee hoofdtaken: patrouilleren en bewaken. 
 Er zijn ook DSI (dienst speciale interventie) agents die alleen in bepaalde situaties voorkomen.
 
 Als er rode agents zijn moeten de blauwe agents op de acties van de rode agents kunnen reageren.
