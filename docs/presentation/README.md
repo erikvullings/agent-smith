@@ -11,7 +11,7 @@ Wij hebben de opdracht gekregen om deze simulatieomgeving uit te breiden. Het do
 
 Er zijn drie verschillende teams in de scenario’s betrokken. Team wit, team rood, en team blauw. Op de afbeelding is te zien hoe de verschillende teams gevisualiseerd worden. Team wit bestaat uit de gewone burgers. Team rood bevat de agents die de dreiging vormen en team blauw is de defensie. 
 
-![Verschillende forces](docs/presentation/forces.PNG)
+![Verschillende forces](forces.PNG)
 
 In een aantal scenario’s zijn specifieke te beschermen personen aanwezig, deze zijn met een paarse kleur aangegeven.
 We hebben het gewone gedrag van de witte agents uitgebreid , dus bijvoorbeeld door winkelen en rondhangen in een park toe te voegen. We hebben de gedragingen van rood en blauw toegevoegd en we hebben reacties van de verschillende agents op bepaalde gebeurtenissen toegevoegd.
@@ -57,9 +57,9 @@ Het rode gedrag is, zoals eerder is genoemd, het gedrag dat de dreiging vormt of
 Ik zal een aantal voorbeelden noemen van acties van de rode agents die wij hebben toegevoegd. 
 
 Ten eerste is toegevoegd dat een agent een object bij zich kan dragen en deze vervolgens ergens achter kan laten. Dit kan een bom zijn die na een tijdje ontploft, gas dat na een tijdje verdwijnt, of een onbekend object.  
-![Objects](docs/presentation/objects.PNG) 
+![Objects](objects.PNG) 
 Als een bom ontploft is er een zone waarin alle agents om het leven komen en een zone waarin agents gewond raken. Agents die niet meer leven worden aangegeven met een donkerdere kleur.  
-![Dead_agent](docs/presentation/dead agent.PNG) 
+![Dead_agent](dead agent.PNG) 
 
 Ook kunnen de rode agents direct aanvallen. Daarbij kunnen ze bijvoorbeeld een handgranaat ergens heen gooien, daarbij wordt een random locatie in de buurt gekozen waar hij beland (zelfde als een bom) of ze kunnen met een handvuurwapen iemand neerschieten (random agent in de buurt).
 
@@ -72,7 +72,7 @@ Tot nu toe krijgen de witte agents bij elke dreiging de reactie om weg te rennen
 Er zijn twee soorten agents van team wit die in een situatie reageren: losse agents en groepen. Als een groep weg rent wordt af en toe een gewond persoon achtergelaten. Dit is iemand die bijvoorbeeld is gevallen en waar anderen vervolgens over heen zijn gerend. Als deze persoon hier niet te gewond voor is vlucht hij verder als losse agent.  
 Bij losse agents wordt gekeken naar of er andere agents in zijn buurt staan. Als er een groep erg dichtbij staat zal de agent zich bij de groep aansluiten en als er een andere losse agent in de buurt staat is er een kans dat ze botsen. Dan staat de agent even stil en raakt hij potentieel gewond.
 
-![White_fleeing_agents](docs/presentation/White_flee.gif) 
+![White_fleeing_agents](White_flee.gif) 
 
 # Blauw
 
@@ -88,4 +88,4 @@ De volgende gedragingen die toegevoegd zijn om dit te realiseren:
 
 Op het moment dat de politie wordt gebeld of een alert binnenkrijgt, moet er bepaald worden welke politie agents naar de locatie gestuurd zullen worden. Hiervoor is er een dispatch service die wordt aangeroepen als de politie gebeld wordt, of als er een alert gestuurd wordt. Op basis van het type event worden er agenten gestuurd naar de locatie.
 
-![Blue](docs/presentation/Blue.gif) 
+![Blue](Blue.gif) 
