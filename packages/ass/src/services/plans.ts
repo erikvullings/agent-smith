@@ -692,7 +692,7 @@ export const plans = {
     },
   },
 
-  /** Attack the agents that are specified in the property "target" */
+  // Attack the agent that is specified in the property "target"
   'Attack targets': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
       prepareAgent(agent);

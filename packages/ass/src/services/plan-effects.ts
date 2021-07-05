@@ -2,7 +2,7 @@ import { IPlanEffects } from '../models';
 
 /**
  * @property {number} damageRadius - Radius to give damage in m
- * @property {number} damageLevel - Health in percentage: 0-100 (an undamaged agent has 100% health)
+ * @property {number} damageLevel - Damage level in percentage: 0-100
  * @property {number} runDistance - Distance white agents have to run away to be safe
  * @property {number} panicLevel - Increase in panic for white agents (in a  noramal situation an agent has 0% panic)
  * @property {number} panicCause - Cause of panic increase

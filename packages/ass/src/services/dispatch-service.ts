@@ -54,7 +54,7 @@ const sendDefence = async (agent: IAgent, services: IEnvServices, eventType?: st
                 (a.agenda[0].options?.reacting === undefined || a.agenda[0].options?.reacting === false));
 
         const receiverAgents  = [...closeAgents,...farStationAgents];
-        const policeAmount = effect.damageLevel;
+        const policeAmount = effect.damageLevel/10;
 
         defenceSent = true;
         return messageServices.sendDirectMessage(agent, 'Call the police', receiverAgents.slice(0,policeAmount), services);
