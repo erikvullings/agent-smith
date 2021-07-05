@@ -51,10 +51,12 @@ De simulatie is geschreven in Typescript en werkt met een game loop. In de game 
 
 Verder wordt er gebruikt gemaakt van OSRM. Dit is eigenlijk een routing engine die de kortste paden bepaald in het netwerken van wegen. Hiermee worden de loop, fiets en rij routes van de agents bepaald.
 
-# Rood
+# Gedragingen
+
+## Rood
 
 Het rode gedrag is, zoals eerder is genoemd, het gedrag dat de dreiging vormt of veroorzaakt.
-Ik zal een aantal voorbeelden noemen van acties van de rode agents die wij hebben toegevoegd. 
+Een aantal van deze acties zijn aan de simulatieomgeving toegevoegd. 
 
 Ten eerste is toegevoegd dat een agent een object bij zich kan dragen en deze vervolgens ergens achter kan laten. Dit kan een bom zijn die na een tijdje ontploft, gas dat na een tijdje verdwijnt, of een onbekend object.  
 ![Objects](objects.PNG) 
@@ -64,7 +66,7 @@ Als een bom ontploft is er een zone waarin alle agents om het leven komen en een
 
 Ook kunnen de rode agents direct aanvallen. Daarbij kunnen ze bijvoorbeeld een handgranaat ergens heen gooien, daarbij wordt een random locatie in de buurt gekozen waar hij beland (zelfde als een bom) of ze kunnen met een handvuurwapen iemand neerschieten (random agent in de buurt).
 
-# Wit
+## Wit
 
 Zoals eerder genoemd is het gewone gedrag van team WIT uitgebreid, maar we zullen het nu vooral hebben over het gedrag van team wit in een dreigingsscenario.
 
@@ -75,7 +77,7 @@ Bij losse agents wordt gekeken naar of er andere agents in zijn buurt staan. Als
 
 ![White_fleeing_agents](White_flee.gif) 
 
-# Blauw
+## Blauw
 
 Blauwe agents hebben in de simulatie twee hoofdtaken: patrouilleren en bewaken
 Er zijn ook DSI (dienst speciale interventie) agents die alleen in bepaalde situaties voorkomen.
