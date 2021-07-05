@@ -45,6 +45,10 @@ npm run link
 npm start
 ```
 
+### Edit simulation/ scenario
+
+An explanation on how to edit scenarios and how the ineraction between agents is implemented can be found in the README file in the folder ./docs
+
 ## COPPER / Simulation viewer
 
 This project also includes a simulation viewer (named COPPER). This viewer consists of a server that listens to all simulation events published on Kafka and a webclient. The viewer is included in the docker-compose and is available at [http://localhost:3008/](http://localhost:3008/).
@@ -78,3 +82,16 @@ git clone https://github.com/openmaptiles/openmaptiles.git
 cd openmaptiles
 sudo ./quickstart.sh netherlands # assuming you want to create mbtiles from The Netherlands (replace with the name known at geofabrik).
 ```
+
+## Accreditation
+
+### Icons
+
+- Woman icon by Icons8: https://icons8.com/icon/21829/woman
+- Bicycle icon by Icons8: https://icons8.com/icon/91006/bicycle
+- Drone icon by Icons8: https://icons8.com/icon/21919/drone
+- Bomb icon by Icons8: https://icons8.com/icon/22459/bomb
+- Cloud icon by Icons8: https://icons8.com/icon/156/cloud
+- Question Mark icon by Icons8: https://icons8.com/icon/10568/question-mark
+
+
