@@ -59,9 +59,11 @@ Het rode gedrag is, zoals eerder is genoemd, het gedrag dat de dreiging vormt of
 Een aantal van deze acties zijn aan de simulatieomgeving toegevoegd. 
 
 Ten eerste is toegevoegd dat een agent een object bij zich kan dragen en deze vervolgens ergens achter kan laten. Dit kan een bom zijn die na een tijdje ontploft, gas dat na een tijdje verdwijnt, of een onbekend object.  
+
 ![Objects](objects.PNG) 
 
-Als een bom ontploft is er een zone waarin alle agents om het leven komen en een zone waarin agents gewond raken. Agents die niet meer leven worden aangegeven met een donkerdere kleur.  
+Als een bom ontploft is er een zone waarin alle agents om het leven komen en een zone waarin agents gewond raken. Agents die niet meer leven worden aangegeven met een donkerdere kleur. 
+
 ![Dead_agent](dead_agent.PNG) 
 
 Ook kunnen de rode agents direct aanvallen. Daarbij kunnen ze bijvoorbeeld een handgranaat ergens heen gooien, daarbij wordt een random locatie in de buurt gekozen waar hij beland (zelfde als een bom) of ze kunnen met een handvuurwapen iemand neerschieten (random agent in de buurt).
