@@ -29,8 +29,10 @@
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^1.16.0",
+    "none": "^1.0.0",
     "pnpm": "^5.17.2",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typedoc": "^0.21.2"
   },
   "dependencies": {
     "@types/redis": "^2.8.28",
@@ -41,6 +43,7 @@
     "osrm-rest-client": "^0.1.6",
     "perf_hooks": "0.0.1",
     "redis": "^3.0.2",
-    "rest-easy-loki": "^1.2.1"
+    "rest-easy-loki": "^1.2.1",
+    "typescript": "^4.3.5"
   }
 }
