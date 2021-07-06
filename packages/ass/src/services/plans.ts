@@ -88,7 +88,7 @@ const prepareAgent = async (agent: IAgent) => {
 export const plans = {
   /** agent waits until a given time */
   'Wait until': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
       agent.sentbox = []
       const { endTime } = options;
       if (endTime) {
@@ -236,7 +236,7 @@ export const plans = {
 
   /** The agent goes to its baseLocation */
   'Go to base': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions) => {
       const blueAgents = [];
       for (const a in services.agents) {
         if (services.agents.hasOwnProperty(a)) {
@@ -415,7 +415,7 @@ export const plans = {
         }
 
         let followCount = 0;
-        agent.agenda?.filter(item => item.name === 'Follow person').map(item => followCount += 1);
+        agent.agenda?.filter(item => item.name === 'Follow person').map(_item => followCount += 1);
 
         if (agent.following && agent.following !== '' && followCount < 2) {
           const followAgenda = [{ name: 'Follow person', options: { destination: followedAgent.actual } }];
@@ -528,7 +528,7 @@ export const plans = {
 
   /** Wait for an agent to arrive */
   'Wait for person': {
-    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: { duration: minutes(20) } });
@@ -539,7 +539,7 @@ export const plans = {
 
   /** Chat with another agent */
   'Chat': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: { duration: minutes(10) } });
@@ -566,7 +566,7 @@ export const plans = {
 
   /** Hide from red agents */
   'Hide': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       const steps = [] as ActivityList;
       const randomInt = randomIntInRange(0, 10);
@@ -610,7 +610,7 @@ export const plans = {
 
   /** Interrogation between police and agent */
   'Interrogation': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       const steps = [] as ActivityList;
 
@@ -709,7 +709,7 @@ export const plans = {
   },
 
   'Damage person': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       agent.route = [];
       const steps = [] as ActivityList;
@@ -802,7 +802,7 @@ export const plans = {
         }
 
         let followCount = 0;
-        agent.agenda?.filter(item => item.name === 'Search and attack').map(item => followCount += 1);
+        agent.agenda?.filter(item => item.name === 'Search and attack').map(_item => followCount += 1);
 
         if (agent.following && agent.following !== '' && followCount < 2) {
           const followAgenda = [{ name: 'Search and attack', options: { destination: services.agents[agent.following].actual } }];
@@ -914,7 +914,7 @@ export const plans = {
 
   /** Drop one of the objects the agent is carrying. The object will follow the suitible agenda for the object */
   'Drop object': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       const objectTypes = ['bomb', 'gas', 'object']
       const steps = [] as ActivityList;
@@ -950,7 +950,7 @@ export const plans = {
 
   /** The agents plays a threatening voice message */
   'Play message': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
       prepareAgent(agent);
       const steps = [] as ActivityList;
       agent.visibleForce = 'red';

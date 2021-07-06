@@ -1,8 +1,8 @@
-import { ILineString, Profile, IOsrmRouteResult } from 'osrm-rest-client';
-import { IAgent, IActivityOptions, ILocation } from '../models';
+import { ILineString, Profile } from 'osrm-rest-client';
+import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, inRangeCheck, determineSpeed, shuffle, randomInRange, randomIntInRange, simTime, minutes, randomPlaceNearby, randomItem, agentToEntityItem } from '../utils';
+import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, determineSpeed, shuffle, randomInRange, randomIntInRange, minutes, randomItem } from '../utils';
 
 
 /**
@@ -387,10 +387,11 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
           if (a.group) {
             releaseAgents(agent, services, { release: a.group }, agents);
             for (const member of a.group) {
-              if (agent.steps) {
-                agent.steps = [{ name: 'joinGroup', options: { group: a.id } }, ...agent.steps];
-              } else {
-                agent.steps = [{ name: 'joinGroup', options: { group: a.id } }];
+              const memberAgent = services.agents[member];
+              if (memberAgent && memberAgent.steps) {
+                memberAgent.steps = [{ name: 'joinGroup', options: { group: a.id } }, ...memberAgent.steps];
+              } else if (memberAgent) {
+                memberAgent.steps = [{ name: 'joinGroup', options: { group: a.id } }];
               }
             }
           }
@@ -465,11 +466,11 @@ const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivi
 
 /**
  * @param {IAgent} agent
- * @param {IEnvServices} services
- * @param {IActivityOptions} options
+ * @param {IEnvServices} _services
+ * @param {IActivityOptions} _options
  * agent becomes invisible and inactive
  */
-const disappear = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+const disappear = async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
   agent.memberOf = 'invisible';
   agent.status = 'inactive';
   return true;
@@ -478,10 +479,10 @@ const disappear = async (agent: IAgent, services: IEnvServices, options: IActivi
 /**
  * @param {IAgent} agent bomb or agent wearing a bomb vest
  * @param {IEnvServices} services
- * @param {IActivityOptions} options
+ * @param {IActivityOptions} _options
  * Agent explodes. The health of other agents nearby decreases or becomes equal to 0.
  */
-const explode = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+const explode = async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
   const deathRange = await redisServices.geoSearch(agent.actual, 5, agent);
   const agentsInDeathRange = deathRange.map((a: any) => a = services.agents[a.key]);
   agentsInDeathRange.map((a: IAgent) => a.health = 0)

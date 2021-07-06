@@ -1,8 +1,8 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
-import { IAgent, TransportType, ObjectType, IReactions, ISimConfig } from './models';
+import { IAgent, IReactions, ISimConfig } from './models';
 import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
-import { redisServices, messageServices, reaction, chatServices } from './services';
+import { redisServices, messageServices, reaction } from './services';
 import jsonSimConfig from './verstoring_openbare_orde.json';
 import reactionConfig from './plan_reactions.json';
 
@@ -201,22 +201,22 @@ export const simController = async (
     const passiveTypes = ['car', 'bicycle', 'object'];
     await redisServices.geoAddBatch('agents', agents);
 
-    /** Send message to agents in range, if reaction exists */
-    const intervalObj = setInterval(async () => {
-      await Promise.all(
-        agents
-          .filter(
-            (a) =>
-              a.agenda &&
-              a.agenda[0] &&
-              a.agenda[0].name &&
-              reaction[a.agenda[0].name] &&
-              a.agenda[0].name !== 'Call the police' &&
-              a.agenda[0].name !== 'Walk to person'
-          )
-          .map((a) => messageServices.sendMessage(a, a.agenda![0].name, services))
-      );
-    }, 10000);
+    // /** Send message to agents in range, if reaction exists */
+    // const intervalObj = setInterval(async () => {
+    //   await Promise.all(
+    //     agents
+    //       .filter(
+    //         (a) =>
+    //           a.agenda &&
+    //           a.agenda[0] &&
+    //           a.agenda[0].name &&
+    //           reaction[a.agenda[0].name] &&
+    //           a.agenda[0].name !== 'Call the police' &&
+    //           a.agenda[0].name !== 'Walk to person'
+    //       )
+    //       .map((a) => messageServices.sendMessage(a, a.agenda![0].name, services))
+    //   );
+    // }, 10000);
 
     // const chatInterval = setInterval(async () => {
     //   const chattingAgents = agents.filter(a => a.agenda && a.agenda[0] && a.agenda[0].name === 'Chat');
