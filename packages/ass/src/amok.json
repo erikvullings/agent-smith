@@ -12,6 +12,15 @@
             ],
             "radius": 1000,
             "force": "white"
+        },
+        {
+            "agentCount": 30,
+            "centerCoord": [
+                4.312264,
+                52.078620
+            ],
+            "radius": 1000,
+            "force": "red"
         }
     ],
     "equipment": {

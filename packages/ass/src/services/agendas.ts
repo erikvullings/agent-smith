@@ -17,7 +17,6 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
   } else {
     agent.day += 1;
   }
-  const { day } = agent;
 
   const activities = {
     work: () => [

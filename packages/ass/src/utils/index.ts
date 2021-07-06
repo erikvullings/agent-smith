@@ -28,8 +28,7 @@ export const { log } = console;
  *
  * @param {number} min
  * @param {number} max
- * @param {Function} filter numbers that do not satisfy the condition
- * @param f
+ * @param {Function} f numbers that do not satisfy the condition
  */
 export const random = (
   min: number,

@@ -1,7 +1,6 @@
 import { IEnvServices } from '../env-services';
 import { IAgent } from '.';
 import { ILocation } from './location';
-import { Coord } from '@turf/helpers';
 
 export interface IActivityOptions {
   /** Time the activity needs to be start */

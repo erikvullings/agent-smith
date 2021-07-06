@@ -30,14 +30,17 @@ export interface IEnvServices {
 
 
 /**
- * @param param0
+ * Create services so an agent can deal with the environment, e.g. for navigation.
+ *
  * @param root0
  * @param root0.time
  * @param root0.latitudeAvg
- * @param param0.time
- * @param param0.latitudeAvg
- * @returns
- * Create services so an agent can deal with the environment, e.g. for navigation.
+ * @param root0
+ * @param root0.time
+ * @param root0.latitudeAvg
+ * @param root0
+ * @param root0.time
+ * @param root0.latitudeAvg
  */
 export const envServices = ({
   time = new Date(),
