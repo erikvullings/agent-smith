@@ -1,7 +1,7 @@
-import { planEffects, redisServices } from '.';
+import { planEffects, redisServices, messageServices } from '.';
 import { IEnvServices } from '../env-services';
 import { IAgent } from '../models';
-import { randomIntInRange, randomItem, randomPlaceNearby } from '../utils';
+import { generateExistingAgent, randomIntInRange, randomItem, randomPlaceNearby } from '../utils';
 
 /**
  * Picks the equipment and
@@ -44,42 +44,27 @@ const damageAgent = async (sender: IAgent, receivers: IAgent[], _services: IEnvS
 
 /**
  * @param {IAgent} sender : The sender of the message
- * @param {IEnvServices} _services
+ * @param {IEnvServices} services
  * Damages random agent or agents nearby with a random item agent.equipment
  */
 
-const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
+const damageRandomAgent = async (sender: IAgent, services: IEnvServices, agents: IAgent[]) => {
     const equipment = randomItem(sender.equipment);
     let receivers: IAgent[] = [];
-    if (equipment && equipment.type === 'firearm') {
-        console.log('pieuw')
-        const inRange = await redisServices.geoSearch(sender.actual, 1000, sender);
-        const agentsInRange = inRange.map((a: any) => a = _services.agents[a.key]).filter((a: IAgent) => !(a.force === 'red'));
-        receivers = [randomItem(agentsInRange)];
-    }
-    else if (equipment && equipment.type === 'handgrenade') {
-        console.log('biem')
-        const center = randomPlaceNearby(sender, 40, 'any', 20);
-        const deathRange = await redisServices.geoSearch(center, 5);
-        const agentsInDeathRange = deathRange.map((a: any) => a = _services.agents[a.key]);
-        agentsInDeathRange.map((a: IAgent) => a.health = 0)
-        const damageRange = await redisServices.geoSearch(center, 15);
-        receivers = damageRange.map((a: any) => a = _services.agents[a.key]);
-    }
-    if (receivers && equipment && equipment.limit > 0) {
-        if (receivers.length > 0 && equipment !== null) {
-            receivers.filter((a) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
-            receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(10, 20)))
-            receivers.filter(a => !a.health || a.health < 0).map(a => a.health = 0);
-        }
-        else if (equipment === null) {
-            receivers.filter((a) => a.health && a.health > 0).map((a) => (a.health! -= randomIntInRange(0, 10)));
-        }
+    if (equipment && equipment.type === 'handgrenade' && equipment.limit > 0) {
+        const center = randomPlaceNearby(sender, 100, 'any', 20);
 
-        const deadAgents = receivers.filter((a) => a.health && a.health <= 0)
-        if (deadAgents.length > 0) {
-            deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
-        }
+        const { agent: grenade } = generateExistingAgent(center.coord[0], center.coord[1], 10, undefined, undefined, 'grenade');
+        grenade.actual = center;
+        grenade.force = sender.force;
+
+        agents.push(grenade);
+        services.agents[grenade.id] = grenade;
+        await redisServices.geoAdd('agents', grenade);
+
+        grenade.steps = [{ name: 'explode', options: {} }];
+        messageServices.sendMessage(grenade, 'Drop bomb', services);
+
         equipment.limit -= 1;
         if (equipment.limit < 1 && sender.equipment) {
             const index = sender.equipment.indexOf(equipment, 0);
@@ -88,6 +73,35 @@ const damageRandomAgent = async (sender: IAgent, _services: IEnvServices) => {
             }
         }
 
+    } else if (equipment && equipment.type === 'firearm') {
+        const inRange = await redisServices.geoSearch(sender.actual, 200, sender);
+        const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]).filter((a: IAgent) => !(a.force === 'red'));
+        if (agentsInRange && agentsInRange.length > 0) {
+            receivers = [randomItem(agentsInRange)];
+
+            if (receivers && receivers.length > 0 && equipment && equipment.limit > 0) {
+                if (equipment !== null) {
+                    receivers.filter((a) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(0, 10)));
+                    receivers.filter((a) => a.health && a.health > 0 && !a.attire).map((a) => (a.health! -= equipment.damageLevel * randomIntInRange(10, 20)))
+                    receivers.filter(a => !a.health || a.health < 0).map(a => a.health = 0);
+                }
+                else {
+                    receivers.filter((a) => a.health && a.health > 0).map((a) => (a.health! -= randomIntInRange(0, 10)));
+                }
+
+                const deadAgents = receivers.filter((a) => a.health && a.health <= 0)
+                if (deadAgents.length > 0) {
+                    deadAgents.map((a) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
+                }
+                equipment.limit -= 1;
+                if (equipment.limit < 1 && sender.equipment) {
+                    const index = sender.equipment.indexOf(equipment, 0);
+                    if (index > -1) {
+                        sender.equipment.splice(index, 1);
+                    }
+                }
+            }
+        }
     }
 
     return true;

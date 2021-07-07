@@ -192,9 +192,6 @@ export const plans = {
           agent.destination = destination;
         }
       }
-      else {
-        console.log('no run', agent.id)
-      }
       agent.running = true;
       prepareRoute(agent, services, options);
       return true;
@@ -874,7 +871,6 @@ export const plans = {
       if (agent.group && agent.force === 'white') {
         const existing = agent.group.filter((a) => a in services.agents)
         const red = existing.filter((a) => services.agents[a].force === 'red');
-        console.log(red)
         for (const i of red) {
           steps.push({ name: 'releaseAgents', options: { release: [i] } });
           steps.push({ name: 'waitFor', options: { duration: minutes(2) } });
@@ -928,7 +924,6 @@ export const plans = {
           agent.group = agent.group.filter((a) => a !== objectAgent.id);
           agent.visibleForce = 'red';
           if (objectAgent.type === 'bomb') {
-            console.log('biem')
             messageServices.sendMessage(objectAgent, 'Drop bomb', services);
             objectAgent.actual = agent.actual;
             objectAgent.agenda = [{ name: 'Bomb', options: { priority: 1 } }];
@@ -936,7 +931,6 @@ export const plans = {
             messageServices.sendMessage(objectAgent, 'Drop gas', services);
             objectAgent.actual = agent.actual;
             objectAgent.agenda = [{ name: 'Gas', options: { priority: 1 } }];
-            console.log('drop gas', services.getTime())
           } else {
             messageServices.sendMessage(objectAgent, 'Drop object', services);
           }
@@ -956,7 +950,7 @@ export const plans = {
       agent.visibleForce = 'red';
       messageServices.sendMessage(agent, 'Play message', services);
       steps.push({ name: 'waitFor', options: { duration: seconds(5, 10) } });
-      console.log('play message', services.getTime())
+      console.log('play message')
       agent.steps = steps;
       return true;
     },
@@ -1008,7 +1002,7 @@ export const plans = {
 
   /** The agent attacks random people nearby until there are no weapons left*/
   'Chaos': {
-    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions, agents: IAgent[]) => {
       prepareAgent(agent);
       const steps = [] as ActivityList;
       if (agent.health && agent.health > 30 && agent.equipment && agent.equipment.length > 0) {
@@ -1018,20 +1012,19 @@ export const plans = {
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         } else {
-          const { destination = randomPlaceNearby(agent, 50, 'any') } = options;
+          const { destination = randomPlaceNearby(agent, 100, 'any') } = options;
           agent.destination = destination;
           steps.push({ name: 'walkTo', options: { destination } });
         }
 
         messageServices.sendMessage(agent, 'Chaos', services);
         dispatchServices.sendDefence(agent, services, 'terrorism');
-        damageServices.damageRandomAgent(agent, services);
+        damageServices.damageRandomAgent(agent, services, agents);
         const timesim = services.getTime();
         timesim.setSeconds(timesim.getSeconds() + 6);
         const attackAgenda: ActivityList = [
           { name: 'Chaos', options }];
         if (agent.agenda) {
-          // const oldAgenda = agent.agenda.filter(item => item.name !== 'Chaos');
           agent.agenda = [...attackAgenda, ...agent.agenda]
         }
         else {
@@ -1040,7 +1033,6 @@ export const plans = {
       }
 
       else if (agent.attire && (agent.attire === 'bomb vest' || agent.attire === 'bulletproof bomb vest')) {
-        console.log(agent.id, ' Bomb vest');
         const nearby = await redisServices.geoSearch(agent.actual, 15, agent);
         const nearbyAgents = nearby.map((a: any) => a = services.agents[a.key]);
         const nearbyGroups = nearbyAgents.filter((a: IAgent) => a.group && a.group.length > 0);
@@ -1082,7 +1074,6 @@ export const plans = {
       const steps = [] as ActivityList;
       steps.push({ name: 'waitFor', options: { duration: minutes(10, 15) } });
       steps.push({ name: 'explode', options: {} });
-      steps.push({ name: 'disappear', options: {} });
       agent.steps = steps;
       return true;
     },
@@ -1095,7 +1086,6 @@ export const plans = {
       delete agent.panic;
       steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
-      console.log('unpanic')
       return true;
     },
   },
@@ -1107,7 +1097,6 @@ export const plans = {
       delete agent.delay;
       steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
-      console.log('undelay')
       return true;
     },
   },

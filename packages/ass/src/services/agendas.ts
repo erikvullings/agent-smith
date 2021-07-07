@@ -238,7 +238,6 @@ const getAgenda = (agent: IAgent, _services: IEnvServices) => {
     red: () => [
       [...redActivities.dropAtRandomLocation(), ...activities.goHome()] as ActivityList,
       [...redActivities.dropAtSpecificLocation(), ...activities.goHome()] as ActivityList,
-      // [...redActivities['steal_from_shop'](), ...activities.goHome()] as ActivityList,
     ],
     group: () => [
       [...activities.releaseAtRandomLocation(), ...activities.goHome()] as ActivityList,
@@ -321,7 +320,6 @@ const customTypeAgenda = (agent: IAgent, services: IEnvServices, customTypeAgInd
   if (agenda.length > 0) {
     agenda[0].options = { ...agenda[0].options }
     if (!(agenda[0] && agenda[0].options && (agenda[0].options.startTime || agenda[0].options.endTime))) {
-      // const agendaOptions = { ...(agenda[0].options), startTime: (toTime(0, randomInRange(0, 15), 0, true)) };
       const agendaOptions = { ...(agenda[0].options), startTime: '00:00:00r' };
       agenda[0].options = agendaOptions;
     }
@@ -411,7 +409,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
     }
 
     else if (reactionAgenda[0].name === 'Follow person' || reactionAgenda[0].name === 'Walk to person') {
-      console.log('following', mail.sender.id, 'location', mail.location);
+
       agent.following = mail.sender.id;
       agent.destination = mail.location;
       reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };
@@ -420,9 +418,7 @@ const addReaction = async (agent: IAgent, services: IEnvServices, mail: IMail, a
 
     }
     else if (reactionAgenda[0].name === 'Damage person' || reactionAgenda[0].name === 'Search and attack') {
-      console.log('add reactin')
       const index = await findWithAttr(agent.agenda, 'name', 'Release');
-      console.log('indexi', index)
       if (agent.agenda[0].name === 'Release') {
         agent.target = mail.sender;
         reactionAgenda[0].options = { startTime, destination: mail.location, priority: 1 };

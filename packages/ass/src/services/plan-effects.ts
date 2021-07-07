@@ -19,7 +19,7 @@ export const planEffects = {
         panicLevel: 0,
         delayLevel: 0,
         severity: 5,
-        messageRadius: 400,
+        messageRadius: 200,
     },
     'Drop object': {
         damageRadius: 0,
@@ -37,7 +37,7 @@ export const planEffects = {
         panicLevel: 100,
         delayLevel: 0,
         severity: 5,
-        messageRadius: 300,
+        messageRadius: 200,
     },
     'Drop gas': {
         damageRadius: 0,
@@ -47,7 +47,7 @@ export const planEffects = {
         delayLevel: 30,
         delayCause: 'gas',
         severity: 4,
-        messageRadius: 300,
+        messageRadius: 200,
     },
     'Play message': {
         damageRadius: 0,
@@ -56,7 +56,7 @@ export const planEffects = {
         panicLevel: 10,
         delayLevel: 0,
         severity: 1,
-        messageRadius: 200,
+        messageRadius: 100,
     },
     'Flee the Scene': {
         damageRadius: 0,
