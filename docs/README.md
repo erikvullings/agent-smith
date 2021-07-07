@@ -1,3 +1,7 @@
+# Types
+
+The folder typedoc contains an html file with a description of all the types and interfaces used for the simulations.
+
 # Editing scenarios
 
 ## Sim Configuration files
@@ -24,9 +28,9 @@ The optional property “object” is used when you want the generated agents to
     "generateSettings": [
         {
             agentCount: number,
-            centerCoord: number[],
-            startCoord?: number[],
-            endCoord?: number[],
+            centerCoord:  [lon, lat],
+            startCoord?: [lon, lat],
+            endCoord?:  [lon, lat],
             radius: number,
             line?: boolean,
             type?: string,
@@ -44,8 +48,8 @@ This is where important locations of the area are defined.
         id: {
             type: string,
             coord: [
-                number,
-                number
+                lon,
+                lat
             ]
         }
     }

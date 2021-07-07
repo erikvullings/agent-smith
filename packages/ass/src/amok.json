@@ -5,22 +5,13 @@
     },
     "generateSettings": [
         {
-            "agentCount": 50,
+            "agentCount": 150,
             "centerCoord": [
                 4.312264,
                 52.078620
             ],
             "radius": 1000,
             "force": "white"
-        },
-        {
-            "agentCount": 30,
-            "centerCoord": [
-                4.312264,
-                52.078620
-            ],
-            "radius": 1000,
-            "force": "red"
         }
     ],
     "equipment": {
@@ -607,12 +598,12 @@
                     {
                         "type": "firearm",
                         "damageLevel": 4,
-                        "limit": 15
+                        "limit": 20
                     },
                     {
                         "type": "handgrenade",
                         "damageLevel": 5,
-                        "limit": 4
+                        "limit": 3
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -644,12 +635,12 @@
                     {
                         "type": "firearm",
                         "damageLevel": 4,
-                        "limit": 15
+                        "limit": 20
                     },
                     {
                         "type": "handgrenade",
                         "damageLevel": 5,
-                        "limit": 4
+                        "limit": 3
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -681,12 +672,12 @@
                     {
                         "type": "firearm",
                         "damageLevel": 4,
-                        "limit": 15
+                        "limit": 20
                     },
                     {
                         "type": "handgrenade",
                         "damageLevel": 5,
-                        "limit": 4
+                        "limit": 3
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -718,12 +709,12 @@
                     {
                         "type": "firearm",
                         "damageLevel": 4,
-                        "limit": 15
+                        "limit": 20
                     },
                     {
                         "type": "handgrenade",
                         "damageLevel": 5,
-                        "limit": 4
+                        "limit": 3
                     }
                 ],
                 "attire": "bulletproof bomb vest"
@@ -755,12 +746,12 @@
                     {
                         "type": "firearm",
                         "damageLevel": 4,
-                        "limit": 15
+                        "limit": 20
                     },
                     {
                         "type": "handgrenade",
                         "damageLevel": 5,
-                        "limit": 4
+                        "limit": 3
                     }
                 ],
                 "attire": "bulletproof bomb vest"

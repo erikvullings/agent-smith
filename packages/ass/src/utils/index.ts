@@ -218,7 +218,7 @@ export const simTime = (days: number, h: number, m = 0, s = 0) =>
   new Date(year, month, day + days, h, m, s);
 
 /**
- * @param {Agent} agent
+ * @param {IAgent} agent
  * Convert agent to entity item
  */
 export const agentToEntityItem = (agent: IAgent): IItem => ({
@@ -349,7 +349,6 @@ const Deg2Rad = Math.PI / 180;
  * @param {number} lon1
  * @param {number} lat2
  * @param {number} lon2
- * @source https://stackoverflow.com/a/11172685/319711
  */
 
 export const distanceInMeters = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -384,9 +383,7 @@ export const simplifiedDistanceFactory = () => {
 
   return (lat0: number, lng0: number, lat1: number, lng1: number) => {
     const x = lat0 - lat1;
-    // const y = (lng0 - lng1) * coslat;
     const y = (lng0 - lng1) * Math.cos((lat0 + lat1) * f);
-    // 111194.92664455873 = R * Math.PI / 180 where R is the radius of the Earth in meter is 6371000
     return 111194.92664455873 * Math.sqrt(x * x + y * y);
   };
 };
@@ -498,7 +495,6 @@ export const generateExistingAgent = (lng: number, lat: number, radius: number, 
     actual: group ? group.actual : home,
     occupations: [{ id: occupationId, ...occupation }],
   } as unknown as IAgent;
-  redisServices.geoAdd('agents', agent);
   return { agent, locations: { ...home, ...occupation } };
 };
 
@@ -565,7 +561,7 @@ export const calculatePointsBetween = async (startCoord: number[], endCoord: num
 
 
 /**
- * @param {Iagent} agent
+ * @param {IAgent} agent
  * @param {IEnvServices} services
  * @param {number} totDistance
  * @param {number} totDuration

@@ -93,7 +93,6 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
     const segmentLength = services.distance(x0, y0, x1, y1);
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
-      // redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
       agent.route = route;
       if (agent.type === 'group' && agent.group && agent.group.length > 0) {
@@ -110,11 +109,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
       agent.actual = { type: step.name || 'unnamed', coord };
       redisServices.geoAdd('agents', agent);
       moveGroup(agent, services);
-      // console.log(
-      //   `${agent.id} is travelling at ${Math.round((agent.speed * 36) / 10)}km/h to ${agent.actual.type} (${round(
-      //     agent.actual.coord
-      //   )}).`
-      // );
+
       return false;
     }
   }
@@ -143,19 +138,15 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
   }
   else {
     agent.speed = determineSpeed(agent, services, totDistance, totDuration);
-    if (agent.speed === 0 && agent.health && agent.health > 10) console.log(agent.id, ' ', agent.health)
   }
   let distance2go = agent.speed * deltaTime;
   const waypoints = (step.geometry as ILineString).coordinates;
   for (let i = 0; i < waypoints.length; i++) {
     const [x0, y0] = agent.actual.coord;
     const [x1, y1] = waypoints[i];
-    const segmentLength = services.distance(x0, y0, x1, y1);
-    // const segmentLength2 = distance([y0, x0], [y1, x1], { units: 'meters' });
-    // console.log(`${Math.abs(segmentLength2 - segmentLength)}`);
+    const segmentLength = services.distance(x0, y0, x1, y1);;
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
-      // redisServices.geoAdd('agents', agent);
       distance2go -= segmentLength;
       agent.route = route;
       try {
@@ -181,21 +172,6 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
           }
           return false
         }
-        // const humansInRange = agentsInRange.filter((a: IAgent) => (a.type === 'man' || a.type === 'woman' || a.type === 'boy' || a.type === 'girl') && !a.memberOf)
-        // if (humansInRange && humansInRange.length > 0) {
-        //   const collideProb = 0.3;
-        //   const r = randomInRange(0, 1);
-        //   if (r < collideProb) {
-        //     console.log('collide ', agent.id)
-        //     agent.health = agent.health ? agent.health - randomIntInRange(0, 15) : randomIntInRange(100, 85);
-        //     if (agent.steps) {
-        //       agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }, ...agent.steps];
-        //     } else {
-        //       agent.steps = [{ name: 'waitFor', options: { duration: 0 } }, { name: 'waitFor', options: { duration: minutes(3) } }];
-        //     }
-        //     return false
-        //   }
-        // }
       } catch (e) {
         console.error(e);
       }
@@ -208,11 +184,6 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
       agent.actual = { type: step.name || 'unnamed', coord };
       redisServices.geoAdd('agents', agent);
       moveGroup(agent, services);
-      // console.log(
-      //   `${agent.id} is travelling at ${Math.round((agent.speed * 36) / 10)}km/h to ${agent.actual.type} (${round(
-      //     agent.actual.coord
-      //   )}).`
-      // );
       return false;
     }
   }
@@ -400,7 +371,7 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
         const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
         a = newAgent.agent;
         agents.push(a);
-        redisServices.geoAdd('agents', a);
+        await redisServices.geoAdd('agents', a);
         services.agents[id] = a;
 
         if (a && i > -1) {

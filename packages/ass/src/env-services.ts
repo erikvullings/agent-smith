@@ -35,12 +35,6 @@ export interface IEnvServices {
  * @param root0
  * @param root0.time
  * @param root0.latitudeAvg
- * @param root0
- * @param root0.time
- * @param root0.latitudeAvg
- * @param root0
- * @param root0.time
- * @param root0.latitudeAvg
  */
 export const envServices = ({
   time = new Date(),
@@ -134,7 +128,7 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
     const { name, options } = agent.agenda[0];
     const plan = services.plans[name];
     if (plan && plan.prepare) {
-      await plan.prepare(agent, services, options);
+      await plan.prepare(agent, services, options, agents);
     }
   } else {
     agent.agenda = createAgenda(agent, services);

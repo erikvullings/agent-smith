@@ -93,5 +93,5 @@ sudo ./quickstart.sh netherlands # assuming you want to create mbtiles from The 
 - Bomb icon by Icons8: https://icons8.com/icon/22459/bomb
 - Cloud icon by Icons8: https://icons8.com/icon/156/cloud
 - Question Mark icon by Icons8: https://icons8.com/icon/10568/question-mark
-
+- Grenade icon by Icons8: https://icons8.com/icon/10556/grenade
 

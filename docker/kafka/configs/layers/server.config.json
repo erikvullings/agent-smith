@@ -833,6 +833,83 @@
       "sourceUrl": "http://localhost:3008/sources/bomb"
     },
     {
+      "id": "grenade",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "grenade.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/30/000000/grenade.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              15,
+              15
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.5,
+              0.5
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/grenade"
+    },
+    {
       "id": "gas",
       "sourceType": "geojson",
       "version": "0.0.1",
