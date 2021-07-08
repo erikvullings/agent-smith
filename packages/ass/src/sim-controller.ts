@@ -7,12 +7,15 @@ import jsonSimConfig from './amok.json';
 import reactionConfig from './plan_reactions.json';
 
 
+
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
 export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
 export const { customTypeAgendas } = simConfig;
 export const { customAgendas } = simConfig;
 export const { generateSettings } = simConfig;
+
+
 
 /**
  * @param callback
@@ -46,7 +49,7 @@ export const simController = async (
   } = {}
 ) => {
   createAdapter(async (tb) => {
-    const { simSpeed = 5, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
+    const { simSpeed = 1, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     services.setTime(startTime);
     const reactionImport: IReactions = reactionConfig;
@@ -72,6 +75,7 @@ export const simController = async (
     const currentSpeed = simSpeed;
     let currentTime = startTime;
 
+
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
       services.setTime(currentTime);
@@ -91,6 +95,8 @@ export const simController = async (
       };
       tb.send(payload, (error) => error && log(error));
     };
+
+
 
     if (simConfig.generateSettings) {
       for (const s of simConfig.generateSettings) {

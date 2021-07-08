@@ -1,7 +1,8 @@
 {
     "settings": {
         "startTimeHours": 12,
-        "startTimeMinutes": 0
+        "startTimeMinutes": 0,
+        "area": "DenHaag_centrum_data.json"
     },
     "generateSettings": [
         {

@@ -58,4 +58,5 @@ export interface GenerateSettings {
 export interface Settings {
   startTimeHours?: number;
   startTimeMinutes?: number;
+  area?: string;
 }
