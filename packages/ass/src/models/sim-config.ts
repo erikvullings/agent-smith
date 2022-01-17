@@ -1,4 +1,4 @@
-import { IActivityOptions, IStep } from '.';
+import { IActivityOptions, IPopulatorConfig, IStep } from '.';
 import { IAgent, IEquipment } from './agent';
 import { ILocation } from './location';
 
@@ -7,10 +7,11 @@ export interface ISimConfig {
   generateSettings: GenerateSettings[];
   locations: { [id: string]: ILocation };
   equipment: { [id: string]: IEquipment };
-  hasEquipment: { [id: string]: string[] }
+  hasEquipment: { [id: string]: string[] };
   customAgents: CustomAgents;
   customAgendas: CustomAgenda[];
   customTypeAgendas: CustomTypeAgenda[];
+  populatorConfig?: IPopulatorConfig;
 }
 
 interface CustomAgents {
@@ -24,7 +25,6 @@ export interface Equipment {
   equipmentId: string;
   equipmentProperties: IEquipment;
 }
-
 
 export interface CustomAgenda {
   agentId: string;

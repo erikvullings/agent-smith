@@ -21,7 +21,10 @@ export interface IAgent {
   visibleForce?: 'white' | 'red' | 'blue';
   /** Health of agent, maximum of 100 */
   health?: number;
+  //*age of the agent
+  age?: number;
   /** Panic the agent feels*/
+
   panic?: {
     /** 0 if there is no panic, 100 if there is extreme panic*/
     panicLevel: number;
@@ -36,7 +39,7 @@ export interface IAgent {
     delayCause?: string[];
   };
   /** ID of home address */
-  home?: ILocation;
+  home: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
   destination?: ILocation;
   /** Location that agents wants to reach, as [lon, lat] */
@@ -46,7 +49,7 @@ export interface IAgent {
     /** Type of occupation, e.g. work, shop, learn */
     type: 'work' | 'learn' | string;
     /** Id of the location where the occupation takes place */
-    id: string;
+    id: string | number;
   }[];
   /** ID of task address */
   activities?: {
@@ -92,24 +95,23 @@ export interface IAgent {
   /** Mailbox for messages */
   mailbox: IMail[];
   /** Mailbox for the  messages that the agent sent, where the receiver reacted to the message */
-  sentbox: { receiver: IAgent, mail: IMail }[];
+  sentbox: { receiver: IAgent; mail: IMail }[];
   /** The action that the agent reacted to */
   reactedTo?: string;
   /** The target of an agent */
-  target: IAgent;
+  target?: IAgent;
   /** The agent id of the agent that is being followed */
   following?: string;
   // to be deleted
-  defenseType: 'kmar' | 'police';
+  defenseType?: 'kmar' | 'police';
   /** work baseLocation */
   baseLocation: 'station' | string;
   /** Equipment that the agent carries */
-  equipment?: IEquipment[],
+  equipment?: IEquipment[];
   /** Equipment that is in use */
-  currentEquipment?: IEquipment,
+  currentEquipment?: IEquipment;
   /** 1 if agent is visible for other agents*/
   visibility?: 0 | 1 | number;
-
 }
 
 export interface IMail {
@@ -132,5 +134,5 @@ export interface IEquipment {
   /** Damage effect that weapon causes */
   damageLevel: 1 | 2 | 3 | 4 | 5 | number;
   /** The limit of how many times the weapon can be used, e.g. number of bullets */
-  limit: number
+  limit: number;
 }

@@ -1,21 +1,20 @@
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
 import { envServices, updateAgent } from './env-services';
-import { IAgent, IReactions, ISimConfig } from './models';
-import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { IAgent, IPopulatorConfig, IReactions, ISimConfig } from './models';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomItems } from './utils';
 import { redisServices, messageServices, reaction } from './services';
 import jsonSimConfig from './amok.json';
 import reactionConfig from './plan_reactions.json';
-
-
+import { populatorApi, populatorParser } from './populator';
 
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
 
-export const simConfig = (jsonSimConfig as unknown) as ISimConfig;
+export const simConfig = jsonSimConfig as unknown as ISimConfig;
 export const { customTypeAgendas } = simConfig;
 export const { customAgendas } = simConfig;
 export const { generateSettings } = simConfig;
 
-
+//
 
 /**
  * @param callback
@@ -48,8 +47,35 @@ export const simController = async (
     startTime?: Date;
   } = {}
 ) => {
+  const api = populatorApi({} as IPopulatorConfig);
+
+  //you can send a polygon or circle (make sure to send a radius for the circle)
+  const populatorResponse = await api.retreiveProperties('Polygon', [
+    [
+      [4.467959403991699, 51.860273620033276],
+      [4.468560218811035, 51.853832755969776],
+      [4.476799964904784, 51.855052084934506],
+      [4.483022689819336, 51.85913394579512],
+      [4.480962753295898, 51.862102339294395],
+      [4.467959403991699, 51.860273620033276],
+    ],
+  ]);
+
+  //this parses the data from the populator repsonse and slices the amount of agents spawned in the simulator.(the more white agents the slower it gets)
+  const populatorWhiteAgents = randomItems(
+    populatorParser(populatorResponse).populatorWhiteAgents,
+    500
+  ) as IAgent[];
+
   createAdapter(async (tb) => {
-    const { simSpeed = 1, startTime = simTime(0, simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0, simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0) } = options;
+    const {
+      simSpeed = 1,
+      startTime = simTime(
+        0,
+        simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0,
+        simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0
+      ),
+    } = options;
     const services = envServices({ latitudeAvg: 51.4 });
     services.setTime(startTime);
     const reactionImport: IReactions = reactionConfig;
@@ -62,19 +88,18 @@ export const simController = async (
       }
     }
 
-    services.locations = simConfig.locations;
     services.equipments = simConfig.equipment;
-
+    services.locations = populatorParser(populatorResponse).housetypes;
 
     const blueAgents: IAgent[] = simConfig.customAgents.blue;
     const redAgents: IAgent[] = simConfig.customAgents.red;
-    const whiteAgents: IAgent[] = simConfig.customAgents.white;
+    const whiteAgents: IAgent[] = [...populatorWhiteAgents];
     const tbpAgents: IAgent[] = simConfig.customAgents.tbp;
 
     const agents = [...blueAgents, ...redAgents, ...whiteAgents, ...tbpAgents] as IAgent[];
+
     const currentSpeed = simSpeed;
     let currentTime = startTime;
-
 
     const updateTime = () => {
       currentTime = new Date(currentTime.valueOf() + 1000 * currentSpeed);
@@ -96,11 +121,9 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-
-
     if (simConfig.generateSettings) {
       for (const s of simConfig.generateSettings) {
-        const { agents: generatedAgents, locations } = generateAgents(
+        const { agents: generatedAgents } = generateAgents(
           s.centerCoord[0],
           s.centerCoord[1],
           s.agentCount,
@@ -111,7 +134,7 @@ export const simController = async (
           s.memberCount
         );
 
-        services.locations = { ...services.locations, ...locations };
+        services.locations = { ...services.locations };
         agents.push(...generatedAgents);
 
         if (s.object) {
@@ -151,7 +174,6 @@ export const simController = async (
       }
     }
 
-
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
@@ -161,16 +183,14 @@ export const simController = async (
 
     for (const key in equipmentsForAgents) {
       if (equipmentsForAgents.hasOwnProperty(key)) {
-
         const agentIdArray = equipmentsForAgents[key] as any[];
-        const agentArray = agentIdArray.map(a => a = services.agents[a]);
+        const agentArray = agentIdArray.map((a) => (a = services.agents[a]));
 
-        agentArray.forEach(a => {
+        agentArray.forEach((a) => {
           if (a.equipment) {
-            a.equipment.push(services.equipments[key])
-          }
-          else {
-            a.equipment = [services.equipments[key]]
+            a.equipment.push(services.equipments[key]);
+          } else {
+            a.equipment = [services.equipments[key]];
           }
         });
       }
@@ -178,8 +198,7 @@ export const simController = async (
 
     /** Insert members of subgroups into groups */
     const groups = agents.filter((g) => g.group);
-    groups.map((g) => g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : '');
-
+    groups.map((g) => (g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : ''));
 
     /** add members that or not generated to groups */
     const groupType = agents.filter((g) => g.type === 'group');
@@ -250,4 +269,3 @@ export const simController = async (
     }
   });
 };
-

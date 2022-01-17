@@ -1,7 +1,7 @@
 import { OSRM, IOsrm } from 'osrm-rest-client';
 import { plans, steps, agendas } from './services';
 import { IAgent, IPlan, Activity, IActivityOptions, ILocation, IEquipment } from './models';
-import { simplifiedDistanceFactory } from './utils';
+import { randomItem, simplifiedDistanceFactory } from './utils';
 import { customAgendas, customTypeAgendas } from './sim-controller';
 
 export interface IEnvServices {
@@ -22,12 +22,12 @@ export interface IEnvServices {
   steps: { [step: string]: Activity };
   /** Available locations */
   locations: { [id: string]: ILocation };
+
   /** Available equipment */
   equipments: { [id: string]: IEquipment };
   /** Approximate distance calculator in meters */
   distance: (lat1: number, lng1: number, lat2: number, lng2: number) => number;
-};
-
+}
 
 /**
  * Create services so an agent can deal with the environment, e.g. for navigation.
@@ -58,7 +58,7 @@ export const envServices = ({
 
   const getDeltaTime = () => deltaTime;
 
-  return ({
+  return {
     setTime,
     getTime,
     getDeltaTime,
@@ -78,22 +78,24 @@ export const envServices = ({
     locations: {},
     /** Approximate distance function in meters */
     distance: simplifiedDistanceFactory(),
-  } as unknown) as IEnvServices;
+  } as unknown as IEnvServices;
 };
 
 const createAgenda = (agent: IAgent, services: IEnvServices) => {
-  const customAgIndex = customAgendas.findIndex((agenda: { agentId: string; }) => agenda.agentId === agent.id);
+  const customAgIndex = customAgendas.findIndex((agenda: { agentId: string }) => agenda.agentId === agent.id);
   if (customAgIndex > -1) {
-    return agendas.customAgenda(agent, services, customAgIndex)
+    return agendas.customAgenda(agent, services, customAgIndex);
   }
-  const customTypeAgIndex = customTypeAgendas.findIndex((agenda) => (agenda.agentType === agent.type && agenda.agentForce === agent.force));
+  const customTypeAgIndex = customTypeAgendas.findIndex(
+    (agenda) => agenda.agentType === agent.type && agenda.agentForce === agent.force
+  );
   return customTypeAgIndex > -1
     ? agendas.customTypeAgenda(agent, services, customTypeAgIndex)
     : agendas.getAgenda(agent, services);
 };
 
 export const executeSteps = async (
-  agent: (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
+  agent: IAgent & { steps: { name: string; options?: IActivityOptions }[] },
   services: IEnvServices,
   agents: IAgent[]
 ) => {
@@ -107,10 +109,9 @@ export const executeSteps = async (
 };
 
 export const updateAgent = async (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
-
   if (agent.steps && agent.steps.length > 0) {
     const result = await executeSteps(
-      agent as (IAgent) & { steps: { name: string; options?: IActivityOptions }[] },
+      agent as IAgent & { steps: { name: string; options?: IActivityOptions }[] },
       services,
       agents
     );
@@ -133,6 +134,14 @@ export const updateAgent = async (agent: IAgent, services: IEnvServices, agents:
   } else {
     agent.agenda = createAgenda(agent, services);
     updateAgent(agent, services, agents);
-
   }
+};
+
+export const getRandomLocationTypeId = (services: IEnvServices, type: string) => {
+  const locationArray = Object.keys(services.locations).map((key) => ({
+    id: key,
+    ...services.locations[key],
+  }));
+  const locationTypeArray = locationArray.filter((v) => v.type === type);
+  return randomItem(locationTypeArray).id;
 };

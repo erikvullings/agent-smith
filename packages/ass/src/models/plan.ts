@@ -11,6 +11,8 @@ export interface IActivityOptions {
   duration?: number;
   /** Destination when travelling */
   destination?: ILocation;
+
+  destination2?: Record<number, ILocation>;
   /** Center of area when travelling inside specific area */
   areaCenter?: [number, number];
   /** Radius of area when travelling inside specific area in meters*/
@@ -33,10 +35,15 @@ export type IAgentActivities = IAgentActivity[];
 
 export interface IAgentActivity {
   [key: string]: ActivityList[];
-};
+}
 
 /** A typical step that can be executed. When the step returns true, it signals completion. */
-export type Activity = (agent: IAgent, services: IEnvServices, options?: IActivityOptions, agents?: IAgent[]) => Promise<boolean>;
+export type Activity = (
+  agent: IAgent,
+  services: IEnvServices,
+  options?: IActivityOptions,
+  agents?: IAgent[]
+) => Promise<boolean>;
 
 export type ActivityList = IStep[];
 
@@ -51,4 +58,3 @@ export interface IPlan {
   /** Cleanup when done */
   cleanup?: Activity;
 }
-

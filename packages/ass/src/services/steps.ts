@@ -2,8 +2,19 @@ import { ILineString, Profile } from 'osrm-rest-client';
 import { IAgent, IActivityOptions } from '../models';
 import { IEnvServices } from '../env-services';
 import { redisServices } from './redis-service';
-import { toDate, toTime, generateExistingAgent, addGroup, durationDroneStep, determineSpeed, shuffle, randomInRange, randomIntInRange, minutes, randomItem } from '../utils';
-
+import {
+  toDate,
+  toTime,
+  generateExistingAgent,
+  addGroup,
+  durationDroneStep,
+  determineSpeed,
+  shuffle,
+  randomInRange,
+  randomIntInRange,
+  minutes,
+  randomItem,
+} from '../utils';
 
 /**
  * @param {IAgent} agent
@@ -27,7 +38,7 @@ const moveGroup = (agent: IAgent, services: IEnvServices) => {
 const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAgent[]) => {
   let releaseProbabilityPercentage = agent.panic ? agent.panic.panicLevel / 100 : 0;
   if (agent.vulnerability) {
-    releaseProbabilityPercentage += (agent.vulnerability / 100);
+    releaseProbabilityPercentage += agent.vulnerability / 100;
   }
   const releaseProbability = agent.group ? agent.group.length * 0.015 * releaseProbabilityPercentage : 0;
   const rnd = randomInRange(0, 100);
@@ -38,20 +49,46 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       releaseAgents(agent, services, { release: agentsToRelease }, agents);
       for (const a of agentsToRelease) {
         const released = services.agents[a];
-        released.health = released.health ? released.health - randomIntInRange(70, 100) : randomIntInRange(0, 30);
+        released.health = released.health
+          ? released.health - randomIntInRange(70, 100)
+          : randomIntInRange(0, 30);
         released.health = released.health && released.health > 0 ? released.health : 0;
         released.panic = agent.panic;
         released.delay = agent.delay;
         if (released.agenda) {
           if (released.delay) {
-            released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Undelay', options: {} }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Unpanic', options: {} }, ...released.agenda];
+            released.agenda = [
+              { name: 'Wait', options: { duration: minutes(1, 3) } },
+              { name: 'Go to specific location', options: { destination: agent.destination } },
+              { name: 'Undelay', options: {} },
+              { name: 'Wait', options: { duration: minutes(10) } },
+              { name: 'Unpanic', options: {} },
+              ...released.agenda,
+            ];
           } else {
-            released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Undelay', options: {} }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Unpanic', options: {} }, ...released.agenda];
+            released.agenda = [
+              { name: 'Wait', options: { duration: minutes(1, 3) } },
+              { name: 'Go to specific location', options: { destination: agent.destination } },
+              { name: 'Undelay', options: {} },
+              { name: 'Wait', options: { duration: minutes(10) } },
+              { name: 'Unpanic', options: {} },
+              ...released.agenda,
+            ];
           }
         } else if (released.delay) {
-          released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Go home', options: {} }];
+          released.agenda = [
+            { name: 'Wait', options: { duration: minutes(1, 3) } },
+            { name: 'Go to specific location', options: { destination: agent.destination } },
+            { name: 'Wait', options: { duration: minutes(10) } },
+            { name: 'Go home', options: {} },
+          ];
         } else {
-          released.agenda = [{ name: 'Wait', options: { duration: minutes(1, 3) } }, { name: 'Go to specific location', options: { destination: agent.destination } }, { name: 'Wait', options: { duration: minutes(10) } }, { name: 'Go home', options: {} }];
+          released.agenda = [
+            { name: 'Wait', options: { duration: minutes(1, 3) } },
+            { name: 'Go to specific location', options: { destination: agent.destination } },
+            { name: 'Wait', options: { duration: minutes(10) } },
+            { name: 'Go home', options: {} },
+          ];
         }
         released.running = true;
         if (released.health === 0) {
@@ -60,9 +97,7 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
       }
     }
   }
-}
-
-
+};
 
 /**
  * @param {IAgent} agent
@@ -71,7 +106,12 @@ const releaseVictimsGroup = (agent: IAgent, services: IEnvServices, agents: IAge
  * @param {IAgent[]} agents
  * Move agent along a route.
  */
-const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): boolean => {
+const moveAgentAlongRoute = (
+  agent: IAgent,
+  services: IEnvServices,
+  deltaTime: number,
+  agents: IAgent[]
+): boolean => {
   const { route = [] } = agent;
   if (route.length === 0) {
     return true; // Done
@@ -81,8 +121,7 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   const totDuration = step.duration || 0;
   if (agent.type === 'group' && agent.force === 'blue') {
     agent.speed = 3;
-  }
-  else {
+  } else {
     agent.speed = determineSpeed(agent, services, totDistance, totDuration);
   }
   let distance2go = agent.speed * deltaTime;
@@ -115,7 +154,6 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
   }
   route.splice(0, 1);
   return moveAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
-
 };
 
 /**
@@ -125,7 +163,12 @@ const moveAgentAlongRoute = (agent: IAgent, services: IEnvServices, deltaTime: n
  * @param {IAgent[]} agents
  * Move fleeing agent along a route. If the agent comes near a group of white force the agent will join the group. If the agent collides with another agent the health decreases.
  */
-const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaTime: number, agents: IAgent[]): Promise<boolean> => {
+const fleeAgentAlongRoute = async (
+  agent: IAgent,
+  services: IEnvServices,
+  deltaTime: number,
+  agents: IAgent[]
+): Promise<boolean> => {
   const { route = [] } = agent;
   if (route.length === 0) {
     return true; // Done
@@ -135,8 +178,7 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
   const totDuration = step.duration || 0;
   if (agent.type === 'group' && agent.force === 'blue') {
     agent.speed = 3;
-  }
-  else {
+  } else {
     agent.speed = determineSpeed(agent, services, totDistance, totDuration);
   }
   let distance2go = agent.speed * deltaTime;
@@ -144,14 +186,14 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
   for (let i = 0; i < waypoints.length; i++) {
     const [x0, y0] = agent.actual.coord;
     const [x1, y1] = waypoints[i];
-    const segmentLength = services.distance(x0, y0, x1, y1);;
+    const segmentLength = services.distance(x0, y0, x1, y1);
     if (distance2go >= segmentLength) {
       agent.actual = { type: step.name || 'unnamed', coord: [x1, y1] };
       distance2go -= segmentLength;
       agent.route = route;
       try {
         const inRange = await redisServices.geoSearch(agent.actual, 5, agent);
-        const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
+        const agentsInRange = inRange.map((a: any) => (a = services.agents[a.key]));
         const whiteGroups = agentsInRange.filter((a: IAgent) => a.type === 'group' && a.force === 'white');
         const group = randomItem(whiteGroups);
         if (group && group.group && group.group.length > 0) {
@@ -170,7 +212,7 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
           } else {
             agent.health = 0;
           }
-          return false
+          return false;
         }
       } catch (e) {
         console.error(e);
@@ -189,49 +231,51 @@ const fleeAgentAlongRoute = async (agent: IAgent, services: IEnvServices, deltaT
   }
   route.splice(0, 1);
   return fleeAgentAlongRoute(agent, services, deltaTime - distance2go / agent.speed, agents);
-
 };
 
 /**
  * @param {Profile} profile
  * Move the agent along its trajectory
  */
-const moveAgent = (profile: Profile) => async (
-  agent: IAgent,
-  services: IEnvServices,
-  options: IActivityOptions = {},
-  agents: IAgent[]
-) => {
-  const { route = [], memberOf } = agent;
-  if (memberOf) return false; // TODO Or can we return true?
-  const { destination } = options;
-  if (route.length === 0) {
-    if (!destination) return true;
-    try {
-      const routeService = profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
-      const routeResult = await routeService.route({
-        coordinates: [agent.actual.coord, destination.coord],
-        continue_straight: true,
-        steps: true,
-        overview: 'full',
-        geometries: 'geojson',
-      });
-      const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
-      agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
-    } catch (e) {
-      console.error(e);
+const moveAgent =
+  (profile: Profile) =>
+  async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
+    const { route = [], memberOf } = agent;
+    if (memberOf) return false; // TODO Or can we return true?
+    const { destination } = options;
+    if (route.length === 0) {
+      if (!destination) return true;
+      try {
+        const routeService =
+          profile === 'foot' ? services.walk : profile === 'bike' ? services.cycle : services.drive;
+        const routeResult = await routeService.route({
+          coordinates: [agent.actual.coord, destination.coord],
+          continue_straight: true,
+          steps: true,
+          overview: 'full',
+          geometries: 'geojson',
+        });
+        const legs = routeResult.routes && routeResult.routes.length > 0 && routeResult.routes[0].legs;
+        agent.route = legs && legs.length > 0 ? legs[0].steps : undefined;
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
-  if (agent.panic && agent.panic.panicLevel > 0 && agent.running && (agent.type === 'man' || agent.type === 'woman' || agent.type === 'boy' || agent.type === 'girl')) {
-    try {
-      const flee = await fleeAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
-      return flee
-    } catch (e) {
-      console.error(e);
+    if (
+      agent.panic &&
+      agent.panic.panicLevel > 0 &&
+      agent.running &&
+      (agent.type === 'man' || agent.type === 'woman' || agent.type === 'boy' || agent.type === 'girl')
+    ) {
+      try {
+        const flee = await fleeAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
+        return flee;
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
-  return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
-};
+    return moveAgentAlongRoute(agent, services, services.getDeltaTime() / 1000, agents);
+  };
 
 /**
  *
@@ -241,7 +285,12 @@ const moveAgent = (profile: Profile) => async (
  * @param {IAgent} agents list of all active agents
  * Move the drone agent along its trajectory
  */
-const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
+const flyTo = async (
+  agent: IAgent,
+  services: IEnvServices,
+  options: IActivityOptions = {},
+  agents: IAgent[]
+) => {
   const { route = [], memberOf } = agent;
   const { distance } = services;
   if (memberOf) return false;
@@ -249,9 +298,24 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
   if (route.length === 0) {
     if (!destination) return true;
     try {
-      const distanceToDestination = distance(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
-      const duration = durationDroneStep(agent.actual.coord[0], agent.actual.coord[1], destination.coord[0], destination.coord[1]);
-      route.push({ distance: distanceToDestination, duration, geometry: { coordinates: [[destination.coord[0], destination.coord[1]]], type: 'LineString' } });
+      const distanceToDestination = distance(
+        agent.actual.coord[0],
+        agent.actual.coord[1],
+        destination.coord[0],
+        destination.coord[1]
+      );
+      const duration = durationDroneStep(
+        agent.actual.coord[0],
+        agent.actual.coord[1],
+        destination.coord[0],
+        destination.coord[1]
+      );
+      route.push({
+        distance: distanceToDestination,
+        duration,
+        geometry: { coordinates: [[destination.coord[0], destination.coord[1]]], type: 'LineString' },
+        pronunciation: '',
+      });
       agent.route = route;
     } catch (e) {
       console.error(e);
@@ -267,18 +331,20 @@ const flyTo = async (agent: IAgent, services: IEnvServices, options: IActivityOp
  * Wait until a start time before continuing
  */
 const waitUntil = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
-
   const { startTime } = options;
   if (startTime) {
     const startTimeDate = toDate(agent, services, startTime);
     if (startTime[startTime.length - 1] === 'r') {
-      options.startTime = toTime(startTimeDate?.getHours(), startTimeDate?.getMinutes(), startTimeDate?.getSeconds())
+      options.startTime = toTime(
+        startTimeDate?.getHours(),
+        startTimeDate?.getMinutes(),
+        startTimeDate?.getSeconds()
+      );
     }
     return startTimeDate ? startTimeDate < services.getTime() : true;
   }
   return true;
 };
-
 
 /**
  * @param {IAgent} agent
@@ -337,7 +403,12 @@ const controlAgents = async (agent: IAgent, services: IEnvServices, options: IAc
  * @param {IActivityOptions} options
  * @param {IAgent[]} agents
  */
-const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}, agents: IAgent[]) => {
+const releaseAgents = async (
+  agent: IAgent,
+  services: IEnvServices,
+  options: IActivityOptions = {},
+  agents: IAgent[]
+) => {
   const { release } = options;
   if (agent.group && agent.memberCount && release && release.length > 0) {
     for (const id of release) {
@@ -368,7 +439,14 @@ const releaseAgents = async (agent: IAgent, services: IEnvServices, options: IAc
           }
         }
       } else {
-        const newAgent = generateExistingAgent(agent.actual.coord[0], agent.actual.coord[1], 100, id, agent, 'man');
+        const newAgent = generateExistingAgent(
+          agent.actual.coord[0],
+          agent.actual.coord[1],
+          100,
+          id,
+          agent,
+          'man'
+        );
         a = newAgent.agent;
         agents.push(a);
         await redisServices.geoAdd('agents', a);
@@ -413,7 +491,7 @@ const stopRunning = async (agent: IAgent, _services: IEnvServices, _options: IAc
 const joinGroup = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { group } = options;
   const inRange = await redisServices.geoSearch(agent.actual, 10, agent);
-  const agentsInRange = inRange.map((a: any) => a = services.agents[a.key]);
+  const agentsInRange = inRange.map((a: any) => (a = services.agents[a.key]));
   if (group) {
     const newGroup = services.agents[group];
     if (agentsInRange.indexOf(newGroup) > -1) {
@@ -455,20 +533,32 @@ const disappear = async (agent: IAgent, _services: IEnvServices, _options: IActi
  */
 const explode = async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
   const deathRange = await redisServices.geoSearch(agent.actual, 5, agent);
-  const agentsInDeathRange = deathRange.map((a: any) => a = services.agents[a.key]);
-  agentsInDeathRange.map((a: IAgent) => a.health = 0)
+  const agentsInDeathRange = deathRange.map((a: any) => (a = services.agents[a.key]));
+  agentsInDeathRange.map((a: IAgent) => (a.health = 0));
   const damageRange = await redisServices.geoSearch(agent.actual, 15, agent);
-  const receivers = damageRange.map((a: any) => a = services.agents[a.key]);
+  const receivers = damageRange.map((a: any) => (a = services.agents[a.key]));
   if (receivers) {
     if (receivers.length > 0) {
-      receivers.filter((a: IAgent) => a.health && a.health > 0 && a.attire && (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')).map((a: IAgent) => (a.health! -= 5 * randomIntInRange(0, 10)));
-      receivers.filter((a: IAgent) => a.health && a.health > 0 && !a.attire).map((a: IAgent) => (a.health! -= 5 * randomIntInRange(10, 20)))
-      receivers.filter((a: IAgent) => !a.health || a.health < 0).map((a: IAgent) => a.health = 0);
+      receivers
+        .filter(
+          (a: IAgent) =>
+            a.health &&
+            a.health > 0 &&
+            a.attire &&
+            (a.attire === 'bulletproof vest' || a.attire === 'bulletproof bomb vest')
+        )
+        .map((a: IAgent) => (a.health! -= 5 * randomIntInRange(0, 10)));
+      receivers
+        .filter((a: IAgent) => a.health && a.health > 0 && !a.attire)
+        .map((a: IAgent) => (a.health! -= 5 * randomIntInRange(10, 20)));
+      receivers.filter((a: IAgent) => !a.health || a.health < 0).map((a: IAgent) => (a.health = 0));
     }
-    const deadAgents = receivers.filter((a: IAgent) => a.health && a.health <= 0)
+    const deadAgents = receivers.filter((a: IAgent) => a.health && a.health <= 0);
     deadAgents.push(agent);
     if (deadAgents.length > 0) {
-      deadAgents.map((a: IAgent) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive'))
+      deadAgents.map(
+        (a: IAgent) => (a.agenda = []) && (a.route = []) && (a.steps = []) && (a.status = 'inactive')
+      );
     }
     agent.health = 0;
   }
