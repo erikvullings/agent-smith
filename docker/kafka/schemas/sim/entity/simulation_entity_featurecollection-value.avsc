@@ -247,6 +247,11 @@
                                         "type": "record",
                                         "fields": [
                                             {
+                                                "name": "title",
+                                                "doc": "Title of the feature",
+                                                "type": "string"
+                                            },
+                                            {
                                                 "name": "id",
                                                 "doc": "Unique case-insensitive identifier of the feature",
                                                 "type": "string"

@@ -30,7 +30,7 @@ export const project: IProject = {
                 {
                     id: "event",
                     type: "layer-server-service",
-                    options: { url: AppState.Instance.serverUrl() + '/', loadFeatureTypes: true, activeLayers: ['man', 'car'] } as ILayerServiceOptions
+                    options: { url: AppState.Instance.serverUrl() + '/', loadFeatureTypes: true, activeLayers: ['man', 'car', 'woman', 'group'] } as ILayerServiceOptions
                 }
 
             ]

@@ -1,10 +1,44 @@
-import { envServices, updateAgent } from './env-services';
 import { TestBedAdapter, LogLevel } from 'node-test-bed-adapter';
-import { IAgent } from './models/agent';
-import { uuid4, simTime, log, sleep, generateAgents, agentToFeature } from './utils';
+import { envServices, updateAgent } from './env-services';
+import { IAgent, IPopulatorConfig, IReactions, ISimConfig } from './models';
+import { addGroup, uuid4, simTime, log, sleep, generateAgents, agentToFeature, randomItems } from './utils';
+import { redisServices, messageServices, reaction } from './services';
+import jsonSimConfig from './amok.json';
+import reactionConfig from './plan_reactions.json';
+import { populatorApi, populatorParser } from './populator';
 
-// const SimEntityItemTopic = 'simulation_entity_item';
 const SimEntityFeatureCollectionTopic = 'simulation_entity_featurecollection';
+
+export const simConfig = jsonSimConfig as unknown as ISimConfig;
+export const { customTypeAgendas } = simConfig;
+export const { customAgendas } = simConfig;
+export const { generateSettings } = simConfig;
+
+//
+
+/**
+ * @param callback
+ * Connect to Kafka and create a connector
+ */
+const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
+  const tb = new TestBedAdapter({
+    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
+    schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
+    clientId: 'agent-smith',
+    produce: [SimEntityFeatureCollectionTopic],
+    logging: {
+      logToConsole: LogLevel.Info,
+      logToKafka: LogLevel.Warn,
+    },
+  });
+  tb.on('error', (e) => console.error(e));
+  tb.on('ready', () => {
+    log(`Current simulation time: ${tb.simulationTime}`);
+    log('Producer is connected');
+    callback(tb);
+  });
+  tb.connect();
+};
 
 export const simController = async (
   options: {
@@ -13,12 +47,58 @@ export const simController = async (
     startTime?: Date;
   } = {}
 ) => {
-  createAdapter(async (tb) => {
-    const { simSpeed = 10, startTime = simTime(0, 6) } = options;
-    const services = envServices({ latitudeAvg: 51.4 });
-    const agents = [] as IAgent[];
+  const api = populatorApi({} as IPopulatorConfig);
 
-    let currentSpeed = simSpeed;
+  //you can send a polygon or circle (make sure to send a radius for the circle)
+  const populatorResponse = await api.retreiveProperties('Polygon', [
+    [
+      [4.467959403991699, 51.860273620033276],
+      [4.468560218811035, 51.853832755969776],
+      [4.476799964904784, 51.855052084934506],
+      [4.483022689819336, 51.85913394579512],
+      [4.480962753295898, 51.862102339294395],
+      [4.467959403991699, 51.860273620033276],
+    ],
+  ]);
+
+  //this parses the data from the populator repsonse and slices the amount of agents spawned in the simulator.(the more white agents the slower it gets)
+  const populatorWhiteAgents = randomItems(
+    populatorParser(populatorResponse).populatorWhiteAgents,
+    500
+  ) as IAgent[];
+
+  createAdapter(async (tb) => {
+    const {
+      simSpeed = 1,
+      startTime = simTime(
+        0,
+        simConfig.settings.startTimeHours ? simConfig.settings.startTimeHours : 0,
+        simConfig.settings.startTimeMinutes ? simConfig.settings.startTimeMinutes : 0
+      ),
+    } = options;
+    const services = envServices({ latitudeAvg: 51.4 });
+    services.setTime(startTime);
+    const reactionImport: IReactions = reactionConfig;
+
+    if (reactionImport) {
+      for (const key in reactionImport) {
+        if (reaction[key]) {
+          reaction[key] = reactionImport[key];
+        }
+      }
+    }
+
+    services.equipments = simConfig.equipment;
+    services.locations = populatorParser(populatorResponse).housetypes;
+
+    const blueAgents: IAgent[] = simConfig.customAgents.blue;
+    const redAgents: IAgent[] = simConfig.customAgents.red;
+    const whiteAgents: IAgent[] = [...populatorWhiteAgents];
+    const tbpAgents: IAgent[] = simConfig.customAgents.tbp;
+
+    const agents = [...blueAgents, ...redAgents, ...whiteAgents, ...tbpAgents] as IAgent[];
+
+    const currentSpeed = simSpeed;
     let currentTime = startTime;
 
     const updateTime = () => {
@@ -41,62 +121,146 @@ export const simController = async (
       tb.send(payload, (error) => error && log(error));
     };
 
-    services.locations = {
-      huisarts: {
-        type: 'medical',
-        coord: [5.490361, 51.457513],
-      },
-      tue_innovation_forum: {
-        type: 'work',
-        coord: [5.486752, 51.446421],
-      },
-      'Firmamentlaan 5': {
-        type: 'home',
-        coord: [5.496994, 51.468701],
-      },
+    if (simConfig.generateSettings) {
+      for (const s of simConfig.generateSettings) {
+        const { agents: generatedAgents } = generateAgents(
+          s.centerCoord[0],
+          s.centerCoord[1],
+          s.agentCount,
+          s.radius,
+          s.type,
+          s.force,
+          undefined,
+          s.memberCount
+        );
+
+        services.locations = { ...services.locations };
+        agents.push(...generatedAgents);
+
+        if (s.object) {
+          for (const a of generatedAgents) {
+            const { agents: generatedObject } = generateAgents(
+              s.centerCoord[0],
+              s.centerCoord[1],
+              1,
+              s.radius,
+              s.object,
+              s.force,
+              a
+            );
+            agents.push(...generatedObject);
+          }
+        }
+      }
+    }
+
+    const nearest = (agent: IAgent) => {
+      if (agent.type === 'car') {
+        return services.drive.nearest({ coordinates: [agent.actual.coord] });
+      }
+      if (agent.type === 'bicycle') {
+        return services.cycle.nearest({ coordinates: [agent.actual.coord] });
+      }
+      return services.walk.nearest({ coordinates: [agent.actual.coord] });
     };
 
-    const agent1 = {
-      id: uuid4(),
-      type: 'man',
-      // speed: 1.4,
-      status: 'active',
-      home: services.locations['Firmamentlaan 5'],
-      owns: [{ type: 'car', id: 'car1' }],
-      actual: services.locations['Firmamentlaan 5'],
-      occupations: [{ type: 'work', id: 'tue_innovation_forum' }],
-    } as IAgent;
+    for (const agent of agents) {
+      const transport = agent.type === 'car' || agent.type === 'bicycle';
+      if (transport) {
+        const coord = (await nearest(agent)).waypoints[0].location;
+        if (coord) {
+          agent.actual.coord = coord;
+        }
+      }
+    }
 
-    const car = {
-      id: 'car1',
-      type: 'car',
-      status: 'active',
-      actual: {
-        type: 'home',
-        coord: (
-          await services.drive.nearest({
-            coordinates: [services.locations['Firmamentlaan 5'].coord],
-          })
-        ).waypoints[0].location,
-      },
-    } as IAgent;
-
-    const agentCount = 98;
-    const { agents: generatedAgents, locations } = generateAgents(5.476543, 51.440208, agentCount);
-    agents.push(agent1, car, ...generatedAgents);
-    services.locations = Object.assign({}, services.locations, locations);
     services.agents = agents.reduce((acc, cur) => {
       acc[cur.id] = cur;
       return acc;
     }, {} as { [id: string]: IAgent });
 
+    const equipmentsForAgents = simConfig.hasEquipment;
+
+    for (const key in equipmentsForAgents) {
+      if (equipmentsForAgents.hasOwnProperty(key)) {
+        const agentIdArray = equipmentsForAgents[key] as any[];
+        const agentArray = agentIdArray.map((a) => (a = services.agents[a]));
+
+        agentArray.forEach((a) => {
+          if (a.equipment) {
+            a.equipment.push(services.equipments[key]);
+          } else {
+            a.equipment = [services.equipments[key]];
+          }
+        });
+      }
+    }
+
+    /** Insert members of subgroups into groups */
+    const groups = agents.filter((g) => g.group);
+    groups.map((g) => (g.group ? g.group.map((a) => addGroup(services.agents[a], g, services)) : ''));
+
+    /** add members that or not generated to groups */
+    const groupType = agents.filter((g) => g.type === 'group');
+    for (const g of groupType) {
+      if (!g.group) {
+        g.group = [];
+      }
+      if (!g.memberCount) {
+        g.memberCount = 0;
+      }
+      if (g.group && g.memberCount) {
+        const extraMembers = g.memberCount - g.group.length;
+        for (let j = 0; j < extraMembers; j++) {
+          const id = String(j) + g.id;
+          g.group.push(id);
+        }
+      }
+    }
+
     /** Agent types that never control itself */
-    const passiveTypes = ['car', 'bicycle'];
+    const passiveTypes = ['car', 'bicycle', 'object'];
+    await redisServices.geoAddBatch('agents', agents);
 
     let i = 0;
-    while (i < 10000000) {
+    while (i < 1000000000) {
       await Promise.all(
-        agents.filter((a) => passiveTypes.indexOf(a.type) < 0 && !a.memberOf).map((a) => updateAgent(a, services))
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
+              !a.memberOf &&
+              a.mailbox &&
+              a.mailbox.length > 0 &&
+              (!a.health || a.health > 0) &&
+              a.status !== 'inactive'
+          )
+          .map((a) => messageServices.readMailbox(a, services, agents))
+      );
+      await Promise.all(
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
+              a.type === 'group' &&
+              a.mailbox &&
+              a.mailbox.length > 0 &&
+              (!a.health || a.health > 0) &&
+              a.status !== 'inactive'
+          )
+          .map((a) => messageServices.readMailbox(a, services, agents))
+      );
+      await Promise.all(
+        agents
+          .filter(
+            (a) =>
+              passiveTypes.indexOf(a.type) < 0 &&
+              !a.memberOf &&
+              a.health &&
+              a.health > 0 &&
+              a.status !== 'inactive'
+          )
+          .map((a) => updateAgent(a, services, agents))
       );
       updateTime();
       await sleep(100);
@@ -104,25 +268,4 @@ export const simController = async (
       i++;
     }
   });
-};
-
-/** Connect to Kafka and create a connector */
-const createAdapter = (callback: (tb: TestBedAdapter) => void) => {
-  const tb = new TestBedAdapter({
-    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
-    schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
-    clientId: 'agent-smith',
-    produce: [SimEntityFeatureCollectionTopic],
-    logging: {
-      logToConsole: LogLevel.Info,
-      logToKafka: LogLevel.Warn,
-    },
-  });
-  tb.on('error', (e) => console.error(e));
-  tb.on('ready', () => {
-    log(`Current simulation time: ${tb.simulationTime}`);
-    log('Producer is connected');
-    callback(tb);
-  });
-  tb.connect();
 };

@@ -1,58 +1,147 @@
-import { IAgent, IActivityOptions, ActivityList } from '../models';
-import { IEnvServices } from '../env-services';
-import { randomItem, minutes, randomPlaceNearby } from '../utils';
+import { IAgent, IActivityOptions, ActivityList, ILocation } from '../models';
+import { getRandomLocationTypeId, IEnvServices } from '../env-services';
+import { damageServices } from './damage-service';
+import { dispatchServices, messageServices, redisServices } from '.';
+import { planEffects } from './plan-effects';
+import {
+  toTime,
+  addGroup,
+  randomItem,
+  hours,
+  minutes,
+  randomPlaceNearby,
+  randomPlaceInArea,
+  randomIntInRange,
+  inRangeCheck,
+  distanceInMeters,
+  determineStartTime,
+  seconds,
+  randomLocationNearby,
+} from '../utils';
 
-const prepareRoute = (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+const prepareRoute = async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
   const steps = [] as ActivityList;
   const { distance } = services;
+  const { endTime } = options;
   const { startTime } = options;
-  if (startTime) {
+  if (endTime) {
+    options.startTime = await determineStartTime(agent, services, options);
+    steps.push({ name: 'waitUntil', options });
+  } else if (startTime) {
     steps.push({ name: 'waitUntil', options });
   }
-  if (agent.owns && agent.owns.length > 0) {
-    const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
-    const car = ownedCar && services.agents[ownedCar.id];
-    if (car && distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) < 500) {
-      steps.push({ name: 'walkTo', options: { destination: car.actual } });
-      steps.push({ name: 'controlAgents', options: { control: [car.id] } });
-      steps.push({ name: 'driveTo', options: { destination: agent.destination } });
-      steps.push({ name: 'releaseAgents', options: { release: [car.id] } });
-    } else {
-      const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
-      const bike = ownedBike && services.agents[ownedBike.id];
+  if (agent.type === 'drone') {
+    steps.push({ name: 'flyTo', options: { destination: agent.destination } });
+  } else if ('owns' in agent) {
+    if (agent.owns && agent.owns.length > 0) {
+      const ownedCar = agent.owns.filter((o) => o.type === 'car').shift();
+      const car = ownedCar && services.agents[ownedCar.id];
       if (
-        bike &&
-        distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) < 300
+        car &&
+        ((distance(agent.actual.coord[0], agent.actual.coord[1], car.actual.coord[0], car.actual.coord[1]) <
+          500 &&
+          agent.destination &&
+          distanceInMeters(
+            agent.actual.coord[0],
+            agent.actual.coord[1],
+            agent.destination.coord[0],
+            agent.destination.coord[1]
+          ) > 400) ||
+          (agent.force === 'blue' && agent.type === 'group'))
       ) {
-        steps.push({ name: 'walkTo', options: { destination: bike.actual } });
-        steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
-        steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
-        steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
+        car.force = agent.force;
+        car.group = [agent.id];
+        car.memberCount = 1;
+        addGroup(agent, car, services);
+        steps.push({ name: 'walkTo', options: { destination: car.actual } });
+        steps.push({ name: 'controlAgents', options: { control: [car.id] } });
+        steps.push({ name: 'driveTo', options: { destination: agent.destination } });
+        steps.push({ name: 'releaseAgents', options: { release: [car.id] } });
       } else {
-        steps.push({ name: 'walkTo', options: { destination: agent.destination } });
+        const ownedBike = agent.owns.filter((o) => o.type === 'bicycle').shift();
+        const bike = ownedBike && services.agents[ownedBike.id];
+        if (
+          bike &&
+          distance(agent.actual.coord[0], agent.actual.coord[1], bike.actual.coord[0], bike.actual.coord[1]) <
+            300 &&
+          agent.destination &&
+          distanceInMeters(
+            agent.actual.coord[0],
+            agent.actual.coord[1],
+            agent.destination.coord[0],
+            agent.destination.coord[1]
+          ) > 300
+        ) {
+          bike.force = agent.force;
+          bike.group = [agent.id];
+          addGroup(agent, bike, services);
+          steps.push({ name: 'walkTo', options: { destination: bike.actual } });
+          steps.push({ name: 'controlAgents', options: { control: [bike.id] } });
+          steps.push({ name: 'cycleTo', options: { destination: agent.destination } });
+          steps.push({ name: 'releaseAgents', options: { release: [bike.id] } });
+        } else {
+          steps.push({ name: 'walkTo', options: { destination: agent.destination } });
+        }
       }
+    } else {
+      steps.push({ name: 'walkTo', options: { destination: agent.destination } });
     }
   } else {
     steps.push({ name: 'walkTo', options: { destination: agent.destination } });
   }
+  if (agent.running) {
+    steps.push({ name: 'stopRunning' });
+  }
   agent.steps = steps;
 };
 
-/** Wait for options.duration msec */
+/**
+ * @param {IAgent} agent
+ * @param {IEnvServices} services
+ * @param {IActivityOptions} options
+ * Wait for options.duration msec */
 const waitFor = async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
   const { duration } = options;
   if (duration) {
-    const startTime = new Date(services.getTime().valueOf() + duration);
+    const startTimeDate = new Date(services.getTime().valueOf() + duration);
+    const startTime = toTime(
+      startTimeDate.getHours(),
+      startTimeDate.getMinutes(),
+      startTimeDate.getSeconds()
+    );
     agent.steps = [{ name: 'waitUntil', options: { startTime } }];
   }
   return true;
 };
 
+/**
+ * @param {IAgent} agent - agent to be prepared
+ */
+const prepareAgent = async (agent: IAgent) => {
+  agent.sentbox = [];
+  agent.visibility = 1;
+  return true;
+};
+
 /** All plans that are available to each agent */
 export const plans = {
-  /** In the options, you can set the work location to go to */
+  /** agent waits until a given time */
+  'Wait until': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      agent.sentbox = [];
+      const { endTime } = options;
+      if (endTime) {
+        options.startTime = endTime;
+        agent.steps = [{ name: 'waitUntil', options }];
+      }
+      return true;
+    },
+  },
+
+  /** The agent goes to work according to it's occupation location */
   'Go to work': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
       if (!agent.occupations) {
         return true;
       }
@@ -60,33 +149,413 @@ export const plans = {
       if (occupations.length > 0) {
         const { destination } = options;
         const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) ||
+          randomItem(occupations);
         agent.destination = services.locations[occupation.id];
         prepareRoute(agent, services, options);
       }
       return true;
     },
   },
-  /** In the options, you can set the shop location to go to */
-  'Go shopping': {
+
+  /** The agent goes to work according to it's occupation location */
+  'Go to the gym': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+
+      agent.destination = services.locations[getRandomLocationTypeId(services, 'sport')];
+      prepareRoute(agent, services, options);
+
+      return true;
+    },
+  },
+
+  /** The agent goes to school according to it's occupatio n location */
+  'Go to school': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
       if (!agent.occupations) {
         return true;
       }
-      const occupations = agent.occupations.filter((o) => o.type === 'shop');
+      const occupations = agent.occupations.filter((o) => o.type === 'learn');
       if (occupations.length > 0) {
         const { destination } = options;
         const occupation =
-          (destination && occupations.filter((o) => o.id === destination.type).shift()) || randomItem(occupations);
+          (destination && occupations.filter((o) => o.id === destination.type).shift()) ||
+          randomItem(occupations);
         agent.destination = services.locations[occupation.id];
         prepareRoute(agent, services, options);
       }
       return true;
     },
   },
+
+  /** The agent goes shopping at random location */
+  'Go shopping': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      if (services.locations[getRandomLocationTypeId(services, 'shop')] !== undefined) {
+        agent.destination = services.locations[getRandomLocationTypeId(services, 'shop')];
+      } else {
+        const destination = randomPlaceNearby(agent, 5000, 'shop');
+        agent.destination = destination;
+      }
+      prepareRoute(agent, services, options);
+
+      return true;
+    },
+  },
+
+  /** The agent goes to the park at random location */
+  'Go to park': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const { destination = randomPlaceNearby(agent, 10000, 'park') } = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
+
+      return true;
+    },
+  },
+
+  /** The agent goes to random location */
+  'Go to random location': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const { destination = randomPlaceNearby(agent, 1000, 'any') } = options;
+      agent.destination = destination;
+      prepareRoute(agent, services, options);
+
+      return true;
+    },
+  },
+
+  /** The agent runs in a random direction */
+  'Flee the scene': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const { destination = randomPlaceNearby(agent, 1000, 'any') } = options;
+      agent.destination = destination;
+      agent.running = true;
+      prepareRoute(agent, services, options);
+
+      return true;
+    },
+  },
+
+  /** The agent runs away in opposite direction of the danger */
+  'Run away': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const danger = options.areaCenter;
+      const range = options.areaRadius ? options.areaRadius : 500;
+
+      if (danger) {
+        const slope = (agent.actual.coord[1] - danger[1]) / (agent.actual.coord[0] - danger[0]);
+        const distanceDegrees = range / 111139;
+        const dx = Math.sqrt(distanceDegrees ** 2 / (1 + slope ** 2));
+        if (agent.actual.coord[0] > danger[0]) {
+          const x = danger[0] + dx;
+          const y = danger[1] + dx * slope;
+          const destination = randomPlaceInArea(x, y, 10, 'any');
+          options.destination = destination;
+          agent.destination = destination;
+        } else {
+          const x = danger[0] - dx;
+          const y = danger[1] - dx * slope;
+          const destination = randomPlaceInArea(x, y, 10, 'any');
+          options.destination = destination;
+          agent.destination = destination;
+        }
+      }
+      agent.running = true;
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
+  /** The agent goes to a specific location that is given in the options */
+  'Go to specific location': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      prepareAgent(agent);
+      if (options.destination) {
+        agent.destination = options.destination;
+        prepareRoute(agent, services, options);
+      } else {
+        agent.destination = agent.home;
+        prepareRoute(agent, services, options);
+      }
+      return true;
+    },
+  },
+
+  /** The agent walks to a specific agent */
+  'Walk to person': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      agent.route = [];
+      agent.steps = [];
+      if (agent.following) {
+        const followedAgent: IAgent = services.agents[agent.following];
+        prepareAgent(agent);
+        agent.destination = followedAgent.actual;
+
+        messageServices.sendDirectMessage(agent, 'Walk to person', [followedAgent], services);
+      }
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
+  /** The agent goes to its baseLocation */
+  'Go to base': {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions) => {
+      const blueAgents = [];
+      for (const a in services.agents) {
+        if (services.agents.hasOwnProperty(a)) {
+          if (services.agents[a].force === 'blue') {
+            blueAgents.push(services.agents[a]);
+          }
+        }
+      }
+
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      agent.destination = services.locations[agent.baseLocation];
+
+      steps.push({ name: 'walkTo', options: { destination: services.locations[agent.baseLocation] } });
+      steps.push({ name: 'waitFor', options: { duration: 70000 } });
+
+      agent.steps = steps;
+      agent.speed = 2;
+      return true;
+    },
+  },
+
+  /** The agent goes to a random location in a specific area (set area center and radius in options)*/
+  'Go to specific area': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
+      if (options.areaCenter && options.areaRadius) {
+        agent.sentbox = [];
+        const center = options.areaCenter;
+        const { destination = randomPlaceInArea(center[0], center[1], options.areaRadius, 'any') } = options;
+        agent.destination = destination;
+        prepareRoute(agent, _services, options);
+      }
+      return true;
+    },
+  },
+
+  /** The agent goes to a location with the type police station */
+  'Go to the police station': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      prepareAgent(agent);
+      const policeStations: ILocation[] = [];
+
+      for (const loc in services.locations) {
+        if (services.locations.hasOwnProperty(loc)) {
+          if (services.locations[loc].type === 'police station') {
+            policeStations.push(services.locations[loc]);
+          }
+        }
+      }
+
+      if (policeStations.length > 0) {
+        agent.destination = policeStations[randomIntInRange(0, policeStations.length - 1)];
+      } else {
+        const destination = randomPlaceNearby(agent, 5000, 'police station');
+        agent.destination = destination;
+      }
+
+      agent.destination = services.locations['police station'];
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
+  /** The agent walks around and stands still in a given area (set area center and radius in options) */
+  'Hang around specific area': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions) => {
+      const steps = [] as ActivityList;
+      if (options.areaCenter && options.areaRadius) {
+        const nOPlaces = randomIntInRange(10, 20);
+        for (let i = 0; i < nOPlaces; i += 1) {
+          const center = options.areaCenter;
+          const { destination = randomPlaceInArea(center[0], center[1], options.areaRadius, 'any') } =
+            options;
+          agent.destination = destination;
+          if (agent.type === 'drone') {
+            steps.push({ name: 'flyTo', options: { destination } });
+            steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
+          } else {
+            steps.push({ name: 'walkTo', options: { destination } });
+            steps.push({ name: 'waitFor', options: { duration: minutes(0, 15) } });
+          }
+        }
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** The agent follows the agent with the id of the property "following" */
+  'Follow person': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      prepareAgent(agent);
+
+      if (agent.following && agent.following !== '' && agent.reactedTo) {
+        const followedAgent = services.agents[agent.following];
+
+        agent.destination = followedAgent.actual;
+        agent.running = true;
+        const timesim = services.getTime();
+        timesim.setSeconds(timesim.getSeconds() + 1);
+
+        const distanceBetween = distanceInMeters(
+          agent.actual.coord[1],
+          agent.actual.coord[0],
+          followedAgent.actual.coord[1],
+          followedAgent.actual.coord[0]
+        );
+
+        if (distanceBetween < 60) {
+          if (
+            planEffects[agent.reactedTo] &&
+            planEffects[agent.reactedTo].damageLevel &&
+            planEffects[agent.reactedTo].damageLevel >= 70
+          ) {
+            agent.target = followedAgent;
+            if (followedAgent.health && followedAgent.health > 0) {
+              damageServices.damageAgent(agent, [followedAgent], services);
+              const attackAgenda: ActivityList = [
+                { name: 'Follow person', options: { destination: followedAgent.actual } },
+              ];
+
+              if (agent.agenda) {
+                const oldAgenda = agent.agenda.filter((item) => item.name !== 'Follow person');
+                agent.agenda = [...attackAgenda, ...oldAgenda];
+              } else {
+                agent.agenda = [...attackAgenda];
+              }
+            } else {
+              agent.following = '';
+
+              const attackAgenda: ActivityList = [
+                { name: 'Wait', options: { priority: 3, duration: minutes(5) } },
+              ];
+
+              if (agent.agenda) {
+                const oldAgenda = agent.agenda.filter((item) => item.name !== 'Follow person');
+                agent.agenda = [...attackAgenda, ...oldAgenda];
+              } else {
+                agent.agenda = [...attackAgenda];
+              }
+            }
+          } else if (
+            planEffects[agent.reactedTo] &&
+            planEffects[agent.reactedTo].damageLevel &&
+            planEffects[agent.reactedTo].damageLevel > 30
+          ) {
+            console.log('We will use weapons');
+
+            agent.following = '';
+            agent.target = followedAgent;
+            const attackAgenda: ActivityList = [
+              { name: 'Wait', options: { priority: 3, duration: minutes(5) } },
+            ];
+
+            damageServices.damageAgent(agent, [followedAgent], services);
+
+            if (agent.agenda) {
+              const oldAgenda = agent.agenda.filter((item) => item.name !== 'Follow person');
+              agent.agenda = [...attackAgenda, ...oldAgenda];
+            } else {
+              agent.agenda = [...attackAgenda];
+            }
+          } else {
+            agent.following = '';
+            const interrogationAgenda: ActivityList = [
+              { name: 'Follow person', options: { priority: 3, destination: followedAgent.actual } },
+              { name: 'Interrogation', options: { priority: 3 } },
+            ];
+
+            messageServices.sendDirectMessage(agent, 'Interrogation', [followedAgent], services);
+
+            if (agent.agenda) {
+              const oldAgenda = agent.agenda.filter((item) => item.name !== 'Follow person');
+              agent.agenda = [...interrogationAgenda, ...oldAgenda];
+            } else {
+              agent.agenda = [...interrogationAgenda];
+            }
+          }
+        }
+
+        let followCount = 0;
+        agent.agenda?.filter((item) => item.name === 'Follow person').map((_item) => (followCount += 1));
+
+        if (agent.following && agent.following !== '' && followCount < 2) {
+          const followAgenda = [{ name: 'Follow person', options: { destination: followedAgent.actual } }];
+
+          if (agent.agenda) {
+            agent.agenda = [...followAgenda, ...agent.agenda];
+          } else {
+            agent.agenda = [...followAgenda];
+          }
+        }
+      }
+
+      prepareRoute(agent, services, options);
+      agent.speed = 2;
+      return true;
+    },
+  },
+
+  /** The agent guards specific person */
+  'Protect person': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions) => {
+      prepareAgent(agent);
+
+      if (agent.following && agent.following !== '') {
+        const followedAgent = services.agents[agent.following];
+        agent.destination = followedAgent.actual;
+        const timesim = services.getTime();
+        timesim.setSeconds(timesim.getSeconds() + 1);
+
+        if (agent.following && agent.following !== '') {
+          const followAgenda = [{ name: 'Protect person', options: { destination: followedAgent.actual } }];
+
+          if (agent.agenda) {
+            agent.agenda = [...followAgenda, ...agent.agenda];
+          } else {
+            agent.agenda = [...followAgenda];
+          }
+        }
+      }
+
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
+  /** Go to a location with type "medical" */
+  'Visit doctor': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+
+      if (services.locations[getRandomLocationTypeId(services, 'medical')] !== undefined) {
+        agent.destination = services.locations[getRandomLocationTypeId(services, 'medical')];
+      } else {
+        const destination = randomPlaceNearby(agent, 5000, 'medical');
+        agent.destination = destination;
+      }
+      prepareRoute(agent, services, options);
+      return true;
+    },
+  },
+
   /** Go to your home address */
   'Go home': {
     prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
       if (agent.home) {
         agent.destination = agent.home;
         prepareRoute(agent, services, options);
@@ -94,18 +563,620 @@ export const plans = {
       return true;
     },
   },
+
+  'work out': { prepare: waitFor },
+
+  'stay at home': { prepare: waitFor },
+
+  Education: { prepare: waitFor },
   /** Work for a number of hours (set duration in the options) */
   Work: { prepare: waitFor },
+
+  /** Shop for a number of hours/minutes (set duration in the options) */
+  Shop: { prepare: waitFor },
+
+  /** Guard for a number of hours (set duration in the options) */
+  Guard: { prepare: waitFor },
+
+  /** Get examined at the hospital for a number of hours/minutes (set duration in the options) */
+  GetExamined: { prepare: waitFor },
+
+  Fight: { prepare: waitFor },
+
+  /** Wait for a number of hours/minutes (set duration in the options) */
+  Wait: {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Wait for an agent to arrive */
+  'Wait for person': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(20) } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Chat with another agent */
+  Chat: {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(10) } });
+
+      if (agent.agenda && agent.agenda[0].options?.reacting && agent.agenda[0].options?.reacting === true) {
+        agent.steps = steps;
+        return true;
+      }
+
+      console.log('following', agent.following);
+      if (agent.following && agent.following !== '') {
+        messageServices.sendDirectMessage(agent, 'Chat', [services.agents[agent.following]], services);
+      } else {
+        agent.steps = [];
+
+        const oldAgenda = agent.agenda?.splice(0, 1);
+        agent.agenda = oldAgenda;
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Hide from red agents */
+  Hide: {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      const randomInt = randomIntInRange(0, 10);
+
+      const destination = randomPlaceNearby(agent, 10, 'any');
+      agent.destination = destination;
+
+      if (randomInt >= 4) {
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: { duration: minutes(15, 60) } });
+      } else {
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: { duration: minutes(2, 10) } });
+
+        const runAwayAgenda: ActivityList = [{ name: 'Run away', options: {} }];
+
+        if (agent.agenda) {
+          const oldAgenda = agent.agenda;
+          agent.agenda = [...runAwayAgenda, ...oldAgenda];
+        } else {
+          agent.agenda = [...runAwayAgenda];
+        }
+      }
+
+      const randomIntVisibility = randomIntInRange(0, 10);
+      if (randomIntVisibility <= 3) {
+        agent.visibility = 1;
+      } else {
+        agent.visibility = 0;
+      }
+
+      agent.speed = 2;
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Interrogation between police and agent */
+  Interrogation: {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+
+      if (randomIntInRange(0, 100) < 5) {
+        // take the agent to the police station
+        // to be added
+      }
+
+      steps.push({ name: 'waitFor', options: { duration: minutes(10) } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  'Stay at police station': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: hours(5, 8) } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** The police agents patrol in area */
+  Patrol: {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      const numberOfStops = randomIntInRange(10, 20);
+
+      if (options.areaCenter && options.areaRadius) {
+        for (let i = 0; i < numberOfStops; i += 1) {
+          const center = options.areaCenter;
+          const { destination = randomPlaceInArea(center[0], center[1], options.areaRadius, 'any') } =
+            options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
+        }
+      } else if (agent.occupations) {
+        const occupations = agent.occupations.filter((o) => o.type === 'work');
+        if (occupations.length > 0) {
+          for (let i = 0; i < numberOfStops; i += 1) {
+            const occupation =
+              occupations.filter((o) => o.id === destination.type).shift() || randomItem(occupations);
+            const occCoords = services.locations[occupation.id].coord;
+            const { destination = randomPlaceInArea(occCoords[0], occCoords[0], 1000, 'any') } = options;
+            agent.destination = destination;
+            steps.push({ name: 'walkTo', options: { destination } });
+            steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
+          }
+        }
+      } else {
+        const center = services.locations[agent.baseLocation].coord;
+        const { destination = randomPlaceInArea(center[0], center[1], 600, 'any') } = options;
+        agent.destination = destination;
+        steps.push({ name: 'walkTo', options: { destination } });
+        steps.push({ name: 'waitFor', options: { duration: minutes(0, 2) } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
   /** Either go to a restaurant, have lunch, and return to your previous location, or have lunch on the spot if no destination is provided. */
   'Have lunch': {
     prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
       const { destination = randomPlaceNearby(agent, 1000, 'food'), duration = minutes(20, 50) } = options;
       const steps = [] as ActivityList;
-      const actual = agent.actual;
+      const { actual } = agent;
       agent.destination = destination;
       steps.push({ name: 'walkTo', options: { destination } });
       steps.push({ name: 'waitFor', options: { duration } });
       steps.push({ name: 'walkTo', options: { destination: actual } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  // Attack the agent that is specified in the property "target"
+  'Attack targets': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      agent.route = [];
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options });
+      agent.steps = steps;
+
+      if (agent.target) {
+        damageServices.damageAgent(agent, [services.agents[agent.target.id]], services);
+      }
+      return true;
+    },
+  },
+
+  'Damage person': {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      agent.route = [];
+      const steps = [] as ActivityList;
+
+      if (agent.target) {
+        damageServices.damageAgent(agent, [agent.target], services);
+      }
+
+      steps.push({ name: 'waitFor', options: { duration: minutes(0, 1) } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Search for the threat and attack red agents, if they are inactive patrol area */
+  'Search and attack': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      dispatchServices.setStrategy(services);
+      agent.following = dispatchServices.strategy.get(agent.id);
+      agent.running = true;
+
+      if (
+        agent.agenda &&
+        agent.agenda[0].options?.reacting &&
+        agent.agenda[0].options?.reacting === true &&
+        agent.target !== undefined &&
+        agent.target.health &&
+        agent.target.health > 0
+      ) {
+        damageServices.damageAgent(agent, [agent.target], services);
+      }
+
+      if (agent.following && agent.following !== '') {
+        const followedAgent = services.agents[agent.following];
+
+        if (followedAgent) {
+          agent.destination = followedAgent.actual;
+          const timesim = services.getTime();
+          timesim.setSeconds(timesim.getSeconds() + 1);
+          const distanceBetween = distanceInMeters(
+            agent.actual.coord[1],
+            agent.actual.coord[0],
+            followedAgent.actual.coord[1],
+            followedAgent.actual.coord[0]
+          );
+
+          if (distanceBetween < 100) {
+            agent.target = followedAgent;
+            if (followedAgent.health && followedAgent.health > 0) {
+              damageServices.damageAgent(agent, [followedAgent], services);
+              const attackAgenda: ActivityList = [
+                { name: 'Search and attack', options: { destination: followedAgent.actual } },
+              ];
+
+              if (agent.agenda) {
+                const oldAgenda = agent.agenda.filter((item) => item.name !== 'Search and attack');
+                agent.agenda = [...attackAgenda, ...oldAgenda];
+              } else {
+                agent.agenda = [...attackAgenda];
+              }
+            } else {
+              agent.following = '';
+              agent.target = await dispatchServices.pickNewTarget(agent, services);
+
+              if (agent.target === undefined || agent.target.health === 0) {
+                agent.route = [];
+                agent.steps = [];
+
+                const newAgenda = [
+                  { name: 'Patrol', options: { areaCenter: agent.actual.coord, areaRadius: 1000 } },
+                  { name: 'Patrol', options: { areaCenter: agent.actual.coord, areaRadius: 1000 } },
+                  { name: 'Go to base', options: {} },
+                ];
+
+                agent.agenda = [...newAgenda];
+
+                prepareRoute(agent, services, options);
+                return true;
+              }
+              agent.following = agent.target.id;
+            }
+          }
+        } else {
+          agent.following = '';
+          agent.target = await dispatchServices.pickNewTarget(agent, services);
+
+          console.log('new target', agent.target);
+
+          if (agent.target === undefined || agent.target.health === 0) {
+            agent.route = [];
+            agent.steps = [];
+
+            const newAgenda = [
+              { name: 'Patrol', options: {} },
+              { name: 'Patrol', options: {} },
+              { name: 'Go to base', options: {} },
+            ];
+
+            agent.agenda = [...newAgenda];
+
+            prepareRoute(agent, services, options);
+            return true;
+          }
+        }
+
+        let followCount = 0;
+        agent.agenda?.filter((item) => item.name === 'Search and attack').map((_item) => (followCount += 1));
+
+        if (agent.following && agent.following !== '' && followCount < 2) {
+          const followAgenda = [
+            { name: 'Search and attack', options: { destination: services.agents[agent.following].actual } },
+          ];
+
+          if (agent.agenda) {
+            agent.agenda = [...followAgenda, ...agent.agenda];
+          } else {
+            agent.agenda = [...followAgenda];
+          }
+        }
+      }
+
+      prepareRoute(agent, services, options);
+      agent.speed = 2;
+      return true;
+    },
+  },
+
+  /** Walk around in random directions */
+  Wander: {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      if (agent.type === 'drone') {
+        const { destination = randomPlaceNearby(agent, 1000, 'road'), duration = minutes(0, 10) } = options;
+        agent.destination = destination;
+        steps.push({ name: 'flyTo', options: { destination } });
+        if (inRangeCheck(0, 10, randomIntInRange(0, 100))) {
+          steps.push({ name: 'flyTo', options: { duration } });
+        }
+      } else {
+        const { destination = randomPlaceNearby(agent, 1000, 'any'), duration = minutes(0, 10) } = options;
+        agent.destination = destination;
+        steps.push({ name: 'walkTo', options: { destination } });
+        if (inRangeCheck(0, 10, randomIntInRange(0, 100))) {
+          steps.push({ name: 'waitFor', options: { duration } });
+        }
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Release all members of agent.group */
+  Release: {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      if (agent.group) {
+        const release = agent.group.filter((a) => a in services.agents);
+        if (release.length > 0) {
+          steps.push({ name: 'releaseAgents', options: { duration: minutes(1), release } });
+        }
+      } else {
+        const { duration = minutes(1) } = options;
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Release all members with force red of agent.group. The released agents will look for and join a group of force red nearby */
+  'Release red': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      if (agent.group && agent.force === 'white') {
+        const existing = agent.group.filter((a) => a in services.agents);
+        const red = existing.filter((a) => services.agents[a].force === 'red');
+        for (const i of red) {
+          steps.push({ name: 'releaseAgents', options: { release: [i] } });
+          steps.push({ name: 'waitFor', options: { duration: minutes(2) } });
+          const member = services.agents[i];
+          if (member.agenda && member.agenda.length > 0) {
+            member.agenda.splice(0, 0, { name: 'Join red group' });
+          } else {
+            member.agenda = [{ name: 'Join red group' }];
+          }
+        }
+      } else {
+        const { duration = minutes(1) } = options;
+        steps.push({ name: 'waitFor', options: { duration } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Look for and join a red group nearby */
+  'Join red group': {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      const inRange = await redisServices.geoSearch(agent.actual, 1000, agent);
+      const agentsInRange = inRange.map((a: any) => (a = _services.agents[a.key]));
+      const redGroups = agentsInRange.filter((a: IAgent) => a.type === 'group' && a.force === 'red');
+      if (redGroups.length > 0) {
+        const newGroup = randomItem(redGroups);
+        steps.push({ name: 'walkTo', options: { destination: newGroup.actual } });
+        steps.push({ name: 'joinGroup', options: { group: newGroup.id } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Drop one of the objects the agent is carrying. The object will follow the suitible agenda for the object */
+  'Drop object': {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const objectTypes = ['bomb', 'gas', 'object'];
+      const steps = [] as ActivityList;
+      let objects: string[];
+      let objectAgent: IAgent;
+      if (agent.group) {
+        objects = agent.group.filter((a) => objectTypes.indexOf(services.agents[a].type) >= 0);
+        if (objects && objects.length > 0) {
+          objectAgent = services.agents[objects[0]];
+          delete objectAgent.memberOf;
+          agent.group = agent.group.filter((a) => a !== objectAgent.id);
+          agent.visibleForce = 'red';
+          if (objectAgent.type === 'bomb') {
+            messageServices.sendMessage(objectAgent, 'Drop bomb', services);
+            objectAgent.actual = agent.actual;
+            objectAgent.agenda = [{ name: 'Bomb', options: { priority: 1 } }];
+          } else if (objectAgent.type === 'gas') {
+            messageServices.sendMessage(objectAgent, 'Drop gas', services);
+            objectAgent.actual = agent.actual;
+            objectAgent.agenda = [{ name: 'Gas', options: { priority: 1 } }];
+          } else {
+            messageServices.sendMessage(objectAgent, 'Drop object', services);
+          }
+        }
+      }
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** The agents plays a threatening voice message */
+  'Play message': {
+    prepare: async (agent: IAgent, services: IEnvServices, _options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      agent.visibleForce = 'red';
+      messageServices.sendMessage(agent, 'Play message', services);
+      steps.push({ name: 'waitFor', options: { duration: seconds(5, 10) } });
+      console.log('play message');
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** The police checks dropped object */
+  'Check object': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      const { duration = minutes(5, 15) } = options;
+      steps.push({ name: 'waitFor', options: { duration } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Call the police and send defence if it is a real threat, the threat is checked in the dispatchService */
+  'Call the police': {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      const { duration = minutes(1, 10) } = options;
+      steps.push({ name: 'waitFor', options: { duration } });
+      agent.steps = steps;
+      dispatchServices.sendDefence(agent, services);
+      return true;
+    },
+  },
+
+  /** The agent goes to a random number of shops nearby */
+  'Go to other shops': {
+    prepare: async (agent: IAgent, _services: IEnvServices, options: IActivityOptions = {}) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      const locationArray = Object.keys(_services.locations).map((key) => ({
+        id: key,
+        ..._services.locations[key],
+      }));
+      const Shoplist = locationArray.filter((v) => v.type === 'shop');
+      const newDestinationId = randomLocationNearby(agent, 50, Shoplist);
+      if (newDestinationId != undefined) {
+        const { destination = _services.locations[newDestinationId] } = options;
+        steps.push({ name: 'walkTo', options: { destination: destination } });
+      } else {
+        const { destination = _services.locations[getRandomLocationTypeId(_services, 'shop')] } = options;
+        steps.push({ name: 'walkTo', options: { destination: destination } });
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** The agent attacks random people nearby until there are no weapons left*/
+  Chaos: {
+    prepare: async (agent: IAgent, services: IEnvServices, options: IActivityOptions, agents: IAgent[]) => {
+      prepareAgent(agent);
+      const steps = [] as ActivityList;
+      if (agent.health && agent.health > 30 && agent.equipment && agent.equipment.length > 0) {
+        if (options.areaCenter && options.areaRadius) {
+          const center = options.areaCenter;
+          const { destination = randomPlaceInArea(center[0], center[1], options.areaRadius, 'any') } =
+            options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+        } else {
+          const { destination = randomPlaceNearby(agent, 100, 'any') } = options;
+          agent.destination = destination;
+          steps.push({ name: 'walkTo', options: { destination } });
+        }
+
+        messageServices.sendMessage(agent, 'Chaos', services);
+        dispatchServices.sendDefence(agent, services, 'terrorism');
+        damageServices.damageRandomAgent(agent, services, agents);
+        const timesim = services.getTime();
+        timesim.setSeconds(timesim.getSeconds() + 6);
+        const attackAgenda: ActivityList = [{ name: 'Chaos', options }];
+        if (agent.agenda) {
+          agent.agenda = [...attackAgenda, ...agent.agenda];
+        } else {
+          agent.agenda = [...attackAgenda];
+        }
+      } else if (agent.attire && (agent.attire === 'bomb vest' || agent.attire === 'bulletproof bomb vest')) {
+        const nearby = await redisServices.geoSearch(agent.actual, 15, agent);
+        const nearbyAgents = nearby.map((a: any) => (a = services.agents[a.key]));
+        const nearbyGroups = nearbyAgents.filter((a: IAgent) => a.group && a.group.length > 0);
+        if (nearbyGroups && nearbyGroups.length > 0) {
+          const victim = randomItem(nearbyGroups);
+          if (victim) {
+            agent.running = true;
+            steps.push({ name: 'walkTo', options: { destination: victim.actual } });
+          }
+        } else {
+          const victim = randomItem(nearbyAgents);
+          if (victim) {
+            agent.running = true;
+            steps.push({ name: 'walkTo', options: { destination: victim.actual } });
+          }
+          steps.push({ name: 'explode', options });
+          messageServices.sendMessage(agent, 'Drop bomb', services);
+        }
+      }
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Agenda for gas object. Gas dissapears after a few minutes */
+  Gas: {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(15, 30) } });
+      steps.push({ name: 'disappear', options: {} });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Agenda for bomb object. Bomb explodes after a few minutes */
+  Bomb: {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      steps.push({ name: 'waitFor', options: { duration: minutes(10, 15) } });
+      steps.push({ name: 'explode', options: {} });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Set panicLevel of agent to 0 */
+  Unpanic: {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      delete agent.panic;
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
+      agent.steps = steps;
+      return true;
+    },
+  },
+
+  /** Set delayLevel of agent to 0 */
+  Undelay: {
+    prepare: async (agent: IAgent, _services: IEnvServices, _options: IActivityOptions = {}) => {
+      const steps = [] as ActivityList;
+      delete agent.delay;
+      steps.push({ name: 'waitFor', options: { duration: 0 } });
       agent.steps = steps;
       return true;
     },

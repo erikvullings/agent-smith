@@ -19,17 +19,140 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 20,
-            "circle-color": "gray"
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
-            "icon-ignore-placement": true
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
           }
         },
         "types": []
       },
       "sourceUrl": "http://localhost:3008/sources/car"
+    },
+    {
+      "id": "bicycle",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "bicycle",
+      "source": "bicycle.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/material-sharp/24/000000/bike-path--v2.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/bicycle"
     },
     {
       "id": "man",
@@ -50,8 +173,875 @@
         "showSymbol": true,
         "mapbox": {
           "circlePaint": {
-            "circle-radius": 20,
-            "circle-color": "gray"
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/man"
+    },
+    {
+      "id": "woman",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "woman",
+      "source": "woman.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/24/000000/standing-woman.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/woman"
+    },
+    {
+      "id": "girl",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "girl",
+      "source": "girl.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/24/000000/standing-woman.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              15,
+              15
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.7,
+              0.7
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/girl"
+    },
+    {
+      "id": "boy",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "boy",
+      "source": "boy.json",
+      "style": {
+        "type": "circle",
+        "icon": "images/man.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              15,
+              15
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.7,
+              0.7
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/boy"
+    },
+    {
+      "id": "group",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "group",
+      "source": "group.json",
+      "style": {
+        "type": "circle",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              30,
+              30
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              16,
+              16
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": true
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/group"
+    },
+    {
+      "id": "drone",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "drone",
+      "source": "drone.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/64/000000/drone.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              20,
+              20
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.3,
+              0.3
+            ],
+            "text-field": [
+              "get",
+              "numberOfMembers"
+            ],
+            "text-font": [
+              "Open Sans Bold",
+              "Arial Unicode MS Bold"
+            ],
+            "text-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              10,
+              10
+            ],
+            "text-offset": [
+              0.85,
+              -0.85
+            ],
+            "text-allow-overlap": true,
+            "text-ignore-placement": false
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/drone"
+    },
+    {
+      "id": "bomb",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "bomb.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/50/000000/bomb-with-timer.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              25,
+              25
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.5,
+              0.5
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/bomb"
+    },
+    {
+      "id": "grenade",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "grenade.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/30/000000/grenade.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              15,
+              15
+            ]
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              0.5,
+              0.5
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/grenade"
+    },
+    {
+      "id": "gas",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "gas.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/metro/26/000000/cloud.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              35,
+              35
+            ],
+            "circle-opacity": 0.5
+          },
+          "symbolLayout": {
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            "icon-size": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              1,
+              1
+            ]
+          }
+        },
+        "types": []
+      },
+      "sourceUrl": "http://localhost:3008/sources/gas"
+    },
+    {
+      "id": "object",
+      "sourceType": "geojson",
+      "version": "0.0.1",
+      "color": "lightgray",
+      "isLive": true,
+      "tags": [
+        "entity-item"
+      ],
+      "isEditable": false,
+      "tileSupport": false,
+      "title": "object",
+      "source": "object.json",
+      "style": {
+        "type": "circle",
+        "icon": "https://img.icons8.com/ios-filled/30/000000/question-mark.png",
+        "showSymbol": true,
+        "mapbox": {
+          "circlePaint": {
+            "circle-color": [
+              "match",
+              [
+                "get",
+                "force"
+              ],
+              "tbp",
+              "purple",
+              "red",
+              "red",
+              "blue",
+              "blue",
+              "white",
+              "white",
+              "tbp0",
+              "black",
+              "red0",
+              "darkred",
+              "blue0",
+              "darkblue",
+              "white0",
+              "grey",
+              "white"
+            ],
+            "circle-radius": [
+              "match",
+              [
+                "get",
+                "visible"
+              ],
+              "0",
+              0,
+              "1",
+              25,
+              25
+            ]
           },
           "symbolLayout": {
             "icon-allow-overlap": true,
@@ -60,7 +1050,7 @@
         },
         "types": []
       },
-      "sourceUrl": "http://localhost:3008/sources/man"
+      "sourceUrl": "http://localhost:3008/sources/object"
     },
     {
       "id": "Feature",
@@ -118,6 +1108,472 @@
           "label": "agenda",
           "type": "string",
           "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": [
+            "get",
+            "id"
+          ],
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": [
+            "get",
+            "id"
+          ],
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "woman": {
+      "title": "woman",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "boy": {
+      "title": "boy",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "girl": {
+      "title": "girl",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "object": {
+      "title": "object",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "drone": {
+      "title": "drone",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "group": {
+      "title": "group",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        },
+        {
+          "label": "number of members",
+          "type": "number",
+          "key": "number_of_members"
+        },
+        {
+          "label": "members",
+          "type": "string",
+          "key": "members"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "car": {
+      "title": "car",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        },
+        {
+          "label": "number of members",
+          "type": "number",
+          "key": "number_of_members"
+        },
+        {
+          "label": "members",
+          "type": "string",
+          "key": "members"
+        }
+      ],
+      "infoPanels": {
+        "popup": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "title-section"
+            }
+          ]
+        },
+        "details": {
+          "title": "id",
+          "sections": [
+            {
+              "sectionType": "image-section",
+              "property": "image"
+            },
+            {
+              "sectionType": "title-section"
+            },
+            {
+              "sectionType": "data-properties"
+            }
+          ]
+        }
+      },
+      "color": "#f28e2c",
+      "attributes": {
+        "color": "#e15759"
+      }
+    },
+    "bicycle": {
+      "title": "bicycle",
+      "properties": [
+        {
+          "label": "name",
+          "readonly": true,
+          "type": "string",
+          "key": "name"
+        },
+        {
+          "label": "Type",
+          "type": "string",
+          "key": "type"
+        },
+        {
+          "label": "id",
+          "type": "string",
+          "key": "id"
+        },
+        {
+          "label": "agenda",
+          "type": "string",
+          "key": "agenda"
+        },
+        {
+          "label": "number of members",
+          "type": "number",
+          "key": "number_of_members"
+        },
+        {
+          "label": "members",
+          "type": "string",
+          "key": "members"
         }
       ],
       "infoPanels": {

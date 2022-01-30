@@ -1,0 +1,250 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>agent-smith</title>
+	<meta name="description" content="Documentation for agent-smith">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">agent-smith</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>agent-smith</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#agent-smith" id="agent-smith" style="color: inherit; text-decoration: none;">
+					<h1>Agent-smith</h1>
+				</a>
+				<p>An agent-based crowd simulator in 2D, loosely based on
+					<a href="https://github.com/noncomputable/AgentMaps">noncomputable/agentmaps</a> by Andrew Gregory Tsesis. The main differences
+				are:</p>
+				<ul>
+					<li>This version is running as a server in Node.js, and it can be queried to return the agents&#39; positions and state.</li>
+					<li>It is written in TypeScript</li>
+					<li>Building units are taken from OSM data, and not generated on-the-fly</li>
+				</ul>
+				<p>Aim is to create a micro-simulator that simulates large groups of people and traffic as input for the evaluation of
+				threat scenarios. It does not aim to be a very realistic crowd or traffic simulator.</p>
+				<p><img src="docs/agent-smith.gif" alt="Agent simulator"></p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>Prerequisites: you need to have a working version of Docker running on your machine.</p>
+				<ol>
+					<li>Setup OSRM, the Open Source routing machine. See the readme in <code>packages/osrm</code>. Note that you do not need to run it from there, as OSRM is started as part of the <code>docker-compose.yml</code> file in Kafka.</li>
+					<li>Start Kafka, see <code>packages/kafka</code>, for running the GUI.</li>
+					<li>Start Agent Smith Simulator, see <code>packages/ass</code>. You can use VSCode&#39;s launch file to run it.</li>
+				</ol>
+				<a href="#name" id="name" style="color: inherit; text-decoration: none;">
+					<h2>Name</h2>
+				</a>
+				<p>The name is inspired by Agent Smith in the film The Matrix.</p>
+				<a href="#dsl--scenario-editor" id="dsl--scenario-editor" style="color: inherit; text-decoration: none;">
+					<h2>DSL / Scenario editor</h2>
+				</a>
+				<p>A DSL and scenario editor.</p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h3>Installation</h3>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">pnpm m i</span>
+<span style="color: #795E26">cd</span><span style="color: #000000"> packages/shared/</span>
+<span style="color: #000000">npm run link</span>
+<span style="color: #795E26">cd</span><span style="color: #000000"> ../gui</span>
+<span style="color: #000000">npm run link</span>
+</code></pre>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h3>Development</h3>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">npm start</span>
+</code></pre>
+				<a href="#edit-simulation-scenario" id="edit-simulation-scenario" style="color: inherit; text-decoration: none;">
+					<h3>Edit simulation/ scenario</h3>
+				</a>
+				<p>An explanation on how to edit scenarios and how the ineraction between agents is implemented can be found in the README file in the folder ./docs</p>
+				<a href="#copper--simulation-viewer" id="copper--simulation-viewer" style="color: inherit; text-decoration: none;">
+					<h2>COPPER / Simulation viewer</h2>
+				</a>
+				<p>This project also includes a simulation viewer (named COPPER). This viewer consists of a server that listens to all simulation events published on Kafka and a webclient. The viewer is included in the docker-compose and is available at <a href="http://localhost:3008/">http://localhost:3008/</a>.</p>
+				<a href="#open-source-routing-machine" id="open-source-routing-machine" style="color: inherit; text-decoration: none;">
+					<h2>Open Source Routing Machine</h2>
+				</a>
+				<p>Used for creating a routing service for driving, cycling, and walking. These routing services are used by the agents to compute their routes. Please see <code>packages/osrm</code> how to set it up.</p>
+				<p>See their <a href="https://project-osrm.org">website</a>.</p>
+				<a href="#opentripplanner" id="opentripplanner" style="color: inherit; text-decoration: none;">
+					<h2>OpenTripPlanner</h2>
+				</a>
+				<p>See the <a href="https://opentripplanner.org">website</a>.</p>
+				<a href="#scalability" id="scalability" style="color: inherit; text-decoration: none;">
+					<h2>Scalability</h2>
+				</a>
+				<a href="#multi-core-and-distributed-servers" id="multi-core-and-distributed-servers" style="color: inherit; text-decoration: none;">
+					<h3>Multi-core and distributed servers</h3>
+				</a>
+				<p>The basic idea is that the main service has knowledge about all agent-smith simulator services (ASS services), and that it can split the map and share it between all simulators. Each ASS will also receive a list of all map boundaries, and a high-level road network, so routing is possible from the local map to another map. When an agent leaves an ASS, it will deregister with the current ASS and register with the new ASS via TCP/IP.</p>
+				<a href="#grouping" id="grouping" style="color: inherit; text-decoration: none;">
+					<h3>Grouping</h3>
+				</a>
+				<p>An agent can also have children: these children will either have a fixed relative position to the parent agent, e.g. to simulate people in a bus, or a dynamic relative position, e.g. to simulate people walking in a group. Nesting is limited to 2 levels, so we can also simulate a family group walking inside a tour group. Agents can leave or join a group when needed.</p>
+				<a href="#creating-vector-tiles" id="creating-vector-tiles" style="color: inherit; text-decoration: none;">
+					<h2>Creating vector tiles</h2>
+				</a>
+				<p>On an Ubuntu machine, run the following commands:</p>
+				<pre><code class="language-bash"><span style="color: #000000">git clone https://github.com/openmaptiles/openmaptiles.git</span>
+<span style="color: #795E26">cd</span><span style="color: #000000"> openmaptiles</span>
+<span style="color: #000000">sudo ./quickstart.sh netherlands </span><span style="color: #008000"># assuming you want to create mbtiles from The Netherlands (replace with the name known at geofabrik).</span>
+</code></pre>
+				<a href="#accreditation" id="accreditation" style="color: inherit; text-decoration: none;">
+					<h2>Accreditation</h2>
+				</a>
+				<a href="#icons" id="icons" style="color: inherit; text-decoration: none;">
+					<h3>Icons</h3>
+				</a>
+				<ul>
+					<li>Woman icon by Icons8: <a href="https://icons8.com/icon/21829/woman">https://icons8.com/icon/21829/woman</a></li>
+					<li>Bicycle icon by Icons8: <a href="https://icons8.com/icon/91006/bicycle">https://icons8.com/icon/91006/bicycle</a></li>
+					<li>Drone icon by Icons8: <a href="https://icons8.com/icon/21919/drone">https://icons8.com/icon/21919/drone</a></li>
+					<li>Bomb icon by Icons8: <a href="https://icons8.com/icon/22459/bomb">https://icons8.com/icon/22459/bomb</a></li>
+					<li>Cloud icon by Icons8: <a href="https://icons8.com/icon/156/cloud">https://icons8.com/icon/156/cloud</a></li>
+					<li>Question Mark icon by Icons8: <a href="https://icons8.com/icon/10568/question-mark">https://icons8.com/icon/10568/question-mark</a></li>
+					<li>Grenade icon by Icons8: <a href="https://icons8.com/icon/10556/grenade">https://icons8.com/icon/10556/grenade</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/models.html">models</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/models_agent.html">models/agent</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/models_location.html">models/location</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/models_plan.html">models/plan</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/models_reaction.html">models/reaction</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/models_sim_config.html">models/sim-<wbr>config</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services.html">services</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_agendas.html">services/agendas</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_chat_service.html">services/chat-<wbr>service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_damage_service.html">services/damage-<wbr>service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_dispatch_service.html">services/dispatch-<wbr>service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_message_service.html">services/message-<wbr>service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_plan_effects.html">services/plan-<wbr>effects</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_plans.html">services/plans</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_reactions.html">services/reactions</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_redis_service.html">services/redis-<wbr>service</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/services_steps.html">services/steps</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/utils.html">utils</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

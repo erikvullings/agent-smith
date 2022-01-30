@@ -13,7 +13,6 @@
     "docker:build-fast": "docker build -t tnocs/copper:fast -f ./copper-dockerfile-fast .",
     "docker:run-fast": "docker stop copper-v2018 & docker rm copper-v2018 & docker run -p 8008:3008 --name copper-v2018 tnocs/copper:fast",
     "docker:push-fast": "docker push tnocs/copper:fast"
-
   },
   "repository": {
     "type": "git",
@@ -27,7 +26,24 @@
   },
   "homepage": "https://github.com/erikvullings/agent-smith#readme",
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^1.16.0",
+    "none": "^1.0.0",
     "pnpm": "^5.17.2",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typedoc": "^0.21.2"
+  },
+  "dependencies": {
+    "@types/redis": "^2.8.28",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
+    "ioredis": "^4.24.2",
+    "node-test-bed-adapter": "^2.0.8",
+    "osrm-rest-client": "^0.1.6",
+    "perf_hooks": "0.0.1",
+    "redis": "^3.0.2",
+    "rest-easy-loki": "^1.2.1",
+    "typescript": "^4.3.5"
   }
 }
