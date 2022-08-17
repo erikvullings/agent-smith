@@ -44,7 +44,7 @@
         "node-test-bed-adapter": "^2.0.8",
         "peer": "0.5.3",
         "pm2": "4.5.4",
-        "protobufjs": "^6.10.2",
+        "protobufjs": "^6.10.3",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^6.6.3",
         "test-bed-schemas": "^0.3.8",
