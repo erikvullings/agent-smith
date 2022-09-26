@@ -43,7 +43,7 @@
         "nestjs": "^0.0.1",
         "node-test-bed-adapter": "^2.0.8",
         "peer": "0.5.3",
-        "pm2": "4.5.4",
+        "pm2": "5.2.0",
         "protobufjs": "^6.10.2",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^6.6.3",
